@@ -27,7 +27,7 @@
     "direccion": "MCI",
     "gerencia": "BI",
     "cuenta": "dev-account",
-    "modulo": "Aplicacion",
+    "modulo": "Aplicación",
     "alcance_sox": "No",
     "propietario": "EquipoBI",
     "proveedor": "Inhouse",
@@ -39,7 +39,7 @@
     "contacto": "bi-team@empresa.com",
     "proyecto": "BI-Dashboard-2025",
     "creado_por": "DarwinLopez",
-    "ciclo_vida": "Creacion",
+    "ciclo_vida": "Creación",
     "version": "1.0.0"
   }
 }
