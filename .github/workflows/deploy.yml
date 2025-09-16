@@ -1,16 +1,11 @@
 name: 🚀 Deploy IAM Resources
 
 on:
-  push:
-    branches:
-      - dev      # Deploy to DEV
-      - qa       # Deploy to QA  
-      - main     # Deploy to PROD
-    paths:
-      - '**/*.tf'           # Cualquier archivo Terraform
-      - '**/*.tfvars'       # Cualquier archivo de variables
-      - '**/*.json'         # Cualquier archivo JSON de roles
-      - 'environments/**/*' # Cambios en configuración de ambientes
+  workflow_run:
+    workflows: ["🔍 Validate IAM Resources"]
+    types:
+      - completed
+    branches: [dev, qa, main]
 
   workflow_dispatch:
     inputs:
@@ -37,6 +32,8 @@ jobs:
   determine-environment:
     name: 🎯 Determine Environment
     runs-on: ubuntu-latest
+    # Solo ejecutar si la validación fue exitosa o es ejecución manual
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
     outputs:
       environment: ${{ steps.env.outputs.environment }}
       should_deploy: ${{ steps.env.outputs.should_deploy }}
