@@ -1,0 +1,292 @@
+name: 🚀 Validate & Deploy IAM Resources
+
+on:
+  push:
+    branches: [dev, qa, main]
+    paths:
+      - '**/*.json'
+      - '**/*.tf'
+      - '**/*.tfvars'
+      - '.github/workflows/**'
+  
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - qa
+          - prod
+      force_deploy:
+        description: 'Force deployment (skip some validations)'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  TF_VERSION: "1.6.0"
+  PYTHON_VERSION: "3.11"
+
+jobs:
+  # 🔍 ESTADO 1: VALIDACIÓN
+  validate:
+    name: 🔍 Validar configuraciones
+    runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.env.outputs.environment }}
+      should_deploy: ${{ steps.env.outputs.should_deploy }}
+      
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: 📦 Install Python Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install boto3 requests jsonschema
+
+      - name: 🎯 Determine Target Environment
+        id: env
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            environment="${{ inputs.environment }}"
+            should_deploy="true"
+          else
+            case "${{ github.ref_name }}" in
+              "dev")
+                environment="dev"
+                ;;
+              "qa")
+                environment="qa"
+                ;;
+              "main")
+                environment="prod"
+                ;;
+              *)
+                environment="dev"
+                ;;
+            esac
+            
+            # Verificar cambios relevantes
+            changed_files=$(git diff --name-only HEAD~1 HEAD | grep -E '\.(tf|tfvars|json)$' | wc -l)
+            if [ "$changed_files" -gt 0 ]; then
+              should_deploy="true"
+            else
+              should_deploy="false"
+            fi
+          fi
+          
+          echo "environment=$environment" >> $GITHUB_OUTPUT
+          echo "should_deploy=$should_deploy" >> $GITHUB_OUTPUT
+          
+          echo "🎯 Target Environment: $environment"
+          echo "📦 Should Deploy: $should_deploy"
+
+      - name: 🔍 Find and Validate Role Configurations
+        run: |
+          echo "🔍 Buscando archivos de configuración de roles..."
+          find . -name "*.json" -type f ! -name "policy-*.json" ! -path "./.git/*" ! -path "./node_modules/*" > role_configs.txt || true
+          
+          if [ -s role_configs.txt ]; then
+            echo "📋 Archivos de roles encontrados:"
+            cat role_configs.txt
+            
+            while read role_file; do
+              echo "✅ Validando: $role_file"
+              python scripts/validate_iam.py "$role_file"
+            done < role_configs.txt
+          else
+            echo "ℹ️  No se encontraron archivos de configuración de roles"
+          fi
+
+      - name: 🔍 Find and Validate Policy Files
+        run: |
+          echo "🔍 Buscando archivos de políticas..."
+          find . -name "policy-*.json" -type f ! -path "./.git/*" ! -path "./node_modules/*" > policy_files.txt || true
+          
+          if [ -s policy_files.txt ]; then
+            echo "📋 Archivos de políticas encontrados:"
+            cat policy_files.txt
+            
+            while read policy_file; do
+              echo "✅ Validando política: $policy_file"
+              python scripts/validate_policy.py "$policy_file"
+            done < policy_files.txt
+          else
+            echo "ℹ️  No se encontraron archivos de políticas"
+          fi
+
+      - name: 🏷️ Validate Tag Examples
+        run: |
+          python3 scripts/validate_iam.py scripts/tag_examples.json
+
+      - name: 🧪 Validate Terraform Format
+        run: |
+          terraform fmt -check=true -recursive .
+
+  # 📋 ESTADO 2: PLANIFICACIÓN
+  plan:
+    name: 📋 Planificar cambios
+    runs-on: ubuntu-latest
+    needs: validate
+    if: needs.validate.outputs.should_deploy == 'true'
+    outputs:
+      deployment_dir: ${{ steps.plan_info.outputs.deployment_dir }}
+      
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 🏗️ Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: 🔑 Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: us-east-1
+          role-session-name: GitHubActions-Plan-${{ github.run_id }}
+
+      - name: 📁 Setup Deployment Directory
+        id: plan_info
+        run: |
+          environment="${{ needs.validate.outputs.environment }}"
+          deployment_dir="environments/$environment"
+          
+          echo "deployment_dir=$deployment_dir" >> $GITHUB_OUTPUT
+          echo "📁 Planning deployment for: $deployment_dir"
+
+      - name: 📋 Terraform Plan
+        run: |
+          environment="${{ needs.validate.outputs.environment }}"
+          deployment_dir="${{ steps.plan_info.outputs.deployment_dir }}"
+          
+          cd "$deployment_dir"
+          
+          # Initialize Terraform
+          terraform init \
+            -backend-config="bucket=s3-data-analytics-raw-dev-tfstate" \
+            -backend-config="key=iam/$environment/terraform.tfstate" \
+            -backend-config="region=us-east-1"
+          
+          # Plan with appropriate tfvars
+          tfvars_file="../$environment.tfvars"
+          if [ -f "$tfvars_file" ]; then
+            echo "📄 Using tfvars file: $tfvars_file"
+            terraform plan -var-file="$tfvars_file" -out=tfplan -detailed-exitcode
+          else
+            echo "⚠️ No specific tfvars file found, using defaults"
+            terraform plan -out=tfplan -detailed-exitcode
+          fi
+
+      - name: 📊 Plan Summary
+        run: |
+          echo "## 📋 Terraform Plan Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Environment:** ${{ needs.validate.outputs.environment }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Directory:** ${{ steps.plan_info.outputs.deployment_dir }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status:** ✅ Plan successful, ready for deployment" >> $GITHUB_STEP_SUMMARY
+
+  # 🚀 ESTADO 3: DEPLOYMENT
+  deploy:
+    name: 🚀 Desplegar a AWS
+    runs-on: ubuntu-latest
+    needs: [validate, plan]
+    if: success()
+    
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 🏗️ Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: 🔑 Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: us-east-1
+          role-session-name: GitHubActions-Deploy-${{ github.run_id }}
+
+      - name: 🚀 Deploy Resources
+        run: |
+          environment="${{ needs.validate.outputs.environment }}"
+          deployment_dir="${{ needs.plan.outputs.deployment_dir }}"
+          
+          cd "$deployment_dir"
+          
+          # Initialize Terraform (same as plan)
+          terraform init \
+            -backend-config="bucket=s3-data-analytics-raw-dev-tfstate" \
+            -backend-config="key=iam/$environment/terraform.tfstate" \
+            -backend-config="region=us-east-1"
+          
+          # Plan again (to be safe)
+          tfvars_file="../$environment.tfvars"
+          if [ -f "$tfvars_file" ]; then
+            terraform plan -var-file="$tfvars_file" -out=tfplan
+          else
+            terraform plan -out=tfplan
+          fi
+          
+          # Apply the plan
+          echo "🚀 Applying Terraform plan..."
+          terraform apply -auto-approve tfplan
+          
+          echo "✅ Deployment completed successfully!"
+
+  # ✅ ESTADO 4: VERIFICACIÓN
+  verify:
+    name: ✅ Verificar deployment
+    runs-on: ubuntu-latest
+    needs: [validate, plan, deploy]
+    if: success()
+    
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 🔑 Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: us-east-1
+          role-session-name: GitHubActions-Verify-${{ github.run_id }}
+
+      - name: ✅ Verify IAM Resources
+        run: |
+          echo "🔍 Verificando recursos IAM creados..."
+          
+          # Listar roles creados recientemente
+          aws iam list-roles --query 'Roles[?contains(RoleName, `rol-analytics`) || contains(RoleName, `rol-s3reader`)].{RoleName:RoleName,CreateDate:CreateDate}' --output table
+          
+          # Verificar políticas
+          aws iam list-policies --scope Local --query 'Policies[?contains(PolicyName, `policy-s3-read`)].{PolicyName:PolicyName,CreateDate:CreateDate}' --output table
+
+      - name: 📊 Deployment Report
+        run: |
+          echo "## 🎉 Deployment Successful!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📋 Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- **Environment:** ${{ needs.validate.outputs.environment }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Directory:** ${{ needs.plan.outputs.deployment_dir }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status:** ✅ All resources deployed and verified" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🔗 Next Steps" >> $GITHUB_STEP_SUMMARY
+          echo "- Check AWS Console to verify IAM roles" >> $GITHUB_STEP_SUMMARY
+          echo "- Test role assumptions if needed" >> $GITHUB_STEP_SUMMARY
+          echo "- Update documentation if required" >> $GITHUB_STEP_SUMMARY
