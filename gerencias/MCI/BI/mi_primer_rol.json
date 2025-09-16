@@ -18,7 +18,7 @@
       "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
     ],
     "custom_policies": [
-      "politicas/policy-s3-read.json"
+      "../../../MCI/politicas/policy-s3-read.json"
     ]
   },
   "tags": {
