@@ -28,7 +28,7 @@ terraform {
 locals {
   # Configuración específica del rol
   role_name = "rol-${var.servicio}-${var.layer}-${var.ambiente}-${var.nombre}"
-  
+
   # Política de confianza para Glue
   glue_assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -94,25 +94,25 @@ module "iam_role" {
   inline_policy        = var.inline_policy
 
   tags = {
-    ambiente     = var.ambiente
-    pais         = var.pais
-    direccion    = var.direccion
-    gerencia     = var.gerencia
-    cuenta       = var.cuenta
-    modulo       = var.modulo
-    alcance_sox  = var.alcance_sox
-    propietario  = var.propietario
-    proveedor    = var.proveedor
-    layer        = var.layer
-    dominio      = var.dominio
-    subdominio   = var.subdominio
-    aplicacion   = var.aplicacion
-    soporte      = var.soporte
-    contacto     = var.contacto
-    proyecto     = var.proyecto
-    creado_por   = var.creado_por
-    ciclo_vida   = var.ciclo_vida
-    version      = var.version
+    ambiente    = var.ambiente
+    pais        = var.pais
+    direccion   = var.direccion
+    gerencia    = var.gerencia
+    cuenta      = var.cuenta
+    modulo      = var.modulo
+    alcance_sox = var.alcance_sox
+    propietario = var.propietario
+    proveedor   = var.proveedor
+    layer       = var.layer
+    dominio     = var.dominio
+    subdominio  = var.subdominio
+    aplicacion  = var.aplicacion
+    soporte     = var.soporte
+    contacto    = var.contacto
+    proyecto    = var.proyecto
+    creado_por  = var.creado_por
+    ciclo_vida  = var.ciclo_vida
+    version     = var.version
   }
 }
 
@@ -151,25 +151,25 @@ module "s3_policy" {
   })
 
   tags = {
-    ambiente     = var.ambiente
-    pais         = var.pais
-    direccion    = var.direccion
-    gerencia     = var.gerencia
-    cuenta       = var.cuenta
-    modulo       = var.modulo
-    alcance_sox  = var.alcance_sox
-    propietario  = var.propietario
-    proveedor    = var.proveedor
-    layer        = var.layer
-    dominio      = var.dominio
-    subdominio   = var.subdominio
-    aplicacion   = var.aplicacion
-    soporte      = var.soporte
-    contacto     = var.contacto
-    proyecto     = var.proyecto
-    creado_por   = var.creado_por
-    ciclo_vida   = var.ciclo_vida
-    version      = var.version
+    ambiente    = var.ambiente
+    pais        = var.pais
+    direccion   = var.direccion
+    gerencia    = var.gerencia
+    cuenta      = var.cuenta
+    modulo      = var.modulo
+    alcance_sox = var.alcance_sox
+    propietario = var.propietario
+    proveedor   = var.proveedor
+    layer       = var.layer
+    dominio     = var.dominio
+    subdominio  = var.subdominio
+    aplicacion  = var.aplicacion
+    soporte     = var.soporte
+    contacto    = var.contacto
+    proyecto    = var.proyecto
+    creado_por  = var.creado_por
+    ciclo_vida  = var.ciclo_vida
+    version     = var.version
   }
 }
 

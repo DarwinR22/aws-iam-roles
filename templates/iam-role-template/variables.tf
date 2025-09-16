@@ -9,7 +9,7 @@ variable "servicio" {
 
   validation {
     condition = contains([
-      "s3", "lambda", "glue", "ec2", "ecs", "rds", "dynamodb", 
+      "s3", "lambda", "glue", "ec2", "ecs", "rds", "dynamodb",
       "sns", "sqs", "kinesis", "redshift", "emr", "apigateway"
     ], var.servicio)
     error_message = "El servicio debe ser uno de los servicios AWS soportados."
@@ -26,7 +26,7 @@ variable "ambiente" {
   type        = string
 
   validation {
-    condition = contains(["dev", "qa", "prod", "poc"], var.ambiente)
+    condition     = contains(["dev", "qa", "prod", "poc"], var.ambiente)
     error_message = "El ambiente debe ser: dev, qa, prod o poc"
   }
 }
@@ -93,7 +93,7 @@ variable "pais" {
   type        = string
 
   validation {
-    condition = contains(["GT", "SV", "NI", "HN", "CR", "RG"], var.pais)
+    condition     = contains(["GT", "SV", "NI", "HN", "CR", "RG"], var.pais)
     error_message = "El país debe ser: GT, SV, NI, HN, CR o RG"
   }
 }
@@ -118,7 +118,7 @@ variable "modulo" {
   type        = string
 
   validation {
-    condition = contains(["Aplicación", "DB", "POC"], var.modulo)
+    condition     = contains(["Aplicación", "DB", "POC"], var.modulo)
     error_message = "El módulo debe ser: Aplicación, DB o POC"
   }
 }
@@ -128,7 +128,7 @@ variable "alcance_sox" {
   type        = string
 
   validation {
-    condition = contains(["Sí", "No"], var.alcance_sox)
+    condition     = contains(["Sí", "No"], var.alcance_sox)
     error_message = "Alcance SOX debe ser 'Sí' o 'No'"
   }
 }
@@ -143,7 +143,7 @@ variable "proveedor" {
   type        = string
 
   validation {
-    condition = contains(["Inhouse", "Tercero"], var.proveedor)
+    condition     = contains(["Inhouse", "Tercero"], var.proveedor)
     error_message = "El proveedor debe ser 'Inhouse' o 'Tercero'"
   }
 }
@@ -194,10 +194,10 @@ variable "ciclo_vida" {
 
   validation {
     condition = contains([
-      "Creación", 
-      "Implementación", 
-      "MonitoreoYMantenimiento", 
-      "Optimización", 
+      "Creación",
+      "Implementación",
+      "MonitoreoYMantenimiento",
+      "Optimización",
       "Decommission"
     ], var.ciclo_vida)
     error_message = "El ciclo de vida debe ser: Creación, Implementación, MonitoreoYMantenimiento, Optimización o Decommission"

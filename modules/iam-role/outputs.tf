@@ -40,9 +40,9 @@ output "attached_policies" {
 output "role_components" {
   description = "Componentes extraídos del nombre del rol"
   value = {
-    servicio  = local.servicio
-    layer     = local.layer
-    ambiente  = local.ambiente
-    nombre    = local.nombre
+    servicio = local.servicio
+    layer    = local.layer
+    ambiente = local.ambiente
+    nombre   = local.nombre
   }
 }

@@ -16,37 +16,37 @@ terraform {
 locals {
   # Tags obligatorios con validación
   required_tags = {
-    Ambiente         = var.tags.ambiente
-    País            = var.tags.pais
-    Dirección       = var.tags.direccion
-    Gerencia        = var.tags.gerencia
-    Cuenta          = var.tags.cuenta
-    Módulo          = var.tags.modulo
-    "Alcance SOX"   = var.tags.alcance_sox
-    Propietario     = var.tags.propietario
-    Proveedor       = var.tags.proveedor
-    Layer           = var.tags.layer
-    Dominio         = var.tags.dominio
-    Subdominio      = var.tags.subdominio
-    Aplicación      = var.tags.aplicacion
-    Name            = var.policy_name
-    Soporte         = var.tags.soporte
-    Contacto        = var.tags.contacto
-    Proyecto        = var.tags.proyecto
+    Ambiente            = var.tags.ambiente
+    País                = var.tags.pais
+    Dirección           = var.tags.direccion
+    Gerencia            = var.tags.gerencia
+    Cuenta              = var.tags.cuenta
+    Módulo              = var.tags.modulo
+    "Alcance SOX"       = var.tags.alcance_sox
+    Propietario         = var.tags.propietario
+    Proveedor           = var.tags.proveedor
+    Layer               = var.tags.layer
+    Dominio             = var.tags.dominio
+    Subdominio          = var.tags.subdominio
+    Aplicación          = var.tags.aplicacion
+    Name                = var.policy_name
+    Soporte             = var.tags.soporte
+    Contacto            = var.tags.contacto
+    Proyecto            = var.tags.proyecto
     "Fecha de Creación" = formatdate("YYYY-MM-DD", timestamp())
-    "Creado Por"    = var.tags.creado_por
-    "Tipo de Recurso" = "IAM Policy"
-    "Ciclo de Vida" = var.tags.ciclo_vida
-    Versión         = var.tags.version
+    "Creado Por"        = var.tags.creado_por
+    "Tipo de Recurso"   = "IAM Policy"
+    "Ciclo de Vida"     = var.tags.ciclo_vida
+    Versión             = var.tags.version
   }
 
   # Validar ambientes permitidos
   valid_environments = ["dev", "qa", "prod", "poc"]
-  environment_valid = contains(local.valid_environments, var.tags.ambiente)
+  environment_valid  = contains(local.valid_environments, var.tags.ambiente)
 
   # Validar países permitidos
   valid_countries = ["GT", "SV", "NI", "HN", "CR", "RG"]
-  country_valid = contains(local.valid_countries, var.tags.pais)
+  country_valid   = contains(local.valid_countries, var.tags.pais)
 
   # Validar SOX
   valid_sox = ["Sí", "No"]

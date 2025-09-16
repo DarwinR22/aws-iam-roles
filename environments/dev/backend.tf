@@ -5,13 +5,13 @@ terraform {
     region         = "us-east-1"
     dynamodb_table = "dynamodb-db-dev-terraform-lock"
     encrypt        = true
-    
+
     # Estructura organizada por gerencia y área
     workspace_key_prefix = "workspaces"
   }
-  
+
   required_version = ">= 1.6.0"
-  
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -23,7 +23,7 @@ terraform {
 # Provider configuration
 provider "aws" {
   region = var.aws_region
-  
+
   default_tags {
     tags = {
       Environment   = "dev"

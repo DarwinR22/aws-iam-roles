@@ -8,7 +8,7 @@ organization = "MCI - América Móvil"
 company_code = "AMX"
 
 # Configuración de Terraform
-terraform_version = "~> 1.6.0"
+terraform_version    = "~> 1.6.0"
 aws_provider_version = "~> 5.0"
 
 # Configuración de buckets de estado por ambiente
@@ -27,17 +27,17 @@ aws_regions = {
 
 # Cuentas AWS por ambiente
 aws_accounts = {
-  dev  = "123456789012"  # Reemplazar con IDs reales
+  dev  = "123456789012" # Reemplazar con IDs reales
   qa   = "234567890123"
   prod = "345678901234"
 }
 
 # Políticas AWS gestionadas comunes
 common_aws_policies = {
-  basic_lambda = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
-  glue_service = "arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole"
-  s3_read_only = "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
-  s3_full      = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+  basic_lambda    = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+  glue_service    = "arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole"
+  s3_read_only    = "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
+  s3_full         = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
   cloudwatch_logs = "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
 }
 
@@ -61,19 +61,19 @@ retention_policies = {
 monitoring_config = {
   dev = {
     enable_detailed_monitoring = false
-    enable_cost_alerts        = false
-    cost_threshold           = 100
+    enable_cost_alerts         = false
+    cost_threshold             = 100
   }
   qa = {
     enable_detailed_monitoring = true
-    enable_cost_alerts        = true
-    cost_threshold           = 500
+    enable_cost_alerts         = true
+    cost_threshold             = 500
   }
   prod = {
     enable_detailed_monitoring = true
-    enable_cost_alerts        = true
-    cost_threshold           = 2000
-    enable_compliance_checks = true
+    enable_cost_alerts         = true
+    cost_threshold             = 2000
+    enable_compliance_checks   = true
   }
 }
 

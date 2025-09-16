@@ -5,19 +5,19 @@
 
 # Configuración AWS
 aws_region = "us-east-1"
-account_id = "345678901234"  # Reemplazar con ID real de cuenta PROD
+account_id = "345678901234" # Reemplazar con ID real de cuenta PROD
 
 # Configuración de red
-vpc_id = "vpc-prod12345"
-subnet_ids = ["subnet-prod123", "subnet-prod456", "subnet-prod789"]  # Más subnets para HA
+vpc_id     = "vpc-prod12345"
+subnet_ids = ["subnet-prod123", "subnet-prod456", "subnet-prod789"] # Más subnets para HA
 
 # Configuración de buckets S3 para PROD
 data_buckets = {
-  raw_data      = "empresa-data-raw-prod"
-  processed     = "empresa-data-processed-prod"
-  logs          = "empresa-logs-prod"
-  backups       = "empresa-backups-prod"
-  archive       = "empresa-archive-prod"  # Bucket adicional para archivos
+  raw_data  = "empresa-data-raw-prod"
+  processed = "empresa-data-processed-prod"
+  logs      = "empresa-logs-prod"
+  backups   = "empresa-backups-prod"
+  archive   = "empresa-archive-prod" # Bucket adicional para archivos
 }
 
 # Configuración de bases de datos
@@ -35,33 +35,33 @@ external_services = {
 }
 
 # Configuración de políticas específicas para PROD
-allow_experimental_permissions = false  # Muy restrictivo en PROD
-enable_debug_logging          = false   # Sin debug en PROD
-session_duration_hours        = 8       # Sesiones más largas para operaciones
+allow_experimental_permissions = false # Muy restrictivo en PROD
+enable_debug_logging           = false # Sin debug en PROD
+session_duration_hours         = 8     # Sesiones más largas para operaciones
 
 # Configuración de tags específicos para PROD
 default_cost_center = "PROD-OPERATIONS"
 environment_tier    = "production"
 
 # Configuración de retention (más conservadora)
-log_retention_days    = 90   # 3 meses
-backup_retention_days = 365  # 1 año
+log_retention_days    = 90  # 3 meses
+backup_retention_days = 365 # 1 año
 
 # Configuración de alarmas (muy estrictas)
-enable_cost_alerts      = true
-enable_security_alerts  = true
-cost_threshold_usd      = 2000
+enable_cost_alerts       = true
+enable_security_alerts   = true
+cost_threshold_usd       = 2000
 enable_compliance_checks = true
 require_sox_compliance   = true
 
 # Configuración de seguridad adicional para PROD
-enable_enhanced_monitoring = true
-require_mfa_for_roles     = true
-enable_access_logging     = true
-enable_encryption_at_rest = true
+enable_enhanced_monitoring   = true
+require_mfa_for_roles        = true
+enable_access_logging        = true
+enable_encryption_at_rest    = true
 enable_encryption_in_transit = true
 
 # Configuración de disponibilidad
-multi_az_deployment = true
-cross_region_backup = true
+multi_az_deployment       = true
+cross_region_backup       = true
 disaster_recovery_enabled = true
