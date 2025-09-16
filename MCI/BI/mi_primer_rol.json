@@ -1,6 +1,6 @@
 {
   "role_name": "rol-analytics-backend-dev-dashboard",
-  "description": "Mi primer rol para dashboard de analytics de BI",
+  "description": "Mi primer rol para dashboard de analytics de BI - Prueba de deployment",
   "trust_policy": {
     "Version": "2012-10-17",
     "Statement": [
