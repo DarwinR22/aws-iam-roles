@@ -1,9 +1,18 @@
 {
-  "servicio": "lambda",
-  "layer": "api", 
-  "ambiente": "dev",
-  "nombre": "lectorS3",
+  "role_name": "rol-s3reader-api-dev-lambda",
   "description": "Rol para Lambda que lee objetos de buckets S3",
+  "trust_policy": {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Principal": {
+          "Service": "lambda.amazonaws.com"
+        },
+        "Action": "sts:AssumeRole"
+      }
+    ]
+  },
   "policies": {
     "aws_managed": [
       "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
@@ -11,13 +20,16 @@
     ]
   },
   "tags": {
+    "ambiente": "dev",
     "pais": "GT",
     "direccion": "Gerencia de Tecnología",
     "gerencia": "Desarrollo de Aplicaciones",
+    "cuenta": "dev-account",
     "modulo": "Aplicación",
     "alcance_sox": "No",
     "propietario": "Juan Pérez",
     "proveedor": "Inhouse",
+    "layer": "api",
     "dominio": "DataProcessing",
     "subdominio": "FileAccess",
     "aplicacion": "S3-READER-APP",
