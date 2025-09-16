@@ -204,13 +204,13 @@ variable "ciclo_vida" {
   }
 }
 
-variable "version" {
+variable "module_version" {
   description = "Versión del recurso"
   type        = string
   default     = "1.0.0"
 
   validation {
-    condition     = can(regex("^[0-9]+\\.[0-9]+\\.[0-9]+$", var.version))
+    condition     = can(regex("^[0-9]+\\.[0-9]+\\.[0-9]+$", var.module_version))
     error_message = "La versión debe seguir el formato semántico (ej: 1.0.0)."
   }
 }

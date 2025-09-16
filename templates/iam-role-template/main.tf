@@ -112,7 +112,7 @@ module "iam_role" {
     proyecto    = var.proyecto
     creado_por  = var.creado_por
     ciclo_vida  = var.ciclo_vida
-    version     = var.version
+    version     = var.module_version
   }
 }
 
@@ -169,7 +169,7 @@ module "s3_policy" {
     proyecto    = var.proyecto
     creado_por  = var.creado_por
     ciclo_vida  = var.ciclo_vida
-    version     = var.version
+    version     = var.module_version
   }
 }
 
