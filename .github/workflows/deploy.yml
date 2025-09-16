@@ -7,8 +7,10 @@ on:
       - qa       # Deploy to QA  
       - main     # Deploy to PROD
     paths:
-      - 'gerencias/**/*.tf'
-      - 'gerencias/**/*.tfvars'
+      - '**/*.tf'           # Cualquier archivo Terraform
+      - '**/*.tfvars'       # Cualquier archivo de variables
+      - '**/*.json'         # Cualquier archivo JSON de roles
+      - 'environments/**/*' # Cambios en configuración de ambientes
 
   workflow_dispatch:
     inputs:
