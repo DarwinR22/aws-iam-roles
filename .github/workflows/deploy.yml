@@ -149,10 +149,8 @@ jobs:
       - name: 🔑 Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets[format('AWS_ACCESS_KEY_ID_{0}', needs.determine-environment.outputs.environment)] }}
-          aws-secret-access-key: ${{ secrets[format('AWS_SECRET_ACCESS_KEY_{0}', needs.determine-environment.outputs.environment)] }}
-          aws-region: ${{ vars[format('AWS_REGION_{0}', needs.determine-environment.outputs.environment)] || 'us-east-1' }}
-          role-to-assume: ${{ secrets[format('AWS_ROLE_ARN_{0}', needs.determine-environment.outputs.environment)] }}
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: us-east-1
           role-session-name: GitHubActions-${{ github.run_id }}
 
       - name: 📁 Find Changed Directories
