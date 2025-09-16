@@ -55,6 +55,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install boto3 requests jsonschema
 
+      - name: 🏗️ Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
       - name: 🎯 Determine Target Environment
         id: env
         run: |
