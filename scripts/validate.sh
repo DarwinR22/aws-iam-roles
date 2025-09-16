@@ -148,7 +148,7 @@ validate_tag_examples() {
     local tag_example_file="scripts/tag_examples.json"
     
     if [ -f "$tag_example_file" ]; then
-        python3 scripts/validate_iam.py --tags-file "$tag_example_file" .
+        python3 scripts/validate_iam.py "$tag_example_file"
     else
         print_warning "Archivo de ejemplos de tags no encontrado: $tag_example_file"
     fi

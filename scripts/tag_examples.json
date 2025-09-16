@@ -1,21 +1,42 @@
 {
-  "ambiente": "dev",
-  "pais": "GT",
-  "direccion": "Gerencia de TI - Data Analytics",
-  "gerencia": "Data Analytics & AI",
-  "cuenta": "dev-analytics-account",
-  "modulo": "Aplicación",
-  "alcance_sox": "No",
-  "propietario": "Juan Pérez",
-  "proveedor": "Inhouse",
-  "layer": "Data Analytics",
-  "dominio": "Analytics",
-  "subdominio": "ETL",
-  "aplicacion": "VENTAS-ETL-PROCESSOR",
-  "soporte": "Equipo Data Engineering",
-  "contacto": "data-engineering@empresa.com",
-  "proyecto": "PROJ-2024-ANALYTICS",
-  "creado_por": "juan.perez@empresa.com",
-  "ciclo_vida": "Implementación",
-  "version": "1.0.0"
+  "role_name": "rol-example-backend-dev-template",
+  "description": "Archivo de ejemplo para validar tags - NO USAR EN PRODUCCIÓN",
+  "trust_policy": {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Principal": {
+          "Service": "ec2.amazonaws.com"
+        },
+        "Action": "sts:AssumeRole"
+      }
+    ]
+  },
+  "policies": {
+    "aws_managed": [
+      "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+    ]
+  },
+  "tags": {
+    "ambiente": "dev",
+    "pais": "GT",
+    "direccion": "Gerencia de TI - Data Analytics",
+    "gerencia": "Data Analytics & AI",
+    "cuenta": "dev-analytics-account",
+    "modulo": "Aplicación",
+    "alcance_sox": "No",
+    "propietario": "Juan Pérez",
+    "proveedor": "Inhouse",
+    "layer": "backend",
+    "dominio": "Analytics",
+    "subdominio": "ETL",
+    "aplicacion": "VENTAS-ETL-PROCESSOR",
+    "soporte": "Equipo Data Engineering",
+    "contacto": "data-engineering@empresa.com",
+    "proyecto": "PROJ-2024-ANALYTICS",
+    "creado_por": "juan.perez@empresa.com",
+    "ciclo_vida": "Implementación",
+    "version": "1.0.0"
+  }
 }
