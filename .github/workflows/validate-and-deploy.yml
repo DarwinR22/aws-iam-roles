@@ -70,25 +70,21 @@ jobs:
             case "${{ github.ref_name }}" in
               "dev")
                 environment="dev"
+                should_deploy="true"
                 ;;
               "qa")
                 environment="qa"
+                should_deploy="true"
                 ;;
               "main")
                 environment="prod"
+                should_deploy="true"
                 ;;
               *)
                 environment="dev"
+                should_deploy="false"
                 ;;
             esac
-            
-            # Verificar cambios relevantes
-            changed_files=$(git diff --name-only HEAD~1 HEAD | grep -E '\.(tf|tfvars|json)$' | wc -l)
-            if [ "$changed_files" -gt 0 ]; then
-              should_deploy="true"
-            else
-              should_deploy="false"
-            fi
           fi
           
           echo "environment=$environment" >> $GITHUB_OUTPUT
@@ -96,6 +92,8 @@ jobs:
           
           echo "🎯 Target Environment: $environment"
           echo "📦 Should Deploy: $should_deploy"
+          echo "🔄 Workflow Trigger: ${{ github.event_name }}"
+          echo "📋 Branch: ${{ github.ref_name }}"
 
       - name: 🔍 Find and Validate Role Configurations
         run: |
