@@ -2,7 +2,7 @@ name: 🔍 Validate IAM Resources
 
 on:
   pull_request:
-    branches: [ main, develop, qa, prod ]
+    branches: [ main, dev, qa, prod ]
     paths:
       - '**/*.json'          # Detecta cualquier JSON en cualquier carpeta
       - '**/*.tf'            # Detecta cualquier Terraform
@@ -11,7 +11,7 @@ on:
       - 'templates/**/*.tf'  # Plantillas específicas
   
   push:
-    branches: [ main, develop, qa, prod ]
+    branches: [ main, dev, qa, prod ]
     paths:
       - '**/*.json'          # Detecta cualquier JSON en cualquier carpeta
       - '**/*.tf'            # Detecta cualquier Terraform

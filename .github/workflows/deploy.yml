@@ -3,7 +3,7 @@ name: 🚀 Deploy IAM Resources
 on:
   push:
     branches:
-      - develop  # Deploy to DEV
+      - dev      # Deploy to DEV
       - qa       # Deploy to QA  
       - main     # Deploy to PROD
     paths:
@@ -52,7 +52,7 @@ jobs:
             environment="${{ inputs.environment }}"
           else
             case "${{ github.ref_name }}" in
-              "develop")
+              "dev")
                 environment="dev"
                 ;;
               "qa")
