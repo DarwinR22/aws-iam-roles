@@ -27,9 +27,9 @@
     "direccion": "MCI",
     "gerencia": "BI",
     "cuenta": "dev-account",
-    "modulo": "Aplicación",
+    "modulo": "Aplicacion",
     "alcance_sox": "No",
-    "propietario": "Equipo BI",
+    "propietario": "EquipoBI",
     "proveedor": "Inhouse",
     "layer": "backend",
     "dominio": "Business Intelligence",
@@ -38,8 +38,8 @@
     "soporte": "Equipo DevOps",
     "contacto": "bi-team@empresa.com",
     "proyecto": "BI-Dashboard-2025",
-    "creado_por": "Ana López",
-    "ciclo_vida": "GIT",
+    "creado_por": "DarwinLopez",
+    "ciclo_vida": "Creacion",
     "version": "1.0.0"
   }
 }
