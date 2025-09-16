@@ -1,6 +1,6 @@
 {
   "role_name": "rol-analytics-backend-dev-dashboard",
-  "description": "Mi primer rol para dashboard de analytics de BI - Prueba de deployment",
+  "description": "Mi primer rol IAM para dashboard de analytics",
   "trust_policy": {
     "Version": "2012-10-17",
     "Statement": [
@@ -18,7 +18,7 @@
       "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
     ],
     "custom_policies": [
-      "../politicas/policy-s3-read.json"
+      "politicas/politica1.json"
     ]
   },
   "tags": {
@@ -29,17 +29,17 @@
     "cuenta": "dev-account",
     "modulo": "Aplicación",
     "alcance_sox": "No",
-    "propietario": "EquipoBI",
+    "propietario": "Tu Nombre",
     "proveedor": "Inhouse",
     "layer": "backend",
     "dominio": "Business Intelligence",
     "subdominio": "Analytics",
     "aplicacion": "dashboard-bi",
-    "soporte": "Equipo DevOps",
+    "soporte": "Equipo BI",
     "contacto": "bi-team@empresa.com",
     "proyecto": "BI-Dashboard-2025",
-    "creado_por": "DarwinLopez",
-    "ciclo_vida": "Creación",
+    "creado_por": "tu.email@empresa.com",
+    "ciclo_vida": "Implementación",
     "version": "1.0.0"
   }
 }
