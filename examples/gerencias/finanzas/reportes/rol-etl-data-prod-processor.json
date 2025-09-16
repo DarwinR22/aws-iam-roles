@@ -1,0 +1,46 @@
+{
+  "role_name": "rol-etl-data-prod-processor",
+  "description": "Rol para procesamiento de datos ETL en reportes financieros",
+  "trust_policy": {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Principal": {
+          "Service": "lambda.amazonaws.com"
+        },
+        "Action": "sts:AssumeRole"
+      }
+    ]
+  },
+  "policies": {
+    "aws_managed": [
+      "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+    ],
+    "custom_policies": [
+      "./policy-rds-read-access.json",
+      "./policy-s3-reports-write.json"
+    ]
+  },
+  "tags": {
+    "ambiente": "prod",
+    "pais": "GT",
+    "direccion": "Finanzas",
+    "gerencia": "Finanzas",
+    "cuenta": "prod-account",
+    "modulo": "DB",
+    "alcance_sox": "Sí",
+    "propietario": "Equipo Finanzas",
+    "proveedor": "Inhouse",
+    "layer": "data",
+    "dominio": "Reportes Financieros",
+    "subdominio": "ETL",
+    "aplicacion": "financial-reporting",
+    "soporte": "Equipo DBA",
+    "contacto": "dba@empresa.com",
+    "proyecto": "FinReports-2025",
+    "creado_por": "María García",
+    "ciclo_vida": "MonitoreoYMantenimiento",
+    "version": "2.1.0"
+  }
+}

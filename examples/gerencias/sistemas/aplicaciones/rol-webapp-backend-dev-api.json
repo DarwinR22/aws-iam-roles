@@ -1,0 +1,46 @@
+{
+  "role_name": "rol-webapp-backend-dev-api",
+  "description": "Rol para API backend de aplicación web en desarrollo",
+  "trust_policy": {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Principal": {
+          "Service": "ec2.amazonaws.com"
+        },
+        "Action": "sts:AssumeRole"
+      }
+    ]
+  },
+  "policies": {
+    "aws_managed": [
+      "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+    ],
+    "custom_policies": [
+      "./policy-s3-read-access.json",
+      "./policy-dynamodb-basic.json"
+    ]
+  },
+  "tags": {
+    "ambiente": "dev",
+    "pais": "GT",
+    "direccion": "Tecnología",
+    "gerencia": "Sistemas",
+    "cuenta": "dev-account",
+    "modulo": "Aplicación",
+    "alcance_sox": "No",
+    "propietario": "Equipo Backend",
+    "proveedor": "Inhouse",
+    "layer": "backend",
+    "dominio": "Aplicaciones Web",
+    "subdominio": "API",
+    "aplicacion": "webapp-main",
+    "soporte": "Equipo DevOps",
+    "contacto": "devops@empresa.com",
+    "proyecto": "WebApp-2025",
+    "creado_por": "Juan Pérez",
+    "ciclo_vida": "Implementación",
+    "version": "1.0.0"
+  }
+}

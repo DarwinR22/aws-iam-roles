@@ -1,0 +1,45 @@
+{
+  "role_name": "rol-analytics-backend-dev-dashboard",
+  "description": "Mi primer rol para dashboard de analytics de BI",
+  "trust_policy": {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Principal": {
+          "Service": "ec2.amazonaws.com"
+        },
+        "Action": "sts:AssumeRole"
+      }
+    ]
+  },
+  "policies": {
+    "aws_managed": [
+      "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+    ],
+    "custom_policies": [
+      "../politicas/policy-s3-read.json"
+    ]
+  },
+  "tags": {
+    "ambiente": "dev",
+    "pais": "GT",
+    "direccion": "MCI",
+    "gerencia": "BI",
+    "cuenta": "dev-account",
+    "modulo": "Aplicación",
+    "alcance_sox": "No",
+    "propietario": "Equipo BI",
+    "proveedor": "Inhouse",
+    "layer": "backend",
+    "dominio": "Business Intelligence",
+    "subdominio": "Analytics",
+    "aplicacion": "dashboard-bi",
+    "soporte": "Equipo DevOps",
+    "contacto": "bi-team@empresa.com",
+    "proyecto": "BI-Dashboard-2025",
+    "creado_por": "Ana López",
+    "ciclo_vida": "Implementación",
+    "version": "1.0.0"
+  }
+}
