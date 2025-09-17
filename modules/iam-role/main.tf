@@ -12,6 +12,15 @@ terraform {
   }
 }
 
+# Función para limpiar nombres (quitar espacios y caracteres especiales)
+locals {
+  # Limpieza automática de tags con espacios
+  clean_propietario = replace(replace(var.tags.propietario, " ", ""), "-", "")
+  clean_creado_por  = replace(replace(var.tags.creado_por, " ", ""), "-", "")
+  clean_contacto    = replace(replace(var.tags.contacto, " ", ""), "-", "")
+  clean_proyecto    = replace(replace(var.tags.proyecto, " ", ""), "-", "")
+}
+
 # Validación de convención de nombres
 locals {
   # Patrón: rol-[servicio]-[layer]-[ambiente]-[nombre]
@@ -30,27 +39,27 @@ locals {
   # Tags obligatorios con validación
   required_tags = {
     Ambiente            = var.tags.ambiente
-    País                = var.tags.pais
-    Dirección           = var.tags.direccion
+    Pais                = var.tags.pais
+    Direccion           = var.tags.direccion
     Gerencia            = var.tags.gerencia
     Cuenta              = var.tags.cuenta
-    Módulo              = var.tags.modulo
+    Modulo              = var.tags.modulo
     "Alcance SOX"       = var.tags.alcance_sox
-    Propietario         = var.tags.propietario
+    Propietario         = local.clean_propietario
     Proveedor           = var.tags.proveedor
     Layer               = var.tags.layer
     Dominio             = var.tags.dominio
     Subdominio          = var.tags.subdominio
-    Aplicación          = var.tags.aplicacion
+    Aplicacion          = var.tags.aplicacion
     Name                = var.role_name
     Soporte             = var.tags.soporte
-    Contacto            = var.tags.contacto
-    Proyecto            = var.tags.proyecto
-    "Fecha de Creación" = formatdate("YYYY-MM-DD", timestamp())
-    "Creado Por"        = var.tags.creado_por
+    Contacto            = local.clean_contacto
+    Proyecto            = local.clean_proyecto
+    "Fecha de Creacion" = formatdate("YYYY-MM-DD", timestamp())
+    "Creado Por"        = local.clean_creado_por
     "Tipo de Recurso"   = "IAM Role"
     "Ciclo de Vida"     = var.tags.ciclo_vida
-    Versión             = var.tags.version
+    Version             = var.tags.version
   }
 
   # Validar ambientes permitidos
