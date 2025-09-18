@@ -1,0 +1,44 @@
+{
+  "role_name": "rol-s3-read-full-dev",
+  "description": "Rol para s3 - read-full en ambiente dev - Despliegue limpio con políticas MCI",
+  "trust_policy": {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Principal": {
+          "Service": "ec2.amazonaws.com"
+        },
+        "Action": "sts:AssumeRole"
+      }
+    ]
+  },
+  "policies": {
+    "generic_policy": "MCI-S3-ReadOnly",
+    "specific_resources": [
+      "arn:aws:s3:::s3-data-analytics-raw-dev-tfstate"
+    ]
+  },
+  "tags": {
+    "ambiente": "dev",
+    "pais": "GT",
+    "direccion": "Tecnologia",
+    "gerencia": "MCI",
+    "cuenta": "Desarrollo",
+    "modulo": "Aplicacion",
+    "alcance_sox": "No",
+    "propietario": "Darwin Lopez",
+    "proveedor": "Interno",
+    "layer": "s3",
+    "dominio": "BI",
+    "subdominio": "read-full",
+    "aplicacion": "BI-read-full",
+    "soporte": "DevOps",
+    "contacto": "darwin.lopez@claro.com.gt",
+    "proyecto": "MCI-BI",
+    "creado_por": "Darwin Lopez",
+    "ciclo_vida": "Creacion",
+    "version": "1.0.6"
+  },
+  "note": "Este rol usa la política genérica 'MCI-S3-ReadOnly' con recursos específicos limitados.!!"
+}
