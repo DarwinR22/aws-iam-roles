@@ -25,7 +25,6 @@ class IAMRoleGenerator:
             '1': 'dev',
             '2': 'qa', 
             '3': 'prod',
-            '4': 'poc'
         }
 
     def get_available_policies(self):
@@ -186,6 +185,9 @@ class IAMRoleGenerator:
         while True:
             nombre_propietario = input("👉 Tu nombre completo: ").strip()
             if nombre_propietario and len(nombre_propietario) >= 3:
+                # Quitar espacios y convertir a formato CamelCase
+                nombre_propietario = ''.join(word.capitalize() for word in nombre_propietario.split())
+                print(f"✅ Nombre formateado: {nombre_propietario}")
                 break
             print("❌ El nombre debe tener al menos 3 caracteres")
         
@@ -207,27 +209,27 @@ class IAMRoleGenerator:
         
         # Dirección
         print("🏢 Dirección organizacional:")
-        print("   [1] Tecnología")
-        print("   [2] Operaciones")
-        print("   [3] Comercial")
-        print("   [4] Finanzas")
-        print("   [5] Otra (especificar)")
+        print("   [1] TICenam")
+       # print("   [2] Operaciones")     # Para agregar nuevas: descomenta y agrega lógica en el while
+       # print("   [3] Comercial")       # Para agregar nuevas: descomenta y agrega lógica en el while  
+       # print("   [4] Finanzas")        # Para agregar nuevas: descomenta y agrega lógica en el while
+        print("   [0] Otra (especificar)")
         
         while True:
-            direccion_choice = input("👉 Selecciona dirección [1-5]: ").strip()
+            direccion_choice = input("👉 Selecciona dirección [1 o 0]: ").strip()
             if direccion_choice == "1":
-                direccion = "Tecnologia"
+                direccion = "TICenam"
                 break
-            elif direccion_choice == "2":
-                direccion = "Operaciones"
-                break
-            elif direccion_choice == "3":
-                direccion = "Comercial"
-                break
-            elif direccion_choice == "4":
-                direccion = "Finanzas"
-                break
-            elif direccion_choice == "5":
+            # elif direccion_choice == "2":    # Descomenta para agregar Operaciones
+            #     direccion = "Operaciones"
+            #     break
+            # elif direccion_choice == "3":    # Descomenta para agregar Comercial
+            #     direccion = "Comercial"  
+            #     break
+            # elif direccion_choice == "4":    # Descomenta para agregar Finanzas
+            #     direccion = "Finanzas"
+            #     break
+            elif direccion_choice == "0":
                 direccion = input("👉 Especifica la dirección: ").strip()
                 if direccion:
                     break

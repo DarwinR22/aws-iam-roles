@@ -49,16 +49,64 @@ MCI/                        # Estructura principal
 
 ---
 
+## 🎯 Políticas Genéricas Reutilizables (Sistema MCI-*)
+
+### ✨ **NOVEDAD**: Políticas Genéricas Listas para Usar
+
+El repositorio incluye **7 políticas genéricas** con prefijo `MCI-*` que pueden reutilizarse en cualquier rol:
+
+```
+politicas/
+├── MCI-S3-ReadOnly.json           # Lectura completa S3
+├── MCI-S3-ReadWrite.json          # Lectura/escritura S3
+├── MCI-DynamoDB-ReadOnly.json     # Lectura DynamoDB
+├── MCI-DynamoDB-ReadWrite.json    # Lectura/escritura DynamoDB
+├── MCI-CloudWatch-Logs.json       # Escritura CloudWatch Logs
+├── MCI-Secrets-ReadOnly.json      # Lectura Secrets Manager
+└── MCI-Lambda-VPC.json            # Ejecución Lambda en VPC
+```
+
+### 🚀 Uso en Roles
+
+**En lugar de crear políticas específicas**, simplemente referencia las genéricas:
+
+```json
+{
+  "role_name": "rol-lambda-api-dev-processor",
+  "policies": {
+    "aws_managed": [
+      "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+    ],
+    "custom": [
+      "MCI-S3-ReadOnly",
+      "MCI-DynamoDB-ReadWrite", 
+      "MCI-CloudWatch-Logs"
+    ]
+  }
+}
+```
+
+### ✅ Ventajas del Sistema MCI-*
+
+- **🔄 Reutilización**: Una política = múltiples roles
+- **🛡️ Seguridad**: Permisos auditados y probados
+- **⚡ Velocidad**: No crear políticas custom por cada rol
+- **📏 Consistencia**: Mismos permisos en todos los ambientes
+- **🔧 Mantenimiento**: Un cambio actualiza todos los roles
+
+---
+
 ## 🚀 Uso Rápido (Para Desarrolladores)
 
 ### 1. Crear tu primer rol
 
 ```bash
-# Crear estructura
+# Opción 1: Usar script interactivo (Recomendado)
+python scripts/create_role.py
+
+# Opción 2: Crear manualmente
 mkdir -p MCI/TuEquipo
 cd MCI/TuEquipo
-
-# Crear rol (copia y edita)
 cp ../BI/mi_primer_rol.json mi-nuevo-rol.json
 ```
 
@@ -80,12 +128,16 @@ cp ../BI/mi_primer_rol.json mi-nuevo-rol.json
     "aws_managed": [
       "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
     ],
-    "custom": ["policy-s3-read"]
+    "custom": [
+      "MCI-S3-ReadOnly",
+      "MCI-DynamoDB-ReadWrite",
+      "MCI-CloudWatch-Logs"
+    ]
   },
   "tags": {
     "ambiente": "dev",
     "pais": "GT",
-    "direccion": "Tecnologia",
+    "direccion": "TICenam",
     "gerencia": "IT",
     "cuenta": "Desarrollo",
     "modulo": "Aplicacion",
@@ -192,6 +244,10 @@ rol-[servicio]-[layer]-[ambiente]-[nombre]
 ```
 
 ### Políticas Personalizadas
+
+**RECOMENDADO**: Usar las políticas genéricas `MCI-*` (ver sección anterior)
+
+**Para casos especiales**, crear políticas custom:
 ```json
 # Archivo: politicas/policy-s3-read.json
 {
@@ -203,6 +259,20 @@ rol-[servicio]-[layer]-[ambiente]-[nombre]
   }]
 }
 ```
+
+### Scripts Auxiliares
+
+**Generador Interactivo de Roles**:
+```bash
+python scripts/create_role.py
+```
+
+El script te guía paso a paso:
+- ✅ Selecciona dirección (TICenam como opción principal)
+- ✅ Configura proyecto y proveedor
+- ✅ Formatea nombres automáticamente (Darwin Lopez → DarwinLopez)
+- ✅ Aplica convenciones de naming
+- ✅ Crea archivo JSON listo para usar
 
 ---
 
@@ -264,7 +334,7 @@ ls politicas/policy-s3-read.json
 
 ## 🎯 Casos de Uso Comunes
 
-### Lambda Function
+### Lambda Function con MCI-* Policies
 ```json
 {
   "role_name": "rol-lambda-api-dev-auth",
@@ -276,12 +346,17 @@ ls politicas/policy-s3-read.json
   "policies": {
     "aws_managed": [
       "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+    ],
+    "custom": [
+      "MCI-S3-ReadOnly",
+      "MCI-Secrets-ReadOnly",
+      "MCI-CloudWatch-Logs"
     ]
   }
 }
 ```
 
-### EC2 Instance
+### EC2 Instance con Políticas Genéricas
 ```json
 {
   "role_name": "rol-ec2-web-prod-server",
@@ -294,12 +369,15 @@ ls politicas/policy-s3-read.json
     "aws_managed": [
       "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
     ],
-    "custom": ["policy-s3-read"]
+    "custom": [
+      "MCI-S3-ReadWrite",
+      "MCI-CloudWatch-Logs"
+    ]
   }
 }
 ```
 
-### Glue ETL Job
+### Glue ETL Job con DynamoDB
 ```json
 {
   "role_name": "rol-glue-etl-dev-processor",
@@ -311,6 +389,10 @@ ls politicas/policy-s3-read.json
   "policies": {
     "aws_managed": [
       "arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole"
+    ],
+    "custom": [
+      "MCI-S3-ReadWrite",
+      "MCI-DynamoDB-ReadWrite"
     ]
   }
 }
@@ -367,6 +449,12 @@ Este proyecto está bajo la Licencia MIT - ver [LICENSE](LICENSE) para detalles.
 
 ## 🏷️ Versión
 
-**v2.0.0** - Pipeline unificado con auto-discovery y OIDC authentication
+**v2.1.0** - Sistema de políticas genéricas MCI-* + script interactivo mejorado
 
-**Última actualización**: Septiembre 2025
+**Última actualización**: Enero 2025
+
+### 🆕 Novedades v2.1.0
+- ✅ **Políticas Genéricas MCI-***: 7 políticas reutilizables listas para usar
+- ✅ **Script Interactivo Mejorado**: `create_role.py` con prompts y auto-formato
+- ✅ **Limpieza de Repositorio**: Eliminados scripts obsoletos y archivos duplicados
+- ✅ **Documentación Actualizada**: Ejemplos con nuevas políticas genéricas
