@@ -2,22 +2,22 @@
 # Detecta automáticamente roles en la estructura de carpetas
 
 locals {
-  # Buscar todos los archivos JSON de roles en la estructura de carpetas
-  role_files = fileset("${path.root}/../../", "**/rol-*.json")
+  # Buscar todos los archivos JSON de roles en Gerencias/
+  role_files = fileset("${path.root}/../../Gerencias", "**/rol-*.json")
 
   # Procesar cada archivo de rol
   roles = {
     for role_file in local.role_files :
-    replace(basename(role_file), ".json", "") => jsondecode(file("${path.root}/../../${role_file}"))
-    if can(jsondecode(file("${path.root}/../../${role_file}")))
+    replace(basename(role_file), ".json", "") => jsondecode(file("${path.root}/../../Gerencias/${role_file}"))
+    if can(jsondecode(file("${path.root}/../../Gerencias/${role_file}")))
   }
 
-  # Procesar políticas personalizadas
-  policy_files = fileset("${path.root}/../../", "**/policy-*.json")
+  # Procesar políticas personalizadas en Gerencias/
+  policy_files = fileset("${path.root}/../../Gerencias", "**/policy-*.json")
 
   policies = {
     for policy_file in local.policy_files :
-    replace(basename(policy_file), ".json", "") => jsondecode(file("${path.root}/../../${policy_file}"))
+    replace(basename(policy_file), ".json", "") => jsondecode(file("${path.root}/../../Gerencias/${policy_file}"))
     if can(jsondecode(file("${path.root}/../../${policy_file}")))
   }
 }
