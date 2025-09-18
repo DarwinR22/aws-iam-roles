@@ -18,7 +18,30 @@ locals {
   policies = {
     for policy_file in local.policy_files :
     replace(basename(policy_file), ".json", "") => jsondecode(file("${path.root}/../../Gerencias/${policy_file}"))
-    if can(jsondecode(file("${path.root}/../../${policy_file}")))
+    if can(jsondecode(file("${path.root}/../../Gerencias/${policy_file}")))
+  }
+
+  # Buscar políticas genéricas en politicas/
+  generic_policy_files = fileset("${path.root}/../../politicas", "**/*.json")
+
+  generic_policies = {
+    for policy_file in local.generic_policy_files :
+    replace(basename(policy_file), ".json", "") => jsondecode(file("${path.root}/../../politicas/${policy_file}"))
+    if can(jsondecode(file("${path.root}/../../politicas/${policy_file}")))
+  }
+}
+
+# Crear políticas genéricas
+resource "aws_iam_policy" "generic_policies" {
+  for_each = local.generic_policies
+
+  name   = each.key
+  policy = jsonencode(each.value)
+
+  tags = {
+    Environment = var.environment
+    ManagedBy   = "Terraform"
+    PolicyType  = "Generic"
   }
 }
 
@@ -46,9 +69,13 @@ module "iam_roles" {
   description        = try(each.value.description, "IAM Role managed by Terraform")
   assume_role_policy = jsonencode(each.value.trust_policy)
 
-  # Políticas AWS administradas y personalizadas
+  # Políticas AWS administradas, genéricas y personalizadas
   policy_arns = concat(
+    # Políticas AWS administradas (si existen)
     try(each.value.policies.aws_managed, []),
+    # Política genérica (si existe)
+    try(each.value.policies.generic_policy != null ? [aws_iam_policy.generic_policies[each.value.policies.generic_policy].arn] : [], []),
+    # Políticas custom (si existen)
     [
       for policy_ref in try(each.value.policies.custom_policies, []) :
       aws_iam_policy.custom_policies[replace(basename(policy_ref), ".json", "")].arn
@@ -73,7 +100,17 @@ output "created_roles" {
   }
 }
 
-output "created_policies" {
+output "created_generic_policies" {
+  description = "Map of created generic policies"
+  value = {
+    for k, v in aws_iam_policy.generic_policies : k => {
+      policy_name = v.name
+      policy_arn  = v.arn
+    }
+  }
+}
+
+output "created_custom_policies" {
   description = "Map of created custom policies"
   value = {
     for k, v in aws_iam_policy.custom_policies : k => {
