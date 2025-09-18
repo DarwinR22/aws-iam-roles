@@ -31,18 +31,10 @@ locals {
   }
 }
 
-# Crear políticas genéricas
-resource "aws_iam_policy" "generic_policies" {
+# Referenciar políticas genéricas existentes
+data "aws_iam_policy" "generic_policies" {
   for_each = local.generic_policies
-
-  name   = each.key
-  policy = jsonencode(each.value)
-
-  tags = {
-    Environment = var.environment
-    ManagedBy   = "Terraform"
-    PolicyType  = "Generic"
-  }
+  name     = each.key
 }
 
 # Crear políticas personalizadas
@@ -92,7 +84,7 @@ resource "aws_iam_role_policy_attachment" "generic_policy_attachments" {
   ]...)
 
   role       = module.iam_roles[each.value.role_key].role_name
-  policy_arn = aws_iam_policy.generic_policies[each.value.policy_name].arn
+  policy_arn = data.aws_iam_policy.generic_policies[each.value.policy_name].arn
 }
 
 # Outputs para mostrar los roles creados
@@ -107,9 +99,9 @@ output "created_roles" {
 }
 
 output "created_generic_policies" {
-  description = "Map of created generic policies"
+  description = "Map of referenced generic policies"
   value = {
-    for k, v in aws_iam_policy.generic_policies : k => {
+    for k, v in data.aws_iam_policy.generic_policies : k => {
       policy_name = v.name
       policy_arn  = v.arn
     }

@@ -98,6 +98,52 @@ politicas/
 
 ## 🚀 Uso Rápido (Para Desarrolladores)
 
+## 🏁 Setup Inicial (Solo Primera Vez)
+
+**Para nuevos desarrolladores que clonan el repositorio:**
+
+### 1. Clonar y configurar
+```bash
+git clone https://github.com/ClaroCENAM/mci-aws-iam.git
+cd mci-aws-iam
+```
+
+### 2. Configurar credenciales AWS
+```bash
+# Opción A: AWS CLI (Recomendado)
+aws configure
+
+# Opción B: Variables de ambiente
+export AWS_ACCESS_KEY_ID=tu_access_key
+export AWS_SECRET_ACCESS_KEY=tu_secret_key
+export AWS_DEFAULT_REGION=us-east-1
+```
+
+### 3. Inicializar Terraform (OBLIGATORIO)
+```bash
+# Opción A: Usando Makefile (Recomendado)
+make setup    # ← Un solo comando, hace todo
+
+# Opción B: Manual
+cd environments/dev
+terraform init    # ← NECESARIO siempre al clonar
+terraform plan    # Verificar configuración
+```
+
+### 4. ¡Listo para usar!
+```bash
+# Crear roles interactivamente
+python scripts/create_role.py
+
+# O crear manualmente
+mkdir -p MCI/TuEquipo
+# ... editar archivos JSON
+```
+
+---
+
+## 🔄 Uso Diario (Desarrolladores Existentes)
+
 ### 1. Crear tu primer rol
 
 ```bash
