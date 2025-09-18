@@ -16,8 +16,8 @@
   "policies": {
     "aws_managed": [],
     "custom": [
-      "MCI-S3-ReadOnly",
-      "MCI-S3-Write"
+      "MCI-S3-Write",
+      "MCI-Lambda-Invoke"
     ]
   },
   "policy_resources": {
@@ -30,7 +30,7 @@
   },
   "tags": {
     "ambiente": "dev",
-    "pais": "GT",
+    "pais": "RG",
     "direccion": "TICenam",
     "gerencia": "MCI",
     "cuenta": "Desarrollo",
