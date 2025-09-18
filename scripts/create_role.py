@@ -311,7 +311,49 @@ class IAMRoleGenerator:
         return self.select_policy_and_environment(nombre)
 
     def select_policy_and_environment(self, nombre):
-        """Seleccionar política genérica y ambiente."""
+        """Seleccionar trust relationship, políticas múltiples y ambiente - SEPARADOS."""
+        
+        # PASO 3A: Seleccionar Trust Relationship (solo UNA)
+        print("\n🔐 PASO 3A: Trust Relationship")
+        print("-" * 40)
+        print("🤔 ¿QUIÉN puede asumir este rol?")
+        
+        trust_options = [
+            ("lambda", "🔧 Servicio AWS Lambda"),
+            ("ec2", "🔧 Servicio AWS EC2"),
+            ("glue", "🔧 Servicio AWS Glue"),
+            ("ecs", "� Servicio AWS ECS"),
+            ("codebuild", "🔧 Servicio AWS CodeBuild"),
+            ("stepfunctions", "🔧 Servicio AWS Step Functions"),
+            ("sagemaker", "🔧 Servicio AWS SageMaker"),
+            ("cross-account", "🏢 Cross-Account Role"),
+            ("user", "👤 Usuario Específico"),
+            ("federated", "🔐 SAML/Federated"),
+            ("github", "🔧 GitHub Actions OIDC")
+        ]
+        
+        for i, (service, description) in enumerate(trust_options, 1):
+            print(f"   [{i}] {description}")
+        
+        # Seleccionar trust relationship
+        while True:
+            choice = input(f"\n� Selecciona trust relationship [1-{len(trust_options)}]: ").strip()
+            try:
+                choice_idx = int(choice) - 1
+                if 0 <= choice_idx < len(trust_options):
+                    trust_service, trust_description = trust_options[choice_idx]
+                    print(f"✅ Trust relationship: {trust_description}")
+                    break
+                else:
+                    print("❌ Número fuera de rango")
+            except ValueError:
+                print("❌ Debe ser un número")
+        
+        # PASO 3B: Seleccionar Políticas de Permisos (MÚLTIPLES)
+        print(f"\n� PASO 3B: Políticas de Permisos")
+        print("-" * 40)
+        print("🎯 ¿QUÉ puede hacer este rol? (selección múltiple)")
+        
         available_policies = self.get_available_policies()
         
         if not available_policies:
@@ -319,7 +361,7 @@ class IAMRoleGenerator:
             print("💡 Primero debes crear políticas en la carpeta 'politicas/'")
             return None
         
-        print("\n🔧 Políticas genéricas disponibles:")
+        # Mostrar políticas disponibles
         policy_options = []
         counter = 1
         
@@ -327,24 +369,44 @@ class IAMRoleGenerator:
             print(f"\n📁 {service.upper()}:")
             for policy in policies:
                 print(f"   [{counter}] {policy}")
-                policy_options.append((service, policy))
+                policy_options.append(policy)
                 counter += 1
         
-        # Seleccionar política
+        # Selección múltiple de políticas
+        selected_policies = []
+        print(f"\n💡 Selecciona múltiples políticas (una por vez):")
+        print(f"💡 Escribe '0' cuando termines de seleccionar")
+        
         while True:
-            choice = input(f"\n👉 Selecciona política [1-{len(policy_options)}]: ").strip()
+            choice = input(f"\n👉 Selecciona política [1-{len(policy_options)}, 0=finalizar]: ").strip()
+            
+            if choice == '0':
+                if selected_policies:
+                    break
+                else:
+                    print("❌ Debes seleccionar al menos una política")
+                    continue
+            
             try:
                 choice_idx = int(choice) - 1
                 if 0 <= choice_idx < len(policy_options):
-                    servicio, policy_name = policy_options[choice_idx]
-                    break
+                    policy = policy_options[choice_idx]
+                    if policy not in selected_policies:
+                        selected_policies.append(policy)
+                        print(f"   ✅ Agregada: {policy}")
+                        print(f"   📋 Seleccionadas: {', '.join(selected_policies)}")
+                    else:
+                        print("   ⚠️  Ya seleccionada, elige otra")
                 else:
                     print("❌ Número fuera de rango")
             except ValueError:
-                print("❌ Debe ser un número")
+                print("❌ Debe ser un número o '0' para finalizar")
         
-        # Ambiente
-        print("\n🌍 Ambientes disponibles:")
+        print(f"\n✅ Políticas seleccionadas: {', '.join(selected_policies)}")
+        
+        # PASO 3C: Ambiente
+        print(f"\n🌍 PASO 3C: Ambiente")
+        print("-" * 20)
         for key, env in self.ambientes.items():
             print(f"   [{key}] {env}")
         
@@ -355,8 +417,14 @@ class IAMRoleGenerator:
                 break
             print("❌ Opción inválida")
         
-        # Validar nombre completo del rol
-        role_name, errors = self.validate_role_name(nombre, servicio, ambiente)
+        # PASO 3D: Recursos Específicos por Política
+        policy_resources = self.collect_specific_resources(selected_policies)
+        
+        # Validar nombre completo del rol usando el primer servicio de las políticas para naming
+        first_policy = selected_policies[0]
+        servicio_for_naming = first_policy.split('-')[1].lower()  # MCI-S3-ReadOnly -> s3
+        
+        role_name, errors = self.validate_role_name(nombre, servicio_for_naming, ambiente)
         
         if errors:
             print(f"\n❌ ERRORES en el nombre del rol:")
@@ -364,11 +432,92 @@ class IAMRoleGenerator:
                 print(f"   • {error}")
             print(f"\n🔧 Nombre generado: {role_name}")
             print("💡 Vuelve a intentar con un nombre más corto o diferente")
-            return self.get_role_info()  # Recursión para reintentar
+            # En caso de error, reiniciar desde el principio con política info
+            return self.select_policy_and_environment(nombre)
         
         print(f"\n✅ Rol válido: {role_name}")
-        print(f"✅ Usará política: {policy_name}")
-        return nombre, servicio, ambiente, policy_name
+        print(f"✅ Trust relationship: {trust_description}")
+        print(f"✅ Políticas: {', '.join(selected_policies)}")
+        
+        return nombre, trust_service, ambiente, selected_policies, policy_resources
+
+    def collect_specific_resources(self, selected_policies):
+        """Recopilar recursos específicos para cada política seleccionada."""
+        print(f"\n🎯 PASO 3D: Recursos Específicos por Política")
+        print("-" * 50)
+        print("💡 Define a QUÉ recursos aplicar cada política (principio de menor privilegio)")
+        
+        policy_resources = {}
+        
+        for policy in selected_policies:
+            service = policy.split('-')[1].lower()  # MCI-S3-ReadOnly -> s3
+            action_type = policy.split('-')[2].lower()  # ReadOnly, Write, etc.
+            
+            print(f"\n📋 RECURSOS PARA: {policy}")
+            print("-" * 30)
+            
+            # Ejemplos específicos según el servicio
+            if service == 's3':
+                print("📝 Ejemplos de recursos S3:")
+                print("   • arn:aws:s3:::mi-bucket-data")
+                print("   • arn:aws:s3:::mi-bucket-data/*")
+                print("   • arn:aws:s3:::cubo-prepago-*")
+                print("   • arn:aws:s3:::analytics-*/reports/*")
+            elif service == 'dynamodb':
+                print("📝 Ejemplos de recursos DynamoDB:")
+                print("   • arn:aws:dynamodb:us-east-1:123456789012:table/users")
+                print("   • arn:aws:dynamodb:*:*:table/cubo-prepago-*")
+                print("   • arn:aws:dynamodb:us-east-1:*:table/analytics-data")
+            elif service == 'lambda':
+                print("📝 Ejemplos de recursos Lambda:")
+                print("   • arn:aws:lambda:us-east-1:123456789012:function:process-data")
+                print("   • arn:aws:lambda:*:*:function:transform-*")
+                print("   • arn:aws:lambda:*:*:function:cubo-prepago-*")
+            elif service == 'sqs':
+                print("📝 Ejemplos de recursos SQS:")
+                print("   • arn:aws:sqs:us-east-1:123456789012:data-queue")
+                print("   • arn:aws:sqs:*:*:cubo-prepago-*")
+            else:
+                print(f"📝 Recursos para {service.upper()}:")
+                print(f"   • arn:aws:{service}:region:account:resource-type/resource-name")
+            
+            # Recopilar recursos para esta política
+            resources = []
+            print(f"\n👉 ARNs para {policy} (Enter vacío para terminar):")
+            
+            while True:
+                resource = input("👉 ARN del recurso: ").strip()
+                if not resource:
+                    break
+                if resource.startswith('arn:aws:'):
+                    resources.append(resource)
+                    print(f"   ✅ Agregado: {resource}")
+                else:
+                    print("   ❌ Debe ser un ARN válido (empezar con 'arn:aws:')")
+            
+            if not resources:
+                print(f"⚠️  Sin recursos específicos para {policy}")
+                print(f"🔓 Se aplicará a TODOS los recursos {service.upper()} (*)")
+                resources = ["*"]
+                
+                confirm = input("¿Confirmas aplicar a TODOS los recursos? [s/N]: ").lower()
+                if not confirm.startswith('s'):
+                    print("💡 Vuelve a definir recursos específicos:")
+                    continue
+            
+            policy_resources[policy] = resources
+            print(f"✅ {policy}: {len(resources)} recurso(s) definido(s)")
+        
+        # Resumen final
+        print(f"\n📊 RESUMEN DE RECURSOS:")
+        for policy, resources in policy_resources.items():
+            print(f"   🔧 {policy}")
+            for resource in resources[:3]:  # Mostrar máximo 3
+                print(f"      • {resource}")
+            if len(resources) > 3:
+                print(f"      • ... y {len(resources) - 3} más")
+        
+        return policy_resources
 
     def get_complexity_level(self):
         """Seleccionar nivel de complejidad."""
@@ -392,23 +541,22 @@ class IAMRoleGenerator:
         main_path = Path("gerencias") / gerencia / area
         main_path.mkdir(parents=True, exist_ok=True)
         
-        # Crear subcarpetas para roles y políticas
+        # Crear subcarpeta solo para roles (políticas están centralizadas en /politicas/)
         roles_path = main_path / "roles"
         roles_path.mkdir(exist_ok=True)
-        
-        policies_path = main_path / "politicas"
-        policies_path.mkdir(exist_ok=True)
         
         print(f"✅ Estructura creada:")
         print(f"   📁 Gerencias/{gerencia}/")
         print(f"   📁 Gerencias/{gerencia}/{area}/")
         print(f"   📁 Gerencias/{gerencia}/{area}/roles/")
-        print(f"   📁 Gerencias/{gerencia}/{area}/politicas/")
+        print(f"   � Políticas centralizadas en: /politicas/ (MCI-*)")
         
         return roles_path  # Devolver la carpeta de roles para guardar el archivo ahí
 
     def create_trust_policy(self, servicio):
-        """Crear trust policy según el servicio."""
+        """Crear trust policy según el servicio con soporte extendido."""
+        
+        # Mapeo de servicios AWS estándar
         service_mapping = {
             'lambda': 'lambda.amazonaws.com',
             'ec2': 'ec2.amazonaws.com',
@@ -417,7 +565,128 @@ class IAMRoleGenerator:
             'ecs': 'ecs-tasks.amazonaws.com',
             'apigateway': 'apigateway.amazonaws.com',
             'rds': 'rds.amazonaws.com',
-            'dynamodb': 'ec2.amazonaws.com'
+            'dynamodb': 'ec2.amazonaws.com',
+            'codebuild': 'codebuild.amazonaws.com',
+            'codepipeline': 'codepipeline.amazonaws.com',
+            'events': 'events.amazonaws.com',
+            'stepfunctions': 'states.amazonaws.com',
+            'batch': 'batch.amazonaws.com',
+            'datasync': 'datasync.amazonaws.com',
+            'dms': 'dms.amazonaws.com',
+            'elasticmapreduce': 'elasticmapreduce.amazonaws.com',
+            'kinesis': 'kinesis.amazonaws.com',
+            'firehose': 'firehose.amazonaws.com',
+            'sagemaker': 'sagemaker.amazonaws.com'
+        }
+        
+        # Detectar casos especiales
+        if servicio.startswith('cross-account'):
+            return self._create_cross_account_trust()
+        elif servicio.startswith('user'):
+            return self._create_user_trust()
+        elif servicio.startswith('federated'):
+            return self._create_federated_trust()
+        elif servicio.startswith('github'):
+            return self._create_github_oidc_trust()
+        
+        # Servicios AWS estándar
+        service = service_mapping.get(servicio, f"{servicio}.amazonaws.com")
+        
+        return {
+            "Version": "2012-10-17",
+            "Statement": [{
+                "Effect": "Allow",
+                "Principal": {
+                    "Service": service
+                },
+                "Action": "sts:AssumeRole"
+            }]
+        }
+    
+    def _create_cross_account_trust(self):
+        """Trust policy para roles cross-account."""
+        print("\n🏢 CONFIGURACIÓN CROSS-ACCOUNT")
+        account_id = input("👉 Account ID que puede asumir el rol: ").strip()
+        
+        trust_policy = {
+            "Version": "2012-10-17",
+            "Statement": [{
+                "Effect": "Allow",
+                "Principal": {
+                    "AWS": f"arn:aws:iam::{account_id}:root"
+                },
+                "Action": "sts:AssumeRole"
+            }]
+        }
+        
+        # Opcional: agregar condición MFA
+        mfa_required = input("👉 ¿Requiere MFA? (s/N): ").lower().startswith('s')
+        if mfa_required:
+            trust_policy["Statement"][0]["Condition"] = {
+                "Bool": {
+                    "aws:MultiFactorAuthPresent": "true"
+                }
+            }
+        
+        return trust_policy
+    
+    def _create_user_trust(self):
+        """Trust policy para usuarios específicos."""
+        print("\n👤 CONFIGURACIÓN USUARIO ESPECÍFICO")
+        account_id = input("👉 Account ID: ").strip()
+        username = input("👉 Nombre de usuario: ").strip()
+        
+        return {
+            "Version": "2012-10-17",
+            "Statement": [{
+                "Effect": "Allow",
+                "Principal": {
+                    "AWS": f"arn:aws:iam::{account_id}:user/{username}"
+                },
+                "Action": "sts:AssumeRole",
+                "Condition": {
+                    "Bool": {
+                        "aws:MultiFactorAuthPresent": "true"
+                    }
+                }
+            }]
+        }
+    
+    def _create_federated_trust(self):
+        """Trust policy para autenticación federada (SAML)."""
+        print("\n🔐 CONFIGURACIÓN SAML/FEDERATED")
+        provider_arn = input("👉 ARN del SAML Provider: ").strip()
+        
+        return {
+            "Version": "2012-10-17",
+            "Statement": [{
+                "Effect": "Allow",
+                "Principal": {
+                    "Federated": provider_arn
+                },
+                "Action": "sts:AssumeRoleWithSAML",
+                "Condition": {
+                    "StringEquals": {
+                        "SAML:aud": "https://signin.aws.amazon.com/saml"
+                    }
+                }
+            }]
+        }
+    
+    def _create_github_oidc_trust(self):
+        """Trust policy para GitHub Actions OIDC."""
+        print("\n🔧 CONFIGURACIÓN GITHUB ACTIONS OIDC")
+        account_id = input("👉 Account ID de AWS: ").strip()
+        repo = input("👉 Repositorio (org/repo): ").strip()
+        branch = input("👉 Branch (opcional, default: main): ").strip() or "main"
+        
+        condition = {
+            "StringEquals": {
+                f"token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
+            },
+            "StringLike": {
+                f"token.actions.githubusercontent.com:sub": f"repo:{repo}:ref:refs/heads/{branch}"
+            }
         }
         
         return {
@@ -425,9 +694,10 @@ class IAMRoleGenerator:
             "Statement": [{
                 "Effect": "Allow",
                 "Principal": {
-                    "Service": service_mapping.get(servicio, f"{servicio}.amazonaws.com")
+                    "Federated": f"arn:aws:iam::{account_id}:oidc-provider/token.actions.githubusercontent.com"
                 },
-                "Action": "sts:AssumeRole"
+                "Action": "sts:AssumeRoleWithWebIdentity",
+                "Condition": condition
             }]
         }
 
@@ -441,10 +711,15 @@ class IAMRoleGenerator:
                         return True, area_path
         return False, None
 
-    def create_role_config(self, gerencia, area, nombre, servicio, ambiente, policy_name, 
+    def create_role_config(self, gerencia, area, nombre, servicio, ambiente, selected_policies, policy_resources,
                          nombre_propietario, email_propietario, direccion, proyecto, proveedor):
-        """Crear configuración del rol usando políticas genéricas."""
-        role_name = f"rol-{servicio}-{nombre}-{ambiente}"
+        """Crear configuración del rol usando múltiples políticas genéricas."""
+        
+        # Para naming, usar el primer servicio de las políticas
+        first_policy = selected_policies[0] if selected_policies else "MCI-Custom"
+        naming_service = first_policy.split('-')[1].lower() if first_policy != "MCI-Custom" else servicio
+        
+        role_name = f"rol-{naming_service}-{nombre}-{ambiente}"
         
         # Verificar si ya existe
         exists, existing_path = self.check_role_exists(role_name)
@@ -457,51 +732,26 @@ class IAMRoleGenerator:
                 print("❌ Operación cancelada")
                 sys.exit(1)
         
-        # Pedir recursos específicos
-        print(f"\n🎯 PASO 5: Recursos Específicos")
+        # Caso normal: políticas MCI-* seleccionadas
+        print(f"\n🎯 CONFIGURACIÓN DEL ROL")
         print("-" * 30)
-        print(f"💡 La política '{policy_name}' se aplicará SOLO a los recursos que definas aquí.")
-        print(f"📝 Ejemplos para {servicio.upper()}:")
+        print(f"✅ Trust relationship: {servicio}")
+        print(f"✅ Políticas seleccionadas: {', '.join(selected_policies)}")
         
-        if servicio == 's3':
-            print("   • arn:aws:s3:::mi-bucket-analytics")
-            print("   • arn:aws:s3:::mi-bucket-analytics/*")
-            print("   • arn:aws:s3:::data-lake-*")
-        elif servicio == 'dynamodb':
-            print("   • arn:aws:dynamodb:us-east-1:123456789012:table/users")
-            print("   • arn:aws:dynamodb:*:*:table/analytics-*")
-        elif servicio == 'lambda':
-            print("   • arn:aws:lambda:us-east-1:123456789012:function:process-data")
-            print("   • arn:aws:lambda:*:*:function:etl-*")
-        elif servicio == 'sqs':
-            print("   • arn:aws:sqs:us-east-1:123456789012:data-queue")
-            print("   • arn:aws:sqs:*:*:analytics-*")
-        
-        print("\n📋 Recursos (uno por línea, Enter vacío para terminar):")
-        
-        resources = []
-        while True:
-            resource = input("👉 ARN del recurso: ").strip()
-            if not resource:
-                break
-            if resource.startswith('arn:aws:'):
-                resources.append(resource)
-                print(f"   ✅ Agregado: {resource}")
-            else:
-                print("   ❌ Debe ser un ARN válido (empezar con 'arn:aws:')")
-        
-        if not resources:
-            print("⚠️  Sin recursos específicos. Se aplicará a TODOS los recursos (*)")
-            resources = ["*"]
+        # Mostrar resumen de recursos
+        print(f"\n📊 Recursos por política:")
+        for policy, resources in policy_resources.items():
+            print(f"   🔧 {policy}: {len(resources)} recurso(s)")
         
         config = {
             "role_name": role_name,
-            "description": f"Rol para {servicio} - {nombre} en ambiente {ambiente}",
+            "description": f"Rol con trust {servicio} - {nombre} en ambiente {ambiente}",
             "trust_policy": self.create_trust_policy(servicio),
             "policies": {
-                "generic_policy": policy_name,
-                "specific_resources": resources
+                "aws_managed": [],
+                "custom": selected_policies
             },
+            "policy_resources": policy_resources,
             "tags": {
                 "ambiente": ambiente,
                 "pais": "GT",
@@ -512,7 +762,7 @@ class IAMRoleGenerator:
                 "alcance_sox": "No",
                 "propietario": nombre_propietario,
                 "proveedor": proveedor,
-                "layer": servicio,
+                "layer": naming_service,
                 "dominio": area,
                 "subdominio": nombre,
                 "aplicacion": f"{area}-{nombre}",
@@ -523,7 +773,7 @@ class IAMRoleGenerator:
                 "ciclo_vida": "Creacion",
                 "version": "1.0.0"
             },
-            "note": f"Este rol usa la política genérica '{policy_name}' con recursos específicos limitados."
+            "note": f"Rol con trust relationship '{servicio}' y políticas: {', '.join(selected_policies)}. Recursos específicos definidos por política."
         }
         
         return config
@@ -662,21 +912,31 @@ class IAMRoleGenerator:
         print(f"   4. git push origin dev")
         print(f"\n🚀 El pipeline de GitHub Actions se ejecutará automáticamente!")
 
-    def show_next_steps_updated(self, file_path, role_name, policy_name):
-        """Mostrar próximos pasos para el nuevo flujo con políticas genéricas."""
+    def show_next_steps_updated(self, file_path, role_name, selected_policies):
+        """Mostrar próximos pasos para el nuevo flujo con múltiples políticas genéricas."""
         print(f"\n🎉 ¡Rol creado exitosamente!")
-        print("=" * 50)
+        print("=" * 60)
         print(f"📄 Archivo: {file_path}")
-        print(f"🔧 Usa política: {policy_name}")
+        print(f"🔧 Políticas aplicadas: {', '.join(selected_policies)}")
         
         print(f"\n📝 PRÓXIMOS PASOS:")
-        print(f"   1. Verificar recursos específicos en: {file_path}")
-        print(f"   2. Revisar política genérica: politicas/{policy_name.split('-')[1]}/{policy_name}.json")
-        print(f"   3. git add {file_path}")
-        print(f"   4. git commit -m 'feat: agregar {role_name} usando {policy_name}'")
-        print(f"   5. git push origin dev")
+        print(f"   1. Verificar configuración en: {file_path}")
+        
+        # Mostrar ubicación de cada política
+        for i, policy in enumerate(selected_policies, 2):
+            service = policy.split('-')[1].lower()
+            print(f"   {i}. Revisar política: politicas/{policy}.json")
+        
+        next_step = len(selected_policies) + 2
+        print(f"   {next_step}. git add {file_path}")
+        print(f"   {next_step + 1}. git commit -m 'feat: agregar {role_name} con políticas {', '.join(selected_policies)}'")
+        print(f"   {next_step + 2}. git push origin dev")
+        
         print(f"\n🚀 El pipeline de GitHub Actions se ejecutará automáticamente!")
-        print(f"\n💡 RECUERDA: El rol limita automáticamente los recursos según lo que definiste.")
+        print(f"\n💡 VENTAJAS:")
+        print(f"   ✅ Múltiples políticas aplicadas de una vez")
+        print(f"   ✅ Trust relationship configurado correctamente")
+        print(f"   ✅ Reutilización de políticas probadas y auditadas")
 
     def run(self):
         """Ejecutar el generador."""
@@ -701,20 +961,20 @@ class IAMRoleGenerator:
                 print("❌ No se pudo obtener información del rol")
                 return
             
-            nombre, servicio, ambiente, policy_name = role_info
+            nombre, servicio, ambiente, selected_policies, policy_resources = role_info
             
             # Paso 6: Crear estructura
             roles_path = self.create_structure(gerencia, area)
             
             # Paso 7: Crear configuración del rol
-            config = self.create_role_config(gerencia, area, nombre, servicio, ambiente, policy_name, 
+            config = self.create_role_config(gerencia, area, nombre, servicio, ambiente, selected_policies, policy_resources,
                                            nombre_propietario, email_propietario, direccion, proyecto, proveedor)
             
             # Paso 8: Guardar archivo de rol
             role_file = self.save_role_file(roles_path, config)
             
             # Paso 9: Mostrar próximos pasos
-            self.show_next_steps_updated(role_file, config['role_name'], policy_name)
+            self.show_next_steps_updated(role_file, config['role_name'], selected_policies)
             
         except KeyboardInterrupt:
             print(f"\n\n❌ Operación cancelada por el usuario")
