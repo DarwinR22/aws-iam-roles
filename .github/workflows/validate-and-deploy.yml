@@ -1,0 +1,183 @@
+name: 🚀 Validate & Deploy IAM Resources
+
+on:
+  push:
+    branches: [dev, qa, main]
+    paths:
+      - '**/*.json'
+      - '**/*.tf'
+      - '**/*.tfvars'
+      - '.github/workflows/**'
+  
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - qa
+          - prod
+      force_deploy:
+        description: 'Force deployment (skip some validations)'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  id-token: write   # Requerido para OIDC authentication con AWS
+  contents: read    # Requerido para checkout del repositorio
+
+env:
+  TF_VERSION: "1.6.0"
+  PYTHON_VERSION: "3.11"
+
+jobs:
+  # ESTADO 1: VALIDACION
+  validate:
+    name: Validar configuraciones
+    runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.env.outputs.environment }}
+      should_deploy: ${{ steps.env.outputs.should_deploy }}
+      
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      
+      - name: 🔐 Validate Authorized User
+        run: |
+          # Lista de usuarios autorizados para deployment (los 4 del equipo)
+          AUTHORIZED_USERS="cesar.calmo_claroca darwin.lopez_claroca jorge.rubio_claroca osmar.pineda_claroca"
+          CURRENT_USER="${{ github.actor }}"
+          
+          echo "Usuario que ejecuta: $CURRENT_USER"
+          echo "Evento: ${{ github.event_name }}"
+          
+          # Verificar si es GitHub Actions automático
+          if [[ "${{ github.event_name }}" == "push" ]]; then
+            echo "✅ Push automático detectado"
+          elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            # Verificar usuario autorizado para ejecución manual
+            if echo "$AUTHORIZED_USERS" | grep -q "\b$CURRENT_USER\b"; then
+              echo "✅ Usuario $CURRENT_USER autorizado para deployment manual"
+            else
+              echo "❌ Usuario $CURRENT_USER NO autorizado para deployment manual"
+              echo "Usuarios autorizados: César, Darwin, Jorge, Osmar"
+              exit 1
+            fi
+          fi
+
+      - name: 🌍 Determine Environment
+        id: env
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            environment="${{ github.event.inputs.environment }}"
+            should_deploy="true"
+          else
+            case "${{ github.ref_name }}" in
+              "dev")
+                environment="dev"
+                should_deploy="true"
+                ;;
+              "qa")
+                environment="qa"
+                should_deploy="true"
+                ;;
+              "main")
+                environment="prod"
+                should_deploy="true"
+                ;;
+              *)
+                environment="dev"
+                should_deploy="false"
+                ;;
+            esac
+          fi
+          
+          echo "environment=$environment" >> $GITHUB_OUTPUT
+          echo "should_deploy=$should_deploy" >> $GITHUB_OUTPUT
+          
+          echo "Target Environment: $environment"
+          echo "Should Deploy: $should_deploy"
+          echo "Workflow Trigger: ${{ github.event_name }}"
+          echo "Branch: ${{ github.ref_name }}"
+
+      - name: ⚙️ Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: 🔧 Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: 🔍 Validate JSON Files
+        run: |
+          echo "🔍 Validating JSON files..."
+          find . -name "*.json" -not -path "./.git/*" | while read file; do
+            echo "Validating: $file"
+            python -m json.tool "$file" > /dev/null
+          done
+          echo "✅ All JSON files are valid"
+
+      - name: 🔍 Validate Terraform Syntax
+        working-directory: environments/${{ steps.env.outputs.environment }}
+        run: |
+          echo "🔍 Validating Terraform syntax for ${{ steps.env.outputs.environment }}..."
+          terraform init
+          terraform validate
+          echo "✅ Terraform syntax is valid"
+
+      - name: 📋 Terraform Plan
+        working-directory: environments/${{ steps.env.outputs.environment }}
+        run: |
+          echo "📋 Running Terraform plan for ${{ steps.env.outputs.environment }}..."
+          terraform plan -detailed-exitcode
+          echo "✅ Terraform plan completed"
+
+  # ESTADO 2: DEPLOYMENT
+  deploy:
+    name: Deploy to ${{ needs.validate.outputs.environment }}
+    runs-on: ubuntu-latest
+    needs: validate
+    if: needs.validate.outputs.should_deploy == 'true'
+    environment: ${{ needs.validate.outputs.environment }}
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: 🔑 Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          role-session-name: GitHubActions-MCI-IAM
+          aws-region: us-east-1
+
+      - name: 🚀 Deploy Infrastructure
+        working-directory: environments/${{ needs.validate.outputs.environment }}
+        run: |
+          echo "🚀 Deploying to ${{ needs.validate.outputs.environment }}..."
+          terraform init
+          terraform apply -auto-approve
+          echo "✅ Deployment completed successfully"
+
+      - name: 📊 Generate Summary
+        run: |
+          echo "## 🎉 Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- **Environment:** ${{ needs.validate.outputs.environment }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Triggered by:** ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status:** ✅ Success" >> $GITHUB_STEP_SUMMARY
