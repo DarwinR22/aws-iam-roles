@@ -9,6 +9,14 @@ on:
       - '**/*.tfvars'
       - '.github/workflows/**'
   
+  pull_request:
+    branches: [dev, qa, main]
+    paths:
+      - '**/*.json'
+      - '**/*.tf'
+      - '**/*.tfvars'
+      - '.github/workflows/**'
+  
   workflow_dispatch:
     inputs:
       environment:
