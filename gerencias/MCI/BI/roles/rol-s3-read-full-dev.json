@@ -14,7 +14,7 @@
     ]
   },
   "policies": {
-    "generic_policy": "POL-S3-ReadOnly",
+    "generic_policy": "MCI-S3-ReadOnly",
     "specific_resources": [
       "arn:aws:s3:::s3-data-analytics-raw-dev-tfstate"
     ]
@@ -40,5 +40,5 @@
     "ciclo_vida": "Creacion",
     "version": "1.0.3"
   },
-  "note": "Este rol usa la política genérica 'POL-S3-ReadOnly' con recursos específicos limitados."
+  "note": "Este rol usa la política genérica 'MCI-S3-ReadOnly' con recursos específicos limitados."
 }

@@ -200,6 +200,73 @@ class IAMRoleGenerator:
         
         return nombre_propietario, email_propietario
 
+    def get_additional_info(self):
+        """Obtener información adicional para tags."""
+        print(f"\n📋 PASO 4: Información Adicional")
+        print("-" * 30)
+        
+        # Dirección
+        print("🏢 Dirección organizacional:")
+        print("   [1] Tecnología")
+        print("   [2] Operaciones")
+        print("   [3] Comercial")
+        print("   [4] Finanzas")
+        print("   [5] Otra (especificar)")
+        
+        while True:
+            direccion_choice = input("👉 Selecciona dirección [1-5]: ").strip()
+            if direccion_choice == "1":
+                direccion = "Tecnologia"
+                break
+            elif direccion_choice == "2":
+                direccion = "Operaciones"
+                break
+            elif direccion_choice == "3":
+                direccion = "Comercial"
+                break
+            elif direccion_choice == "4":
+                direccion = "Finanzas"
+                break
+            elif direccion_choice == "5":
+                direccion = input("👉 Especifica la dirección: ").strip()
+                if direccion:
+                    break
+            print("❌ Opción inválida, intenta de nuevo")
+        
+        # Proyecto
+        print(f"\n📂 Proyecto:")
+        print("💡 Especifica el nombre del proyecto o iniciativa")
+        print("   Ejemplos: Portal-Cliente, Analytics-BI, Mobile-App")
+        
+        while True:
+            proyecto = input("👉 Nombre del proyecto: ").strip()
+            if proyecto:
+                break
+            print("❌ El proyecto no puede estar vacío")
+        
+        # Proveedor
+        print(f"\n🏭 Proveedor/Desarrollador:")
+        print("   [1] INHOUSE (desarrollo interno)")
+        print("   [2] Otro proveedor externo")
+        
+        while True:
+            proveedor_choice = input("👉 Selecciona proveedor [1-2]: ").strip()
+            if proveedor_choice == "1":
+                proveedor = "INHOUSE"
+                break
+            elif proveedor_choice == "2":
+                proveedor = input("👉 Especifica el proveedor: ").strip()
+                if proveedor:
+                    break
+            print("❌ Opción inválida, intenta de nuevo")
+        
+        print(f"\n✅ Información adicional configurada:")
+        print(f"   • Dirección: {direccion}")
+        print(f"   • Proyecto: {proyecto}")
+        print(f"   • Proveedor: {proveedor}")
+        
+        return direccion, proyecto, proveedor
+
     def get_role_info(self):
         """Obtener información del rol."""
         print(f"\n📝 PASO 4: Información del Rol")
@@ -372,7 +439,8 @@ class IAMRoleGenerator:
                         return True, area_path
         return False, None
 
-    def create_role_config(self, gerencia, area, nombre, servicio, ambiente, policy_name, nombre_propietario, email_propietario):
+    def create_role_config(self, gerencia, area, nombre, servicio, ambiente, policy_name, 
+                         nombre_propietario, email_propietario, direccion, proyecto, proveedor):
         """Crear configuración del rol usando políticas genéricas."""
         role_name = f"rol-{servicio}-{nombre}-{ambiente}"
         
@@ -435,20 +503,20 @@ class IAMRoleGenerator:
             "tags": {
                 "ambiente": ambiente,
                 "pais": "GT",
-                "direccion": "Tecnologia",
+                "direccion": direccion,
                 "gerencia": gerencia,
                 "cuenta": "Desarrollo",
                 "modulo": "Aplicacion",
                 "alcance_sox": "No",
                 "propietario": nombre_propietario,
-                "proveedor": "Interno",
+                "proveedor": proveedor,
                 "layer": servicio,
                 "dominio": area,
                 "subdominio": nombre,
                 "aplicacion": f"{area}-{nombre}",
                 "soporte": "DevOps",
                 "contacto": email_propietario,
-                "proyecto": f"{gerencia}-{area}",
+                "proyecto": proyecto,
                 "creado_por": nombre_propietario,
                 "ciclo_vida": "Creacion",
                 "version": "1.0.0"
@@ -622,7 +690,10 @@ class IAMRoleGenerator:
             # Paso 3: Información del propietario
             nombre_propietario, email_propietario = self.get_owner_info()
             
-            # Paso 4: Información del rol y selección de política
+            # Paso 4: Información adicional (dirección, proyecto, proveedor)
+            direccion, proyecto, proveedor = self.get_additional_info()
+            
+            # Paso 5: Información del rol y selección de política
             role_info = self.get_role_info()
             if role_info is None:
                 print("❌ No se pudo obtener información del rol")
@@ -634,7 +705,8 @@ class IAMRoleGenerator:
             roles_path = self.create_structure(gerencia, area)
             
             # Paso 7: Crear configuración del rol
-            config = self.create_role_config(gerencia, area, nombre, servicio, ambiente, policy_name, nombre_propietario, email_propietario)
+            config = self.create_role_config(gerencia, area, nombre, servicio, ambiente, policy_name, 
+                                           nombre_propietario, email_propietario, direccion, proyecto, proveedor)
             
             # Paso 8: Guardar archivo de rol
             role_file = self.save_role_file(roles_path, config)
