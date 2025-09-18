@@ -79,16 +79,20 @@ module "iam_roles" {
   tags = each.value.tags
 }
 
-# Adjuntar políticas genéricas a los roles (por separado para evitar dependencias circulares)
+# Adjuntar políticas genéricas a los roles (múltiples políticas custom)
 resource "aws_iam_role_policy_attachment" "generic_policy_attachments" {
-  for_each = {
-    for role_key, role_config in local.roles :
-    role_key => role_config
-    if try(role_config.policies.generic_policy, null) != null
-  }
+  for_each = merge([
+    for role_key, role_config in local.roles : {
+      for policy_name in try(role_config.policies.custom, []) :
+      "${role_key}-${policy_name}" => {
+        role_key    = role_key
+        policy_name = policy_name
+      }
+    }
+  ]...)
 
-  role       = module.iam_roles[each.key].role_name
-  policy_arn = aws_iam_policy.generic_policies[each.value.policies.generic_policy].arn
+  role       = module.iam_roles[each.value.role_key].role_name
+  policy_arn = aws_iam_policy.generic_policies[each.value.policy_name].arn
 }
 
 # Outputs para mostrar los roles creados
