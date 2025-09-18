@@ -35,7 +35,7 @@ class IAMRoleGenerator:
             for service_dir in self.politicas_path.iterdir():
                 if service_dir.is_dir():
                     service_policies = []
-                    for policy_file in service_dir.glob('POL-*.json'):
+                    for policy_file in service_dir.glob('MCI-*.json'):
                         policy_name = policy_file.stem
                         service_policies.append(policy_name)
                     if service_policies:
