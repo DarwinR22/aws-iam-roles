@@ -109,7 +109,8 @@ jobs:
         run: |
           cd environments/dev
           
-          terraform init \
+          # Initialize Terraform with clean state
+          terraform init -reconfigure \
             -backend-config="bucket=s3-data-analytics-raw-dev-tfstate" \
             -backend-config="key=iam/dev/terraform.tfstate" \
             -backend-config="region=us-east-1"
@@ -155,7 +156,8 @@ jobs:
         run: |
           cd environments/dev
           
-          terraform init \
+          # Re-initialize with clean state for apply
+          terraform init -reconfigure \
             -backend-config="bucket=s3-data-analytics-raw-dev-tfstate" \
             -backend-config="key=iam/dev/terraform.tfstate" \
             -backend-config="region=us-east-1"
