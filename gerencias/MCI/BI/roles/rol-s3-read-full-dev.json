@@ -38,7 +38,7 @@
     "proyecto": "MCI-BI",
     "creado_por": "Darwin Lopez",
     "ciclo_vida": "Creacion",
-    "version": "1.0.4"
+    "version": "1.0.5"
   },
   "note": "Este rol usa la política genérica 'MCI-S3-ReadOnly' con recursos específicos limitados.!!"
 }
