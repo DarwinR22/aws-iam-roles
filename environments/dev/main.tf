@@ -69,24 +69,26 @@ module "iam_roles" {
   description        = try(each.value.description, "IAM Role managed by Terraform")
   assume_role_policy = jsonencode(each.value.trust_policy)
 
-  # Políticas AWS administradas, genéricas y personalizadas
-  policy_arns = concat(
-    # Políticas AWS administradas (si existen)
-    try(each.value.policies.aws_managed, []),
-    # Política genérica (si existe)
-    try(each.value.policies.generic_policy != null ? [aws_iam_policy.generic_policies[each.value.policies.generic_policy].arn] : [], []),
-    # Políticas custom (si existen)
-    [
-      for policy_ref in try(each.value.policies.custom_policies, []) :
-      aws_iam_policy.custom_policies[replace(basename(policy_ref), ".json", "")].arn
-    ]
-  )
+  # Solo políticas AWS administradas por ahora
+  policy_arns = try(each.value.policies.aws_managed, [])
 
   # Política inline si existe
   inline_policy = try(each.value.policies.inline != null ? jsonencode(each.value.policies.inline) : null, null)
 
   # Tags del rol
   tags = each.value.tags
+}
+
+# Adjuntar políticas genéricas a los roles (por separado para evitar dependencias circulares)
+resource "aws_iam_role_policy_attachment" "generic_policy_attachments" {
+  for_each = {
+    for role_key, role_config in local.roles :
+    role_key => role_config
+    if try(role_config.policies.generic_policy, null) != null
+  }
+
+  role       = module.iam_roles[each.key].role_name
+  policy_arn = aws_iam_policy.generic_policies[each.value.policies.generic_policy].arn
 }
 
 # Outputs para mostrar los roles creados

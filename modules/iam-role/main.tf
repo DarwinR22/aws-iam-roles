@@ -134,10 +134,10 @@ resource "aws_iam_role" "this" {
 
 # Adjuntar políticas al rol
 resource "aws_iam_role_policy_attachment" "custom_policies" {
-  count = length(var.policy_arns)
+  for_each = toset(var.policy_arns)
 
   role       = aws_iam_role.this.name
-  policy_arn = var.policy_arns[count.index]
+  policy_arn = each.value
 }
 
 # Política inline si se proporciona
