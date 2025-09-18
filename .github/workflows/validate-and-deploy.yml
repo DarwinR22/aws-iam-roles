@@ -4,7 +4,35 @@ on:
   push:
     branches: [dev, qa, main]
     paths:
-      - '**/*.json'
+         run: |
+          echo         run: |
+          echo "🔍 Buscando archivos de políticas en gerencias/..."
+          find gerencias -name "policy-*.json" -type f 2>/dev/null > policy_files.txt || true
+          
+          if [ -s policy_files.txt ]; then
+            echo "📋 Archivos de políticas encontrados:"
+            cat policy_files.txt
+            
+            while read policy_file; do
+              echo "✅ Validando política: $policy_file"
+              python scripts/validate_policy.py "$policy_file"
+            done < policy_files.txt
+          else
+            echo "ℹ️  No se encontraron archivos de políticas en gerencias/"
+          fichivos de configuración de roles en gerencias/..."
+          find gerencias -name "*.json" -type f ! -name "policy-*.json" 2>/dev/null > role_configs.txt || true
+          
+          if [ -s role_configs.txt ]; then
+            echo "📋 Archivos de roles encontrados:"
+            cat role_configs.txt
+            
+            while read role_file; do
+              echo "✅ Validando: $role_file"
+              python scripts/validate_iam.py "$role_file"
+            done < role_configs.txt
+          else
+            echo "ℹ️  No se encontraron archivos de configuración de roles en gerencias/"
+          fion'
       - '**/*.tf'
       - '**/*.tfvars'
       - '.github/workflows/**'
@@ -102,7 +130,7 @@ jobs:
       - name: 🔍 Find and Validate Role Configurations
         run: |
           echo "🔍 Buscando archivos de configuración de roles en Gerencias/..."
-          find Gerencias -name "*.json" -type f ! -name "policy-*.json" 2>/dev/null > role_configs.txt || true
+          find gerencias -name "*.json" -type f ! -name "policy-*.json" 2>/dev/null > role_configs.txt || true
           
           if [ -s role_configs.txt ]; then
             echo "📋 Archivos de roles encontrados:"
@@ -119,7 +147,7 @@ jobs:
       - name: 🔍 Find and Validate Policy Files
         run: |
           echo "🔍 Buscando archivos de políticas en Gerencias/..."
-          find Gerencias -name "policy-*.json" -type f 2>/dev/null > policy_files.txt || true
+          find gerencias -name "policy-*.json" -type f 2>/dev/null > policy_files.txt || true
           
           if [ -s policy_files.txt ]; then
             echo "📋 Archivos de políticas encontrados:"

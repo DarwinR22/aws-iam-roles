@@ -15,7 +15,7 @@ class IAMRoleGenerator:
     """Generador interactivo de roles IAM con creación de estructura."""
     
     def __init__(self):
-        self.base_path = Path('Gerencias')  # Buscar solo en carpeta Gerencias
+        self.base_path = Path('gerencias')  # Buscar solo en carpeta gerencias
         self.politicas_path = Path('politicas')  # Carpeta de políticas genéricas
         # Crear carpetas si no existen
         self.base_path.mkdir(exist_ok=True)
@@ -320,7 +320,7 @@ class IAMRoleGenerator:
         print("-" * 30)
         
         # Crear carpeta principal
-        main_path = Path("Gerencias") / gerencia / area
+        main_path = Path("gerencias") / gerencia / area
         main_path.mkdir(parents=True, exist_ok=True)
         
         # Crear subcarpetas para roles y políticas
