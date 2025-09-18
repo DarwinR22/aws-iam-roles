@@ -1,6 +1,6 @@
 {
   "role_name": "rol-s3-read-full-dev",
-  "description": "Rol para s3 - read-full en ambiente dev - Despliegue limpio con políticas MCI",
+  "description": "Rol para S3 - acceso de lectura completa en ambiente dev - Incluye múltiples buckets de analytics",
   "trust_policy": {
     "Version": "2012-10-17",
     "Statement": [
@@ -16,7 +16,10 @@
   "policies": {
     "generic_policy": "MCI-S3-ReadOnly",
     "specific_resources": [
-      "arn:aws:s3:::s3-data-analytics-raw-dev-tfstate"
+      "arn:aws:s3:::s3-data-analytics-raw-dev-tfstate",
+      "arn:aws:s3:::s3-data-analytics-processed-dev",
+      "arn:aws:s3:::s3-bi-reports-dev",
+      "arn:aws:s3:::s3-mci-backups-dev"
     ]
   },
   "tags": {
@@ -37,8 +40,9 @@
     "contacto": "darwin.lopez@claro.com.gt",
     "proyecto": "MCI-BI",
     "creado_por": "Darwin Lopez",
-    "ciclo_vida": "Creacion",
-    "version": "1.0.6"
+    "ciclo_vida": "Actualizacion",
+    "version": "1.0.7",
+    "ultima_modificacion": "2025-09-18"
   },
-  "note": "Este rol usa la política genérica 'MCI-S3-ReadOnly' con recursos específicos limitados.!!"
+  "note": "Este rol usa la política genérica 'MCI-S3-ReadOnly' con múltiples buckets S3 para analytics y BI en desarrollo."
 }
