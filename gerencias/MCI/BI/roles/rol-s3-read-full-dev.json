@@ -1,6 +1,6 @@
 {
   "role_name": "rol-s3-read-full-dev",
-  "description": "Rol para s3 - read-full en ambiente dev - Actualizado para usar políticas genéricas",
+  "description": "Rol para s3 - read-full en ambiente dev - Despliegue limpio con políticas MCI",
   "trust_policy": {
     "Version": "2012-10-17",
     "Statement": [
