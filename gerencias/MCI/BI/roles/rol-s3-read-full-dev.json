@@ -1,6 +1,6 @@
 {
   "role_name": "rol-s3-read-full-dev",
-  "description": "Rol para s3 - read-full en ambiente dev",
+  "description": "Rol para s3 - read-full en ambiente dev - Actualizado para usar políticas genéricas",
   "trust_policy": {
     "Version": "2012-10-17",
     "Statement": [
@@ -38,7 +38,7 @@
     "proyecto": "MCI-BI",
     "creado_por": "Darwin Lopez",
     "ciclo_vida": "Creacion",
-    "version": "1.0.0"
+    "version": "1.0.1"
   },
   "note": "Este rol usa la política genérica 'POL-S3-ReadOnly' con recursos específicos limitados."
 }
