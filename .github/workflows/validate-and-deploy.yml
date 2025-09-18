@@ -117,7 +117,14 @@ jobs:
         with:
           terraform_version: ${{ env.TF_VERSION }}
 
-      - name: 🔍 Validate JSON Files
+      - name: � Configure AWS credentials for validation
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          role-session-name: GitHubActions-MCI-IAM-Validation
+          aws-region: us-east-1
+
+      - name: �🔍 Validate JSON Files
         run: |
           echo "🔍 Validating JSON files..."
           find . -name "*.json" -not -path "./.git/*" | while read file; do
