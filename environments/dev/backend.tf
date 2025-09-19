@@ -26,10 +26,18 @@ provider "aws" {
 
   default_tags {
     tags = {
+      # Tags fijos para TODOS los recursos
       Environment   = "dev"
       ManagedBy     = "Terraform"
       Repository    = "mci-aws-iam"
       StateLocation = "s3-data-analytics-raw-dev-tfstate"
+      
+      # Nuevos tags fijos MCI
+      pais          = "RG"
+      direccion     = "TICenam"
+      gerencia      = "MCI"
+      proveedor     = "INHOUSE"
+      creado_por    = "MCI-IAM-System"
     }
   }
 }
