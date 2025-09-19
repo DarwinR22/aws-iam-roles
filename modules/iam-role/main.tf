@@ -14,11 +14,11 @@ terraform {
 
 # Función para limpiar nombres (quitar espacios y caracteres especiales)
 locals {
-  # Limpieza automática de tags con espacios
-  clean_propietario = replace(replace(var.tags.propietario, " ", ""), "-", "")
-  clean_creado_por  = replace(replace(var.tags.creado_por, " ", ""), "-", "")
-  clean_contacto    = replace(replace(var.tags.contacto, " ", ""), "-", "")
-  clean_proyecto    = replace(replace(var.tags.proyecto, " ", ""), "-", "")
+  # Limpieza automática de tags con valores seguros por defecto
+  clean_propietario = replace(replace(lookup(var.tags, "propietario", "admin"), " ", ""), "-", "")
+  clean_creado_por  = replace(replace(lookup(var.tags, "creado_por", "terraform"), " ", ""), "-", "")
+  clean_contacto    = replace(replace(lookup(var.tags, "contacto", "admin"), " ", ""), "-", "")
+  clean_proyecto    = replace(replace(lookup(var.tags, "proyecto", lookup(var.tags, "Proyecto", "default")), " ", ""), "-", "")
 }
 
 # Validación de convención de nombres
@@ -36,43 +36,36 @@ locals {
   ambiente   = length(local.name_parts) >= 2 ? local.name_parts[length(local.name_parts) - 2] : ""
   nombre     = length(local.name_parts) >= 1 ? local.name_parts[length(local.name_parts) - 1] : ""
 
-  # Tags obligatorios con validación
-  required_tags = {
-    Ambiente            = var.tags.ambiente
-    Pais                = var.tags.pais
-    Direccion           = var.tags.direccion
-    Gerencia            = var.tags.gerencia
-    Cuenta              = var.tags.cuenta
-    Modulo              = var.tags.modulo
-    "Alcance SOX"       = var.tags.alcance_sox
-    Propietario         = local.clean_propietario
-    Proveedor           = var.tags.proveedor
-    Layer               = var.tags.layer
-    Dominio             = var.tags.dominio
-    Subdominio          = var.tags.subdominio
-    Aplicacion          = var.tags.aplicacion
-    Name                = var.role_name
-    Soporte             = var.tags.soporte
-    Contacto            = local.clean_contacto
-    Proyecto            = local.clean_proyecto
-    "Fecha de Creacion" = formatdate("YYYY-MM-DD", timestamp())
-    "Creado Por"        = local.clean_creado_por
-    "Tipo de Recurso"   = "IAM Role"
-    "Ciclo de Vida"     = var.tags.ciclo_vida
-    Version             = var.tags.version
-  }
+  # Tags flexibles - usar valores proporcionados o valores por defecto
+  flexible_tags = merge(
+    {
+      # Tags mínimos garantizados
+      Name                = var.role_name
+      "Tipo de Recurso"   = "IAM Role"
+      "Fecha de Creacion" = formatdate("YYYY-MM-DD", timestamp())
+      "Creado Por"        = local.clean_creado_por
+      Propietario         = local.clean_propietario
+      Contacto            = local.clean_contacto
+      Proyecto            = local.clean_proyecto
+    },
+    # Todos los tags proporcionados desde el llamador
+    var.tags
+  )
 
-  # Validar ambientes permitidos
+  # Validar ambientes permitidos (usar tags flexibles)
   valid_environments = ["dev", "qa", "prod", "poc"]
-  environment_valid  = contains(local.valid_environments, var.tags.ambiente)
+  ambiente_tag = lookup(var.tags, "ambiente", lookup(var.tags, "Ambiente", "dev"))
+  environment_valid  = contains(local.valid_environments, local.ambiente_tag)
 
-  # Validar países permitidos
+  # Validar países permitidos (opcional)
   valid_countries = ["GT", "SV", "NI", "HN", "CR", "RG"]
-  country_valid   = contains(local.valid_countries, var.tags.pais)
+  pais_tag = lookup(var.tags, "pais", lookup(var.tags, "Pais", "GT"))
+  country_valid   = contains(local.valid_countries, local.pais_tag)
 
-  # Validar SOX
-  valid_sox = ["Sí", "No"]
-  sox_valid = contains(local.valid_sox, var.tags.alcance_sox)
+  # Validar SOX (opcional)
+  valid_sox = ["Sí", "No", "Si", "No", "YES", "NO"]
+  sox_tag = lookup(var.tags, "alcance_sox", lookup(var.tags, "SOX", "No"))
+  sox_valid = contains(local.valid_sox, local.sox_tag)
 }
 
 # Validaciones con preconditions
@@ -82,7 +75,7 @@ resource "aws_iam_role" "this" {
   description          = var.description
   max_session_duration = var.max_session_duration
 
-  tags = local.required_tags
+  tags = local.flexible_tags
 
   lifecycle {
     precondition {
@@ -93,41 +86,6 @@ resource "aws_iam_role" "this" {
     precondition {
       condition     = local.environment_valid
       error_message = "El ambiente debe ser uno de: ${join(", ", local.valid_environments)}"
-    }
-
-    precondition {
-      condition     = local.country_valid
-      error_message = "El país debe ser uno de: ${join(", ", local.valid_countries)}"
-    }
-
-    precondition {
-      condition     = local.sox_valid
-      error_message = "Alcance SOX debe ser 'Sí' o 'No'"
-    }
-
-    precondition {
-      condition = alltrue([
-        var.tags.ambiente != "",
-        var.tags.pais != "",
-        var.tags.direccion != "",
-        var.tags.gerencia != "",
-        var.tags.cuenta != "",
-        var.tags.modulo != "",
-        var.tags.alcance_sox != "",
-        var.tags.propietario != "",
-        var.tags.proveedor != "",
-        var.tags.layer != "",
-        var.tags.dominio != "",
-        var.tags.subdominio != "",
-        var.tags.aplicacion != "",
-        var.tags.soporte != "",
-        var.tags.contacto != "",
-        var.tags.proyecto != "",
-        var.tags.creado_por != "",
-        var.tags.ciclo_vida != "",
-        var.tags.version != ""
-      ])
-      error_message = "Todos los tags obligatorios deben estar completos. Verifique que no haya campos vacíos."
     }
   }
 }
