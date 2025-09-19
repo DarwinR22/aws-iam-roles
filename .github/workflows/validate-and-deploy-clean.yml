@@ -114,7 +114,7 @@ jobs:
         working-directory: environments/${{ steps.env.outputs.environment }}
         run: |
           echo "📋 Running Terraform plan for ${{ steps.env.outputs.environment }}..."
-          terraform plan -detailed-exitcode
+          terraform plan -detailed-exitcode -var-file="team-tag-policies.tfvars"
           echo "✅ Terraform plan completed"
 
   deploy:
@@ -144,5 +144,5 @@ jobs:
         run: |
           echo "🚀 Deploying to ${{ needs.validate.outputs.environment }}..."
           terraform init
-          terraform apply -auto-approve
+          terraform apply -auto-approve -var-file="team-tag-policies.tfvars"
           echo "✅ Deployment completed successfully"
