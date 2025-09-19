@@ -60,6 +60,40 @@ variable "team_tag_policies" {
     description    = string
   }))
   default = {}
+
+  validation {
+    condition = alltrue([
+      for k, v in var.team_tag_policies : alltrue([
+        v.team_name != null && v.team_name != "",
+        v.environment != null && v.environment != "",
+        v.project_name != null && v.project_name != ""
+      ])
+    ])
+    error_message = <<-EOT
+    ❌ FALTAN CAMPOS OBLIGATORIOS EN team_tag_policies:
+    
+    Cada entrada debe incluir:
+    - team_name: Nombre del equipo (ej: "BI-Team", "Development-Team")
+    - environment: Ambiente (ej: "dev", "qa", "prod")
+    - project_name: Nombre del proyecto (ej: "DataAnalytics")
+    
+    Ejemplo correcto:
+    "bi-team-dynamodb-read" = {
+      policy_template = "politicas/MCI-DynamoDB-TagBased-ReadOnly.json"
+      team_name       = "BI-Team"
+      environment     = "dev"
+      project_name    = "DataAnalytics"
+      description     = "DynamoDB read access for BI team"
+    }
+    EOT
+  }
+
+  validation {
+    condition = alltrue([
+      for k, v in var.team_tag_policies : contains(["dev", "qa", "prod"], v.environment)
+    ])
+    error_message = "❌ Todos los valores de 'environment' deben ser: 'dev', 'qa' o 'prod'"
+  }
 }
 
 variable "required_resource_tags" {

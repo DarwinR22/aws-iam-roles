@@ -17,6 +17,32 @@ locals {
     for role_file in local.role_files :
     replace(basename(role_file), ".json", "") => split("/", role_file)[0]
   }
+
+  # ============================================================================
+  # VALIDACIÓN DE TAGS OBLIGATORIOS
+  # ============================================================================
+  # Verificar que todos los roles tengan los tags mínimos requeridos
+  roles_missing_tags = [
+    for role_name, role_data in local.roles : {
+      role = role_name
+      missing_tags = [
+        for required_tag in ["Equipo", "Ambiente", "Proyecto"] :
+        required_tag if !contains(keys(try(role_data.tags, {})), required_tag)
+      ]
+    }
+    if length([
+      for required_tag in ["Equipo", "Ambiente", "Proyecto"] :
+      required_tag if !contains(keys(try(role_data.tags, {})), required_tag)
+    ]) > 0
+  ]
+
+  # Generar error si hay roles sin tags
+  validate_tags = length(local.roles_missing_tags) == 0 ? true : tobool(
+    "❌ ROLES SIN ETIQUETAS OBLIGATORIAS:\n${join("\n", [
+      for invalid in local.roles_missing_tags :
+      "  - ${invalid.role}: faltan tags ${join(", ", invalid.missing_tags)}"
+    ])}\n\n🛡️ Todos los roles deben incluir: Equipo, Ambiente, Proyecto"
+  )
 }
 
 # ============================================================================
