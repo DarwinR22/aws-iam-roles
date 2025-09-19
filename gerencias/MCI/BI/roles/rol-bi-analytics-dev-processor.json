@@ -1,0 +1,40 @@
+{
+  "role_name": "rol-bi-analytics-dev-processor",
+  "description": "Rol para equipo BI con acceso basado en tags",
+  "trust_policy": {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Principal": {
+          "Service": "lambda.amazonaws.com"
+        },
+        "Action": "sts:AssumeRole"
+      }
+    ]
+  },
+  "policies": {
+    "aws_managed": [
+      "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+    ],
+    "mci_managed": [
+      "MCI-Lambda-Invoke"
+    ],
+    "tag_based": [
+      "bi-team-dynamodb-read",
+      "bi-team-s3-read"
+    ]
+  },
+  "tags": {
+    "ambiente": "dev",
+    "gerencia": "MCI", 
+    "area": "BI",
+    "propietario": "darwin.lopez@mci.com",
+    "proyecto": "DataAnalytics",
+    "servicio": "lambda",
+    "aplicacion": "bi-processor",
+    "centro_costo": "CC-BI-001",
+    "equipo": "BI-Team"
+  },
+  "note": "Rol con políticas basadas en tags - acceso automático a recursos etiquetados con Equipo=BI-Team, Ambiente=dev, Proyecto=DataAnalytics"
+}

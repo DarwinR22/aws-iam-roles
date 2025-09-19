@@ -28,26 +28,64 @@ variable "policy_tags" {
   default     = {}
 }
 
-variable "policy_custom_tags" {
-  description = "Custom tags per policy name (fallback for specific overrides)"
-  type        = map(map(string))
-  default     = {}
-}
-
-variable "service_owners" {
-  description = "Owner per AWS service type"
+variable "area_owners" {
+  description = "Owner per business area/gerencia"
   type        = map(string)
   default     = {}
 }
 
-variable "service_teams" {
-  description = "Team per AWS service type"
+variable "area_teams" {
+  description = "Team per business area/gerencia"
   type        = map(string)
   default     = {}
 }
 
-variable "service_cost_centers" {
-  description = "Cost center per AWS service type"
+variable "area_cost_centers" {
+  description = "Cost center per business area/gerencia"
   type        = map(string)
   default     = {}
+}
+
+# ============================================================================
+# TEAM-BASED TAG POLICIES VARIABLES
+# ============================================================================
+
+variable "team_tag_policies" {
+  description = "Tag-based policies configuration by team"
+  type = map(object({
+    policy_template = string
+    team_name      = string
+    environment    = string
+    project_name   = string
+    description    = string
+  }))
+  default = {}
+}
+
+variable "required_resource_tags" {
+  description = "Required tags for governance and compliance"
+  type = object({
+    dynamodb_required_tags = list(string)
+    s3_required_tags      = list(string)
+  })
+  default = {
+    dynamodb_required_tags = ["Equipo", "Ambiente", "Proyecto"]
+    s3_required_tags      = ["Equipo", "Ambiente", "Proyecto"]
+  }
+}
+
+variable "tag_validation_rules" {
+  description = "Validation rules for tag values"
+  type = object({
+    valid_teams                = list(string)
+    valid_environments         = list(string)
+    valid_project_patterns     = list(string)
+    valid_data_classifications = list(string)
+  })
+  default = {
+    valid_teams                = ["BI-Team", "Development-Team", "Database-Team"]
+    valid_environments         = ["dev", "qa", "prod"]
+    valid_project_patterns     = ["DataAnalytics", "WebApps", "MobileApps"]
+    valid_data_classifications = ["public", "internal", "confidential"]
+  }
 }

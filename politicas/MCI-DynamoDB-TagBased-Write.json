@@ -1,0 +1,78 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "DynamoDBTagBasedWriteAccess",
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:GetItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:Query",
+        "dynamodb:Scan",
+        "dynamodb:BatchGetItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:DescribeTable",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:DescribeStream",
+        "dynamodb:ListStreams"
+      ],
+      "Resource": [
+        "arn:aws:dynamodb:*:*:table/*",
+        "arn:aws:dynamodb:*:*:table/*/index/*",
+        "arn:aws:dynamodb:*:*:table/*/stream/*"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "aws:ResourceTag/Equipo": "${team_name}",
+          "aws:ResourceTag/Ambiente": "${environment}",
+          "aws:ResourceTag/Proyecto": "${project_name}"
+        }
+      }
+    },
+    {
+      "Sid": "DynamoDBListForDiscovery",
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:ListTables",
+        "dynamodb:ListTagsOfResource"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "DenyUntaggedTables",
+      "Effect": "Deny",
+      "Action": "*",
+      "Resource": "arn:aws:dynamodb:*:*:table/*",
+      "Condition": {
+        "Null": {
+          "aws:ResourceTag/Equipo": "true"
+        }
+      }
+    },
+    {
+      "Sid": "DenyWrongEnvironment",
+      "Effect": "Deny",
+      "Action": "*",
+      "Resource": "arn:aws:dynamodb:*:*:table/*",
+      "Condition": {
+        "StringNotEquals": {
+          "aws:ResourceTag/Ambiente": "${environment}"
+        }
+      }
+    },
+    {
+      "Sid": "DenyWrongTeam",
+      "Effect": "Deny",
+      "Action": "*",
+      "Resource": "arn:aws:dynamodb:*:*:table/*",
+      "Condition": {
+        "StringNotEquals": {
+          "aws:ResourceTag/Equipo": "${team_name}"
+        }
+      }
+    }
+  ]
+}
