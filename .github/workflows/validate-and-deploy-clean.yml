@@ -86,12 +86,12 @@ jobs:
         with:
           terraform_version: ${{ env.TF_VERSION }}
 
-      - name: 🔑 Configure AWS credentials
+      - name: 🔑 Configure AWS credentials via OIDC
         uses: aws-actions/configure-aws-credentials@v4
         continue-on-error: true
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          role-session-name: GitHubActions-IAM-Deploy
           aws-region: us-east-1
 
       - name: 🔍 Validate JSON Files
