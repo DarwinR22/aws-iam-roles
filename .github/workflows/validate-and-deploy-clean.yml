@@ -86,12 +86,11 @@ jobs:
         with:
           terraform_version: ${{ env.TF_VERSION }}
 
-      - name: 🔑 Configure AWS credentials via OIDC
+      - name: 🔑 Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
-        continue-on-error: true
         with:
-          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
-          role-session-name: GitHubActions-IAM-Deploy
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          role-session-name: GitHubActions-MCI-IAM-Validation
           aws-region: us-east-1
 
       - name: 🔍 Validate JSON Files
@@ -111,12 +110,12 @@ jobs:
           terraform validate
           echo "✅ Terraform syntax is valid"
 
-      - name: 📋 Terraform Plan (Syntax Only)
+      - name: 📋 Terraform Plan
         working-directory: environments/${{ steps.env.outputs.environment }}
         run: |
-          echo "📋 Running Terraform syntax validation for ${{ steps.env.outputs.environment }}..."
-          terraform plan -detailed-exitcode -refresh=false -lock=false || echo "⚠️ Plan failed - likely due to missing AWS credentials (expected in validation)"
-          echo "✅ Terraform syntax validation completed"
+          echo "📋 Running Terraform plan for ${{ steps.env.outputs.environment }}..."
+          terraform plan -detailed-exitcode
+          echo "✅ Terraform plan completed"
 
   deploy:
     name: Deploy to ${{ needs.validate.outputs.environment }}
@@ -133,22 +132,17 @@ jobs:
         with:
           terraform_version: ${{ env.TF_VERSION }}
 
-      - name: 🔑 Configure AWS credentials via OIDC
+      - name: 🔑 Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
-        continue-on-error: true
         with:
-          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
-          role-session-name: GitHubActions-IAM-Deploy
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          role-session-name: GitHubActions-MCI-IAM-Deploy
           aws-region: us-east-1
 
       - name: 🚀 Deploy Infrastructure
-        continue-on-error: true
         working-directory: environments/${{ needs.validate.outputs.environment }}
         run: |
           echo "🚀 Deploying to ${{ needs.validate.outputs.environment }}..."
-          echo "⚠️  Note: Deployment requires AWS role configuration"
-          echo "🔸 AWS role not configured - skipping actual deployment"
-          echo "✅ Validation completed successfully (deployment skipped)"
-          # Uncomment when AWS_ROLE_TO_ASSUME is configured:
-          # terraform init
-          # terraform apply -auto-approve
+          terraform init
+          terraform apply -auto-approve
+          echo "✅ Deployment completed successfully"
