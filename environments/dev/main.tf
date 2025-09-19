@@ -36,13 +36,34 @@ locals {
     ]) > 0
   ]
 
-  # Generar error si hay roles sin tags
-  validate_tags = length(local.roles_missing_tags) == 0 ? true : tobool(
-    "❌ ROLES SIN ETIQUETAS OBLIGATORIAS:\n${join("\n", [
+  # Generar error si hay roles sin tags - usar validation en data source
+  validate_tags_count = length(local.roles_missing_tags)
+}
+
+# ============================================================================
+# VALIDACIÓN: Check obligatorio de tags 
+# ============================================================================
+check "validate_required_tags" {
+  assert {
+    condition = length(local.roles_missing_tags) == 0
+    error_message = <<-EOT
+    ❌ ROLES SIN ETIQUETAS OBLIGATORIAS:
+    
+    ${join("\n", [
       for invalid in local.roles_missing_tags :
       "  - ${invalid.role}: faltan tags ${join(", ", invalid.missing_tags)}"
-    ])}\n\n🛡️ Todos los roles deben incluir: Equipo, Ambiente, Proyecto"
-  )
+    ])}
+    
+    🛡️ Todos los roles deben incluir los tags: Equipo, Ambiente, Proyecto
+    
+    Ejemplo correcto en archivo JSON del rol:
+    "tags": {
+      "Equipo": "BI-Team",
+      "Ambiente": "dev", 
+      "Proyecto": "DataAnalytics"
+    }
+    EOT
+  }
 }
 
 # ============================================================================

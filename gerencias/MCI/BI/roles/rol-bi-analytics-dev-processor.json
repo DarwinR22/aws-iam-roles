@@ -26,6 +26,9 @@
     ]
   },
   "tags": {
+    "Equipo": "BI-Team",
+    "Ambiente": "dev", 
+    "Proyecto": "DataAnalytics",
     "ambiente": "dev",
     "gerencia": "MCI", 
     "area": "BI",
@@ -33,8 +36,7 @@
     "proyecto": "DataAnalytics",
     "servicio": "lambda",
     "aplicacion": "bi-processor",
-    "centro_costo": "CC-BI-001",
-    "equipo": "BI-Team"
+    "centro_costo": "CC-BI-001"
   },
   "note": "Rol con políticas basadas en tags - acceso automático a recursos etiquetados con Equipo=BI-Team, Ambiente=dev, Proyecto=DataAnalytics"
 }

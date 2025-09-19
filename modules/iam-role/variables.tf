@@ -51,66 +51,41 @@ variable "inline_policy" {
 # ==============================================================================
 
 variable "tags" {
-  description = "Tags obligatorios para el recurso IAM"
-  type = object({
-    ambiente    = string # dev, qa, prod, poc
-    pais        = string # GT, SV, NI, HN, CR, RG
-    direccion   = string # Dirección solicitante
-    gerencia    = string # Gerencia TI responsable
-    cuenta      = string # Nombre de la cuenta organizacional
-    modulo      = string # Aplicación, DB, POC
-    alcance_sox = string # Sí/No
-    propietario = string # Persona responsable
-    proveedor   = string # Inhouse o tercero
-    layer       = string # Ej. Data Analytics & AI
-    dominio     = string # Dominio AMX
-    subdominio  = string # Subdominio AMX
-    aplicacion  = string # Identificador de aplicación
-    soporte     = string # Equipo/persona responsable del soporte
-    contacto    = string # Correo de soporte
-    proyecto    = string # Código o nombre del proyecto
-    creado_por  = string # Nombre o ID del creador
-    ciclo_vida  = string # Creación, Implementación, MonitoreoYMantenimiento, etc.
-    version     = string # Versión del recurso
-  })
-
-  validation {
-    condition     = contains(["dev", "qa", "prod", "poc"], var.tags.ambiente)
-    error_message = "El ambiente debe ser: dev, qa, prod o poc"
-  }
-
-  validation {
-    condition     = contains(["GT", "SV", "NI", "HN", "CR", "RG"], var.tags.pais)
-    error_message = "El país debe ser: GT, SV, NI, HN, CR o RG"
-  }
-
-  validation {
-    condition     = contains(["Sí", "No"], var.tags.alcance_sox)
-    error_message = "Alcance SOX debe ser 'Sí' o 'No'"
-  }
+  description = "Tags para el recurso IAM"
+  type        = map(string)
+  default     = {}
 
   validation {
     condition = alltrue([
-      var.tags.ambiente != "",
-      var.tags.pais != "",
-      var.tags.direccion != "",
-      var.tags.gerencia != "",
-      var.tags.cuenta != "",
-      var.tags.modulo != "",
-      var.tags.alcance_sox != "",
-      var.tags.propietario != "",
-      var.tags.proveedor != "",
-      var.tags.layer != "",
-      var.tags.dominio != "",
-      var.tags.subdominio != "",
-      var.tags.aplicacion != "",
-      var.tags.soporte != "",
-      var.tags.contacto != "",
-      var.tags.proyecto != "",
-      var.tags.creado_por != "",
-      var.tags.ciclo_vida != "",
-      var.tags.version != ""
+      length(var.tags) > 0,
+      contains(keys(var.tags), "Equipo"),
+      contains(keys(var.tags), "Ambiente"), 
+      contains(keys(var.tags), "Proyecto")
     ])
-    error_message = "Todos los campos de tags son obligatorios y no pueden estar vacíos"
+    error_message = <<-EOT
+    ❌ FALTAN ETIQUETAS OBLIGATORIAS:
+    
+    Los siguientes tags son OBLIGATORIOS para todos los roles IAM:
+    - Equipo: Nombre del equipo responsable (ej: "BI-Team", "Development-Team")
+    - Ambiente: Entorno de despliegue (ej: "dev", "qa", "prod") 
+    - Proyecto: Nombre del proyecto (ej: "DataAnalytics", "WebPortal")
+    
+    Ejemplo correcto:
+    "tags": {
+      "Equipo": "BI-Team",
+      "Ambiente": "dev", 
+      "Proyecto": "DataAnalytics"
+    }
+    
+    🛡️ Estos tags son necesarios para:
+    - Governance automática de acceso a recursos
+    - Separación por equipos y ambientes
+    - Facturación y costos por proyecto
+    EOT
+  }
+
+  validation {
+    condition     = var.tags["Ambiente"] != null ? contains(["dev", "qa", "prod"], var.tags["Ambiente"]) : true
+    error_message = "❌ Tag 'Ambiente' debe ser: 'dev', 'qa' o 'prod'"
   }
 }
