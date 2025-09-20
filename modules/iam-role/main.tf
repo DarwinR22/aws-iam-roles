@@ -15,10 +15,10 @@ terraform {
 # Función para limpiar nombres (quitar espacios y caracteres especiales)
 locals {
   # Limpieza automática de tags con valores seguros por defecto
-  clean_propietario = replace(replace(lookup(var.tags, "propietario", "admin"), " ", ""), "-", "")
-  clean_creado_por  = replace(replace(lookup(var.tags, "creado_por", "terraform"), " ", ""), "-", "")
-  clean_contacto    = replace(replace(lookup(var.tags, "contacto", "admin"), " ", ""), "-", "")
-  clean_proyecto    = replace(replace(lookup(var.tags, "proyecto", lookup(var.tags, "Proyecto", "default")), " ", ""), "-", "")
+  clean_propietario = replace(replace(lookup(var.tags, "Propietario", lookup(var.tags, "propietario", "admin")), " ", ""), "-", "")
+  clean_creado_por  = replace(replace(lookup(var.tags, "CreadoPor", lookup(var.tags, "creado_por", "terraform")), " ", ""), "-", "")
+  clean_contacto    = replace(replace(lookup(var.tags, "Contacto", lookup(var.tags, "contacto", "admin")), " ", ""), "-", "")
+  clean_proyecto    = replace(replace(lookup(var.tags, "Proyecto", lookup(var.tags, "proyecto", "default")), " ", ""), "-", "")
 }
 
 # Validación de convención de nombres
@@ -48,8 +48,23 @@ locals {
       Contacto            = local.clean_contacto
       Proyecto            = local.clean_proyecto
     },
-    # Todos los tags proporcionados desde el llamador
-    var.tags
+    # Filtrar tags proporcionados para evitar duplicados
+    { for k, v in var.tags : k => v if !contains([
+      "Name",
+      "Tipo de Recurso", 
+      "Fecha de Creacion",
+      "Creado Por",
+      "Propietario",
+      "Contacto", 
+      "Proyecto",
+      # También excluir variaciones de case comunes
+      "name",
+      "propietario",
+      "contacto",
+      "proyecto",
+      "CreadoPor",
+      "creado_por"
+    ], k) }
   )
 
   # Validar ambientes permitidos (usar tags flexibles)
