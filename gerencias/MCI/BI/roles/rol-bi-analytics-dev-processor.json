@@ -30,8 +30,6 @@
     "Ambiente": "dev", 
     "Proyecto": "DataAnalytics",
     "Gerencia": "MCI", 
-    "Area": "BI",
-    "Propietario": "darwin.lopez@mci.com",
     "Servicio": "lambda",
     "Aplicacion": "bi-processor",
     "CentroCosto": "CC-BI-001"

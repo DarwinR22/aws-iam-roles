@@ -141,9 +141,10 @@ module "iam_roles" {
   inline_policy = try(each.value.policies.inline != null ? jsonencode(each.value.policies.inline) : null, null)
 
   # Tags automáticos por área + tags específicos del rol
+  # Crear tags en orden de prioridad: automáticos primero, JSON del rol sobreescribe
   tags = merge(
     {
-      # Tags automáticos por área/gerencia (solo si no están en el JSON del rol)
+      # Tags automáticos por área/gerencia
       Area          = local.role_areas[each.key]
       Team          = lookup(var.area_teams, local.role_areas[each.key], "Infrastructure")
       CostCenter    = lookup(var.area_cost_centers, local.role_areas[each.key], "IT-INFRA-001")
@@ -152,14 +153,14 @@ module "iam_roles" {
       PolicyType    = "Role"
       ManagedBy     = "Terraform"
       Environment   = "DEV"
+      
+      # Propietario automático solo si no está en JSON
+      Propietario   = lookup(var.area_owners, local.role_areas[each.key], "DarwinLopez")
     },
-    # Tags específicos del rol (desde JSON) - estos toman prioridad
-    try(each.value.tags, {}),
-    # Propietario solo si no está definido en el JSON del rol
-    contains(keys(try(each.value.tags, {})), "Propietario") ? {} : {
-      Propietario = lookup(var.area_owners, local.role_areas[each.key], "DarwinLopez")
-    }
+    # Tags específicos del rol (desde JSON) - estos SOBREESCRIBEN los automáticos
+    try(each.value.tags, {})
   )
+}
 }
 
 # Adjuntar políticas MCI genéricas a los roles
