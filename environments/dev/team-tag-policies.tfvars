@@ -1,16 +1,16 @@
 # ============================================================================
-# CONFIGURACIÓN TAG-BASED POLICIES - Nueva Arquitectura MCI
+# CONFIGURACION TAG-BASED POLICIES - Nueva Arquitectura MCI
 # ============================================================================
-# Esta configuración reemplaza el enfoque granular con políticas inteligentes
-# basadas en tags que escalan automáticamente.
+# Esta configuracion reemplaza el enfoque granular con politicas inteligentes
+# basadas en tags que escalan automaticamente.
 
 # ============================================================================
-# TEAM-BASED TAG POLICIES: Acceso automático por equipos
+# TEAM-BASED TAG POLICIES: Acceso automatico por equipos
 # ============================================================================
 
 team_tag_policies = {
   # -------------------------------------------------------------------------
-  # EQUIPO BI/ANALYTICS - Acceso a datos de análisis
+  # EQUIPO BI/ANALYTICS - Acceso a datos de analisis
   # -------------------------------------------------------------------------
   "bi-team-dynamodb-read" = {
     policy_template = "MCI-DynamoDB-TagBased-ReadOnly"
@@ -54,19 +54,19 @@ team_tag_policies = {
     policy_template = "MCI-DynamoDB-TagBased-ReadOnly"
     team_name      = "Database-Team"
     environment    = "prod"
-    project_name   = "*"  # Acceso a todos los proyectos
-    description    = "Acceso de solo lectura para equipo DB en producción"
+    project_name   = "AllProjects"  # Acceso a todos los proyectos
+    description    = "Acceso de solo lectura para equipo DB en produccion"
   }
 
   # -------------------------------------------------------------------------
-  # EQUIPO FINANCE - Auditoría específica
+  # EQUIPO FINANCE - Auditoria especifica
   # -------------------------------------------------------------------------
   "finance-audit-readonly" = {
     policy_template = "MCI-DynamoDB-TagBased-ReadOnly"
     team_name      = "Finance-Team"
     environment    = "prod"
     project_name   = "FinancialReporting"
-    description    = "Acceso de auditoría para equipo financiero"
+    description    = "Acceso de auditoria para equipo financiero"
   }
 
   "finance-s3-readonly" = {
@@ -74,21 +74,21 @@ team_tag_policies = {
     team_name      = "Finance-Team"
     environment    = "prod"
     project_name   = "FinancialReporting"
-    description    = "Acceso S3 de auditoría para reportes financieros"
+    description    = "Acceso S3 de auditoria para reportes financieros"
   }
 }
 
 # ============================================================================
 # REQUIRED TAGS GOVERNANCE
-# Tags obligatorios para recursos - Compliance automático
+# Tags obligatorios para recursos - Compliance automatico
 # ============================================================================
 
 required_resource_tags = {
   # DynamoDB tables DEBEN tener estos tags
   dynamodb_required_tags = [
-    "Equipo",           # ¿Qué equipo es dueño?
+    "Equipo",           # Que equipo es dueno?
     "Ambiente",         # dev/qa/prod
-    "Proyecto",         # ¿A qué proyecto pertenece?
+    "Proyecto",         # A que proyecto pertenece?
     "CentroCosto",      # Para billing
     "Propietario",      # Email del responsable
     "DataClassification" # public/internal/confidential
@@ -101,8 +101,8 @@ required_resource_tags = {
     "Proyecto",
     "CentroCosto",
     "Propietario",
-    "DataRetention",    # Política de retención
-    "Encryption"        # Tipo de encriptación
+    "DataRetention",    # Politica de retencion
+    "Encryption"        # Tipo de encriptacion
   ]
 }
 
@@ -112,7 +112,7 @@ required_resource_tags = {
 # ============================================================================
 
 tag_validation_rules = {
-  # Valores válidos para tag "Equipo"
+  # Valores validos para tag "Equipo"
   valid_teams = [
     "BI-Team",
     "Development-Team", 
@@ -123,10 +123,10 @@ tag_validation_rules = {
     "Infrastructure-Team"
   ]
 
-  # Valores válidos para tag "Ambiente"
+  # Valores validos para tag "Ambiente"
   valid_environments = ["dev", "qa", "staging", "prod"]
 
-  # Patrones válidos para "Proyecto"
+  # Patrones validos para "Proyecto"
   valid_project_patterns = [
     "DataAnalytics",
     "WebApps", 
@@ -136,6 +136,6 @@ tag_validation_rules = {
     "InternalTools"
   ]
 
-  # Valores válidos para "DataClassification"
+  # Valores validos para "DataClassification"
   valid_data_classifications = ["public", "internal", "confidential", "restricted"]
 }

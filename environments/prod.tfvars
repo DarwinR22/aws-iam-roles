@@ -1,17 +1,17 @@
 # ==============================================================================
-# Configuración de ambiente PROD
-# Este archivo contiene configuraciones específicas para el ambiente de producción
+# Configuracion de ambiente PROD
+# Este archivo contiene configuraciones especificas para el ambiente de produccion
 # ==============================================================================
 
-# Configuración AWS
+# Configuracion AWS
 aws_region = "us-east-1"
 account_id = "345678901234" # Reemplazar con ID real de cuenta PROD
 
-# Configuración de red
+# Configuracion de red
 vpc_id     = "vpc-prod12345"
 subnet_ids = ["subnet-prod123", "subnet-prod456", "subnet-prod789"] # Más subnets para HA
 
-# Configuración de buckets S3 para PROD
+# Configuracion de buckets S3 para PROD
 data_buckets = {
   raw_data  = "empresa-data-raw-prod"
   processed = "empresa-data-processed-prod"
@@ -20,34 +20,34 @@ data_buckets = {
   archive   = "empresa-archive-prod" # Bucket adicional para archivos
 }
 
-# Configuración de bases de datos
+# Configuracion de bases de datos
 database_endpoints = {
   postgres_main = "postgres-prod.cluster-xyz.us-east-1.rds.amazonaws.com"
   postgres_read = "postgres-prod-ro.cluster-xyz.us-east-1.rds.amazonaws.com"
   redis_cache   = "redis-prod.abc123.cache.amazonaws.com"
 }
 
-# Configuración de servicios externos
+# Configuracion de servicios externos
 external_services = {
   monitoring_url = "https://monitoring.empresa.com"
   logging_url    = "https://logs.empresa.com"
   alerting_url   = "https://alerts.empresa.com"
 }
 
-# Configuración de políticas específicas para PROD
+# Configuracion de politicas especificas para PROD
 allow_experimental_permissions = false # Muy restrictivo en PROD
 enable_debug_logging           = false # Sin debug en PROD
 session_duration_hours         = 8     # Sesiones más largas para operaciones
 
-# Configuración de tags específicos para PROD
+# Configuracion de tags especificos para PROD
 default_cost_center = "PROD-OPERATIONS"
 environment_tier    = "production"
 
-# Configuración de retention (más conservadora)
+# Configuracion de retention (mas conservadora)
 log_retention_days    = 90  # 3 meses
 backup_retention_days = 365 # 1 año
 
-# Configuración de alarmas (muy estrictas)
+# Configuracion de alarmas (muy estrictas)
 enable_cost_alerts       = true
 enable_security_alerts   = true
 cost_threshold_usd       = 2000

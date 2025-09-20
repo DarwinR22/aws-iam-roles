@@ -1,7 +1,7 @@
-# Configuración por ÁREA/GERENCIA - Enterprise approach
-# Tags automáticos según estructura organizacional
+# Configuracion por AREA/GERENCIA - Enterprise approach
+# Tags automaticos segun estructura organizacional
 
-# Propietarios por área de negocio
+# Propietarios por area de negocio
 area_owners = {
   "ventas"      = "cesar.calmo@mci.com"
   "marketing"   = "jorge.rubio@mci.com" 
@@ -13,7 +13,7 @@ area_owners = {
   "legal"       = "osmar.pineda@mci.com"
 }
 
-# Equipos por área
+# Equipos por area
 area_teams = {
   "ventas"      = "Sales-Team"
   "marketing"   = "Marketing-Team"
@@ -25,7 +25,7 @@ area_teams = {
   "legal"       = "Legal-Team"
 }
 
-# Centros de costos por área
+# Centros de costos por area
 area_cost_centers = {
   "ventas"      = "SALES-001"
   "marketing"   = "MARKETING-002"
