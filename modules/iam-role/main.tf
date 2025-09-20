@@ -12,9 +12,6 @@ terraform {
   }
 }
 
-# Función para limpiar nombres (quitar espacios y caracteres especiales)
-locals {
-
 # Validación de convención de nombres
 locals {
   # Patrón: rol-[servicio]-[layer]-[ambiente]-[nombre]
