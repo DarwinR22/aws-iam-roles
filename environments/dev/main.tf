@@ -161,7 +161,6 @@ module "iam_roles" {
     try(each.value.tags, {})
   )
 }
-}
 
 # Adjuntar políticas MCI genéricas a los roles
 resource "aws_iam_role_policy_attachment" "mci_policy_attachments" {
