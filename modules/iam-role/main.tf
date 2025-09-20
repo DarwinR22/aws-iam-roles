@@ -14,12 +14,6 @@ terraform {
 
 # Función para limpiar nombres (quitar espacios y caracteres especiales)
 locals {
-  # Limpieza automática de tags con valores seguros por defecto
-  clean_propietario = replace(replace(lookup(var.tags, "Propietario", lookup(var.tags, "propietario", "admin")), " ", ""), "-", "")
-  clean_creado_por  = replace(replace(lookup(var.tags, "CreadoPor", lookup(var.tags, "creado_por", "terraform")), " ", ""), "-", "")
-  clean_contacto    = replace(replace(lookup(var.tags, "Contacto", lookup(var.tags, "contacto", "admin")), " ", ""), "-", "")
-  clean_proyecto    = replace(replace(lookup(var.tags, "Proyecto", lookup(var.tags, "proyecto", "default")), " ", ""), "-", "")
-}
 
 # Validación de convención de nombres
 locals {
@@ -36,35 +30,16 @@ locals {
   ambiente   = length(local.name_parts) >= 2 ? local.name_parts[length(local.name_parts) - 2] : ""
   nombre     = length(local.name_parts) >= 1 ? local.name_parts[length(local.name_parts) - 1] : ""
 
-  # Tags flexibles - usar valores proporcionados o valores por defecto
+  # Tags flexibles - usar valores proporcionados directamente
   flexible_tags = merge(
     {
-      # Tags mínimos garantizados
+      # Tags mínimos garantizados (que no suelen estar en JSON de roles)
       Name                = var.role_name
       "Tipo de Recurso"   = "IAM Role"
       "Fecha de Creacion" = formatdate("YYYY-MM-DD", timestamp())
-      "Creado Por"        = local.clean_creado_por
-      Propietario         = local.clean_propietario
-      Contacto            = local.clean_contacto
-      Proyecto            = local.clean_proyecto
     },
-    # Filtrar tags proporcionados para evitar duplicados
-    { for k, v in var.tags : k => v if !contains([
-      "Name",
-      "Tipo de Recurso", 
-      "Fecha de Creacion",
-      "Creado Por",
-      "Propietario",
-      "Contacto", 
-      "Proyecto",
-      # También excluir variaciones de case comunes
-      "name",
-      "propietario",
-      "contacto",
-      "proyecto",
-      "CreadoPor",
-      "creado_por"
-    ], k) }
+    # Todos los tags proporcionados desde el llamador
+    var.tags
   )
 
   # Validar ambientes permitidos (usar tags flexibles)

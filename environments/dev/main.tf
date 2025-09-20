@@ -143,9 +143,8 @@ module "iam_roles" {
   # Tags automáticos por área + tags específicos del rol
   tags = merge(
     {
-      # Tags automáticos por área/gerencia
+      # Tags automáticos por área/gerencia (solo si no están en el JSON del rol)
       Area          = local.role_areas[each.key]
-      Propietario   = lookup(var.area_owners, local.role_areas[each.key], "DarwinLopez")
       Team          = lookup(var.area_teams, local.role_areas[each.key], "Infrastructure")
       CostCenter    = lookup(var.area_cost_centers, local.role_areas[each.key], "IT-INFRA-001")
       
@@ -154,8 +153,12 @@ module "iam_roles" {
       ManagedBy     = "Terraform"
       Environment   = "DEV"
     },
-    # Tags específicos del rol (desde JSON)
-    try(each.value.tags, {})
+    # Tags específicos del rol (desde JSON) - estos toman prioridad
+    try(each.value.tags, {}),
+    # Propietario solo si no está definido en el JSON del rol
+    contains(keys(try(each.value.tags, {})), "Propietario") ? {} : {
+      Propietario = lookup(var.area_owners, local.role_areas[each.key], "DarwinLopez")
+    }
   )
 }
 
