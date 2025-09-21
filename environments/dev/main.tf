@@ -2,29 +2,43 @@
 # Building blocks approach: Generic policies + Granular roles
 
 locals {
+  # ============================================================================
+  # DYNAMIC POLICY LOADER
+  # ============================================================================
+  # Cargar catálogo de políticas dinámicamente
+  policies_catalog_raw = file("${path.root}/../../catalog/policies.yaml")
+  policies_catalog = yamldecode(local.policies_catalog_raw)
+  
+  # Extraer políticas MCI TagBased automáticamente
+  mci_policies = {
+    for policy_name, policy_config in local.policies_catalog.policies : 
+    policy_name => policy_config
+    if can(regex("^MCI-.+-TagBased-.+$", policy_name))
+  }
+  
   # Tags canónicos base para todos los recursos
   base_canonical_tags = {
-    Ambiente           = "dev"
+    Ambiente           = "Dev"
     País              = "RG" 
     Dirección         = "Tecnología"
     Gerencia          = "MCI"
     Cuenta            = data.aws_caller_identity.current.account_id
-    Módulo            = "IAM-Roles"
+    Módulo            = "IamRoles"
     "Alcance SOX"     = "No"
-    Propietario       = "DevOps-Team"
+    Propietario       = "DevOpsTeam"
     Proveedor         = "Claro"
     Layer             = "Security"
     Dominio           = "Identity"
     Subdominio        = "IAM"
-    Soporte           = "devops@claro.com"
-    Contacto          = "devops@claro.com"
-    Proyecto          = "ABAC-Framework"
+    Soporte           = "DevOpsClaroComm"
+    Contacto          = "DevOpsClaroComm"
+    Proyecto          = "AbacFramework"
     "Fechas de Creación" = formatdate("YYYY-MM-DD'T'hh:mm:ssZ", timestamp())
-    "Creado Por"      = "terraform-iac"
-    "Tipo de Recurso" = "IAM-Role"
+    "Creado Por"      = "TerraformIac"
+    "Tipo de Recurso" = "IamRole"
     "Ciclo de Vida"   = "Active"
     Versión           = "2.0"
-    "Map-migrated"    = "mig_role_001"
+    "Map-migrated"    = "MigRole001"
   }
 
   # Buscar todos los archivos JSON de roles en gerencias/
@@ -178,27 +192,17 @@ check "validate_unique_tags" {
     EOT
   }
 }# ============================================================================
-# BUILDING BLOCKS: Políticas MCI genéricas (Data Sources)
+# BUILDING BLOCKS: Políticas MCI genéricas (Data Sources DINÁMICOS)
 # ============================================================================
+# Sistema escalable: Se cargan automáticamente desde catalog/policies.yaml
 
-data "aws_iam_policy" "mci_s3_readonly" {
-  name = "MCI-S3-TagBased-ReadOnly"
-}
-
-data "aws_iam_policy" "mci_s3_write" {
-  name = "MCI-S3-TagBased-Write"
-}
-
-data "aws_iam_policy" "mci_lambda_invoke" {
-  name = "MCI-Lambda-TagBased-Invoke"
-}
-
-data "aws_iam_policy" "mci_dynamodb_readonly" {
-  name = "MCI-DynamoDB-TagBased-ReadOnly"
-}
-
-data "aws_iam_policy" "mci_dynamodb_write" {
-  name = "MCI-DynamoDB-TagBased-Write"
+# Data sources dinámicos para todas las políticas MCI-*-TagBased-*
+data "aws_iam_policy" "mci_policies" {
+  for_each = local.mci_policies
+  name     = each.key
+  
+  # Solo intentar cargar si la política existe
+  # En caso de error, Terraform mostrará qué políticas faltan crear
 }
 
 # Data source para obtener account ID
@@ -258,8 +262,8 @@ module "iam_roles" {
     local.base_canonical_tags,
     {
       Name        = each.value.metadata.role_name
-      Aplicación  = try(each.value.metadata.aplicacion, "unknown")
-      Ambiente    = try(each.value.metadata.ambiente, "dev")
+      Aplicación  = title(replace(try(each.value.metadata.aplicacion, "Unknown"), "-", ""))
+      Ambiente    = title(try(each.value.metadata.ambiente, "Dev"))
       País        = try(each.value.metadata.pais.code, "RG")
       Gerencia    = try(each.value.metadata.gerencia.code, "MCI")
     }
@@ -269,7 +273,12 @@ module "iam_roles" {
   tags = try(each.value.tags, {})
 }
 
-# Adjuntar políticas MCI genéricas a los roles
+# ============================================================================
+# ATTACHMENTS DINÁMICOS: Políticas MCI escalables
+# ============================================================================
+# Sistema que escala automáticamente con nuevas políticas en el catálogo
+
+# Adjuntar políticas MCI genéricas a los roles (DINÁMICO)
 resource "aws_iam_role_policy_attachment" "mci_policy_attachments" {
   for_each = merge([
     for role_key, role_config in local.roles : {
@@ -278,20 +287,15 @@ resource "aws_iam_role_policy_attachment" "mci_policy_attachments" {
         role_key    = role_key
         policy_name = policy_name
       }
+      # Solo incluir si la política existe en el catálogo
+      if contains(keys(local.mci_policies), policy_name)
     }
   ]...)
 
   role       = module.iam_roles[each.value.role_key].role_name
   
-  # Mapear nombres a ARNs de políticas MCI
-  policy_arn = (
-    each.value.policy_name == "MCI-S3-ReadOnly" ? data.aws_iam_policy.mci_s3_readonly.arn :
-    each.value.policy_name == "MCI-S3-Write" ? data.aws_iam_policy.mci_s3_write.arn :
-    each.value.policy_name == "MCI-Lambda-Invoke" ? data.aws_iam_policy.mci_lambda_invoke.arn :
-    each.value.policy_name == "MCI-DynamoDB-ReadOnly" ? data.aws_iam_policy.mci_dynamodb_readonly.arn :
-    each.value.policy_name == "MCI-DynamoDB-Write" ? data.aws_iam_policy.mci_dynamodb_write.arn :
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/${each.value.policy_name}"
-  )
+  # Mapear dinámicamente a ARNs usando el data source dinámico
+  policy_arn = data.aws_iam_policy.mci_policies[each.value.policy_name].arn
 }
 
 # Adjuntar políticas TAG-BASED a los roles
@@ -327,13 +331,14 @@ output "created_roles" {
 }
 
 output "mci_building_blocks" {
-  description = "Available MCI building block policies"
+  description = "Available MCI building block policies (DYNAMIC)"
   value = {
-    s3_readonly     = data.aws_iam_policy.mci_s3_readonly.arn
-    s3_write        = data.aws_iam_policy.mci_s3_write.arn
-    lambda_invoke   = data.aws_iam_policy.mci_lambda_invoke.arn
-    dynamodb_read   = data.aws_iam_policy.mci_dynamodb_readonly.arn
-    dynamodb_write  = data.aws_iam_policy.mci_dynamodb_write.arn
+    for policy_name, policy_data in data.aws_iam_policy.mci_policies : 
+    policy_name => {
+      policy_name = policy_data.name
+      policy_arn  = policy_data.arn
+      description = local.mci_policies[policy_name].description
+    }
   }
 }
 
