@@ -284,6 +284,7 @@ jobs:
       - name: 📚 Generate IAM Documentation
         run: |
           echo "📚 Generating IAM documentation..."
+          pip install PyYAML
           
           python -c "
           import json
@@ -309,8 +310,10 @@ jobs:
                       f.write(f'- {tag_key}: {tag_value}\n')
                   f.write('\n---\n\n')
           
-          echo '✅ Documentation generated successfully'
+          print('✅ Documentation generated successfully')
           "
+          
+          echo "✅ Documentation generation completed"
 
       - name: 📤 Commit Documentation
         run: |
