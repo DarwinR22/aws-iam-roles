@@ -2,6 +2,31 @@
 # Building blocks approach: Generic policies + Granular roles
 
 locals {
+  # Tags canónicos base para todos los recursos
+  base_canonical_tags = {
+    Ambiente           = "dev"
+    País              = "RG" 
+    Dirección         = "Tecnología"
+    Gerencia          = "MCI"
+    Cuenta            = data.aws_caller_identity.current.account_id
+    Módulo            = "IAM-Roles"
+    "Alcance SOX"     = "No"
+    Propietario       = "DevOps-Team"
+    Proveedor         = "Claro"
+    Layer             = "Security"
+    Dominio           = "Identity"
+    Subdominio        = "IAM"
+    Soporte           = "devops@claro.com"
+    Contacto          = "devops@claro.com"
+    Proyecto          = "ABAC-Framework"
+    "Fechas de Creación" = formatdate("YYYY-MM-DD'T'hh:mm:ssZ", timestamp())
+    "Creado Por"      = "terraform-iac"
+    "Tipo de Recurso" = "IAM-Role"
+    "Ciclo de Vida"   = "Active"
+    Versión           = "2.0"
+    "Map-migrated"    = "mig_role_001"
+  }
+
   # Buscar todos los archivos JSON de roles en gerencias/
   role_files = fileset("${path.root}/../../gerencias", "**/rol-*.json")
 
@@ -216,25 +241,28 @@ module "iam_roles" {
 
   for_each = local.roles
 
-  role_name          = each.value.role_name
-  description        = try(each.value.description, "IAM Role managed by Terraform")
-  assume_role_policy = jsonencode(each.value.trust_policy)
-
+  role_name                = each.value.role_name
+  description              = try(each.value.description, "IAM Role managed by Terraform")
+  trust_policy_document    = jsonencode(each.value.trust_policy)
+  
   # Políticas AWS administradas
-  policy_arns = try(each.value.policies.aws_managed, [])
+  managed_policy_arns = try(each.value.policies.aws_managed, [])
 
-  # Política inline si existe
-  inline_policy = try(each.value.policies.inline != null ? jsonencode(each.value.policies.inline) : null, null)
+  # Políticas inline como mapa
+  inline_policies = try(each.value.policies.inline != null ? {
+    "inline-policy" = jsonencode(each.value.policies.inline)
+  } : {}, {})
 
-  # Tags automáticos por área + tags específicos del rol
-  # Crear tags en orden de prioridad: automáticos primero, JSON del rol sobreescribe
-  tags = merge(
+  # Tags canónicos requeridos
+  canonical_tags = merge(
+    local.base_canonical_tags,
     {
-      # Tags esenciales que NO entran en conflicto con default_tags
-      Name = each.value.role_name
-    },
-    # Tags específicos del rol (desde JSON)
-    try(each.value.tags, {})
+      Name        = each.value.role_name
+      Aplicación  = try(each.value.metadata.aplicacion, "unknown")
+      Ambiente    = try(each.value.metadata.ambiente, "dev")
+      País        = try(each.value.metadata.pais.code, "RG")
+      Gerencia    = try(each.value.metadata.gerencia.code, "MCI")
+    }
   )
 }
 
