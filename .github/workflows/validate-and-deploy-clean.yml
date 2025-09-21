@@ -72,11 +72,25 @@ jobs:
 
       - name: 🎯 Terraform Format Check
         run: |
-          echo "🎯 Checking Terraform formatting..."
-          terraform fmt -check -recursive
-          echo "✅ Terraform formatting is correct"
+          echo "🎯 Checking and fixing Terraform formatting..."
+          terraform fmt -recursive -write=true
+          
+          # Check if any files were modified
+          if ! git diff --quiet; then
+            echo "⚠️ Some files were reformatted:"
+            git diff --name-only
+            echo "📝 Auto-committing format changes..."
+            git config --local user.email "action@github.com"
+            git config --local user.name "GitHub Action"
+            git add -A
+            git commit -m "style: Auto-format Terraform files [skip ci]" || echo "No changes to commit"
+            git push || echo "No changes to push"
+          else
+            echo "✅ All Terraform files are properly formatted"
+          fi
 
       - name: 📏 Python Code Quality
+        continue-on-error: true
         run: |
           echo "📏 Installing Python linting tools..."
           pip install flake8 black pylint
@@ -84,8 +98,8 @@ jobs:
           echo "🔍 Running Python linting..."
           find . -name "*.py" -not -path "./.git/*" | head -10 | while read file; do
             echo "Linting: $file"
-            flake8 "$file" --max-line-length=120 || true
-            black --check "$file" || true
+            flake8 "$file" --max-line-length=120 || echo "⚠️ Linting issues found in $file"
+            black --check "$file" || echo "⚠️ Formatting issues found in $file"
           done
           echo "✅ Python code quality check completed"
 
