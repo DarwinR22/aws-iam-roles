@@ -228,7 +228,14 @@ module "iam_roles" {
 
   # Tags automáticos por área + tags específicos del rol
   # Crear tags en orden de prioridad: automáticos primero, JSON del rol sobreescribe
-  tags = try(each.value.tags, {})
+  tags = merge(
+    {
+      # Tags esenciales que NO entran en conflicto con default_tags
+      Name = each.value.role_name
+    },
+    # Tags específicos del rol (desde JSON)
+    try(each.value.tags, {})
+  )
 }
 
 # Adjuntar políticas MCI genéricas a los roles
