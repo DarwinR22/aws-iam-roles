@@ -10,6 +10,7 @@ Flujo directo y logico:
 4. Crear rol con estructura: rol-<gerencia>-<area>-<aplicacion>-<pais>
 
 Enfoque: Sin menus confusos, preguntas directas paso a paso.
+Integrado con catálogo dinámico de políticas.
 """
 
 import os
@@ -25,6 +26,10 @@ class DynamicRoleCreator:
     def __init__(self):
         self.base_path = Path(__file__).parent.parent  # mci-aws-iam/
         self.gerencias_path = self.base_path / "gerencias"
+        self.catalog_path = self.base_path / "catalog" / "policies.yaml"
+        
+        # Cargar catálogo de políticas dinámicamente
+        self.policies_catalog = self._load_policies_catalog()
         
         # Configuracion base
         self.paises_validos = {
@@ -49,6 +54,43 @@ class DynamicRoleCreator:
             'Operaciones',
             'Finanzas'
         ]
+    
+    def _load_policies_catalog(self):
+        """Cargar catálogo de políticas dinámicamente"""
+        try:
+            if self.catalog_path.exists():
+                with open(self.catalog_path, 'r', encoding='utf-8') as f:
+                    catalog = yaml.safe_load(f)
+                    return catalog.get('policies', {})
+            else:
+                print(f"⚠️ No se encuentra catálogo de políticas: {self.catalog_path}")
+                return {}
+        except Exception as e:
+            print(f"❌ Error cargando catálogo de políticas: {e}")
+            return {}
+    
+    def get_available_mci_policies(self):
+        """Obtener políticas MCI disponibles organizadas por servicio"""
+        mci_policies = {}
+        
+        for policy_name, policy_config in self.policies_catalog.items():
+            # Filtrar solo políticas MCI TagBased
+            if policy_name.startswith('MCI-') and 'TagBased' in policy_name:
+                # Extraer servicio del nombre (ej: MCI-S3-TagBased-ReadOnly -> S3)
+                parts = policy_name.split('-')
+                if len(parts) >= 4:
+                    service = parts[1]
+                    
+                    if service not in mci_policies:
+                        mci_policies[service] = []
+                    
+                    mci_policies[service].append({
+                        'name': policy_name,
+                        'description': policy_config.get('description', 'Sin descripción'),
+                        'sox_required': policy_config.get('canonical_tags', {}).get('Alcance SOX', 'No') == 'Sí'
+                    })
+        
+        return mci_policies
         
         # Cuentas AWS disponibles
         self.cuentas_aws = [
@@ -57,20 +99,8 @@ class DynamicRoleCreator:
             'clarohn-data-analytics-qa'
         ]
         
-        # Building Blocks MCI disponibles (ABAC Tag-Based)
-        self.mci_building_blocks = {
-            'S3': [
-                'MCI-S3-TagBased-ReadOnly',
-                'MCI-S3-TagBased-Write'
-            ],
-            'DynamoDB': [
-                'MCI-DynamoDB-TagBased-ReadOnly', 
-                'MCI-DynamoDB-TagBased-Write'
-            ],
-            'Lambda': [
-                'MCI-Lambda-TagBased-Invoke'
-            ]
-        }
+        # Building Blocks MCI disponibles (AHORA DINÁMICO)
+        # self.mci_building_blocks se reemplaza por get_available_mci_policies()
         
         # AWS Managed Policies comunes
         self.aws_managed_policies = [
@@ -459,17 +489,27 @@ class DynamicRoleCreator:
             except ValueError:
                 print("Formato inválido. Usa números separados por coma.")
         
-        # 2. MCI Building Blocks
+        # 2. MCI Building Blocks (DINÁMICO)
         print(f"\n2. BUILDING BLOCKS MCI (✅ Recomendado):")
+        
+        # Obtener políticas dinámicamente del catálogo
+        mci_policies = self.get_available_mci_policies()
         all_mci_blocks = []
         counter = 1
         
-        for service, blocks in self.mci_building_blocks.items():
-            print(f"\n   {service}:")
-            for block in blocks:
-                print(f"   {counter}) {block}")
-                all_mci_blocks.append(block)
-                counter += 1
+        if mci_policies:
+            for service, policies in mci_policies.items():
+                print(f"\n   {service}:")
+                for policy_info in policies:
+                    policy_name = policy_info['name']
+                    description = policy_info['description']
+                    sox_indicator = " 🛡️SOX" if policy_info['sox_required'] else ""
+                    print(f"   {counter}) {policy_name}{sox_indicator}")
+                    print(f"        📝 {description}")
+                    all_mci_blocks.append(policy_name)
+                    counter += 1
+        else:
+            print("   ⚠️ No hay políticas MCI disponibles en el catálogo")
         
         print(f"   {counter}) Ninguna")
         
@@ -819,15 +859,20 @@ class DynamicRoleCreator:
                             print(f"💡 Tip: ✅ = seleccionada, ⬜ = disponible")
                             print(f"💡 Comportamiento: Seleccionar número agrega/quita la política")
                             
+                            # Obtener políticas dinámicamente del catálogo
+                            mci_policies = self.get_available_mci_policies()
                             all_mci_blocks = []
                             counter = 1
                             
-                            for service, blocks in self.mci_building_blocks.items():
-                                print(f"\n   {service}:")
-                                for block in blocks:
-                                    marcado = "✅" if block in mci_actuales else "⬜"
-                                    print(f"   {counter}) {marcado} {block}")
-                                    all_mci_blocks.append(block)
+                            if mci_policies:
+                                for service, policies in mci_policies.items():
+                                    print(f"\n   {service}:")
+                                    for policy_info in policies:
+                                        policy_name = policy_info['name']
+                                        marcado = "✅" if policy_name in mci_actuales else "⬜"
+                                        sox_indicator = " 🛡️SOX" if policy_info['sox_required'] else ""
+                                        print(f"   {counter}) {marcado} {policy_name}{sox_indicator}")
+                                        all_mci_blocks.append(policy_name)
                                     counter += 1
                             
                             print(f"   {counter}) Limpiar todas las políticas")
