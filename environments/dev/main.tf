@@ -192,17 +192,64 @@ check "validate_unique_tags" {
     EOT
   }
 }# ============================================================================
-# BUILDING BLOCKS: Políticas MCI genéricas (Data Sources DINÁMICOS)
+# BUILDING BLOCKS: Módulos de políticas ABAC
 # ============================================================================
-# Sistema escalable: Se cargan automáticamente desde catalog/policies.yaml
+# Incluir todos los módulos de building blocks para acceso a sus outputs
 
-# Data sources dinámicos para todas las políticas MCI-*-TagBased-*
-data "aws_iam_policy" "mci_policies" {
+module "s3_policies" {
+  source = "../../policy_lib/s3"
+}
+
+module "dynamodb_policies" {
+  source = "../../policy_lib/dynamodb"
+}
+
+module "lambda_policies" {
+  source = "../../policy_lib/lambda"
+}
+
+module "sqs_policies" {
+  source = "../../policy_lib/sqs"
+}
+
+module "commons_policies" {
+  source = "../../policy_lib/commons"
+}
+
+# BUILDING BLOCKS: Políticas MCI genéricas (RECURSOS DINÁMICOS)
+# ============================================================================
+# Sistema escalable: Se crean automáticamente desde catalog/policies.yaml
+
+# Mapping de policy documents a módulos
+locals {
+  policy_documents = {
+    "s3.s3_tag_based_read"              = module.s3_policies.s3_tag_based_read_policy_json
+    "s3.s3_tag_based_write"             = module.s3_policies.s3_tag_based_write_policy_json
+    "dynamodb.dynamodb_tag_based_read"  = module.dynamodb_policies.dynamodb_tag_based_read_policy_json
+    "dynamodb.dynamodb_tag_based_write" = module.dynamodb_policies.dynamodb_tag_based_write_policy_json
+    "lambda.lambda_tag_based_invoke"    = module.lambda_policies.lambda_tag_based_invoke_policy_json
+    "sqs.sqs_tag_based_produce"         = module.sqs_policies.sqs_tag_based_produce_policy_json
+    "sqs.sqs_tag_based_consume"         = module.sqs_policies.sqs_tag_based_consume_policy_json
+    "commons.app_standard_boundary"     = module.commons_policies.app_standard_boundary_policy_json
+    "commons.platform_boundary"         = module.commons_policies.platform_boundary_policy_json
+  }
+}
+
+# Recursos dinámicos para crear todas las políticas MCI-*-TagBased-*
+resource "aws_iam_policy" "mci_policies" {
   for_each = local.mci_policies
-  name     = each.key
   
-  # Solo intentar cargar si la política existe
-  # En caso de error, Terraform mostrará qué políticas faltan crear
+  name        = each.key
+  description = each.value.description
+  
+  # Usar el documento de política desde los módulos building blocks
+  policy = local.policy_documents[each.value.policy_document]
+  
+  # Aplicar tags canónicos desde el catálogo
+  tags = merge(
+    local.base_canonical_tags,
+    each.value.canonical_tags
+  )
 }
 
 # Data source para obtener account ID
@@ -294,8 +341,8 @@ resource "aws_iam_role_policy_attachment" "mci_policy_attachments" {
 
   role       = module.iam_roles[each.value.role_key].role_name
   
-  # Mapear dinámicamente a ARNs usando el data source dinámico
-  policy_arn = data.aws_iam_policy.mci_policies[each.value.policy_name].arn
+  # Mapear dinámicamente a ARNs usando el recurso dinámico
+  policy_arn = aws_iam_policy.mci_policies[each.value.policy_name].arn
 }
 
 # Adjuntar políticas TAG-BASED a los roles
@@ -333,7 +380,7 @@ output "created_roles" {
 output "mci_building_blocks" {
   description = "Available MCI building block policies (DYNAMIC)"
   value = {
-    for policy_name, policy_data in data.aws_iam_policy.mci_policies : 
+    for policy_name, policy_data in aws_iam_policy.mci_policies : 
     policy_name => {
       policy_name = policy_data.name
       policy_arn  = policy_data.arn
