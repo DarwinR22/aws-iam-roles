@@ -26,12 +26,12 @@ locals {
     for role_name, role_data in local.roles : {
       role = role_name
       missing_tags = [
-        for required_tag in ["BusinessTeam", "DeploymentStage", "ProjectCode"] :
+        for required_tag in ["Team", "Environment", "Project"] :
         required_tag if !contains(keys(try(role_data.tags, {})), required_tag)
       ]
     }
     if length([
-      for required_tag in ["BusinessTeam", "DeploymentStage", "ProjectCode"] :
+      for required_tag in ["Team", "Environment", "Project"] :
       required_tag if !contains(keys(try(role_data.tags, {})), required_tag)
     ]) > 0
   ]
@@ -122,13 +122,13 @@ check "validate_required_tags" {
       "  - ${invalid.role}: faltan tags ${join(", ", invalid.missing_tags)}"
     ])}
     
-    🛡️ Todos los roles deben incluir los tags: BusinessTeam, DeploymentStage, ProjectCode
+    🛡️ Todos los roles deben incluir los tags: Team, Environment, Project
     
     Ejemplo correcto en archivo JSON del rol:
     "tags": {
-      "BusinessTeam": "BI-Analytics",
-      "DeploymentStage": "development",
-      "ProjectCode": "DataAnalytics"
+      "Team": "BI-Team",
+      "Environment": "dev",
+      "Project": "DataAnalytics"
     }
     EOT
   }
@@ -232,8 +232,8 @@ module "iam_roles" {
     {
       # Tags esenciales del sistema solamente - sin duplicar conceptos
       Name          = each.value.role_name
-      "Tipo de Recurso" = "IAM Role"
-      "Fecha de Creacion" = formatdate("YYYY-MM-DD", timestamp())
+      ResourceType  = "IAM Role"
+      CreationDate  = formatdate("YYYY-MM-DD", timestamp())
       PolicyType    = "Role"
       ManagedBy     = "Terraform"
     },

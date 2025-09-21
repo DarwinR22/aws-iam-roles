@@ -58,23 +58,23 @@ variable "tags" {
   validation {
     condition = alltrue([
       length(var.tags) > 0,
-      contains(keys(var.tags), "Equipo"),
-      contains(keys(var.tags), "Ambiente"), 
-      contains(keys(var.tags), "Proyecto")
+      contains(keys(var.tags), "Team"),
+      contains(keys(var.tags), "Environment"), 
+      contains(keys(var.tags), "Project")
     ])
     error_message = <<-EOT
     ❌ FALTAN ETIQUETAS OBLIGATORIAS:
     
     Los siguientes tags son OBLIGATORIOS para todos los roles IAM:
-    - Equipo: Nombre del equipo responsable (ej: "BI-Team", "Development-Team")
-    - Ambiente: Entorno de despliegue (ej: "dev", "qa", "prod") 
-    - Proyecto: Nombre del proyecto (ej: "DataAnalytics", "WebPortal")
+    - Team: Nombre del equipo responsable (ej: "BI-Team", "Development-Team")
+    - Environment: Entorno de despliegue (ej: "dev", "qa", "prod") 
+    - Project: Nombre del proyecto (ej: "DataAnalytics", "WebPortal")
     
     Ejemplo correcto:
     "tags": {
-      "Equipo": "BI-Team",
-      "Ambiente": "dev", 
-      "Proyecto": "DataAnalytics"
+      "Team": "BI-Team",
+      "Environment": "dev", 
+      "Project": "DataAnalytics"
     }
     
     🛡️ Estos tags son necesarios para:
@@ -85,7 +85,7 @@ variable "tags" {
   }
 
   validation {
-    condition     = var.tags["Ambiente"] != null ? contains(["dev", "qa", "prod"], var.tags["Ambiente"]) : true
-    error_message = "❌ Tag 'Ambiente' debe ser: 'dev', 'qa' o 'prod'"
+    condition     = var.tags["Environment"] != null ? contains(["dev", "qa", "prod"], var.tags["Environment"]) : true
+    error_message = "❌ Tag 'Environment' debe ser: 'dev', 'qa' o 'prod'"
   }
 }
