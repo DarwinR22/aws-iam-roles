@@ -27,17 +27,8 @@ locals {
   ambiente   = length(local.name_parts) >= 2 ? local.name_parts[length(local.name_parts) - 2] : ""
   nombre     = length(local.name_parts) >= 1 ? local.name_parts[length(local.name_parts) - 1] : ""
 
-  # Tags flexibles - usar valores proporcionados directamente
-  flexible_tags = merge(
-    {
-      # Tags mínimos garantizados (que no suelen estar en JSON de roles)
-      Name                = var.role_name
-      "Tipo de Recurso"   = "IAM Role"
-      "Fecha de Creacion" = formatdate("YYYY-MM-DD", timestamp())
-    },
-    # Todos los tags proporcionados desde el llamador
-    var.tags
-  )
+  # Tags flexibles - usar exactamente los tags proporcionados sin agregar nada más
+  flexible_tags = var.tags
 
   # Validar ambientes permitidos (usar tags flexibles)
   valid_environments = ["dev", "qa", "prod", "poc"]

@@ -15,7 +15,7 @@ locals {
   # Extraer área/gerencia del path del archivo para tags automáticos
   role_areas = {
     for role_file in local.role_files :
-    replace(basename(role_file), ".json", "") => split("/", role_file)[0]
+    replace(basename(role_file), ".json", "") => length(split("/", role_file)) >= 2 ? split("/", role_file)[1] : split("/", role_file)[0]
   }
 
   # ============================================================================
@@ -144,6 +144,11 @@ module "iam_roles" {
   # Crear tags en orden de prioridad: automáticos primero, JSON del rol sobreescribe
   tags = merge(
     {
+      # Tags esenciales del sistema
+      Name          = each.value.role_name
+      "Tipo de Recurso" = "IAM Role"
+      "Fecha de Creacion" = formatdate("YYYY-MM-DD", timestamp())
+      
       # Tags automáticos por área/gerencia
       Area          = local.role_areas[each.key]
       Team          = lookup(var.area_teams, local.role_areas[each.key], "Infrastructure")
