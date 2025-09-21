@@ -47,8 +47,8 @@ variable "canonical_tags" {
       for required_key in [
         "Ambiente", "Pais", "Direccion", "Gerencia", "Cuenta", "Modulo",
         "Alcance SOX", "Propietario", "Proveedor", "Layer", "Dominio", "Subdominio",
-        "Aplicación", "Name", "Soporte", "Contacto", "Proyecto", "Fechas de Creación",
-        "Creado Por", "Tipo de Recurso", "Ciclo de Vida", "Versión", "Map-migrated"
+        "Aplicacion", "Name", "Soporte", "Contacto", "Proyecto", "Fechas de Creacion",
+        "Creado Por", "Tipo de Recurso", "Ciclo de Vida", "Version", "Map-migrated"
       ] : contains(keys(var.canonical_tags), required_key)
     ])
     error_message = "All 23 canonical tags must be present"
@@ -63,7 +63,7 @@ locals {
   auto_completed_tags = merge(
     var.canonical_tags,
     {
-      "Fechas de Creación" = lookup(var.canonical_tags, "Fechas de Creación", local.current_timestamp)
+      "Fechas de Creacion" = lookup(var.canonical_tags, "Fechas de Creacion", local.current_timestamp)
       "Creado Por"         = lookup(var.canonical_tags, "Creado Por", "terraform-iac")
       "Tipo de Recurso"    = lookup(var.canonical_tags, "Tipo de Recurso", "IAM-Policy")
     }
