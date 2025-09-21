@@ -103,7 +103,7 @@ module "iam_roles" {
   # Políticas inline como mapa (si las hay)
   inline_policies = {}
 
-  # Tags canónicos con normalización
+  # Tags canónicos con normalización - COMBINAR base + específicos del archivo
   canonical_tags = merge(
     local.base_canonical_tags,
     {
@@ -112,10 +112,16 @@ module "iam_roles" {
       Ambiente    = try(lower(each.value.metadata.ambiente), "dev")
       Pais        = try(upper(each.value.metadata.pais.code), "RG")
       Gerencia    = try(upper(each.value.metadata.gerencia.code), "MCI")
+    },
+    # NUEVO: Incluir tags específicos del archivo JSON (normalizados)
+    {
+      for k, v in try(each.value.metadata.tags, {}) : k => v
+      # Solo incluir si no es un tag ya definido arriba para evitar conflictos
+      if !contains(["Name", "Aplicacion", "Ambiente", "Pais", "Gerencia"], k)
     }
   )
   
-  # Tags adicionales del rol específico (normalizados)
+  # Tags adicionales del rol específico (ahora vacío ya que se incluyen arriba)
   tags = {}
 }
 
