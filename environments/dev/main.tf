@@ -1,247 +1,490 @@
-# Main configuration for IAM roles deployment - ENTERPRISE ARCHITECTURE# Main configuration for IAM roles deployment - ENTERPRISE ARCHITECTURE
+# Main configuration for IAM roles deployment - ENTERPRISE ARCHITECTURE# Main configuration for IAM roles deployment - ENTERPRISE ARCHITECTURE# Main configuration for IAM roles deployment - ENTERPRISE ARCHITECTURE
+
+# Building blocks approach: Generic policies + Granular roles
 
 # Building blocks approach: Generic policies + Granular roles# Building blocks approach: Generic policies + Granular roles
 
+locals {
 
+  # Convierte CUALQUIER input a lowercase sin espacios ni guiones
 
-locals {locals {
+  normalize_value = function(input) {
 
-  # ============================================================================  # ============================================================================
+    return lower(replace(replace(tostring(input), " ", ""), "-", ""))locals {locals {
 
-  # FUNCIÓN DE NORMALIZACIÓN AUTOMÁTICA  # FUNCIÓN DE NORMALIZACIÓN AUTOMÁTICA
+  }
 
-  # ============================================================================  # ============================================================================
+    # ============================================================================  # ============================================================================
 
-  # Convierte CUALQUIER input a lowercase sin espacios ni guiones  # Convierte CUALQUIER input a lowercase sin espacios ni guiones
+  # Cargar catálogo de políticas dinámicamente
 
-  normalize_value = function(input) {  normalize_value = function(input) {
+  policies_catalog_raw = file("${path.root}/../../catalog/policies.yaml")  # FUNCIÓN DE NORMALIZACIÓN AUTOMÁTICA  # FUNCIÓN DE NORMALIZACIÓN AUTOMÁTICA
 
-    return lower(replace(replace(tostring(input), " ", ""), "-", ""))    return lower(replace(replace(tostring(input), " ", ""), "-", ""))
+  policies_catalog = yamldecode(local.policies_catalog_raw)
 
-  }  }
+    # ============================================================================  # ============================================================================
 
-    
+  # Extraer políticas MCI TagBased automáticamente
 
-  # ============================================================================  # ============================================================================
+  mci_policies = {  # Convierte CUALQUIER input a lowercase sin espacios ni guiones  # Convierte CUALQUIER input a lowercase sin espacios ni guiones
 
-  # DYNAMIC POLICY LOADER  # DYNAMIC POLICY LOADER
+    for policy_name, policy_config in local.policies_catalog.policies : 
 
-  # ============================================================================  # ============================================================================
+    policy_name => policy_config  normalize_value = function(input) {  normalize_value = function(input) {
 
-  # Cargar catálogo de políticas dinámicamente  # Cargar catálogo de políticas dinámicamente
+    if can(regex("^MCI-.+-TagBased-.+$", policy_name))
 
-  policies_catalog_raw = file("${path.root}/../../catalog/policies.yaml")  policies_catalog_raw = file("${path.root}/../../catalog/policies.yaml")
+  }    return lower(replace(replace(tostring(input), " ", ""), "-", ""))    return lower(replace(replace(tostring(input), " ", ""), "-", ""))
 
-  policies_catalog = yamldecode(local.policies_catalog_raw)  policies_catalog = yamldecode(local.policies_catalog_raw)
+  
 
-    
+  # Tags canónicos base para todos los recursos  }  }
 
-  # Extraer políticas MCI TagBased automáticamente  # Extraer políticas MCI TagBased automáticamente
+  base_canonical_tags = {
 
-  mci_policies = {  mci_policies = {
+    Ambiente           = "dev"    
 
-    for policy_name, policy_config in local.policies_catalog.policies :     for policy_name, policy_config in local.policies_catalog.policies : 
+    País              = "rg" 
+
+    Dirección         = "tecnología"  # ============================================================================  # ============================================================================
+
+    Gerencia          = "mci"
+
+    Cuenta            = data.aws_caller_identity.current.account_id  # DYNAMIC POLICY LOADER  # DYNAMIC POLICY LOADER
+
+    Módulo            = "iamroles"
+
+    "Alcance SOX"     = "no"  # ============================================================================  # ============================================================================
+
+    Propietario       = "devopsteam"
+
+    Proveedor         = "claro"  # Cargar catálogo de políticas dinámicamente  # Cargar catálogo de políticas dinámicamente
+
+    Layer             = "security"
+
+    Dominio           = "identity"  policies_catalog_raw = file("${path.root}/../../catalog/policies.yaml")  policies_catalog_raw = file("${path.root}/../../catalog/policies.yaml")
+
+    Subdominio        = "iam"
+
+    Soporte           = "devopsclarocomm"  policies_catalog = yamldecode(local.policies_catalog_raw)  policies_catalog = yamldecode(local.policies_catalog_raw)
+
+    Contacto          = "devopsclarocomm"
+
+    Proyecto          = "abacframework"    
+
+    "Fechas de Creación" = formatdate("YYYY-MM-DD'T'hh:mm:ssZ", timestamp())
+
+    "Creado Por"      = "terraformiac"  # Extraer políticas MCI TagBased automáticamente  # Extraer políticas MCI TagBased automáticamente
+
+    "Tipo de Recurso" = "iamrole"
+
+    "Ciclo de Vida"   = "active"  mci_policies = {  mci_policies = {
+
+    Versión           = "2.0"
+
+    "Map-migrated"    = "migrole001"    for policy_name, policy_config in local.policies_catalog.policies :     for policy_name, policy_config in local.policies_catalog.policies : 
+
+  }
 
     policy_name => policy_config    policy_name => policy_config
 
-    if can(regex("^MCI-.+-TagBased-.+$", policy_name))    if can(regex("^MCI-.+-TagBased-.+$", policy_name))
+  # Buscar archivos JSON de roles
 
-  }  }
+  role_files = fileset("${path.root}/../../gerencias", "**/rol-*.json")    if can(regex("^MCI-.+-TagBased-.+$", policy_name))    if can(regex("^MCI-.+-TagBased-.+$", policy_name))
 
-    
 
-  # Tags canónicos base para todos los recursos (TODO LOWERCASE)  # Tags canónicos base para todos los recursos (TODO LOWERCASE)
+
+  # Procesar archivos de rol válidos  }  }
+
+  roles = {
+
+    for role_file in local.role_files :    
+
+    replace(basename(role_file), ".json", "") => jsondecode(file("${path.root}/../../gerencias/${role_file}"))
+
+    if can(jsondecode(file("${path.root}/../../gerencias/${role_file}")))  # Tags canónicos base para todos los recursos (TODO LOWERCASE)  # Tags canónicos base para todos los recursos (TODO LOWERCASE)
+
+  }
 
   base_canonical_tags = {  base_canonical_tags = {
 
-    Ambiente           = "dev"    Ambiente           = "dev"
+  # Validación de tags obligatorios
 
-    País              = "rg"     País              = "rg" 
+  roles_missing_tags = [    Ambiente           = "dev"    Ambiente           = "dev"
 
-    Dirección         = "tecnología"    Dirección         = "tecnología"
+    for role_name, role_data in local.roles : {
 
-    Gerencia          = "mci"    Gerencia          = "mci"
+      role = role_name    País              = "rg"     País              = "rg" 
 
-    Cuenta            = data.aws_caller_identity.current.account_id    Cuenta            = data.aws_caller_identity.current.account_id
+      missing_tags = [
 
-    Módulo            = "iamroles"    Módulo            = "iamroles"
+        for required_tag in ["Equipo", "Ambiente", "Proyecto"] :    Dirección         = "tecnología"    Dirección         = "tecnología"
 
-    "Alcance SOX"     = "no"    "Alcance SOX"     = "no"
+        required_tag if !contains(keys(try(role_data.metadata.tags, {})), required_tag)
+
+      ]    Gerencia          = "mci"    Gerencia          = "mci"
+
+    }
+
+    if length([    Cuenta            = data.aws_caller_identity.current.account_id    Cuenta            = data.aws_caller_identity.current.account_id
+
+      for required_tag in ["Equipo", "Ambiente", "Proyecto"] :
+
+      required_tag if !contains(keys(try(role_data.metadata.tags, {})), required_tag)    Módulo            = "iamroles"    Módulo            = "iamroles"
+
+    ]) > 0
+
+  ]    "Alcance SOX"     = "no"    "Alcance SOX"     = "no"
+
+}
 
     Propietario       = "devopsteam"    Propietario       = "devopsteam"
 
-    Proveedor         = "claro"    Proveedor         = "claro"
+# Data source para obtener account ID
 
-    Layer             = "security"    Layer             = "security"
+data "aws_caller_identity" "current" {}    Proveedor         = "claro"    Proveedor         = "claro"
 
-    Dominio           = "identity"    Dominio           = "identity"
+
+
+# BUILDING BLOCKS: Módulos de políticas ABAC    Layer             = "security"    Layer             = "security"
+
+module "s3_policies" {
+
+  source = "../../policy_lib/s3"    Dominio           = "identity"    Dominio           = "identity"
+
+}
 
     Subdominio        = "iam"    Subdominio        = "iam"
 
-    Soporte           = "devopsclarocomm"    Soporte           = "devopsclarocomm"
+module "dynamodb_policies" {
+
+  source = "../../policy_lib/dynamodb"    Soporte           = "devopsclarocomm"    Soporte           = "devopsclarocomm"
+
+}
 
     Contacto          = "devopsclarocomm"    Contacto          = "devopsclarocomm"
 
-    Proyecto          = "abacframework"    Proyecto          = "abacframework"
+module "lambda_policies" {
+
+  source = "../../policy_lib/lambda"    Proyecto          = "abacframework"    Proyecto          = "abacframework"
+
+}
 
     "Fechas de Creación" = formatdate("YYYY-MM-DD'T'hh:mm:ssZ", timestamp())    "Fechas de Creación" = formatdate("YYYY-MM-DD'T'hh:mm:ssZ", timestamp())
 
-    "Creado Por"      = "terraformiac"    "Creado Por"      = "terraformiac"
+module "sqs_policies" {
+
+  source = "../../policy_lib/sqs"    "Creado Por"      = "terraformiac"    "Creado Por"      = "terraformiac"
+
+}
 
     "Tipo de Recurso" = "iamrole"    "Tipo de Recurso" = "iamrole"
 
-    "Ciclo de Vida"   = "active"    "Ciclo de Vida"   = "active"
+module "commons_policies" {
+
+  source = "../../policy_lib/commons"    "Ciclo de Vida"   = "active"    "Ciclo de Vida"   = "active"
+
+}
 
     Versión           = "2.0"    Versión           = "2.0"
 
-    "Map-migrated"    = "migrole001"    "Map-migrated"    = "migrole001"
+# Mapeo de documentos de política
 
-  }  }
+locals {    "Map-migrated"    = "migrole001"    "Map-migrated"    = "migrole001"
 
+  policy_documents = {
 
+    "s3.s3_tag_based_read"              = module.s3_policies.s3_tag_based_read_policy_json  }  }
 
-  # Buscar todos los archivos JSON de roles en gerencias/  # Buscar todos los archivos JSON de roles en gerencias/
+    "s3.s3_tag_based_write"             = module.s3_policies.s3_tag_based_write_policy_json
 
-  role_files = fileset("${path.root}/../../gerencias", "**/rol-*.json")  role_files = fileset("${path.root}/../../gerencias", "**/rol-*.json")
+    "dynamodb.dynamodb_tag_based_read"  = module.dynamodb_policies.dynamodb_tag_based_read_policy_json
 
+    "dynamodb.dynamodb_tag_based_write" = module.dynamodb_policies.dynamodb_tag_based_write_policy_json
 
+    "lambda.lambda_tag_based_invoke"    = module.lambda_policies.lambda_tag_based_invoke_policy_json  # Buscar todos los archivos JSON de roles en gerencias/  # Buscar todos los archivos JSON de roles en gerencias/
 
-  # Procesar cada archivo de rol  # Procesar cada archivo de rol
+    "sqs.sqs_tag_based_produce"         = module.sqs_policies.sqs_tag_based_produce_policy_json
 
-  roles = {  roles = {
+    "sqs.sqs_tag_based_consume"         = module.sqs_policies.sqs_tag_based_consume_policy_json  role_files = fileset("${path.root}/../../gerencias", "**/rol-*.json")  role_files = fileset("${path.root}/../../gerencias", "**/rol-*.json")
 
-    for role_file in local.role_files :    for role_file in local.role_files :
+    "commons.app_standard_boundary"     = module.commons_policies.app_standard_boundary_policy_json
 
-    replace(basename(role_file), ".json", "") => jsondecode(file("${path.root}/../../gerencias/${role_file}"))    replace(basename(role_file), ".json", "") => jsondecode(file("${path.root}/../../gerencias/${role_file}"))
+    "commons.platform_boundary"         = module.commons_policies.platform_boundary_policy_json
 
-    if can(jsondecode(file("${path.root}/../../gerencias/${role_file}")))    if can(jsondecode(file("${path.root}/../../gerencias/${role_file}")))
+  }
 
-  }  }
-
-
-
-  # Extraer área/gerencia del path del archivo para tags automáticos  # Extraer área/gerencia del path del archivo para tags automáticos
-
-  role_areas = {  role_areas = {
-
-    for role_file in local.role_files :    for role_file in local.role_files :
-
-    replace(basename(role_file), ".json", "") => lower(length(split("/", role_file)) >= 2 ? split("/", role_file)[1] : split("/", role_file)[0])    replace(basename(role_file), ".json", "") => lower(length(split("/", role_file)) >= 2 ? split("/", role_file)[1] : split("/", role_file)[0])
-
-  }  }
+}  # Procesar cada archivo de rol  # Procesar cada archivo de rol
 
 
 
-  # ============================================================================  # ============================================================================
+# Crear políticas MCI automáticamente  roles = {  roles = {
 
-  # VALIDACIÓN DE TAGS OBLIGATORIOS  # VALIDACIÓN DE TAGS OBLIGATORIOS
+resource "aws_iam_policy" "mci_policies" {
 
-  # ============================================================================  # ============================================================================
+  for_each = local.mci_policies    for role_file in local.role_files :    for role_file in local.role_files :
+
+  
+
+  name        = each.key    replace(basename(role_file), ".json", "") => jsondecode(file("${path.root}/../../gerencias/${role_file}"))    replace(basename(role_file), ".json", "") => jsondecode(file("${path.root}/../../gerencias/${role_file}"))
+
+  description = each.value.description
+
+  policy      = local.policy_documents[each.value.policy_document]    if can(jsondecode(file("${path.root}/../../gerencias/${role_file}")))    if can(jsondecode(file("${path.root}/../../gerencias/${role_file}")))
+
+  
+
+  tags = merge(  }  }
+
+    local.base_canonical_tags,
+
+    each.value.canonical_tags
+
+  )
+
+}  # Extraer área/gerencia del path del archivo para tags automáticos  # Extraer área/gerencia del path del archivo para tags automáticos
+
+
+
+# Validación de tags obligatorios  role_areas = {  role_areas = {
+
+check "validate_required_tags" {
+
+  assert {    for role_file in local.role_files :    for role_file in local.role_files :
+
+    condition = length(local.roles_missing_tags) == 0
+
+    error_message = <<-EOT    replace(basename(role_file), ".json", "") => lower(length(split("/", role_file)) >= 2 ? split("/", role_file)[1] : split("/", role_file)[0])    replace(basename(role_file), ".json", "") => lower(length(split("/", role_file)) >= 2 ? split("/", role_file)[1] : split("/", role_file)[0])
+
+    ❌ ROLES SIN ETIQUETAS OBLIGATORIAS:
+
+      }  }
+
+    ${join("\n", [
+
+      for invalid in local.roles_missing_tags :
+
+      "  - ${invalid.role}: faltan tags ${join(", ", invalid.missing_tags)}"
+
+    ])}  # ============================================================================  # ============================================================================
+
+    
+
+    🛡️ Todos los roles deben incluir los tags: Equipo, Ambiente, Proyecto  # VALIDACIÓN DE TAGS OBLIGATORIOS  # VALIDACIÓN DE TAGS OBLIGATORIOS
+
+    EOT
+
+  }  # ============================================================================  # ============================================================================
+
+}
 
   # Verificar que todos los roles tengan los tags mínimos requeridos  # Verificar que todos los roles tengan los tags mínimos requeridos
 
-  roles_missing_tags = [  roles_missing_tags = [
+# Permission Boundaries
 
-    for role_name, role_data in local.roles : {    for role_name, role_data in local.roles : {
+module "app_standard_boundary" {  roles_missing_tags = [  roles_missing_tags = [
 
-      role = role_name      role = role_name
+  source = "../../modules/iam-managed-policy"
 
-      missing_tags = [      missing_tags = [
+      for role_name, role_data in local.roles : {    for role_name, role_data in local.roles : {
 
-        for required_tag in ["Equipo", "Ambiente", "Proyecto"] :        for required_tag in ["Equipo", "Ambiente", "Proyecto"] :
+  policy_name        = "App-StandardBoundary"
 
-        required_tag if !contains(keys(try(role_data.metadata.tags, {})), required_tag)        required_tag if !contains(keys(try(role_data.metadata.tags, {})), required_tag)
+  policy_description = "Standard permission boundary for application roles"      role = role_name      role = role_name
 
-      ]      ]
+  policy_document    = module.commons_policies.app_standard_boundary_policy_json
 
-    }    }
+        missing_tags = [      missing_tags = [
 
-    if length([    if length([
+  canonical_tags = merge(
 
-      for required_tag in ["Equipo", "Ambiente", "Proyecto"] :      for required_tag in ["Equipo", "Ambiente", "Proyecto"] :
+    local.base_canonical_tags,        for required_tag in ["Equipo", "Ambiente", "Proyecto"] :        for required_tag in ["Equipo", "Ambiente", "Proyecto"] :
 
-      required_tag if !contains(keys(try(role_data.metadata.tags, {})), required_tag)      required_tag if !contains(keys(try(role_data.metadata.tags, {})), required_tag)
+    {
 
-    ]) > 0    ]) > 0
+      Módulo         = "permissionboundaries"        required_tag if !contains(keys(try(role_data.metadata.tags, {})), required_tag)        required_tag if !contains(keys(try(role_data.metadata.tags, {})), required_tag)
 
-  ]  ]
+      "Alcance SOX"  = "sí"
+
+      Aplicación     = "permissionboundaries"      ]      ]
+
+      Dominio        = "permissionboundaries"
+
+      Subdominio     = "application"    }    }
+
+      Proyecto       = "securityframework"
+
+    }    if length([    if length([
+
+  )
+
+}      for required_tag in ["Equipo", "Ambiente", "Proyecto"] :      for required_tag in ["Equipo", "Ambiente", "Proyecto"] :
 
 
 
-  # Generar error si hay roles sin tags - usar validation en data source  # Generar error si hay roles sin tags - usar validation en data source
+module "platform_boundary" {      required_tag if !contains(keys(try(role_data.metadata.tags, {})), required_tag)      required_tag if !contains(keys(try(role_data.metadata.tags, {})), required_tag)
 
-  validate_tags_count = length(local.roles_missing_tags)  validate_tags_count = length(local.roles_missing_tags)
+  source = "../../modules/iam-managed-policy"
+
+      ]) > 0    ]) > 0
+
+  policy_name        = "Platform-Boundary"
+
+  policy_description = "Platform permission boundary for infrastructure roles"  ]  ]
+
+  policy_document    = module.commons_policies.platform_boundary_policy_json
+
+  
+
+  canonical_tags = merge(
+
+    local.base_canonical_tags,  # Generar error si hay roles sin tags - usar validation en data source  # Generar error si hay roles sin tags - usar validation en data source
+
+    {
+
+      Módulo         = "permissionboundaries"  validate_tags_count = length(local.roles_missing_tags)  validate_tags_count = length(local.roles_missing_tags)
+
+      "Alcance SOX"  = "sí"
+
+      Aplicación     = "permissionboundaries"
+
+      Dominio        = "permissionboundaries"
+
+      Subdominio     = "platform"  # Mapping de policy documents a módulos  # ============================================================================
+
+      Proyecto       = "securityframework"
+
+    }  policy_documents = {  # VALIDACIÓN DE TAGS ÚNICOS (case-insensitive)
+
+  )
+
+}    "s3.s3_tag_based_read"              = module.s3_policies.s3_tag_based_read_policy_json  # ============================================================================
 
 
 
-  # Mapping de policy documents a módulos  # ============================================================================
+# Crear roles IAM    "s3.s3_tag_based_write"             = module.s3_policies.s3_tag_based_write_policy_json  # Detectar tags duplicados case-insensitive antes del deploy
 
-  policy_documents = {  # VALIDACIÓN DE TAGS ÚNICOS (case-insensitive)
+module "iam_roles" {
 
-    "s3.s3_tag_based_read"              = module.s3_policies.s3_tag_based_read_policy_json  # ============================================================================
+  source = "../../modules/iam-role"    "dynamodb.dynamodb_tag_based_read"  = module.dynamodb_policies.dynamodb_tag_based_read_policy_json  roles_with_duplicate_tags = [
 
-    "s3.s3_tag_based_write"             = module.s3_policies.s3_tag_based_write_policy_json  # Detectar tags duplicados case-insensitive antes del deploy
-
-    "dynamodb.dynamodb_tag_based_read"  = module.dynamodb_policies.dynamodb_tag_based_read_policy_json  roles_with_duplicate_tags = [
+  for_each = local.roles
 
     "dynamodb.dynamodb_tag_based_write" = module.dynamodb_policies.dynamodb_tag_based_write_policy_json    for role_name, role_data in local.roles : {
 
-    "lambda.lambda_tag_based_invoke"    = module.lambda_policies.lambda_tag_based_invoke_policy_json      role = role_name
+  role_name          = each.value.metadata.role_name
+
+  assume_role_policy = jsonencode(each.value.assume_role_policy)    "lambda.lambda_tag_based_invoke"    = module.lambda_policies.lambda_tag_based_invoke_policy_json      role = role_name
+
+  role_description   = try(each.value.description, "IAM role for ${each.value.metadata.role_name}")
 
     "sqs.sqs_tag_based_produce"         = module.sqs_policies.sqs_tag_based_produce_policy_json      all_tags = merge(
 
-    "sqs.sqs_tag_based_consume"         = module.sqs_policies.sqs_tag_based_consume_policy_json        {
+  permission_boundary_arn = try(each.value.metadata.aplicacion, "") != "" ? module.app_standard_boundary.policy_arn : module.platform_boundary.policy_arn
 
-    "commons.app_standard_boundary"     = module.commons_policies.app_standard_boundary_policy_json          Name = role_data.metadata.role_name
+  managed_policy_arns = try(each.value.metadata.policies.aws_managed, [])    "sqs.sqs_tag_based_consume"         = module.sqs_policies.sqs_tag_based_consume_policy_json        {
 
-    "commons.platform_boundary"         = module.commons_policies.platform_boundary_policy_json          "Tipo de Recurso" = "IAM Role"
 
-  }          "Fecha de Creacion" = formatdate("YYYY-MM-DD", timestamp())
 
-}          PolicyType = "Role"
+  inline_policies = try(each.value.metadata.policies.inline != null ? {    "commons.app_standard_boundary"     = module.commons_policies.app_standard_boundary_policy_json          Name = role_data.metadata.role_name
 
-          ManagedBy = "Terraform"
+    "inline-policy" = jsonencode(each.value.metadata.policies.inline)
 
-# Data source para obtener account ID        },
+  } : {}, {})    "commons.platform_boundary"         = module.commons_policies.platform_boundary_policy_json          "Tipo de Recurso" = "IAM Role"
 
-data "aws_caller_identity" "current" {}        try(role_data.tags, {})
 
-      )
 
-# BUILDING BLOCKS: Módulos de políticas ABAC      tag_keys_lower = [for k in keys(merge(
+  canonical_tags = merge(  }          "Fecha de Creacion" = formatdate("YYYY-MM-DD", timestamp())
 
-# ============================================================================        {
+    local.base_canonical_tags,
 
-# Incluir todos los módulos de building blocks para acceso a sus outputs          Name = role_data.metadata.role_name
+    {}          PolicyType = "Role"
 
-          "Tipo de Recurso" = "IAM Role"
+      Name        = each.value.metadata.role_name
 
-module "s3_policies" {          "Fecha de Creacion" = formatdate("YYYY-MM-DD", timestamp())
+      Aplicación  = local.normalize_value(try(each.value.metadata.aplicacion, "unknown"))          ManagedBy = "Terraform"
 
-  source = "../../policy_lib/s3"          PolicyType = "Role"
+      Ambiente    = local.normalize_value(try(each.value.metadata.ambiente, "dev"))
+
+      País        = local.normalize_value(try(each.value.metadata.pais.code, "rg"))# Data source para obtener account ID        },
+
+      Gerencia    = local.normalize_value(try(each.value.metadata.gerencia.code, "mci"))
+
+    }data "aws_caller_identity" "current" {}        try(role_data.tags, {})
+
+  )
+
+        )
+
+  tags = try(each.value.metadata.tags, {})
+
+}# BUILDING BLOCKS: Módulos de políticas ABAC      tag_keys_lower = [for k in keys(merge(
+
+
+
+# OUTPUTS# ============================================================================        {
+
+output "roles_created" {
+
+  description = "Information about IAM roles created"# Incluir todos los módulos de building blocks para acceso a sus outputs          Name = role_data.metadata.role_name
+
+  value = {
+
+    for k, v in module.iam_roles : k => {          "Tipo de Recurso" = "IAM Role"
+
+      role_name = v.role_name
+
+      role_arn  = v.role_arnmodule "s3_policies" {          "Fecha de Creacion" = formatdate("YYYY-MM-DD", timestamp())
+
+    }
+
+  }  source = "../../policy_lib/s3"          PolicyType = "Role"
+
+}
 
 }          ManagedBy = "Terraform"
 
-        },
+output "mci_building_blocks" {
 
-module "dynamodb_policies" {        try(role_data.tags, {})
+  description = "Available MCI building block policies"        },
 
-  source = "../../policy_lib/dynamodb"      )) : lower(k)]
+  value = {
 
-}      has_duplicates = length(keys(merge(
+    for policy_name, policy_data in aws_iam_policy.mci_policies : module "dynamodb_policies" {        try(role_data.tags, {})
 
-        {
+    policy_name => {
+
+      policy_name = policy_data.name  source = "../../policy_lib/dynamodb"      )) : lower(k)]
+
+      policy_arn  = policy_data.arn
+
+      description = local.mci_policies[policy_name].description}      has_duplicates = length(keys(merge(
+
+    }
+
+  }        {
+
+}
 
 module "lambda_policies" {          Name = role_data.metadata.role_name
 
-  source = "../../policy_lib/lambda"          "Tipo de Recurso" = "IAM Role"
+output "app_standard_boundary_arn" {
 
-}          "Fecha de Creacion" = formatdate("YYYY-MM-DD", timestamp())
+  description = "ARN of the application standard permission boundary"  source = "../../policy_lib/lambda"          "Tipo de Recurso" = "IAM Role"
 
-          PolicyType = "Role"
+  value       = module.app_standard_boundary.policy_arn
 
-module "sqs_policies" {          ManagedBy = "Terraform"
+}}          "Fecha de Creacion" = formatdate("YYYY-MM-DD", timestamp())
 
+
+
+output "platform_boundary_arn" {          PolicyType = "Role"
+
+  description = "ARN of the platform permission boundary"
+
+  value       = module.platform_boundary.policy_arnmodule "sqs_policies" {          ManagedBy = "Terraform"
+
+}
   source = "../../policy_lib/sqs"        },
 
 }        try(role_data.tags, {})
