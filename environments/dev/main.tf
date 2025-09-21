@@ -73,7 +73,7 @@ locals {
       role = role_name
       all_tags = merge(
         {
-          Name = role_data.role_name
+          Name = role_data.metadata.role_name
           "Tipo de Recurso" = "IAM Role"
           "Fecha de Creacion" = formatdate("YYYY-MM-DD", timestamp())
           PolicyType = "Role"
@@ -83,7 +83,7 @@ locals {
       )
       tag_keys_lower = [for k in keys(merge(
         {
-          Name = role_data.role_name
+          Name = role_data.metadata.role_name
           "Tipo de Recurso" = "IAM Role"
           "Fecha de Creacion" = formatdate("YYYY-MM-DD", timestamp())
           PolicyType = "Role"
@@ -93,7 +93,7 @@ locals {
       )) : lower(k)]
       has_duplicates = length(keys(merge(
         {
-          Name = role_data.role_name
+          Name = role_data.metadata.role_name
           "Tipo de Recurso" = "IAM Role"
           "Fecha de Creacion" = formatdate("YYYY-MM-DD", timestamp())
           PolicyType = "Role"
@@ -102,7 +102,7 @@ locals {
         try(role_data.tags, {})
       ))) != length(distinct([for k in keys(merge(
         {
-          Name = role_data.role_name
+          Name = role_data.metadata.role_name
           "Tipo de Recurso" = "IAM Role"
           "Fecha de Creacion" = formatdate("YYYY-MM-DD", timestamp())
           PolicyType = "Role"
@@ -113,7 +113,7 @@ locals {
     }
     if length(keys(merge(
       {
-        Name = role_data.role_name
+        Name = role_data.metadata.role_name
         "Tipo de Recurso" = "IAM Role"
         "Fecha de Creacion" = formatdate("YYYY-MM-DD", timestamp())
         PolicyType = "Role"
@@ -122,7 +122,7 @@ locals {
       try(role_data.tags, {})
     ))) != length(distinct([for k in keys(merge(
       {
-        Name = role_data.role_name
+        Name = role_data.metadata.role_name
         "Tipo de Recurso" = "IAM Role"
         "Fecha de Creacion" = formatdate("YYYY-MM-DD", timestamp())
         PolicyType = "Role"
@@ -241,9 +241,9 @@ module "iam_roles" {
 
   for_each = local.roles
 
-  role_name                = each.value.role_name
-  description              = try(each.value.description, "IAM Role managed by Terraform")
-  trust_policy_document    = jsonencode(each.value.trust_policy)
+  role_name                = each.value.metadata.role_name
+  description              = try(each.value.metadata.description, "IAM Role managed by Terraform")
+  trust_policy_document    = jsonencode(each.value.assume_role_policy)
   
   # Políticas AWS administradas
   managed_policy_arns = try(each.value.policies.aws_managed, [])
@@ -257,7 +257,7 @@ module "iam_roles" {
   canonical_tags = merge(
     local.base_canonical_tags,
     {
-      Name        = each.value.role_name
+      Name        = each.value.metadata.role_name
       Aplicación  = try(each.value.metadata.aplicacion, "unknown")
       Ambiente    = try(each.value.metadata.ambiente, "dev")
       País        = try(each.value.metadata.pais.code, "RG")
