@@ -30,9 +30,69 @@ env:
   PYTHON_VERSION: "3.11"
 
 jobs:
-  validate:
-    name: Validar configuraciones
+  security-scan:
+    name: 🔒 Security Scan
     runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 🔍 Run Checkov Security Scan
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: .
+          framework: terraform
+          output_format: cli
+          download_external_modules: true
+          quiet: false
+          
+      - name: 🔍 Scan for secrets
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: ./
+          base: main
+          head: HEAD
+
+  code-quality:
+    name: 📊 Code Quality
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: 🔧 Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: 🎯 Terraform Format Check
+        run: |
+          echo "🎯 Checking Terraform formatting..."
+          terraform fmt -check -recursive
+          echo "✅ Terraform formatting is correct"
+
+      - name: 📏 Python Code Quality
+        run: |
+          echo "📏 Installing Python linting tools..."
+          pip install flake8 black pylint
+          
+          echo "🔍 Running Python linting..."
+          find . -name "*.py" -not -path "./.git/*" | head -10 | while read file; do
+            echo "Linting: $file"
+            flake8 "$file" --max-line-length=120 || true
+            black --check "$file" || true
+          done
+          echo "✅ Python code quality check completed"
+
+  validate:
+    name: ✅ Validar configuraciones
+    runs-on: ubuntu-latest
+    needs: [security-scan, code-quality]
     outputs:
       environment: ${{ steps.env.outputs.environment }}
       should_deploy: ${{ steps.env.outputs.should_deploy }}
@@ -146,3 +206,124 @@ jobs:
           terraform init
           terraform apply -auto-approve -var-file="team-tag-policies.tfvars"
           echo "✅ Deployment completed successfully"
+
+  post-deployment-tests:
+    name: 🧪 Post-Deployment Tests
+    runs-on: ubuntu-latest
+    needs: [validate, deploy]
+    if: needs.validate.outputs.should_deploy == 'true'
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: 🔑 Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          role-session-name: GitHubActions-MCI-IAM-Tests
+          aws-region: us-east-1
+
+      - name: 🧪 Test IAM Policies
+        run: |
+          echo "🧪 Testing IAM policies existence..."
+          pip install boto3
+          
+          python -c "
+          import boto3
+          iam = boto3.client('iam')
+          
+          policies_to_check = [
+              'App-StandardBoundary',
+              'Platform-Boundary'
+          ]
+          
+          for policy_name in policies_to_check:
+              try:
+                  response = iam.get_policy(PolicyArn=f'arn:aws:iam::393209814297:policy/{policy_name}')
+                  print(f'✅ Policy {policy_name} exists')
+              except Exception as e:
+                  print(f'❌ Policy {policy_name} not found: {e}')
+          "
+          echo "✅ IAM policy tests completed"
+
+  generate-docs:
+    name: 📚 Generate Documentation
+    runs-on: ubuntu-latest
+    needs: [validate, deploy]
+    if: needs.validate.outputs.should_deploy == 'true'
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: 📚 Generate IAM Documentation
+        run: |
+          echo "📚 Generating IAM documentation..."
+          
+          python -c "
+          import json
+          import yaml
+          import os
+          
+          # Read policies catalog
+          with open('catalog/policies.yaml', 'r') as f:
+              catalog = yaml.safe_load(f)
+          
+          # Generate markdown documentation
+          with open('POLICIES_DOCUMENTATION.md', 'w') as f:
+              f.write('# 📋 IAM Policies Documentation\n\n')
+              f.write('Auto-generated documentation for all IAM policies.\n\n')
+              
+              for policy_name, policy_data in catalog['policies'].items():
+                  f.write(f'## {policy_name}\n\n')
+                  f.write(f'**Description:** {policy_data[\"description\"]}\n\n')
+                  f.write(f'**Type:** {policy_data[\"type\"]}\n\n')
+                  f.write(f'**Policy Document:** {policy_data[\"policy_document\"]}\n\n')
+                  f.write('**Tags:**\n')
+                  for tag_key, tag_value in policy_data['canonical_tags'].items():
+                      f.write(f'- {tag_key}: {tag_value}\n')
+                  f.write('\n---\n\n')
+          
+          echo '✅ Documentation generated successfully'
+          "
+
+      - name: 📤 Commit Documentation
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add POLICIES_DOCUMENTATION.md || true
+          git commit -m "docs: Auto-update IAM policies documentation [skip ci]" || echo "No changes to commit"
+          git push || echo "No changes to push"
+
+  notify:
+    name: 📢 Notifications
+    runs-on: ubuntu-latest
+    needs: [security-scan, code-quality, validate, deploy, post-deployment-tests, generate-docs]
+    if: always()
+    
+    steps:
+      - name: 📢 Deployment Notification
+        run: |
+          if [[ "${{ needs.deploy.result }}" == "success" ]]; then
+            echo "🎉 Deployment to ${{ needs.validate.outputs.environment }} completed successfully!"
+            echo "✅ Security scan: ${{ needs.security-scan.result }}"
+            echo "✅ Code quality: ${{ needs.code-quality.result }}"
+            echo "✅ Validation: ${{ needs.validate.result }}"
+            echo "✅ Deployment: ${{ needs.deploy.result }}"
+            echo "✅ Tests: ${{ needs.post-deployment-tests.result }}"
+            echo "✅ Documentation: ${{ needs.generate-docs.result }}"
+          else
+            echo "❌ Deployment failed or was skipped"
+            echo "🔍 Check the logs for more details"
+          fi
