@@ -1,0 +1,66 @@
+{
+  "metadata": {
+    "role_name": "rol-mci-bi-s3-process-rg",
+    "description": "¿Migrado? (Si/No)",
+    "ambiente": "dev",
+    "gerencia": {
+      "code": "MCI",
+      "name": "MCI"
+    },
+    "area": {
+      "code": "bi",
+      "name": "Bi"
+    },
+    "aplicacion": "s3-process",
+    "pais": {
+      "code": "rg",
+      "name": "Regional"
+    },
+    "created_date": "2025-09-21",
+    "tags": {
+      "Ambiente": "dev",
+      "País": "Regional",
+      "Gerencia": "MCI",
+      "Aplicación": "s3-process",
+      "Name": "rol-mci-bi-s3-process-rg",
+      "Fechas de Creación": "2025-09-21",
+      "Tipo de Recurso": "IAM Role",
+      "Dirección": "TI Cenam",
+      "Cuenta": "clarohn-data-analytics-dev",
+      "Módulo": "Aplicacion",
+      "Alcance SOX": "NO",
+      "Propietario": "darwin.lopez@claro.com.gt",
+      "Proveedor": "Inhouse",
+      "Layer": "IA",
+      "Dominio": "BusinessIntelligence",
+      "Subdominio": "Analytics",
+      "Soporte": "darwin.lopez@claro.com.gt",
+      "Contacto": "darwin.lopez@claro.com.gt",
+      "Proyecto": "DataAnalitics",
+      "Creado Por": "Darwin lopez",
+      "Ciclo de Vida": "Creacion",
+      "Versión": "1.0.1",
+      "Map-migrated": "No"
+    }
+  },
+  "assume_role_policy": {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Principal": {
+          "Service": "ec2.amazonaws.com"
+        },
+        "Action": "sts:AssumeRole"
+      }
+    ]
+  },
+  "policies": {
+    "aws_managed": [],
+    "mci_managed": [
+      "MCI-S3-Write",
+      "MCI-DynamoDB-ReadOnly",
+      "MCI-DynamoDB-Write"
+    ]
+  }
+}

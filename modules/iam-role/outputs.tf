@@ -28,21 +28,26 @@ output "role_create_date" {
 }
 
 output "role_tags" {
-  description = "Tags aplicados al rol IAM"
+  description = "Applied tags on the IAM role"
   value       = aws_iam_role.this.tags
 }
 
-output "attached_policies" {
-  description = "Lista de políticas adjuntadas al rol"
-  value       = var.policy_arns
+output "attached_managed_policies" {
+  description = "List of managed policies attached to the role"
+  value       = var.managed_policy_arns
 }
 
-output "role_components" {
-  description = "Componentes extraídos del nombre del rol"
-  value = {
-    servicio = local.servicio
-    layer    = local.layer
-    ambiente = local.ambiente
-    nombre   = local.nombre
-  }
+output "inline_policies" {
+  description = "Map of inline policies attached to the role"
+  value       = var.inline_policies
+}
+
+output "permission_boundary_arn" {
+  description = "ARN of the permission boundary attached to the role"
+  value       = local.effective_boundary_arn
+}
+
+output "canonical_tags" {
+  description = "Canonical tags applied to the role"
+  value       = local.auto_completed_tags
 }

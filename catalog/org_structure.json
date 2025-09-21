@@ -1,0 +1,12 @@
+{
+  "gerencias": {
+    "MCI": {
+      "name": "MCI - Detectada desde filesystem",
+      "areas": {},
+      "creado": "2025-09-20T23:54:07.141378",
+      "origen": "filesystem"
+    }
+  },
+  "version": "1.0",
+  "ultima_actualizacion": "2025-09-20T23:54:07.141580"
+}

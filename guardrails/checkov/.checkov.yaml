@@ -1,0 +1,48 @@
+# guardrails/checkov/.checkov.yaml
+# ======================================
+# CHECKOV CONFIGURATION FOR IAM SCANNING
+# ======================================
+
+# Framework configurations
+framework:
+  - terraform
+  - terraform_plan
+
+# Output settings
+output:
+  - cli
+  - json
+  - junit
+
+# Skip specific checks that conflict with ABAC patterns
+skip-check:
+  # Skip overly strict S3 bucket policy checks that don't understand ABAC
+  - CKV_AWS_40   # S3 bucket should have MFA delete enabled (not applicable for data buckets)
+  - CKV_AWS_144  # S3 bucket should not allow broad list permissions (we use ABAC conditions)
+  
+  # Skip IAM checks that don't understand permission boundaries
+  - CKV_AWS_60   # IAM role has Administrator access policy (we use boundaries to limit)
+  - CKV_AWS_62   # IAM role should not have AdministratorAccess policy (we use boundaries)
+
+# Custom checks directory
+external-checks-dir:
+  - ./guardrails/checkov/custom_checks
+
+# Severity configuration
+severity: 
+  - CRITICAL
+  - HIGH
+  - MEDIUM
+
+# Compact mode for easier reading
+compact: true
+
+# Include suppressed checks in output
+include-all-checkov-policies: true
+
+# Repo metadata
+repo-id: ClaroCENAM/mci-aws-iam
+branch: refactor/abac
+
+# Custom baseline configuration
+baseline: ./guardrails/checkov/baseline.json

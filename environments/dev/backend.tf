@@ -5,8 +5,6 @@ terraform {
     region         = "us-east-1"
     dynamodb_table = "dynamodb-db-dev-terraform-lock"
     encrypt        = true
-
-    # Estructura organizada por gerencia y área
     workspace_key_prefix = "workspaces"
   }
 
@@ -20,22 +18,42 @@ terraform {
   }
 }
 
-# Provider configuration
+# ENTERPRISE AWS PROVIDER WITH CANONICAL TAGS
 provider "aws" {
   region = var.aws_region
 
   default_tags {
     tags = {
-      # Tags fijos para TODOS los recursos (sin conflictos con roles)
-      ManagedBy     = "Terraform"
-      Repository    = "mci-aws-iam"
-      StateLocation = "s3-data-analytics-raw-dev-tfstate"
+      # ALL 23 CANONICAL TAGS (MANDATORY FOR ALL RESOURCES)
+      Ambiente        = "Dev"
+      País            = "GT"
+      Dirección       = "Tecnología"
+      Gerencia        = "MCI"
+      Cuenta          = "393209814297"
+      Módulo          = "IAM-Management"
+      "Alcance SOX"   = "Sí"
+      Propietario     = "Security-Team"
+      Proveedor       = "Claro"
+      Layer           = "Security"
+      Dominio         = "IdentityAccessManagement"
+      Subdominio      = "Roles"
+      Aplicación      = "iam-terraform"
+      Name            = "MCI-IAM-Enterprise"
+      Soporte         = "Security-Team"
+      Contacto        = "security@claro.com"
+      Proyecto        = "IAM-ABAC-Enterprise"
+      "Fechas de Creación" = "2024-01-15T10:00:00Z"
+      "Creado Por"    = "terraform-iac"
+      "Tipo de Recurso" = "IAM-Infrastructure"
+      "Ciclo de Vida" = "Active"
+      Versión         = "2.0"
+      "Map-migrated"  = "mig_iam_enterprise_001"
       
-      # Tags MCI específicos (sin conflictos)
-      pais          = "RG"
-      direccion     = "TICenam"
-      proveedor     = "INHOUSE"
-      creado_por    = "MCI-IAM-System"
+      # Additional management tags
+      ManagedBy       = "Terraform"
+      Repository      = "mci-aws-iam"
+      StateLocation   = "s3://s3-data-analytics-raw-dev-tfstate"
+      TerraformVersion = "1.6.0"
     }
   }
 }

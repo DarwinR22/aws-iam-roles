@@ -1,28 +1,36 @@
-# 🚀 Repositorio IAM AWS - Gestión de Roles y Políticas
+# MCI AWS IAM Enterprise Architecture
 
-[![GitHub Actions](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-blue?logo=github-actions)](https://github.com/ClaroCENAM/mci-aws-iam/actions)
-[![Terraform](https://img.shields.io/badge/Infrastructure-Terraform-purple?logo=terraform)](https://terraform.io)
-[![AWS](https://img.shields.io/badge/Cloud-AWS-orange?logo=amazon-aws)](https://aws.amazon.com)
+[![Terraform CI](https://github.com/ClaroCENAM/mci-aws-iam/workflows/Enterprise%20IAM%20Terraform%20CI/badge.svg)](https://github.com/ClaroCENAM/mci-aws-iam/actions)
+[![Security Scan](https://github.com/ClaroCENAM/mci-aws-iam/workflows/Security%20Validation/badge.svg)](https://github.com/ClaroCENAM/mci-aws-iam/actions)
+[![Drift Detection](https://github.com/ClaroCENAM/mci-aws-iam/workflows/Drift%20Detection/badge.svg)](https://github.com/ClaroCENAM/mci-aws-iam/actions)
 
-## 🎯 **NUEVA ARQUITECTURA TAG-BASED (2025)**
+**Enterprise-grade IAM management with Attribute-Based Access Control (ABAC), automated governance, and comprehensive security guardrails for Claro CENAM.**
 
-### ✨ **Escalabilidad Automática con Tags Inteligentes**
+## 🏗️ Architecture Overview
 
-Este repositorio implementa una **arquitectura tag-based** que escala automáticamente de 4 políticas para 1000+ recursos:
+This repository implements a **zero-trust, tag-based ABAC architecture** for AWS IAM management with enterprise governance and compliance capabilities.
+
+### 📦 **Clean Enterprise Structure**
 
 ```
-🏗️ ARQUITECTURA HÍBRIDA OPTIMIZADA:
-├── 🧱 Building Blocks → MCI-S3-ReadOnly, MCI-DynamoDB-Write, etc.
-├── 🏷️ Tag-Based Policies → Acceso automático por equipos/proyectos  
-└── 📋 Governance → Tags obligatorios, separación automática
+📦 mci-aws-iam/
+├── 🧱 policy_lib/          # ABAC building blocks (S3, DynamoDB, Lambda)
+├── 📋 catalog/             # Single source of truth (roles.yaml, policies.yaml)
+├── 🏢 gerencias/           # Organizational structure with roles
+├── 🔧 modules/             # Terraform enterprise modules  
+├── 🌍 environments/        # Environment-specific configs (dev/qa/prod)
+├── 🛡️ guardrails/          # Security validation & compliance
+├── � ci/                  # GitHub Actions workflows
+├── 📝 docs/                # Enterprise documentation
+└── 🚀 scripts/create_role_dinamico_clean.py  # Role creation tool
 ```
 
-### 🔥 **Beneficios Demostrados:**
-- ✅ **98% menos políticas** → De 200 políticas a 4 inteligentes
-- ✅ **Escalabilidad infinita** → Nueva tabla = acceso automático
-- ✅ **Separación automática** → Tags separan equipos/entornos
-- ✅ **Governance integrada** → Sin tags = sin acceso
-- ✅ **Cost allocation** → Billing automático por equipo
+### 🎯 **Key Features**
+- ✅ **Tag-Based ABAC Policies** → Auto-scaling access control
+- ✅ **Organizational Structure Detection** → Dynamic role management
+- ✅ **25+ Mandatory Tags Governance** → Complete compliance
+- ✅ **Building Blocks Integration** → Reusable MCI policies
+- ✅ **Multi-Environment Support** → dev/qa/prod workflows
 
 ## ✅ Estado del Proyecto
 
