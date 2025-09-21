@@ -13,12 +13,12 @@ module "app_standard_boundary" {
   
   canonical_tags = {
     Ambiente        = "Multi"
-    País            = "RG"
-    Dirección       = "Tecnología"
+    Pais            = "RG"
+    Direccion       = "Tecnologia"
     Gerencia        = "MCI"
     Cuenta          = "393209814297"
-    Módulo          = "PermissionBoundaries"
-    "Alcance SOX"   = "Sí"
+    Modulo          = "PermissionBoundaries"
+    "Alcance SOX"   = "Si"
     Propietario     = "Security-Team"
     Proveedor       = "Claro"
     Layer           = "Security"
@@ -48,12 +48,12 @@ module "platform_boundary" {
   
   canonical_tags = {
     Ambiente        = "Multi"
-    País            = "RG"
-    Dirección       = "Tecnología"
+    Pais            = "RG"
+    Direccion       = "Tecnologia"
     Gerencia        = "MCI"
     Cuenta          = "393209814297"
-    Módulo          = "PermissionBoundaries"
-    "Alcance SOX"   = "Sí"
+    Modulo          = "PermissionBoundaries"
+    "Alcance SOX"   = "Si"
     Propietario     = "Security-Team"
     Proveedor       = "Claro"
     Layer           = "Security"
