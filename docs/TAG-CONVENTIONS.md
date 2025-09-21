@@ -1,13 +1,13 @@
-# 🏷️ Tag Conventions - MCI AWS IAM
+# 🏷️ Convenciones de Tags - MCI AWS IAM
 
-## Overview
+## Descripción
 
-This document establishes strict tag naming conventions to prevent AWS IAM deployment failures due to duplicate or conflicting tag keys.
+Este documento establece convenciones estrictas de nombres de tags para prevenir errores de deployment de AWS IAM debido a claves de tags duplicadas o conflictivas.
 
-## Tag Categories
+## Categorías de Tags
 
-### 🔧 System Tags (Auto-generated)
-These tags are automatically added by Terraform and should NOT be included in role JSON files:
+### 🔧 Tags del Sistema (Auto-generados)
+Estos tags son agregados automáticamente por Terraform y NO deben incluirse en archivos JSON de roles:
 
 ```json
 {
@@ -19,14 +19,14 @@ These tags are automatically added by Terraform and should NOT be included in ro
 }
 ```
 
-### 🏢 Business Tags (Required in JSON)
-These tags must be present in every role JSON file:
+### 🏢 Tags de Negocio (Obligatorios en JSON)
+Estos tags deben estar presentes en cada archivo JSON de rol:
 
 ```json
 {
-  "BusinessTeam": "BI-Analytics",           // Team responsible for the role
-  "DeploymentStage": "development",         // Environment: development, staging, production
-  "ProjectCode": "DataAnalytics"            // Project identifier
+  "Equipo": "BI-Team",           // Equipo responsable del rol
+  "Ambiente": "dev",             // Ambiente: dev, qa, prod
+  "Proyecto": "DataAnalytics"    // Identificador de proyecto
 }
 ```
 
