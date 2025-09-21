@@ -26,18 +26,86 @@ locals {
     for role_name, role_data in local.roles : {
       role = role_name
       missing_tags = [
-        for required_tag in ["Equipo", "Ambiente", "Proyecto"] :
+        for required_tag in ["BusinessTeam", "DeploymentStage", "ProjectCode"] :
         required_tag if !contains(keys(try(role_data.tags, {})), required_tag)
       ]
     }
     if length([
-      for required_tag in ["Equipo", "Ambiente", "Proyecto"] :
+      for required_tag in ["BusinessTeam", "DeploymentStage", "ProjectCode"] :
       required_tag if !contains(keys(try(role_data.tags, {})), required_tag)
     ]) > 0
   ]
 
   # Generar error si hay roles sin tags - usar validation en data source
   validate_tags_count = length(local.roles_missing_tags)
+
+  # ============================================================================
+  # VALIDACIÓN DE TAGS ÚNICOS (case-insensitive)
+  # ============================================================================
+  # Detectar tags duplicados case-insensitive antes del deploy
+  roles_with_duplicate_tags = [
+    for role_name, role_data in local.roles : {
+      role = role_name
+      all_tags = merge(
+        {
+          Name = role_data.role_name
+          "Tipo de Recurso" = "IAM Role"
+          "Fecha de Creacion" = formatdate("YYYY-MM-DD", timestamp())
+          PolicyType = "Role"
+          ManagedBy = "Terraform"
+        },
+        try(role_data.tags, {})
+      )
+      tag_keys_lower = [for k in keys(merge(
+        {
+          Name = role_data.role_name
+          "Tipo de Recurso" = "IAM Role"
+          "Fecha de Creacion" = formatdate("YYYY-MM-DD", timestamp())
+          PolicyType = "Role"
+          ManagedBy = "Terraform"
+        },
+        try(role_data.tags, {})
+      )) : lower(k)]
+      has_duplicates = length(keys(merge(
+        {
+          Name = role_data.role_name
+          "Tipo de Recurso" = "IAM Role"
+          "Fecha de Creacion" = formatdate("YYYY-MM-DD", timestamp())
+          PolicyType = "Role"
+          ManagedBy = "Terraform"
+        },
+        try(role_data.tags, {})
+      ))) != length(distinct([for k in keys(merge(
+        {
+          Name = role_data.role_name
+          "Tipo de Recurso" = "IAM Role"
+          "Fecha de Creacion" = formatdate("YYYY-MM-DD", timestamp())
+          PolicyType = "Role"
+          ManagedBy = "Terraform"
+        },
+        try(role_data.tags, {})
+      )) : lower(k)]))
+    }
+    if length(keys(merge(
+      {
+        Name = role_data.role_name
+        "Tipo de Recurso" = "IAM Role"
+        "Fecha de Creacion" = formatdate("YYYY-MM-DD", timestamp())
+        PolicyType = "Role"
+        ManagedBy = "Terraform"
+      },
+      try(role_data.tags, {})
+    ))) != length(distinct([for k in keys(merge(
+      {
+        Name = role_data.role_name
+        "Tipo de Recurso" = "IAM Role"
+        "Fecha de Creacion" = formatdate("YYYY-MM-DD", timestamp())
+        PolicyType = "Role"
+        ManagedBy = "Terraform"
+      },
+      try(role_data.tags, {})
+    )) : lower(k)]))
+  ]
 }
 
 # ============================================================================
@@ -54,19 +122,37 @@ check "validate_required_tags" {
       "  - ${invalid.role}: faltan tags ${join(", ", invalid.missing_tags)}"
     ])}
     
-    🛡️ Todos los roles deben incluir los tags: Equipo, Ambiente, Proyecto
+    🛡️ Todos los roles deben incluir los tags: BusinessTeam, DeploymentStage, ProjectCode
     
     Ejemplo correcto en archivo JSON del rol:
     "tags": {
-      "Equipo": "BI-Team",
-      "Ambiente": "dev", 
-      "Proyecto": "DataAnalytics"
+      "BusinessTeam": "BI-Analytics",
+      "DeploymentStage": "development",
+      "ProjectCode": "DataAnalytics"
     }
     EOT
   }
 }
 
-# ============================================================================
+# VALIDACIÓN: Check para tags duplicados case-insensitive
+check "validate_unique_tags" {
+  assert {
+    condition = length(local.roles_with_duplicate_tags) == 0
+    error_message = <<-EOT
+    ❌ ROLES CON TAGS DUPLICADOS (case-insensitive):
+    
+    ${join("\n", [
+      for invalid in local.roles_with_duplicate_tags :
+      "  - ${invalid.role}: tiene tags que AWS considera duplicados"
+    ])}
+    
+    🛡️ AWS no permite tags con nombres similares (case-insensitive)
+    Ejemplos de conflictos: Environment vs environment, Team vs team, etc.
+    
+    Usa nomenclatura única y específica para evitar conflictos.
+    EOT
+  }
+}# ============================================================================
 # BUILDING BLOCKS: Políticas MCI genéricas (Data Sources)
 # ============================================================================
 
@@ -235,50 +321,4 @@ output "team_tag_policies" {
       project_name = var.team_tag_policies[k].project_name
     }
   }
-}
-
-# DEBUG OUTPUT: Ver exactamente qué tags se están creando
-output "debug_bi_role_tags" {
-  value = try({
-    role_found = contains(keys(local.roles), "rol-bi-analytics-dev-processor")
-    role_area = try(local.role_areas["rol-bi-analytics-dev-processor"], "NOT_FOUND")
-    json_tags = try(local.roles["rol-bi-analytics-dev-processor"].tags, {})
-    auto_tags = {
-      Name = "rol-bi-analytics-dev-processor"
-      "Tipo de Recurso" = "IAM Role"
-      "Fecha de Creacion" = formatdate("YYYY-MM-DD", timestamp())
-      PolicyType = "Role"
-      ManagedBy = "Terraform"
-    }
-    merged_tags = try(merge(
-      {
-        Name = "rol-bi-analytics-dev-processor"
-        "Tipo de Recurso" = "IAM Role"
-        "Fecha de Creacion" = formatdate("YYYY-MM-DD", timestamp())
-        PolicyType = "Role"
-        ManagedBy = "Terraform"
-      },
-      local.roles["rol-bi-analytics-dev-processor"].tags
-    ), "MERGE_ERROR")
-    tag_keys = try(keys(merge(
-      {
-        Name = "rol-bi-analytics-dev-processor"
-        "Tipo de Recurso" = "IAM Role"
-        "Fecha de Creacion" = formatdate("YYYY-MM-DD", timestamp())
-        PolicyType = "Role"
-        ManagedBy = "Terraform"
-      },
-      local.roles["rol-bi-analytics-dev-processor"].tags
-    )), "KEYS_ERROR")
-    tag_keys_lowercase = try([for k in keys(merge(
-      {
-        Name = "rol-bi-analytics-dev-processor"
-        "Tipo de Recurso" = "IAM Role"
-        "Fecha de Creacion" = formatdate("YYYY-MM-DD", timestamp())
-        PolicyType = "Role"
-        ManagedBy = "Terraform"
-      },
-      local.roles["rol-bi-analytics-dev-processor"].tags
-    )) : lower(k)], "LOWERCASE_ERROR")
-  }, "FULL_ERROR")
 }
