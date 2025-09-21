@@ -45,7 +45,7 @@ variable "canonical_tags" {
   validation {
     condition = alltrue([
       for required_key in [
-        "Ambiente", "País", "Dirección", "Gerencia", "Cuenta", "Módulo",
+        "Ambiente", "Pais", "Direccion", "Gerencia", "Cuenta", "Modulo",
         "Alcance SOX", "Propietario", "Proveedor", "Layer", "Dominio", "Subdominio",
         "Aplicación", "Name", "Soporte", "Contacto", "Proyecto", "Fechas de Creación",
         "Creado Por", "Tipo de Recurso", "Ciclo de Vida", "Versión", "Map-migrated"
