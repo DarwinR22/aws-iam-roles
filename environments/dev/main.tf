@@ -230,16 +230,39 @@ module "iam_roles" {
   # Crear tags en orden de prioridad: automáticos primero, JSON del rol sobreescribe
   tags = merge(
     {
-      # Tags esenciales del sistema solamente - sin duplicar conceptos
-      Name                = each.value.role_name
-      "Tipo de Recurso"   = "IAM Role"
-      "Fecha de Creacion" = formatdate("YYYY-MM-DD", timestamp())
-      PolicyType          = "Role"
-      ManagedBy           = "Terraform"
+      # Tags mínimos absolutamente esenciales
+      Name        = each.value.role_name
+      ManagedBy   = "Terraform"
     },
     # Tags específicos del rol (desde JSON) - estos SOBREESCRIBEN los automáticos
     try(each.value.tags, {})
   )
+  
+  # Debug temporal: verificar si hay duplicados en las keys
+  lifecycle {
+    precondition {
+      condition = length(keys(merge(
+        {
+          Name        = each.value.role_name
+          ManagedBy   = "Terraform"
+        },
+        try(each.value.tags, {})
+      ))) == length(distinct([for k in keys(merge(
+        {
+          Name        = each.value.role_name
+          ManagedBy   = "Terraform"
+        },
+        try(each.value.tags, {})
+      )) : lower(k)]))
+      error_message = "Duplicated tag keys detected (case-insensitive): ${jsonencode(keys(merge(
+        {
+          Name        = each.value.role_name
+          ManagedBy   = "Terraform"
+        },
+        try(each.value.tags, {})
+      )))}"
+    }
+  }
 }
 
 # Adjuntar políticas MCI genéricas a los roles
