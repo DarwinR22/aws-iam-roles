@@ -4,7 +4,25 @@
 locals {
   # ============================================================================
   # DYNAMIC POLICY LOADER
+  # =====================================================  # Tags canónicos requeridos (AUTO-NORMALIZACIÓN a lowercase)
+  canonical_tags = merge(
+    local.base_canonical_tags,
+    {
+      Name        = each.value.metadata.role_name
+      Aplicación  = local.normalize_value(try(each.value.metadata.aplicacion, "unknown"))
+      Ambiente    = local.normalize_value(try(each.value.metadata.ambiente, "dev"))
+      País        = local.normalize_value(try(each.value.metadata.pais.code, "rg"))
+      Gerencia    = local.normalize_value(try(each.value.metadata.gerencia.code, "mci"))
+    }
+  )============
   # ============================================================================
+  # FUNCIÓN DE NORMALIZACIÓN AUTOMÁTICA
+  # ============================================================================
+  # Función para normalizar CUALQUIER input a lowercase sin espacios
+  normalize_value = function(input) {
+    return lower(replace(replace(tostring(input), " ", ""), "-", ""))
+  }
+  
   # Cargar catálogo de políticas dinámicamente
   policies_catalog_raw = file("${path.root}/../../catalog/policies.yaml")
   policies_catalog = yamldecode(local.policies_catalog_raw)
@@ -16,27 +34,27 @@ locals {
     if can(regex("^MCI-.+-TagBased-.+$", policy_name))
   }
   
-  # Tags canónicos base para todos los recursos
+  # Tags canónicos base para todos los recursos (TODO LOWERCASE)
   base_canonical_tags = {
-    Ambiente           = "Dev"
-    País              = "RG" 
-    Dirección         = "Tecnología"
-    Gerencia          = "MCI"
+    Ambiente           = "dev"
+    País              = "rg" 
+    Dirección         = "tecnología"
+    Gerencia          = "mci"
     Cuenta            = data.aws_caller_identity.current.account_id
-    Módulo            = "IamRoles"
-    "Alcance SOX"     = "No"
-    Propietario       = "DevOpsTeam"
-    Proveedor         = "Claro"
-    Layer             = "Security"
-    Dominio           = "Identity"
-    Subdominio        = "Iam"
-    Soporte           = "DevOpsClaroComm"
-    Contacto          = "DevOpsClaroComm"
-    Proyecto          = "AbacFramework"
+    Módulo            = "iamroles"
+    "Alcance SOX"     = "no"
+    Propietario       = "devopsteam"
+    Proveedor         = "claro"
+    Layer             = "security"
+    Dominio           = "identity"
+    Subdominio        = "iam"
+    Soporte           = "devopsclarocomm"
+    Contacto          = "devopsclarocomm"
+    Proyecto          = "abacframework"
     "Fechas de Creación" = formatdate("YYYY-MM-DD'T'hh:mm:ssZ", timestamp())
-    "Creado Por"      = "TerraformIac"
-    "Tipo de Recurso" = "IamRole"
-    "Ciclo de Vida"   = "Active"
+    "Creado Por"      = "terraformiac"
+    "Tipo de Recurso" = "iamrole"
+    "Ciclo de Vida"   = "active"
     Versión           = "2.0"
     "Map-migrated"    = "MigRole001"
   }
@@ -304,15 +322,15 @@ module "iam_roles" {
     "inline-policy" = jsonencode(each.value.policies.inline)
   } : {}, {})
 
-  # Tags canónicos requeridos
+  # Tags canónicos requeridos (TODO LOWERCASE automáticamente)
   canonical_tags = merge(
     local.base_canonical_tags,
     {
       Name        = each.value.metadata.role_name
-      Aplicación  = title(replace(try(each.value.metadata.aplicacion, "Unknown"), "-", ""))
-      Ambiente    = title(try(each.value.metadata.ambiente, "Dev"))
-      País        = try(each.value.metadata.pais.code, "RG")
-      Gerencia    = try(each.value.metadata.gerencia.code, "MCI")
+      Aplicación  = lower(replace(try(each.value.metadata.aplicacion, "unknown"), " ", ""))
+      Ambiente    = lower(try(each.value.metadata.ambiente, "dev"))
+      País        = lower(try(each.value.metadata.pais.code, "rg"))
+      Gerencia    = lower(try(each.value.metadata.gerencia.code, "mci"))
     }
   )
   

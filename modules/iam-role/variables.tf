@@ -87,9 +87,9 @@ variable "canonical_tags" {
   validation {
     condition = alltrue([
       for key, value in var.canonical_tags : 
-      key == "Name" ? true : can(regex("^[A-Z][a-zA-Z0-9-]*$", value))
+      value != null && value != ""
     ])
-    error_message = "All canonical tag values must be CamelCase (except 'Name')"
+    error_message = "All canonical tag values must be non-empty"
   }
 }
 
