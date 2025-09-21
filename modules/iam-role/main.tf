@@ -16,27 +16,6 @@ terraform {
 # DATA SOURCES
 data "aws_caller_identity" "current" {}
 
-# LOCAL CALCULATIONS
-locals {
-  # Merge canonical tags with additional tags
-  final_tags = merge(var.canonical_tags, var.tags)
-  
-  # Permission boundary logic
-  effective_boundary_arn = var.permission_boundary_arn != "" ? var.permission_boundary_arn : "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/App-StandardBoundary"
-  
-  # Tag validation: check for duplicates (case-insensitive)
-  all_tag_keys = concat(keys(var.canonical_tags), keys(var.tags))
-  lowercase_keys = [for k in local.all_tag_keys : lower(k)]
-  unique_keys = toset(local.lowercase_keys)
-  has_duplicates = length(local.lowercase_keys) != length(local.unique_keys)
-  
-  # Tag validation: unauthorized keys (only canonical tags allowed in addition to var.tags)
-  canonical_keys = keys(var.canonical_tags)
-  additional_keys = keys(var.tags)
-  authorized_keys = toset(concat(local.canonical_keys, local.additional_keys))
-  unauthorized_keys = setsubtract(toset(keys(local.final_tags)), local.authorized_keys)
-}
-
 # VALIDATION PRECONDITIONS
 resource "aws_iam_role" "this" {
   lifecycle {

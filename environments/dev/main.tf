@@ -264,6 +264,9 @@ module "iam_roles" {
       Gerencia    = try(each.value.metadata.gerencia.code, "MCI")
     }
   )
+  
+  # Tags adicionales del rol específico
+  tags = try(each.value.tags, {})
 }
 
 # Adjuntar políticas MCI genéricas a los roles
