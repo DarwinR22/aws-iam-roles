@@ -1,10 +1,6 @@
 ﻿# Main configuration for IAM roles deployment
 
 locals {
-  normalize_value = function(input) {
-    return lower(replace(replace(tostring(input), " ", ""), "-", ""))
-  }
-  
   base_canonical_tags = {
     Ambiente = "dev"
     Pais = "rg"
