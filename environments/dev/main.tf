@@ -29,7 +29,7 @@ locals {
     Proveedor         = "Claro"
     Layer             = "Security"
     Dominio           = "Identity"
-    Subdominio        = "IAM"
+    Subdominio        = "Iam"
     Soporte           = "DevOpsClaroComm"
     Contacto          = "DevOpsClaroComm"
     Proyecto          = "AbacFramework"
@@ -66,12 +66,12 @@ locals {
       role = role_name
       missing_tags = [
         for required_tag in ["Equipo", "Ambiente", "Proyecto"] :
-        required_tag if !contains(keys(try(role_data.tags, {})), required_tag)
+        required_tag if !contains(keys(try(role_data.metadata.tags, {})), required_tag)
       ]
     }
     if length([
       for required_tag in ["Equipo", "Ambiente", "Proyecto"] :
-      required_tag if !contains(keys(try(role_data.tags, {})), required_tag)
+      required_tag if !contains(keys(try(role_data.metadata.tags, {})), required_tag)
     ]) > 0
   ]
 
