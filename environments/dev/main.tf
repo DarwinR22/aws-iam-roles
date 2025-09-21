@@ -15,7 +15,7 @@ locals {
   # Extraer área/gerencia del path del archivo para tags automáticos
   role_areas = {
     for role_file in local.role_files :
-    replace(basename(role_file), ".json", "") => length(split("/", role_file)) >= 2 ? split("/", role_file)[1] : split("/", role_file)[0]
+    replace(basename(role_file), ".json", "") => lower(length(split("/", role_file)) >= 2 ? split("/", role_file)[1] : split("/", role_file)[0])
   }
 
   # ============================================================================
@@ -144,23 +144,12 @@ module "iam_roles" {
   # Crear tags en orden de prioridad: automáticos primero, JSON del rol sobreescribe
   tags = merge(
     {
-      # Tags esenciales del sistema
+      # Tags esenciales del sistema solamente - sin duplicar conceptos
       Name          = each.value.role_name
       "Tipo de Recurso" = "IAM Role"
       "Fecha de Creacion" = formatdate("YYYY-MM-DD", timestamp())
-      
-      # Tags automáticos por área/gerencia
-      Area          = local.role_areas[each.key]
-      Team          = lookup(var.area_teams, local.role_areas[each.key], "Infrastructure")
-      CostCenter    = lookup(var.area_cost_centers, local.role_areas[each.key], "IT-INFRA-001")
-      
-      # Tags enterprise estándar
       PolicyType    = "Role"
       ManagedBy     = "Terraform"
-      Environment   = "DEV"
-      
-      # Propietario automático solo si no está en JSON
-      Propietario   = lookup(var.area_owners, local.role_areas[each.key], "DarwinLopez")
     },
     # Tags específicos del rol (desde JSON) - estos SOBREESCRIBEN los automáticos
     try(each.value.tags, {})
@@ -258,26 +247,16 @@ output "debug_bi_role_tags" {
       Name = "rol-bi-analytics-dev-processor"
       "Tipo de Recurso" = "IAM Role"
       "Fecha de Creacion" = formatdate("YYYY-MM-DD", timestamp())
-      Area = try(local.role_areas["rol-bi-analytics-dev-processor"], "NOT_FOUND")
-      Team = "Infrastructure"
-      CostCenter = "IT-INFRA-001"
       PolicyType = "Role"
       ManagedBy = "Terraform"
-      Environment = "DEV"
-      Propietario = "DarwinLopez"
     }
     merged_tags = try(merge(
       {
         Name = "rol-bi-analytics-dev-processor"
         "Tipo de Recurso" = "IAM Role"
         "Fecha de Creacion" = formatdate("YYYY-MM-DD", timestamp())
-        Area = local.role_areas["rol-bi-analytics-dev-processor"]
-        Team = "Infrastructure"
-        CostCenter = "IT-INFRA-001"
         PolicyType = "Role"
         ManagedBy = "Terraform"
-        Environment = "DEV"
-        Propietario = "DarwinLopez"
       },
       local.roles["rol-bi-analytics-dev-processor"].tags
     ), "MERGE_ERROR")
@@ -286,13 +265,8 @@ output "debug_bi_role_tags" {
         Name = "rol-bi-analytics-dev-processor"
         "Tipo de Recurso" = "IAM Role"
         "Fecha de Creacion" = formatdate("YYYY-MM-DD", timestamp())
-        Area = local.role_areas["rol-bi-analytics-dev-processor"]
-        Team = "Infrastructure"
-        CostCenter = "IT-INFRA-001"
         PolicyType = "Role"
         ManagedBy = "Terraform"
-        Environment = "DEV"
-        Propietario = "DarwinLopez"
       },
       local.roles["rol-bi-analytics-dev-processor"].tags
     )), "KEYS_ERROR")
@@ -301,13 +275,8 @@ output "debug_bi_role_tags" {
         Name = "rol-bi-analytics-dev-processor"
         "Tipo de Recurso" = "IAM Role"
         "Fecha de Creacion" = formatdate("YYYY-MM-DD", timestamp())
-        Area = local.role_areas["rol-bi-analytics-dev-processor"]
-        Team = "Infrastructure"
-        CostCenter = "IT-INFRA-001"
         PolicyType = "Role"
         ManagedBy = "Terraform"
-        Environment = "DEV"
-        Propietario = "DarwinLopez"
       },
       local.roles["rol-bi-analytics-dev-processor"].tags
     )) : lower(k)], "LOWERCASE_ERROR")

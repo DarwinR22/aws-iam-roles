@@ -11,6 +11,7 @@ area_owners = {
   "operaciones" = "cesar.calmo@mci.com"
   "auditoria"   = "jorge.rubio@mci.com"
   "legal"       = "osmar.pineda@mci.com"
+  "bi"          = "darwin.lopez@mci.com"
 }
 
 # Equipos por area
@@ -23,6 +24,7 @@ area_teams = {
   "operaciones" = "Operations-Team"
   "auditoria"   = "Audit-Team"
   "legal"       = "Legal-Team"
+  "bi"          = "BI-Team"
 }
 
 # Centros de costos por area
@@ -35,4 +37,5 @@ area_cost_centers = {
   "operaciones" = "OPS-006"
   "auditoria"   = "AUDIT-007"
   "legal"       = "LEGAL-008"
+  "bi"          = "BI-009"
 }
