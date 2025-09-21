@@ -3,26 +3,16 @@
 
 locals {
   # ============================================================================
-  # DYNAMIC POLICY LOADER
-  # =====================================================  # Tags canónicos requeridos (AUTO-NORMALIZACIÓN a lowercase)
-  canonical_tags = merge(
-    local.base_canonical_tags,
-    {
-      Name        = each.value.metadata.role_name
-      Aplicación  = local.normalize_value(try(each.value.metadata.aplicacion, "unknown"))
-      Ambiente    = local.normalize_value(try(each.value.metadata.ambiente, "dev"))
-      País        = local.normalize_value(try(each.value.metadata.pais.code, "rg"))
-      Gerencia    = local.normalize_value(try(each.value.metadata.gerencia.code, "mci"))
-    }
-  )============
-  # ============================================================================
   # FUNCIÓN DE NORMALIZACIÓN AUTOMÁTICA
   # ============================================================================
-  # Función para normalizar CUALQUIER input a lowercase sin espacios
+  # Convierte CUALQUIER input a lowercase sin espacios ni guiones
   normalize_value = function(input) {
     return lower(replace(replace(tostring(input), " ", ""), "-", ""))
   }
   
+  # ============================================================================
+  # DYNAMIC POLICY LOADER
+  # ============================================================================
   # Cargar catálogo de políticas dinámicamente
   policies_catalog_raw = file("${path.root}/../../catalog/policies.yaml")
   policies_catalog = yamldecode(local.policies_catalog_raw)
@@ -48,6 +38,16 @@ locals {
     Layer             = "security"
     Dominio           = "identity"
     Subdominio        = "iam"
+    Soporte           = "devopsclarocomm"
+    Contacto          = "devopsclarocomm"
+    Proyecto          = "abacframework"
+    "Fechas de Creación" = formatdate("YYYY-MM-DD'T'hh:mm:ssZ", timestamp())
+    "Creado Por"      = "terraformiac"
+    "Tipo de Recurso" = "iamrole"
+    "Ciclo de Vida"   = "active"
+    Versión           = "2.0"
+    "Map-migrated"    = "migrole001"
+  }
     Soporte           = "devopsclarocomm"
     Contacto          = "devopsclarocomm"
     Proyecto          = "abacframework"
@@ -322,15 +322,15 @@ module "iam_roles" {
     "inline-policy" = jsonencode(each.value.policies.inline)
   } : {}, {})
 
-  # Tags canónicos requeridos (TODO LOWERCASE automáticamente)
+  # Tags canónicos requeridos (AUTO-NORMALIZACIÓN a lowercase)
   canonical_tags = merge(
     local.base_canonical_tags,
     {
       Name        = each.value.metadata.role_name
-      Aplicación  = lower(replace(try(each.value.metadata.aplicacion, "unknown"), " ", ""))
-      Ambiente    = lower(try(each.value.metadata.ambiente, "dev"))
-      País        = lower(try(each.value.metadata.pais.code, "rg"))
-      Gerencia    = lower(try(each.value.metadata.gerencia.code, "mci"))
+      Aplicación  = local.normalize_value(try(each.value.metadata.aplicacion, "unknown"))
+      Ambiente    = local.normalize_value(try(each.value.metadata.ambiente, "dev"))
+      País        = local.normalize_value(try(each.value.metadata.pais.code, "rg"))
+      Gerencia    = local.normalize_value(try(each.value.metadata.gerencia.code, "mci"))
     }
   )
   
