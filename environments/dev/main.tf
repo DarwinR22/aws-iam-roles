@@ -247,3 +247,69 @@ output "team_tag_policies" {
     }
   }
 }
+
+# DEBUG OUTPUT: Ver exactamente qué tags se están creando
+output "debug_bi_role_tags" {
+  value = try({
+    role_found = contains(keys(local.roles), "rol-bi-analytics-dev-processor")
+    role_area = try(local.role_areas["rol-bi-analytics-dev-processor"], "NOT_FOUND")
+    json_tags = try(local.roles["rol-bi-analytics-dev-processor"].tags, {})
+    auto_tags = {
+      Name = "rol-bi-analytics-dev-processor"
+      "Tipo de Recurso" = "IAM Role"
+      "Fecha de Creacion" = formatdate("YYYY-MM-DD", timestamp())
+      Area = try(local.role_areas["rol-bi-analytics-dev-processor"], "NOT_FOUND")
+      Team = "Infrastructure"
+      CostCenter = "IT-INFRA-001"
+      PolicyType = "Role"
+      ManagedBy = "Terraform"
+      Environment = "DEV"
+      Propietario = "DarwinLopez"
+    }
+    merged_tags = try(merge(
+      {
+        Name = "rol-bi-analytics-dev-processor"
+        "Tipo de Recurso" = "IAM Role"
+        "Fecha de Creacion" = formatdate("YYYY-MM-DD", timestamp())
+        Area = local.role_areas["rol-bi-analytics-dev-processor"]
+        Team = "Infrastructure"
+        CostCenter = "IT-INFRA-001"
+        PolicyType = "Role"
+        ManagedBy = "Terraform"
+        Environment = "DEV"
+        Propietario = "DarwinLopez"
+      },
+      local.roles["rol-bi-analytics-dev-processor"].tags
+    ), "MERGE_ERROR")
+    tag_keys = try(keys(merge(
+      {
+        Name = "rol-bi-analytics-dev-processor"
+        "Tipo de Recurso" = "IAM Role"
+        "Fecha de Creacion" = formatdate("YYYY-MM-DD", timestamp())
+        Area = local.role_areas["rol-bi-analytics-dev-processor"]
+        Team = "Infrastructure"
+        CostCenter = "IT-INFRA-001"
+        PolicyType = "Role"
+        ManagedBy = "Terraform"
+        Environment = "DEV"
+        Propietario = "DarwinLopez"
+      },
+      local.roles["rol-bi-analytics-dev-processor"].tags
+    )), "KEYS_ERROR")
+    tag_keys_lowercase = try([for k in keys(merge(
+      {
+        Name = "rol-bi-analytics-dev-processor"
+        "Tipo de Recurso" = "IAM Role"
+        "Fecha de Creacion" = formatdate("YYYY-MM-DD", timestamp())
+        Area = local.role_areas["rol-bi-analytics-dev-processor"]
+        Team = "Infrastructure"
+        CostCenter = "IT-INFRA-001"
+        PolicyType = "Role"
+        ManagedBy = "Terraform"
+        Environment = "DEV"
+        Propietario = "DarwinLopez"
+      },
+      local.roles["rol-bi-analytics-dev-processor"].tags
+    )) : lower(k)], "LOWERCASE_ERROR")
+  }, "FULL_ERROR")
+}
