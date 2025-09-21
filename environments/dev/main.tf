@@ -7,10 +7,10 @@ locals {
 
   base_canonical_tags = {
     Ambiente = "dev"
-    País = "rg" 
+    Pais = "rg" 
     Gerencia = "mci"
     Cuenta = data.aws_caller_identity.current.account_id
-    Módulo = "iamroles"
+    Modulo = "iamroles"
   }
 }
 
