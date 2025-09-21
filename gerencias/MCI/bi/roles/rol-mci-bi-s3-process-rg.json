@@ -13,7 +13,7 @@
     },
     "aplicacion": "s3-process",
     "pais": {
-      "code": "rg",
+      "code": "RG",
       "name": "Regional"
     },
     "created_date": "2025-09-21",
@@ -58,9 +58,14 @@
   "policies": {
     "aws_managed": [],
     "mci_managed": [
-      "MCI-S3-Write",
-      "MCI-DynamoDB-ReadOnly",
-      "MCI-DynamoDB-Write"
+      "MCI-S3-TagBased-Write",
+      "MCI-DynamoDB-TagBased-ReadOnly",
+      "MCI-DynamoDB-TagBased-Write"
     ]
+  },
+  "tags": {
+    "Equipo": "BI-Team",
+    "Ambiente": "dev",
+    "Proyecto": "DataProcessing"
   }
 }

@@ -114,6 +114,53 @@ class DynamicRoleCreator:
         # Detectar estructura existente
         self.detectar_estructura_existente()
 
+    def normalize_to_camelcase(self, text):
+        """
+        Convierte cualquier texto a CamelCase compatible con validaciones Terraform.
+        
+        Ejemplos:
+        - 'mi-aplicacion' -> 'MiAplicacion'
+        - 'data analytics' -> 'DataAnalytics'
+        - 'FINANZAS' -> 'Finanzas'
+        - 'bi_team' -> 'BiTeam'
+        """
+        if not text or not isinstance(text, str):
+            return text
+            
+        # Limpiar y separar palabras
+        import re
+        
+        # Reemplazar caracteres especiales por espacios
+        clean_text = re.sub(r'[_\-\s]+', ' ', text.strip())
+        
+        # Dividir en palabras y convertir a CamelCase
+        words = clean_text.split()
+        camelcase_words = []
+        
+        for word in words:
+            if word:
+                # Primera letra mayuscula, resto minuscula
+                camelcase_word = word[0].upper() + word[1:].lower()
+                camelcase_words.append(camelcase_word)
+        
+        return ''.join(camelcase_words)
+
+    def normalize_tags_to_camelcase(self, tags_dict):
+        """Normaliza todos los valores de tags a CamelCase (excepto 'Name')."""
+        if not isinstance(tags_dict, dict):
+            return tags_dict
+            
+        normalized_tags = {}
+        for key, value in tags_dict.items():
+            if key == 'Name':
+                # El tag Name no se normaliza
+                normalized_tags[key] = value
+            else:
+                # Normalizar valor a CamelCase
+                normalized_tags[key] = self.normalize_to_camelcase(str(value))
+        
+        return normalized_tags
+
     def print_banner(self):
         """Banner simple y claro."""
         print(f"\n" + "=" * 50)
@@ -644,9 +691,9 @@ class DynamicRoleCreator:
                                 nuevo_ambiente = ambientes_list[amb_choice - 1]
                                 if nuevo_ambiente != rol_actual['metadata']['ambiente']:
                                     rol_actual['metadata']['ambiente'] = nuevo_ambiente
-                                    # Actualizar también en tags
+                                    # Actualizar también en tags (normalizado a CamelCase)
                                     if 'tags' in rol_actual['metadata']:
-                                        rol_actual['metadata']['tags']['Ambiente'] = nuevo_ambiente
+                                        rol_actual['metadata']['tags']['Ambiente'] = self.normalize_to_camelcase(nuevo_ambiente)
                                     cambios_realizados = True
                                     print(f"✅ Ambiente actualizado a: {nuevo_ambiente}")
                                     
@@ -870,7 +917,9 @@ class DynamicRoleCreator:
                                 if nuevo_valor and len(nuevo_valor) >= 2:
                                     if 'tags' not in rol_actual['metadata']:
                                         rol_actual['metadata']['tags'] = {}
-                                    rol_actual['metadata']['tags'][tag_name] = nuevo_valor
+                                    # Normalizar valor a CamelCase (excepto Name)
+                                    valor_normalizado = nuevo_valor if tag_name == 'Name' else self.normalize_to_camelcase(nuevo_valor)
+                                    rol_actual['metadata']['tags'][tag_name] = valor_normalizado
                                     cambios_realizados = True
                                     print(f"✅ Tag '{tag_name}' actualizado")
                                     
@@ -1164,6 +1213,9 @@ class DynamicRoleCreator:
                         break
                     print(f"Valor muy corto para {key}")
             
+            # Normalizar tags a CamelCase antes de asignar
+            tags_normalizados = self.normalize_tags_to_camelcase(tags_obligatorios)
+            
             # Metadata del rol completa
             metadata = {
                 "role_name": info_rol['nombre_rol'],
@@ -1183,7 +1235,7 @@ class DynamicRoleCreator:
                     "name": info_rol['pais_name']
                 },
                 "created_date": "2025-09-21",
-                "tags": tags_obligatorios,
+                "tags": tags_normalizados,
                 "policies": []
             }
             

@@ -13,7 +13,7 @@
     },
     "aplicacion": "s3-dev",
     "pais": {
-      "code": "rg",
+      "code": "RG",
       "name": "Regional"
     },
     "created_date": "2025-09-21",
@@ -31,5 +31,10 @@
       }
     ]
   },
-  "policies": []
+  "policies": [],
+  "tags": {
+    "Equipo": "BI-Team",
+    "Ambiente": "dev", 
+    "Proyecto": "DataAnalytics"
+  }
 }

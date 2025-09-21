@@ -182,23 +182,23 @@ check "validate_unique_tags" {
 # ============================================================================
 
 data "aws_iam_policy" "mci_s3_readonly" {
-  name = "MCI-S3-ReadOnly"
+  name = "MCI-S3-TagBased-ReadOnly"
 }
 
 data "aws_iam_policy" "mci_s3_write" {
-  name = "MCI-S3-Write"
+  name = "MCI-S3-TagBased-Write"
 }
 
 data "aws_iam_policy" "mci_lambda_invoke" {
-  name = "MCI-Lambda-Invoke"
+  name = "MCI-Lambda-TagBased-Invoke"
 }
 
 data "aws_iam_policy" "mci_dynamodb_readonly" {
-  name = "MCI-DynamoDB-ReadOnly"
+  name = "MCI-DynamoDB-TagBased-ReadOnly"
 }
 
 data "aws_iam_policy" "mci_dynamodb_write" {
-  name = "MCI-DynamoDB-Write"
+  name = "MCI-DynamoDB-TagBased-Write"
 }
 
 # Data source para obtener account ID
