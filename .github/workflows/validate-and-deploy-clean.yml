@@ -7,6 +7,8 @@ on:
       - '**/*.json'
       - '**/*.tf'
       - '**/*.tfvars'
+      - '**/*.yaml'
+      - '**/*.yml'
       - '.github/workflows/**'
   
   workflow_dispatch:
