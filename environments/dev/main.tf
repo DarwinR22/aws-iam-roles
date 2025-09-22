@@ -93,12 +93,12 @@ module "iam_roles" {
 
   for_each = local.roles
 
-  role_name             = each.value.metadata.role_name
-  description           = try(each.value.metadata.description, "IAM Role managed by Terraform")
-  trust_policy_document = jsonencode(each.value.assume_role_policy)
+  role_name             = each.value.role_name
+  description           = try(each.value.description, "IAM Role managed by Terraform")
+  trust_policy_document = jsonencode(each.value.trust_policy)
   
   # Politicas AWS administradas
-  managed_policy_arns = try(each.value.policies, [])
+  managed_policy_arns = try(each.value.policies.aws_managed, [])
 
   # Politicas inline como mapa (si las hay)
   inline_policies = {}
@@ -107,7 +107,7 @@ module "iam_roles" {
   canonical_tags = merge(
     local.base_canonical_tags,
     {
-      Name        = each.value.metadata.role_name
+      Name        = each.value.role_name
       Aplicacion  = try(lower(each.value.metadata.aplicacion), "unknown")
       Ambiente    = try(lower(each.value.metadata.ambiente), "dev")
       Pais        = try(upper(each.value.metadata.pais.code), "RG")
