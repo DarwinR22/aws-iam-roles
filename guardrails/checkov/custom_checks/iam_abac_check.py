@@ -113,10 +113,10 @@ class IAMCanonicalTagsCheck(BaseResourceCheck):
         Validates that IAM resources have all 23 canonical tags
         """
         required_tags = [
-            "Ambiente", "País", "Dirección", "Gerencia", "Cuenta", "Módulo",
+            "Ambiente", "Pais", "Direccion", "Gerencia", "Cuenta", "Modulo",
             "Alcance SOX", "Propietario", "Proveedor", "Layer", "Dominio", "Subdominio",
-            "Aplicación", "Name", "Soporte", "Contacto", "Proyecto", "Fechas de Creación",
-            "Creado Por", "Tipo de Recurso", "Ciclo de Vida", "Versión", "Map-migrated"
+            "Aplicacion", "Name", "Soporte", "Contacto", "Proyecto", "Fechas de Creacion",
+            "Creado Por", "Tipo de Recurso", "Ciclo de Vida", "Version", "Map-migrated"
         ]
         
         tags = conf.get('tags', [{}])[0]
@@ -131,8 +131,8 @@ class IAMCanonicalTagsCheck(BaseResourceCheck):
         if missing_tags:
             return CheckResult.FAILED
             
-        # Validate País tag value
-        pais = tags.get('País', '')
+        # Validate Pais tag value
+        pais = tags.get('Pais', '')
         valid_countries = ['GT', 'SV', 'HN', 'NI', 'CR', 'RG']
         if pais not in valid_countries:
             return CheckResult.FAILED

@@ -1,11 +1,11 @@
 ﻿# Main configuration for IAM roles deployment
 
 locals {
-  # Cargar catálogo de políticas
+  # Cargar catalogo de politicas
   policies_catalog_raw = file("${path.root}/../../catalog/policies.yaml")
   policies_catalog = yamldecode(local.policies_catalog_raw)
   
-  # Extraer políticas MCI TagBased
+  # Extraer politicas MCI TagBased
   mci_policies = {
     for policy_name, policy_config in local.policies_catalog.policies : 
     policy_name => policy_config
@@ -51,7 +51,7 @@ locals {
 
 data "aws_caller_identity" "current" {}
 
-# Crear políticas MCI TagBased
+# Crear politicas MCI TagBased
 resource "aws_iam_policy" "mci_policies" {
   for_each = local.mci_policies
   
@@ -65,11 +65,11 @@ resource "aws_iam_policy" "mci_policies" {
   )
 }
 
-# Generar documentos de política dinámicamente
+# Generar documentos de politica dinamicamente
 data "aws_iam_policy_document" "mci_policies" {
   for_each = local.mci_policies
   
-  # Ejemplo básico - necesitarías expandir según tus policy_lib modules
+  # Ejemplo basico - necesitarias expandir segun tus policy_lib modules
   statement {
     effect = "Allow"
     actions = ["s3:GetObject"] # Placeholder - usar policy_document real
@@ -87,7 +87,7 @@ data "aws_iam_policy_document" "mci_policies" {
 # IAM ROLES CREATION
 # ============================================================================
 
-# Crear roles IAM dinámicamente
+# Crear roles IAM dinamicamente
 module "iam_roles" {
   source = "../../modules/iam-role"
 
@@ -97,13 +97,13 @@ module "iam_roles" {
   description           = try(each.value.metadata.description, "IAM Role managed by Terraform")
   trust_policy_document = jsonencode(each.value.assume_role_policy)
   
-  # Políticas AWS administradas
+  # Politicas AWS administradas
   managed_policy_arns = try(each.value.policies, [])
 
-  # Políticas inline como mapa (si las hay)
+  # Politicas inline como mapa (si las hay)
   inline_policies = {}
 
-  # Tags canónicos con normalización - COMBINAR base + específicos del archivo
+  # Tags canonicos con normalizacion - COMBINAR base + especificos del archivo
   canonical_tags = merge(
     local.base_canonical_tags,
     {
@@ -113,7 +113,7 @@ module "iam_roles" {
       Pais        = try(upper(each.value.metadata.pais.code), "RG")
       Gerencia    = try(upper(each.value.metadata.gerencia.code), "MCI")
     },
-    # NUEVO: Incluir tags específicos del archivo JSON (normalizados)
+    # NUEVO: Incluir tags especificos del archivo JSON (normalizados)
     {
       for k, v in try(each.value.metadata.tags, {}) : k => v
       # Solo incluir si no es un tag ya definido arriba para evitar conflictos
@@ -121,7 +121,7 @@ module "iam_roles" {
     }
   )
   
-  # Tags adicionales del rol específico (ahora vacío ya que se incluyen arriba)
+  # Tags adicionales del rol especifico (ahora vacio ya que se incluyen arriba)
   tags = {}
 }
 
@@ -130,7 +130,7 @@ module "iam_roles" {
 # ============================================================================
 
 output "created_policies" {
-  description = "Lista de políticas IAM creadas"
+  description = "Lista de politicas IAM creadas"
   value = {
     for k, v in aws_iam_policy.mci_policies : k => {
       name = v.name

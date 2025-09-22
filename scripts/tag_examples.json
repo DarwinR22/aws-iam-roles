@@ -1,6 +1,6 @@
 {
   "role_name": "rol-example-backend-dev-template",
-  "description": "Archivo de ejemplo para validar tags - NO USAR EN PRODUCCIÓN",
+  "description": "Archivo de ejemplo para validar tags - NO USAR EN PRODUCCIoN",
   "trust_policy": {
     "Version": "2012-10-17",
     "Statement": [
@@ -24,9 +24,9 @@
     "direccion": "Gerencia de TI - Data Analytics",
     "gerencia": "Data Analytics & AI",
     "cuenta": "dev-analytics-account",
-    "modulo": "Aplicación",
+    "modulo": "Aplicacion",
     "alcance_sox": "No",
-    "propietario": "Juan Pérez",
+    "propietario": "Juan Perez",
     "proveedor": "Inhouse",
     "layer": "backend",
     "dominio": "Analytics",
@@ -36,7 +36,7 @@
     "contacto": "data-engineering@empresa.com",
     "proyecto": "PROJ-2024-ANALYTICS",
     "creado_por": "juan.perez@empresa.com",
-    "ciclo_vida": "Implementación",
+    "ciclo_vida": "Implementacion",
     "version": "1.0.0"
   }
 }

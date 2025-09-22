@@ -1,14 +1,14 @@
 # policy_lib/s3/path_based_read_write.tf
 # ================================================
 # S3 Path-Based Read/Write Policy Building Block
-# Para acceso específico a rutas de S3
+# Para acceso especifico a rutas de S3
 # ================================================
 
 locals {
   s3_path_based_read_write_policy = {
     Version = "2012-10-17"
     Statement = [
-      # Permisos para listar bucket (necesario para navegación)
+      # Permisos para listar bucket (necesario para navegacion)
       {
         Sid    = "S3ListBucket"
         Effect = "Allow"
@@ -23,7 +23,7 @@ locals {
           }
         }
       },
-      # Permisos de lectura en la ruta específica
+      # Permisos de lectura en la ruta especifica
       {
         Sid    = "S3ReadObjects"
         Effect = "Allow"
@@ -34,7 +34,7 @@ locals {
         ]
         Resource = "${var.s3_bucket_arn}/${var.s3_path_prefix}*"
       },
-      # Permisos de escritura en la ruta específica
+      # Permisos de escritura en la ruta especifica
       {
         Sid    = "S3WriteObjects"
         Effect = "Allow"
@@ -64,6 +64,6 @@ variable "s3_path_prefix" {
 
 # Output del policy JSON
 output "s3_path_based_read_write_policy_json" {
-  description = "Policy JSON para acceso específico a ruta S3"
+  description = "Policy JSON para acceso especifico a ruta S3"
   value       = jsonencode(local.s3_path_based_read_write_policy)
 }

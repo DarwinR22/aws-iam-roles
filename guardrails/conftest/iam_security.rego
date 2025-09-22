@@ -45,10 +45,10 @@ deny contains msg if {
     resource.type in ["aws_iam_role", "aws_iam_policy"]
     
     required_tags := [
-        "Ambiente", "País", "Dirección", "Gerencia", "Cuenta", "Módulo",
+        "Ambiente", "Pais", "Direccion", "Gerencia", "Cuenta", "Modulo",
         "Alcance SOX", "Propietario", "Proveedor", "Layer", "Dominio", "Subdominio",
-        "Aplicación", "Name", "Soporte", "Contacto", "Proyecto", "Fechas de Creación",
-        "Creado Por", "Tipo de Recurso", "Ciclo de Vida", "Versión", "Map-migrated"
+        "Aplicacion", "Name", "Soporte", "Contacto", "Proyecto", "Fechas de Creacion",
+        "Creado Por", "Tipo de Recurso", "Ciclo de Vida", "Version", "Map-migrated"
     ]
     
     resource_tags := object.get(resource.change.after, "tags", {})
@@ -67,12 +67,12 @@ deny contains msg if {
     resource.type in ["aws_iam_role", "aws_iam_policy"]
     resource_tags := object.get(resource.change.after, "tags", {})
     
-    # Check País value
-    pais := object.get(resource_tags, "País", "")
+    # Check Pais value
+    pais := object.get(resource_tags, "Pais", "")
     pais != ""
     not pais in ["GT", "SV", "HN", "NI", "CR", "RG"]
     
-    msg := sprintf("IAM Resource '%s' has invalid 'País' tag value '%s'. Must be one of: GT, SV, HN, NI, CR, RG", [resource.address, pais])
+    msg := sprintf("IAM Resource '%s' has invalid 'Pais' tag value '%s'. Must be one of: GT, SV, HN, NI, CR, RG", [resource.address, pais])
 }
 
 # REQUIRE TRUST POLICY CONDITIONS FOR SERVICE ROLES

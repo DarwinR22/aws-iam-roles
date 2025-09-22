@@ -69,8 +69,8 @@ data "aws_iam_policy_document" "glue_tag_based_read" {
     
     condition {
       test     = "StringEquals"
-      variable = "aws:ResourceTag/Aplicación"
-      values   = ["$${aws:PrincipalTag/Aplicación}"]
+      variable = "aws:ResourceTag/Aplicacion"
+      values   = ["$${aws:PrincipalTag/Aplicacion}"]
     }
   }
   
@@ -171,8 +171,8 @@ data "aws_iam_policy_document" "glue_tag_based_execute" {
     
     condition {
       test     = "StringEquals"
-      variable = "aws:ResourceTag/Aplicación"
-      values   = ["$${aws:PrincipalTag/Aplicación}"]
+      variable = "aws:ResourceTag/Aplicacion"
+      values   = ["$${aws:PrincipalTag/Aplicacion}"]
     }
   }
   
@@ -222,8 +222,8 @@ data "aws_iam_policy_document" "glue_tag_based_execute" {
     
     condition {
       test     = "StringEquals"
-      variable = "aws:ResourceTag/Aplicación"
-      values   = ["$${aws:PrincipalTag/Aplicación}"]
+      variable = "aws:ResourceTag/Aplicacion"
+      values   = ["$${aws:PrincipalTag/Aplicacion}"]
     }
   }
   
@@ -293,8 +293,8 @@ data "aws_iam_policy_document" "glue_tag_based_execute" {
     
     condition {
       test     = "StringEquals"
-      variable = "aws:ResourceTag/Aplicación"
-      values   = ["$${aws:PrincipalTag/Aplicación}"]
+      variable = "aws:ResourceTag/Aplicacion"
+      values   = ["$${aws:PrincipalTag/Aplicacion}"]
     }
   }
 }

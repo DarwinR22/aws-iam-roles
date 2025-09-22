@@ -3,16 +3,16 @@
 """
 ENTERPRISE POLICY MANAGEMENT SYSTEM
 ====================================
-Sistema completo CRUD para gestión de políticas IAM
-Maneja el catálogo catalog/policies.yaml de forma dinámica
+Sistema completo CRUD para gestion de politicas IAM
+Maneja el catalogo catalog/policies.yaml de forma dinamica
 
 Capacidades:
-✅ Crear nuevas políticas
-✅ Editar políticas existentes  
-✅ Eliminar políticas obsoletas
-✅ Listar y buscar políticas
+✅ Crear nuevas politicas
+✅ Editar politicas existentes  
+✅ Eliminar politicas obsoletas
+✅ Listar y buscar politicas
 ✅ Validar formatos y duplicados
-✅ Auto-normalización CamelCase
+✅ Auto-normalizacion CamelCase
 """
 
 import yaml
@@ -23,19 +23,19 @@ from datetime import datetime
 from typing import Dict, List, Optional, Any
 import re
 
-# Configuración de paths
+# Configuracion de paths
 POLICIES_CATALOG = os.path.join(os.path.dirname(__file__), '..', 'catalog', 'policies.yaml')
 POLICY_BLOCKS_DIR = os.path.join(os.path.dirname(__file__), '..', 'policy-blocks')
 
 class PolicyManager:
-    """Gestor completo de políticas empresariales"""
+    """Gestor completo de politicas empresariales"""
     
     def __init__(self):
         self.catalog_path = POLICIES_CATALOG
         self.policies_data = self._load_catalog()
         
     def _load_catalog(self) -> Dict[str, Any]:
-        """Cargar catálogo de políticas"""
+        """Cargar catalogo de politicas"""
         try:
             if os.path.exists(self.catalog_path):
                 with open(self.catalog_path, 'r', encoding='utf-8') as f:
@@ -43,11 +43,11 @@ class PolicyManager:
             else:
                 return {"policies": {}, "policy_blocks": {}}
         except Exception as e:
-            print(f"❌ Error cargando catálogo: {e}")
+            print(f"❌ Error cargando catalogo: {e}")
             return {"policies": {}, "policy_blocks": {}}
     
     def _save_catalog(self):
-        """Guardar cambios al catálogo"""
+        """Guardar cambios al catalogo"""
         try:
             os.makedirs(os.path.dirname(self.catalog_path), exist_ok=True)
             with open(self.catalog_path, 'w', encoding='utf-8') as f:
@@ -56,9 +56,9 @@ class PolicyManager:
                          allow_unicode=True, 
                          sort_keys=False,
                          indent=2)
-            print(f"✅ Catálogo actualizado: {self.catalog_path}")
+            print(f"✅ Catalogo actualizado: {self.catalog_path}")
         except Exception as e:
-            print(f"❌ Error guardando catálogo: {e}")
+            print(f"❌ Error guardando catalogo: {e}")
     
     def normalize_to_camelcase(self, text: str) -> str:
         """Normalizar texto a CamelCase"""
@@ -67,23 +67,23 @@ class PolicyManager:
         
         # Remover caracteres especiales y espacios, dividir por delimitadores
         words = re.split(r'[_\-\s@.]+', str(text).strip())
-        words = [word for word in words if word]  # Filtrar vacíos
+        words = [word for word in words if word]  # Filtrar vacios
         
         if not words:
             return text
         
-        # Primera palabra capitalizada, resto también
+        # Primera palabra capitalizada, resto tambien
         camel_case = ''.join(word.capitalize() for word in words)
         return camel_case
     
     def _validate_policy_name(self, name: str) -> bool:
-        """Validar formato de nombre de política"""
+        """Validar formato de nombre de politica"""
         # MCI-Service-TagBased-Action
         pattern = r'^MCI-[A-Z][a-zA-Z0-9]+-TagBased-[A-Z][a-zA-Z0-9]+$'
         return bool(re.match(pattern, name))
     
     def _get_available_policy_blocks(self) -> List[str]:
-        """Obtener bloques de políticas disponibles"""
+        """Obtener bloques de politicas disponibles"""
         blocks = []
         if os.path.exists(POLICY_BLOCKS_DIR):
             for root, dirs, files in os.walk(POLICY_BLOCKS_DIR):
@@ -95,7 +95,7 @@ class PolicyManager:
         return sorted(blocks)
     
     def _generate_canonical_tags(self, policy_name: str, service: str, action: str) -> Dict[str, str]:
-        """Generar tags canónicos para nueva política"""
+        """Generar tags canonicos para nueva politica"""
         service_modules = {
             'S3': 'StorageAccess',
             'DynamoDB': 'DatabaseAccess', 
@@ -120,46 +120,46 @@ class PolicyManager:
         
         return {
             "Ambiente": "Multi",
-            "País": "RG",
-            "Dirección": "Tecnología",
+            "Pais": "RG",
+            "Direccion": "Tecnologia",
             "Gerencia": "MCI",
             "Cuenta": "393209814297",
-            "Módulo": service_modules.get(service, "GeneralAccess"),
-            "Alcance SOX": "Sí" if sox_required else "No",
+            "Modulo": service_modules.get(service, "GeneralAccess"),
+            "Alcance SOX": "Si" if sox_required else "No",
             "Propietario": "SecurityTeam",
             "Proveedor": "Claro",
             "Layer": "Security",
             "Dominio": service_domains.get(service, "GeneralAccess"),
             "Subdominio": service,
-            "Aplicación": "AbacPolicies",
+            "Aplicacion": "AbacPolicies",
             "Name": policy_name,
             "Soporte": "SecurityTeam",
             "Contacto": "SecurityClaroComm",
             "Proyecto": "AbacFramework",
-            "Fechas de Creación": datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "Fechas de Creacion": datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ"),
             "Creado Por": "TerraformIac",
             "Tipo de Recurso": "IamPolicy",
             "Ciclo de Vida": "monitoreoymantenimiento",
-            "Versión": "2.0",
+            "Version": "2.0",
             "Map-migrated": f"mig_{service.lower()}_policy_{len(self.policies_data['policies']) + 1:03d}"
         }
     
     def list_policies(self, filter_service: Optional[str] = None):
-        """Listar todas las políticas con filtros opcionales"""
+        """Listar todas las politicas con filtros opcionales"""
         policies = self.policies_data.get('policies', {})
         
         if not policies:
-            print("📋 No hay políticas registradas")
+            print("📋 No hay politicas registradas")
             return
         
-        print(f"\n📋 CATÁLOGO DE POLÍTICAS ({len(policies)} total)")
+        print(f"\n📋 CATaLOGO DE POLiTICAS ({len(policies)} total)")
         print("=" * 70)
         
         for name, policy in policies.items():
             if filter_service and filter_service.lower() not in name.lower():
                 continue
                 
-            description = policy.get('description', 'Sin descripción')
+            description = policy.get('description', 'Sin descripcion')
             policy_type = policy.get('type', 'unknown')
             service = name.split('-')[1] if '-' in name else 'Unknown'
             sox = policy.get('canonical_tags', {}).get('Alcance SOX', 'No')
@@ -171,7 +171,7 @@ class PolicyManager:
             print()
     
     def search_policies(self, query: str):
-        """Buscar políticas por nombre, servicio o descripción"""
+        """Buscar politicas por nombre, servicio o descripcion"""
         query = query.lower()
         results = []
         
@@ -182,50 +182,50 @@ class PolicyManager:
                 results.append((name, policy))
         
         if not results:
-            print(f"🔍 No se encontraron políticas con: '{query}'")
+            print(f"🔍 No se encontraron politicas con: '{query}'")
             return
         
-        print(f"\n🔍 RESULTADOS DE BÚSQUEDA: '{query}' ({len(results)} encontradas)")
+        print(f"\n🔍 RESULTADOS DE BuSQUEDA: '{query}' ({len(results)} encontradas)")
         print("=" * 70)
         
         for name, policy in results:
-            print(f"✅ {name}: {policy.get('description', 'Sin descripción')}")
+            print(f"✅ {name}: {policy.get('description', 'Sin descripcion')}")
     
     def create_policy(self):
-        """Crear nueva política interactivamente"""
-        print("\n🆕 CREAR NUEVA POLÍTICA")
+        """Crear nueva politica interactivamente"""
+        print("\n🆕 CREAR NUEVA POLiTICA")
         print("=" * 50)
         
         # Inputs del usuario
-        print("\n1️⃣ Información básica:")
+        print("\n1️⃣ Informacion basica:")
         service = input("Servicio (ej: S3, DynamoDB, Lambda): ").strip()
         if not service:
             print("❌ El servicio es obligatorio")
             return
         
-        action = input("Acción (ej: ReadOnly, Write, Invoke): ").strip()
+        action = input("Accion (ej: ReadOnly, Write, Invoke): ").strip()
         if not action:
-            print("❌ La acción es obligatoria")
+            print("❌ La accion es obligatoria")
             return
         
-        # Generar nombre de política
+        # Generar nombre de politica
         service_norm = self.normalize_to_camelcase(service)
         action_norm = self.normalize_to_camelcase(action)
         policy_name = f"MCI-{service_norm}-TagBased-{action_norm}"
         
         # Verificar duplicados
         if policy_name in self.policies_data.get('policies', {}):
-            print(f"❌ La política '{policy_name}' ya existe")
+            print(f"❌ La politica '{policy_name}' ya existe")
             return
         
         print(f"\n📝 Nombre generado: {policy_name}")
         
-        description = input("Descripción: ").strip()
+        description = input("Descripcion: ").strip()
         if not description:
             description = f"{service} {action.lower()} access based on matching resource tags with principal tags"
         
         # Mostrar bloques disponibles
-        print("\n2️⃣ Bloques de políticas disponibles:")
+        print("\n2️⃣ Bloques de politicas disponibles:")
         available_blocks = self._get_available_policy_blocks()
         
         if available_blocks:
@@ -241,14 +241,14 @@ class PolicyManager:
             except:
                 policy_document = f"{service.lower()}.{service.lower()}_tag_based_{action.lower()}"
         else:
-            policy_document = input("Bloque de política (ej: s3.s3_tag_based_read): ").strip()
+            policy_document = input("Bloque de politica (ej: s3.s3_tag_based_read): ").strip()
             if not policy_document:
                 policy_document = f"{service.lower()}.{service.lower()}_tag_based_{action.lower()}"
         
-        # Generar tags canónicos
+        # Generar tags canonicos
         canonical_tags = self._generate_canonical_tags(policy_name, service_norm, action_norm)
         
-        # Crear estructura de política
+        # Crear estructura de politica
         new_policy = {
             "description": description,
             "type": "managed",
@@ -257,15 +257,15 @@ class PolicyManager:
         }
         
         # Mostrar resumen
-        print(f"\n📋 RESUMEN DE NUEVA POLÍTICA:")
+        print(f"\n📋 RESUMEN DE NUEVA POLiTICA:")
         print(f"   🏷️  Nombre: {policy_name}")
-        print(f"   📝 Descripción: {description}")
+        print(f"   📝 Descripcion: {description}")
         print(f"   📦 Block: {policy_document}")
         print(f"   🛡️  SOX: {canonical_tags['Alcance SOX']}")
         
-        confirm = input("\n✅ ¿Crear esta política? (s/N): ").strip().lower()
+        confirm = input("\n✅ ¿Crear esta politica? (s/N): ").strip().lower()
         if confirm in ['s', 'si', 'y', 'yes']:
-            # Agregar al catálogo
+            # Agregar al catalogo
             if 'policies' not in self.policies_data:
                 self.policies_data['policies'] = {}
             
@@ -280,53 +280,53 @@ class PolicyManager:
                 self.policies_data['policy_blocks'][block_key] = policy_document
             
             self._save_catalog()
-            print(f"✅ Política '{policy_name}' creada exitosamente")
+            print(f"✅ Politica '{policy_name}' creada exitosamente")
         else:
-            print("❌ Creación cancelada")
+            print("❌ Creacion cancelada")
     
     def edit_policy(self):
-        """Editar política existente"""
+        """Editar politica existente"""
         policies = self.policies_data.get('policies', {})
         if not policies:
-            print("📋 No hay políticas para editar")
+            print("📋 No hay politicas para editar")
             return
         
-        print("\n✏️ EDITAR POLÍTICA")
+        print("\n✏️ EDITAR POLiTICA")
         print("=" * 50)
         
-        # Mostrar políticas disponibles
+        # Mostrar politicas disponibles
         policy_list = list(policies.keys())
         for i, name in enumerate(policy_list, 1):
             print(f"   {i}. {name}")
         
         try:
-            choice = input(f"\nSelecciona política (1-{len(policy_list)}): ").strip()
+            choice = input(f"\nSelecciona politica (1-{len(policy_list)}): ").strip()
             if not choice.isdigit() or not (1 <= int(choice) <= len(policy_list)):
-                print("❌ Selección inválida")
+                print("❌ Seleccion invalida")
                 return
             
             policy_name = policy_list[int(choice) - 1]
             policy = policies[policy_name]
             
         except:
-            print("❌ Selección inválida")
+            print("❌ Seleccion invalida")
             return
         
         print(f"\n📝 Editando: {policy_name}")
-        print(f"   Descripción actual: {policy.get('description', 'N/A')}")
+        print(f"   Descripcion actual: {policy.get('description', 'N/A')}")
         print(f"   Block actual: {policy.get('policy_document', 'N/A')}")
         
-        # Opciones de edición
-        print("\n¿Qué deseas editar?")
-        print("   1. Descripción")
+        # Opciones de edicion
+        print("\n¿Que deseas editar?")
+        print("   1. Descripcion")
         print("   2. Policy Block")
-        print("   3. Tags canónicos")
+        print("   3. Tags canonicos")
         print("   4. Todo")
         
-        edit_choice = input("Selecciona opción (1-4): ").strip()
+        edit_choice = input("Selecciona opcion (1-4): ").strip()
         
         if edit_choice == "1" or edit_choice == "4":
-            new_description = input(f"Nueva descripción [{policy.get('description', '')}]: ").strip()
+            new_description = input(f"Nueva descripcion [{policy.get('description', '')}]: ").strip()
             if new_description:
                 policy['description'] = new_description
         
@@ -342,12 +342,12 @@ class PolicyManager:
                 policy['policy_document'] = new_block
         
         if edit_choice == "3" or edit_choice == "4":
-            print("\n🏷️ Editando tags canónicos:")
+            print("\n🏷️ Editando tags canonicos:")
             tags = policy.get('canonical_tags', {})
             
             for key, value in tags.items():
-                if key in ['Name', 'Fechas de Creación', 'Creado Por']:
-                    continue  # No editar estos campos automáticos
+                if key in ['Name', 'Fechas de Creacion', 'Creado Por']:
+                    continue  # No editar estos campos automaticos
                 
                 new_value = input(f"{key} [{value}]: ").strip()
                 if new_value:
@@ -355,69 +355,69 @@ class PolicyManager:
         
         # Actualizar timestamp
         if 'canonical_tags' in policy:
-            policy['canonical_tags']['Fechas de Creación'] = datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
+            policy['canonical_tags']['Fechas de Creacion'] = datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
         
         self._save_catalog()
-        print(f"✅ Política '{policy_name}' actualizada exitosamente")
+        print(f"✅ Politica '{policy_name}' actualizada exitosamente")
     
     def delete_policy(self):
-        """Eliminar política"""
+        """Eliminar politica"""
         policies = self.policies_data.get('policies', {})
         if not policies:
-            print("📋 No hay políticas para eliminar")
+            print("📋 No hay politicas para eliminar")
             return
         
-        print("\n🗑️ ELIMINAR POLÍTICA")
+        print("\n🗑️ ELIMINAR POLiTICA")
         print("=" * 50)
-        print("⚠️ ADVERTENCIA: Esta acción es irreversible")
+        print("⚠️ ADVERTENCIA: Esta accion es irreversible")
         
-        # Mostrar políticas disponibles
+        # Mostrar politicas disponibles
         policy_list = list(policies.keys())
         for i, name in enumerate(policy_list, 1):
-            desc = policies[name].get('description', 'Sin descripción')
+            desc = policies[name].get('description', 'Sin descripcion')
             print(f"   {i}. {name} - {desc}")
         
         try:
-            choice = input(f"\nSelecciona política a eliminar (1-{len(policy_list)}): ").strip()
+            choice = input(f"\nSelecciona politica a eliminar (1-{len(policy_list)}): ").strip()
             if not choice.isdigit() or not (1 <= int(choice) <= len(policy_list)):
-                print("❌ Selección inválida")
+                print("❌ Seleccion invalida")
                 return
             
             policy_name = policy_list[int(choice) - 1]
             
         except:
-            print("❌ Selección inválida")
+            print("❌ Seleccion invalida")
             return
         
-        print(f"\n⚠️ ¿Estás SEGURO de eliminar '{policy_name}'?")
-        print("   Esta política puede estar siendo usada por roles existentes.")
+        print(f"\n⚠️ ¿Estas SEGURO de eliminar '{policy_name}'?")
+        print("   Esta politica puede estar siendo usada por roles existentes.")
         
         confirm = input("Escribe 'CONFIRMAR' para eliminar: ").strip()
         if confirm == "CONFIRMAR":
             del self.policies_data['policies'][policy_name]
             self._save_catalog()
-            print(f"✅ Política '{policy_name}' eliminada exitosamente")
+            print(f"✅ Politica '{policy_name}' eliminada exitosamente")
         else:
-            print("❌ Eliminación cancelada")
+            print("❌ Eliminacion cancelada")
 
 def main():
-    """Función principal con menú interactivo"""
+    """Funcion principal con menu interactivo"""
     manager = PolicyManager()
     
     while True:
         print("\n" + "="*60)
         print("🏢 ENTERPRISE POLICY MANAGEMENT SYSTEM")
         print("="*60)
-        print("1. 📋 Listar todas las políticas")
-        print("2. 🔍 Buscar políticas")
-        print("3. 🆕 Crear nueva política")
-        print("4. ✏️ Editar política existente")
-        print("5. 🗑️ Eliminar política")
-        print("6. 📊 Estadísticas del catálogo")
+        print("1. 📋 Listar todas las politicas")
+        print("2. 🔍 Buscar politicas")
+        print("3. 🆕 Crear nueva politica")
+        print("4. ✏️ Editar politica existente")
+        print("5. 🗑️ Eliminar politica")
+        print("6. 📊 Estadisticas del catalogo")
         print("0. 🚪 Salir")
         print("-" * 60)
         
-        choice = input("Selecciona opción: ").strip()
+        choice = input("Selecciona opcion: ").strip()
         
         try:
             if choice == "1":
@@ -425,11 +425,11 @@ def main():
                 manager.list_policies(service_filter if service_filter else None)
                 
             elif choice == "2":
-                query = input("Buscar políticas (nombre/servicio/descripción): ").strip()
+                query = input("Buscar politicas (nombre/servicio/descripcion): ").strip()
                 if query:
                     manager.search_policies(query)
                 else:
-                    print("❌ Debes ingresar un término de búsqueda")
+                    print("❌ Debes ingresar un termino de busqueda")
                 
             elif choice == "3":
                 manager.create_policy()
@@ -448,19 +448,19 @@ def main():
                     service = name.split('-')[1] if '-' in name else 'Unknown'
                     services[service] = services.get(service, 0) + 1
                 
-                print(f"\n📊 ESTADÍSTICAS DEL CATÁLOGO:")
-                print(f"   📋 Total políticas: {len(policies)}")
+                print(f"\n📊 ESTADiSTICAS DEL CATaLOGO:")
+                print(f"   📋 Total politicas: {len(policies)}")
                 print(f"   📦 Policy blocks: {len(blocks)}")
                 print(f"   🔐 Servicios cubiertos:")
                 for service, count in sorted(services.items()):
-                    print(f"      - {service}: {count} políticas")
+                    print(f"      - {service}: {count} politicas")
                 
             elif choice == "0":
                 print("👋 ¡Hasta luego!")
                 break
                 
             else:
-                print("❌ Opción inválida")
+                print("❌ Opcion invalida")
                 
         except KeyboardInterrupt:
             print("\n👋 ¡Hasta luego!")

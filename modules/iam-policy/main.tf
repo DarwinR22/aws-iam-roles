@@ -1,5 +1,5 @@
 # ==============================================================================
-# Módulo IAM Policy con validación estricta de tags
+# Modulo IAM Policy con validacion estricta de tags
 # ==============================================================================
 
 terraform {
@@ -14,7 +14,7 @@ terraform {
 
 # Validaciones locales
 locals {
-  # Tags obligatorios con validación
+  # Tags obligatorios con validacion
   required_tags = {
     Ambiente            = var.tags.ambiente
     Pais                = var.tags.pais
@@ -44,16 +44,16 @@ locals {
   valid_environments = ["dev", "qa", "prod", "poc"]
   environment_valid  = contains(local.valid_environments, var.tags.ambiente)
 
-  # Validar países permitidos
+  # Validar paises permitidos
   valid_countries = ["GT", "SV", "NI", "HN", "CR", "RG"]
   country_valid   = contains(local.valid_countries, var.tags.pais)
 
   # Validar SOX
-  valid_sox = ["Sí", "No"]
+  valid_sox = ["Si", "No"]
   sox_valid = contains(local.valid_sox, var.tags.alcance_sox)
 }
 
-# Recurso de política IAM
+# Recurso de politica IAM
 resource "aws_iam_policy" "this" {
   name        = var.policy_name
   path        = var.path
@@ -70,12 +70,12 @@ resource "aws_iam_policy" "this" {
 
     precondition {
       condition     = local.country_valid
-      error_message = "El país debe ser uno de: ${join(", ", local.valid_countries)}"
+      error_message = "El pais debe ser uno de: ${join(", ", local.valid_countries)}"
     }
 
     precondition {
       condition     = local.sox_valid
-      error_message = "Alcance SOX debe ser 'Sí' o 'No'"
+      error_message = "Alcance SOX debe ser 'Si' o 'No'"
     }
 
     precondition {
@@ -100,12 +100,12 @@ resource "aws_iam_policy" "this" {
         var.tags.ciclo_vida != "",
         var.tags.version != ""
       ])
-      error_message = "Todos los tags obligatorios deben estar completos. Verifique que no haya campos vacíos."
+      error_message = "Todos los tags obligatorios deben estar completos. Verifique que no haya campos vacios."
     }
 
     precondition {
       condition     = can(jsondecode(var.policy_document))
-      error_message = "El documento de política debe ser un JSON válido."
+      error_message = "El documento de politica debe ser un JSON valido."
     }
   }
 }

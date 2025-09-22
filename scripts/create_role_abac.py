@@ -26,17 +26,17 @@ class IAMRoleGeneratorABAC:
                 'tag_based_read': 'Lectura basada en etiquetas coincidentes',
                 'tag_based_write': 'Escritura basada en etiquetas coincidentes', 
                 'tag_based_read_write': 'Lectura/Escritura basada en etiquetas',
-                'path_based_read_write': 'Acceso específico a ruta de S3'
+                'path_based_read_write': 'Acceso especifico a ruta de S3'
             },
             'DynamoDB': {
                 'tag_based_read': 'Lectura de tablas con etiquetas coincidentes',
                 'tag_based_write': 'Escritura en tablas con etiquetas coincidentes'
             },
             'Lambda': {
-                'tag_based_invoke': 'Invocación de funciones con etiquetas coincidentes'
+                'tag_based_invoke': 'Invocacion de funciones con etiquetas coincidentes'
             },
             'SQS': {
-                'tag_based_produce': 'Envío a colas con etiquetas coincidentes',
+                'tag_based_produce': 'Envio a colas con etiquetas coincidentes',
                 'tag_based_consume': 'Consumo de colas con etiquetas coincidentes'
             }
         }
@@ -49,7 +49,7 @@ class IAMRoleGeneratorABAC:
             'github': 'github_actions'
         }
         
-        # Políticas AWS administradas comunes
+        # Politicas AWS administradas comunes
         self.aws_managed_common = [
             'service-role/AWSLambdaBasicExecutionRole',
             'ReadOnlyAccess',
@@ -75,12 +75,12 @@ class IAMRoleGeneratorABAC:
         """Banner enterprise."""
         print("🚀 " + "="*70)
         print("🚀 GENERADOR ENTERPRISE DE ROLES IAM - ABAC")
-        print("🚀 Interfaz simple + Arquitectura enterprise automática")
+        print("🚀 Interfaz simple + Arquitectura enterprise automatica")
         print("🚀 " + "="*70)
         print()
 
     def load_existing_catalog(self):
-        """Cargar catálogo existente."""
+        """Cargar catalogo existente."""
         roles_file = self.catalog_path / 'roles.yaml'
         try:
             with open(roles_file, 'r', encoding='utf-8') as f:
@@ -89,14 +89,14 @@ class IAMRoleGeneratorABAC:
             return {'roles': {}}
 
     def save_catalog(self, catalog_data):
-        """Guardar catálogo actualizado."""
+        """Guardar catalogo actualizado."""
         roles_file = self.catalog_path / 'roles.yaml'
         with open(roles_file, 'w', encoding='utf-8') as f:
             yaml.dump(catalog_data, f, default_flow_style=False, allow_unicode=True, indent=2)
 
     def get_role_name(self):
         """Obtener nombre del rol."""
-        print("📝 INFORMACIÓN BÁSICA DEL ROL")
+        print("📝 INFORMACIoN BaSICA DEL ROL")
         print("=" * 40)
         
         while True:
@@ -108,19 +108,19 @@ class IAMRoleGeneratorABAC:
             role_name = input("\n👉 Nombre del rol: ").strip()
             if role_name and re.match(r'^[a-zA-Z0-9\-_]+$', role_name):
                 return role_name
-            print("❌ Nombre inválido. Usa solo letras, números, guiones y guiones bajos.")
+            print("❌ Nombre invalido. Usa solo letras, numeros, guiones y guiones bajos.")
 
     def get_role_description(self, role_name):
-        """Obtener descripción del rol."""
+        """Obtener descripcion del rol."""
         suggestion = f"Rol para {role_name.replace('-', ' ')}"
         print(f"\n💡 Sugerencia: {suggestion}")
         
-        description = input("👉 Descripción del rol (Enter para usar sugerencia): ").strip()
+        description = input("👉 Descripcion del rol (Enter para usar sugerencia): ").strip()
         return description if description else suggestion
 
     def get_trust_policy(self):
         """Seleccionar trust policy."""
-        print("\n🔐 TRUST POLICY (¿Qué servicio usará este rol?)")
+        print("\n🔐 TRUST POLICY (¿Que servicio usara este rol?)")
         print("=" * 50)
         
         services = [
@@ -139,18 +139,18 @@ class IAMRoleGeneratorABAC:
                 choice_num = int(choice)
                 if 1 <= choice_num <= len(services):
                     return self.trust_policies[services[choice_num - 1][1]]
-            print("❌ Opción inválida")
+            print("❌ Opcion invalida")
 
     def get_aws_managed_policies(self):
-        """Seleccionar políticas AWS administradas."""
-        print("\n☁️ POLÍTICAS AWS ADMINISTRADAS")
+        """Seleccionar politicas AWS administradas."""
+        print("\n☁️ POLiTICAS AWS ADMINISTRADAS")
         print("=" * 35)
-        print("Selecciona políticas AWS (separadas por comas, o Enter para ninguna):")
+        print("Selecciona politicas AWS (separadas por comas, o Enter para ninguna):")
         
         for i, policy in enumerate(self.aws_managed_common, 1):
             print(f"   [{i}] {policy}")
         
-        selection = input(f"\n👉 Números separados por comas [1-{len(self.aws_managed_common)}]: ").strip()
+        selection = input(f"\n👉 Numeros separados por comas [1-{len(self.aws_managed_common)}]: ").strip()
         
         selected_policies = []
         if selection:
@@ -160,7 +160,7 @@ class IAMRoleGeneratorABAC:
                     if 1 <= idx <= len(self.aws_managed_common):
                         selected_policies.append(self.aws_managed_common[idx - 1])
             except ValueError:
-                print("❌ Formato inválido, no se agregaron políticas AWS")
+                print("❌ Formato invalido, no se agregaron politicas AWS")
         
         return selected_policies
 
@@ -176,7 +176,7 @@ class IAMRoleGeneratorABAC:
             print(f"\n🔹 {service}:")
             for block_key, description in blocks.items():
                 response = input(f"   ¿Agregar {block_key}? ({description}) [s/N]: ").strip().lower()
-                if response in ['s', 'si', 'sí', 'y', 'yes']:
+                if response in ['s', 'si', 'si', 'y', 'yes']:
                     selected_blocks.append({
                         'type': f"{service.lower()}_{block_key}",
                         'service': service.lower()
@@ -185,11 +185,11 @@ class IAMRoleGeneratorABAC:
         return selected_blocks
 
     def get_canonical_tags(self, role_name):
-        """Obtener etiquetas canónicas."""
-        print("\n🏷️ ETIQUETAS CANÓNICAS (23 obligatorias)")
+        """Obtener etiquetas canonicas."""
+        print("\n🏷️ ETIQUETAS CANoNICAS (23 obligatorias)")
         print("=" * 40)
         
-        # Tags básicos que el usuario debe proporcionar
+        # Tags basicos que el usuario debe proporcionar
         user_tags = {}
         
         required_user_input = [
@@ -207,40 +207,40 @@ class IAMRoleGeneratorABAC:
                     break
                 print("❌ Este campo es obligatorio")
         
-        # Tags automáticos/predeterminados
+        # Tags automaticos/predeterminados
         auto_tags = {
-            'País': 'GT',
-            'Dirección': 'Tecnología', 
+            'Pais': 'GT',
+            'Direccion': 'Tecnologia', 
             'Gerencia': 'MCI',
             'Cuenta': '393209814297',
-            'Módulo': user_tags.get('Proyecto', 'General'),
+            'Modulo': user_tags.get('Proyecto', 'General'),
             'Alcance SOX': 'No',
             'Proveedor': 'Claro',
             'Layer': 'Application',
             'Dominio': 'Infrastructure',
             'Subdominio': 'IAM',
-            'Aplicación': role_name,
+            'Aplicacion': role_name,
             'Name': role_name,
             'Soporte': user_tags.get('Propietario', 'DevOps-Team'),
-            'Fechas de Creación': datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ'),
+            'Fechas de Creacion': datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ'),
             'Creado Por': 'terraform-iac',
             'Tipo de Recurso': 'IAM-Role',
             'Ciclo de Vida': 'Active',
-            'Versión': '1.0',
+            'Version': '1.0',
             'Map-migrated': f"mig_{role_name.replace('-', '_')}"
         }
         
-        # Combinar tags del usuario con automáticos
+        # Combinar tags del usuario con automaticos
         all_tags = {**auto_tags, **user_tags}
         
-        print(f"\n✅ Se generaron las 23 etiquetas canónicas automáticamente")
+        print(f"\n✅ Se generaron las 23 etiquetas canonicas automaticamente")
         return all_tags
 
     def generate_role_definition(self):
-        """Generar definición completa del rol."""
+        """Generar definicion completa del rol."""
         print("\n🚀 CREANDO ROL ENTERPRISE CON ABAC...")
         
-        # Recopilar información
+        # Recopilar informacion
         role_name = self.get_role_name()
         description = self.get_role_description(role_name)
         trust_policy = self.get_trust_policy()
@@ -248,7 +248,7 @@ class IAMRoleGeneratorABAC:
         policy_blocks = self.get_abac_policies()
         canonical_tags = self.get_canonical_tags(role_name)
         
-        # Crear definición del rol
+        # Crear definicion del rol
         role_definition = {
             'description': description,
             'trust_policy': trust_policy,
@@ -256,7 +256,7 @@ class IAMRoleGeneratorABAC:
             'canonical_tags': canonical_tags
         }
         
-        # Agregar políticas si existen
+        # Agregar politicas si existen
         policies = {}
         if aws_managed:
             policies['aws_managed'] = aws_managed
@@ -275,13 +275,13 @@ class IAMRoleGeneratorABAC:
         print("="*60)
         
         print(f"🏷️  Nombre: {role_name}")
-        print(f"📝 Descripción: {role_definition['description']}")
+        print(f"📝 Descripcion: {role_definition['description']}")
         print(f"🔐 Trust Policy: {role_definition['trust_policy']}")
         print(f"🛡️  Permission Boundary: {role_definition['permission_boundary']}")
         
         if 'policies' in role_definition:
             if 'aws_managed' in role_definition['policies']:
-                print(f"☁️  AWS Managed: {len(role_definition['policies']['aws_managed'])} políticas")
+                print(f"☁️  AWS Managed: {len(role_definition['policies']['aws_managed'])} politicas")
             if 'policy_blocks' in role_definition['policies']:
                 print(f"🏗️  ABAC Blocks: {len(role_definition['policies']['policy_blocks'])} building blocks")
         
@@ -290,7 +290,7 @@ class IAMRoleGeneratorABAC:
         print("\n" + "="*60)
 
     def save_role_to_catalog(self, role_name, role_definition):
-        """Guardar rol en el catálogo."""
+        """Guardar rol en el catalogo."""
         catalog = self.load_existing_catalog()
         catalog['roles'][role_name] = role_definition
         self.save_catalog(catalog)
@@ -306,7 +306,7 @@ class IAMRoleGeneratorABAC:
         print("   cd environments/dev")
         print("   terraform plan")
         print("   terraform apply")
-        print("3. El rol será creado automáticamente con ABAC! 🚀")
+        print("3. El rol sera creado automaticamente con ABAC! 🚀")
 
     def run(self):
         """Ejecutar el generador."""
@@ -316,15 +316,15 @@ class IAMRoleGeneratorABAC:
             self.preview_role(role_name, role_definition)
             
             confirm = input("\n👉 ¿Crear este rol? [S/n]: ").strip().lower()
-            if confirm in ['', 's', 'si', 'sí', 'y', 'yes']:
+            if confirm in ['', 's', 'si', 'si', 'y', 'yes']:
                 self.save_role_to_catalog(role_name, role_definition)
                 self.show_next_steps(role_name)
                 print(f"\n🎉 ¡Rol '{role_name}' creado exitosamente!")
             else:
-                print("❌ Operación cancelada.")
+                print("❌ Operacion cancelada.")
                 
         except KeyboardInterrupt:
-            print("\n\n❌ Operación cancelada por el usuario.")
+            print("\n\n❌ Operacion cancelada por el usuario.")
         except Exception as e:
             print(f"\n❌ Error: {e}")
 

@@ -1,5 +1,5 @@
-# Configuración por servicio/área - NO por política individual
-# Escala bien con 100+ políticas
+# Configuracion por servicio/area - NO por politica individual
+# Escala bien con 100+ politicas
 
 # Propietarios por servicio AWS
 service_owners = {
@@ -25,7 +25,7 @@ service_teams = {
   "cloudwatch" = "Monitoring-Team"
 }
 
-# Cost centers por área
+# Cost centers por area
 service_cost_centers = {
   "rds"        = "Infrastructure"
   "ec2"        = "Infrastructure"

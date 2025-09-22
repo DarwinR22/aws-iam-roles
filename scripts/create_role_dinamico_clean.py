@@ -10,7 +10,7 @@ Flujo directo y logico:
 4. Crear rol con estructura: rol-<gerencia>-<area>-<aplicacion>-<pais>
 
 Enfoque: Sin menus confusos, preguntas directas paso a paso.
-Integrado con catálogo dinámico de políticas.
+Integrado con catalogo dinamico de politicas.
 """
 
 import os
@@ -28,7 +28,7 @@ class DynamicRoleCreator:
         self.gerencias_path = self.base_path / "gerencias"
         self.catalog_path = self.base_path / "catalog" / "policies.yaml"
         
-        # Cargar catálogo de políticas dinámicamente
+        # Cargar catalogo de politicas dinamicamente
         self.policies_catalog = self._load_policies_catalog()
         
         # Configuracion base
@@ -56,25 +56,25 @@ class DynamicRoleCreator:
         ]
     
     def _load_policies_catalog(self):
-        """Cargar catálogo de políticas dinámicamente"""
+        """Cargar catalogo de politicas dinamicamente"""
         try:
             if self.catalog_path.exists():
                 with open(self.catalog_path, 'r', encoding='utf-8') as f:
                     catalog = yaml.safe_load(f)
                     return catalog.get('policies', {})
             else:
-                print(f"⚠️ No se encuentra catálogo de políticas: {self.catalog_path}")
+                print(f"⚠️ No se encuentra catalogo de politicas: {self.catalog_path}")
                 return {}
         except Exception as e:
-            print(f"❌ Error cargando catálogo de políticas: {e}")
+            print(f"❌ Error cargando catalogo de politicas: {e}")
             return {}
     
     def get_available_mci_policies(self):
-        """Obtener políticas MCI disponibles organizadas por servicio"""
+        """Obtener politicas MCI disponibles organizadas por servicio"""
         mci_policies = {}
         
         for policy_name, policy_config in self.policies_catalog.items():
-            # Filtrar solo políticas MCI TagBased
+            # Filtrar solo politicas MCI TagBased
             if policy_name.startswith('MCI-') and 'TagBased' in policy_name:
                 # Extraer servicio del nombre (ej: MCI-S3-TagBased-ReadOnly -> S3)
                 parts = policy_name.split('-')
@@ -86,8 +86,8 @@ class DynamicRoleCreator:
                     
                     mci_policies[service].append({
                         'name': policy_name,
-                        'description': policy_config.get('description', 'Sin descripción'),
-                        'sox_required': policy_config.get('canonical_tags', {}).get('Alcance SOX', 'No') == 'Sí'
+                        'description': policy_config.get('description', 'Sin descripcion'),
+                        'sox_required': policy_config.get('canonical_tags', {}).get('Alcance SOX', 'No') == 'Si'
                     })
         
         return mci_policies
@@ -99,7 +99,7 @@ class DynamicRoleCreator:
             'clarohn-data-analytics-qa'
         ]
         
-        # Building Blocks MCI disponibles (AHORA DINÁMICO)
+        # Building Blocks MCI disponibles (AHORA DINaMICO)
         # self.mci_building_blocks se reemplaza por get_available_mci_policies()
         
         # AWS Managed Policies comunes
@@ -373,7 +373,7 @@ class DynamicRoleCreator:
         
         print(f"\nCodigo confirmado: {codigo}")
         
-        # Usar el codigo como nombre también (simplificado)
+        # Usar el codigo como nombre tambien (simplificado)
         nombre = codigo.replace('-', ' ').title()
         
         # Crear estructura fisica
@@ -398,30 +398,30 @@ class DynamicRoleCreator:
         return codigo, nombre
 
     def seleccionar_o_crear_direccion(self):
-        """Seleccionar dirección existente o crear nueva."""
+        """Seleccionar direccion existente o crear nueva."""
         print(f"\nDIRECCION SOLICITANTE:")
         
         # Mostrar direcciones existentes
         for i, direccion in enumerate(self.direcciones_disponibles, 1):
             print(f"   {i}) {direccion}")
-        print(f"   {len(self.direcciones_disponibles) + 1}) Crear nueva dirección")
+        print(f"   {len(self.direcciones_disponibles) + 1}) Crear nueva direccion")
         
         while True:
             try:
                 choice = int(input(f"\nOpcion [1-{len(self.direcciones_disponibles) + 1}]: ").strip())
                 if 1 <= choice <= len(self.direcciones_disponibles):
-                    # Seleccionar dirección existente
+                    # Seleccionar direccion existente
                     return self.direcciones_disponibles[choice - 1]
                 elif choice == len(self.direcciones_disponibles) + 1:
-                    # Crear nueva dirección
-                    nueva_direccion = input(f"\nNueva dirección: ").strip()
+                    # Crear nueva direccion
+                    nueva_direccion = input(f"\nNueva direccion: ").strip()
                     while len(nueva_direccion) < 3:
                         print("Nombre muy corto.")
-                        nueva_direccion = input(f"Nueva dirección: ").strip()
+                        nueva_direccion = input(f"Nueva direccion: ").strip()
                     
                     # Agregar a la lista para futuras ejecuciones
                     self.direcciones_disponibles.append(nueva_direccion)
-                    print(f"Dirección '{nueva_direccion}' agregada!")
+                    print(f"Direccion '{nueva_direccion}' agregada!")
                     return nueva_direccion
                 else:
                     print(f"Numero invalido.")
@@ -447,7 +447,7 @@ class DynamicRoleCreator:
                 print("Ingresa un numero valido.")
 
     def seleccionar_politicas(self):
-        """Seleccionar políticas para el rol."""
+        """Seleccionar politicas para el rol."""
         print(f"\n" + "=" * 50)
         print(f"POLITICAS PARA EL ROL")
         print(f"=" * 50)
@@ -466,7 +466,7 @@ class DynamicRoleCreator:
         
         while True:
             try:
-                choices = input(f"\nAWS Managed [números separados por coma o {len(self.aws_managed_policies) + 1} para ninguna]: ").strip()
+                choices = input(f"\nAWS Managed [numeros separados por coma o {len(self.aws_managed_policies) + 1} para ninguna]: ").strip()
                 if choices == str(len(self.aws_managed_policies) + 1):
                     break
                 
@@ -479,7 +479,7 @@ class DynamicRoleCreator:
                         print(f"   ⚠️ {policy}")
                 
                 if valid_policies:
-                    print(f"\n📋 RECORDATORIO: Documentar justificación para governance")
+                    print(f"\n📋 RECORDATORIO: Documentar justificacion para governance")
                     confirmacion = input(f"¿Confirmar uso de AWS Managed? [y/N]: ").strip().lower()
                     if confirmacion in ['y', 'yes', 'si']:
                         selected_policies['aws_managed'] = valid_policies
@@ -487,12 +487,12 @@ class DynamicRoleCreator:
                         print(f"📌 AWS Managed canceladas")
                 break
             except ValueError:
-                print("Formato inválido. Usa números separados por coma.")
+                print("Formato invalido. Usa numeros separados por coma.")
         
-        # 2. MCI Building Blocks (DINÁMICO)
+        # 2. MCI Building Blocks (DINaMICO)
         print(f"\n2. BUILDING BLOCKS MCI (✅ Recomendado):")
         
-        # Obtener políticas dinámicamente del catálogo
+        # Obtener politicas dinamicamente del catalogo
         mci_policies = self.get_available_mci_policies()
         all_mci_blocks = []
         counter = 1
@@ -509,13 +509,13 @@ class DynamicRoleCreator:
                     all_mci_blocks.append(policy_name)
                     counter += 1
         else:
-            print("   ⚠️ No hay políticas MCI disponibles en el catálogo")
+            print("   ⚠️ No hay politicas MCI disponibles en el catalogo")
         
         print(f"   {counter}) Ninguna")
         
         while True:
             try:
-                choices = input(f"\nMCI Building Blocks [números separados por coma o {counter} para ninguna]: ").strip()
+                choices = input(f"\nMCI Building Blocks [numeros separados por coma o {counter} para ninguna]: ").strip()
                 if choices == str(counter):
                     break
                 
@@ -531,7 +531,7 @@ class DynamicRoleCreator:
                     selected_policies['mci_managed'] = valid_blocks
                 break
             except ValueError:
-                print("Formato inválido. Usa números separados por coma.")
+                print("Formato invalido. Usa numeros separados por coma.")
         
         return selected_policies
 
@@ -582,7 +582,7 @@ class DynamicRoleCreator:
                             print(f"  {area_code} (0 roles)")
         
         if total_roles == 0:
-            print(f"\nNo hay roles creados todavía.")
+            print(f"\nNo hay roles creados todavia.")
         else:
             print(f"\nTotal: {total_roles} roles")
         
@@ -646,23 +646,23 @@ class DynamicRoleCreator:
             print(f"Descripcion: {rol_actual['metadata']['description']}")
             print(f"Ambiente: {rol_actual['metadata']['ambiente']}")
             
-            # Manejar diferentes formatos de políticas
+            # Manejar diferentes formatos de politicas
             policies_data = {}
             if 'policies' in rol_actual and isinstance(rol_actual['policies'], dict):
-                # Formato nuevo: policies como diccionario en raíz
+                # Formato nuevo: policies como diccionario en raiz
                 policies_data = rol_actual['policies']
             elif 'policies' in rol_actual['metadata']:
                 # Formato intermedio: policies en metadata
                 if isinstance(rol_actual['metadata']['policies'], list):
-                    # Lista vacía, convertir a formato nuevo
+                    # Lista vacia, convertir a formato nuevo
                     policies_data = {'aws_managed': [], 'mci_managed': []}
                 elif isinstance(rol_actual['metadata']['policies'], dict):
                     policies_data = rol_actual['metadata']['policies']
             else:
-                # Sin políticas, crear estructura
+                # Sin politicas, crear estructura
                 policies_data = {'aws_managed': [], 'mci_managed': []}
             
-            # Mostrar políticas actuales
+            # Mostrar politicas actuales
             if policies_data.get('aws_managed') or policies_data.get('mci_managed'):
                 print(f"\nPoliticas actuales:")
                 if policies_data.get('aws_managed'):
@@ -673,15 +673,15 @@ class DynamicRoleCreator:
             cambios_realizados = False
             
             while True:
-                # Mostrar menú siempre al inicio del loop
+                # Mostrar menu siempre al inicio del loop
                 print(f"\n" + "=" * 50)
                 print(f"¿QUE DESEAS EDITAR?")
                 print(f"=" * 50)
-                print(f"   1) Descripción")
+                print(f"   1) Descripcion")
                 print(f"   2) Ambiente")
-                print(f"   3) Políticas AWS Managed (⚠️ Solo en casos especiales)")
-                print(f"   4) Políticas MCI Building Blocks (✅ Recomendado)")
-                print(f"   5) Tags específicos")
+                print(f"   3) Politicas AWS Managed (⚠️ Solo en casos especiales)")
+                print(f"   4) Politicas MCI Building Blocks (✅ Recomendado)")
+                print(f"   5) Tags especificos")
                 print(f"   6) Guardar cambios y salir")
                 print(f"   7) Salir sin guardar")
                 
@@ -689,27 +689,27 @@ class DynamicRoleCreator:
                     choice = int(input(f"\nOpcion [1-7]: ").strip())
                     
                     if choice == 1:
-                        # Editar descripción
-                        print(f"\nDescripción actual: {rol_actual['metadata']['description']}")
-                        nueva_desc = input(f"Nueva descripción (Enter para mantener actual): ").strip()
+                        # Editar descripcion
+                        print(f"\nDescripcion actual: {rol_actual['metadata']['description']}")
+                        nueva_desc = input(f"Nueva descripcion (Enter para mantener actual): ").strip()
                         if nueva_desc and len(nueva_desc) >= 10:
                             rol_actual['metadata']['description'] = nueva_desc
                             cambios_realizados = True
-                            print(f"✅ Descripción actualizada")
+                            print(f"✅ Descripcion actualizada")
                             
                             # Preguntar si quiere continuar editando
                             continuar_editando = input(f"\n¿Continuar editando el rol? [y/N]: ").strip().lower()
                             if continuar_editando not in ['y', 'yes', 'si']:
-                                # Guardar automáticamente y salir
+                                # Guardar automaticamente y salir
                                 with open(rol_seleccionado['archivo'], 'w', encoding='utf-8') as f:
                                     json.dump(rol_actual, f, indent=2, ensure_ascii=False)
                                 print(f"\n✅ ¡ROL ACTUALIZADO EXITOSAMENTE!")
                                 print(f"Archivo: {rol_seleccionado['archivo']}")
                                 return True
                         elif nueva_desc and len(nueva_desc) < 10:
-                            print(f"❌ Descripción muy corta (mínimo 10 caracteres)")
+                            print(f"❌ Descripcion muy corta (minimo 10 caracteres)")
                         else:
-                            print(f"📌 Descripción sin cambios")
+                            print(f"📌 Descripcion sin cambios")
                             # Preguntar si quiere continuar editando
                             continuar_editando = input(f"\n¿Continuar editando el rol? [y/N]: ").strip().lower()
                             if continuar_editando not in ['y', 'yes', 'si']:
@@ -731,7 +731,7 @@ class DynamicRoleCreator:
                                 nuevo_ambiente = ambientes_list[amb_choice - 1]
                                 if nuevo_ambiente != rol_actual['metadata']['ambiente']:
                                     rol_actual['metadata']['ambiente'] = nuevo_ambiente
-                                    # Actualizar también en tags (normalizado a CamelCase)
+                                    # Actualizar tambien en tags (normalizado a CamelCase)
                                     if 'tags' in rol_actual['metadata']:
                                         rol_actual['metadata']['tags']['Ambiente'] = self.normalize_to_camelcase(nuevo_ambiente)
                                     cambios_realizados = True
@@ -740,7 +740,7 @@ class DynamicRoleCreator:
                                     # Preguntar si quiere continuar editando
                                     continuar_editando = input(f"\n¿Continuar editando el rol? [y/N]: ").strip().lower()
                                     if continuar_editando not in ['y', 'yes', 'si']:
-                                        # Guardar automáticamente y salir
+                                        # Guardar automaticamente y salir
                                         with open(rol_seleccionado['archivo'], 'w', encoding='utf-8') as f:
                                             json.dump(rol_actual, f, indent=2, ensure_ascii=False)
                                         print(f"\n✅ ¡ROL ACTUALIZADO EXITOSAMENTE!")
@@ -762,23 +762,23 @@ class DynamicRoleCreator:
                             print(f"📌 Ambiente sin cambios")
                     
                     elif choice == 3:
-                        # Editar políticas AWS Managed
-                        print(f"\n⚠️ ADVERTENCIA - POLÍTICAS AWS MANAGED")
+                        # Editar politicas AWS Managed
+                        print(f"\n⚠️ ADVERTENCIA - POLiTICAS AWS MANAGED")
                         print(f"=" * 50)
-                        print(f"Las políticas AWS Managed deben usarse solo cuando:")
+                        print(f"Las politicas AWS Managed deben usarse solo cuando:")
                         print(f"• No existe un MCI Building Block equivalente")
                         print(f"• Es un caso especial aprobado por Architecture")
-                        print(f"• Para servicios que MCI aún no ha estandarizado")
+                        print(f"• Para servicios que MCI aun no ha estandarizado")
                         print(f"")
-                        print(f"✅ RECOMENDADO: Usar MCI Building Blocks (Opción 4)")
+                        print(f"✅ RECOMENDADO: Usar MCI Building Blocks (Opcion 4)")
                         print(f"")
                         
                         continuar = input(f"¿Continuar con AWS Managed? [y/N]: ").strip().lower()
                         if continuar not in ['y', 'yes', 'si']:
-                            print(f"📌 Operación cancelada - Usa MCI Building Blocks (Opción 4)")
+                            print(f"📌 Operacion cancelada - Usa MCI Building Blocks (Opcion 4)")
                             continue
                         
-                        print(f"\nPolíticas AWS Managed actuales:")
+                        print(f"\nPoliticas AWS Managed actuales:")
                         aws_actuales = policies_data.get('aws_managed', [])
                         if aws_actuales:
                             for i, policy in enumerate(aws_actuales, 1):
@@ -786,13 +786,13 @@ class DynamicRoleCreator:
                         else:
                             print(f"   (Ninguna)")
                         
-                        print(f"\nPolíticas AWS disponibles:")
+                        print(f"\nPoliticas AWS disponibles:")
                         for i, policy in enumerate(self.aws_managed_policies, 1):
                             marcado = "✅" if policy in aws_actuales else "⬜"
                             print(f"   {i}) {marcado} {policy}")
                         print(f"   {len(self.aws_managed_policies) + 1}) Limpiar todas")
                         
-                        choices = input(f"\nAWS Policies [números separados por coma, {len(self.aws_managed_policies) + 1} para limpiar, Enter para mantener]: ").strip()
+                        choices = input(f"\nAWS Policies [numeros separados por coma, {len(self.aws_managed_policies) + 1} para limpiar, Enter para mantener]: ").strip()
                         if choices:
                             try:
                                 if choices == str(len(self.aws_managed_policies) + 1):
@@ -804,9 +804,9 @@ class DynamicRoleCreator:
                                     if 'policies' in rol_actual['metadata']:
                                         del rol_actual['metadata']['policies']
                                     cambios_realizados = True
-                                    print(f"✅ Políticas AWS limpiadas")
+                                    print(f"✅ Politicas AWS limpiadas")
                                 else:
-                                    # Seleccionar específicas
+                                    # Seleccionar especificas
                                     indices = [int(x.strip()) for x in choices.split(',') if x.strip()]
                                     nuevas_policies = []
                                     for idx in indices:
@@ -821,33 +821,33 @@ class DynamicRoleCreator:
                                         if 'policies' in rol_actual['metadata']:
                                             del rol_actual['metadata']['policies']
                                         cambios_realizados = True
-                                        print(f"⚠️ Políticas AWS actualizadas: {', '.join(nuevas_policies)}")
-                                        print(f"📋 RECORDATORIO: Documentar justificación para governance")
+                                        print(f"⚠️ Politicas AWS actualizadas: {', '.join(nuevas_policies)}")
+                                        print(f"📋 RECORDATORIO: Documentar justificacion para governance")
                                         
                                         # Preguntar si quiere continuar editando
                                         continuar_editando = input(f"\n¿Continuar editando el rol? [y/N]: ").strip().lower()
                                         if continuar_editando not in ['y', 'yes', 'si']:
-                                            # Guardar automáticamente y salir
+                                            # Guardar automaticamente y salir
                                             with open(rol_seleccionado['archivo'], 'w', encoding='utf-8') as f:
                                                 json.dump(rol_actual, f, indent=2, ensure_ascii=False)
                                             print(f"\n✅ ¡ROL ACTUALIZADO EXITOSAMENTE!")
                                             print(f"Archivo: {rol_seleccionado['archivo']}")
                                             return True
                                     else:
-                                        print(f"📌 Políticas AWS sin cambios")
+                                        print(f"📌 Politicas AWS sin cambios")
                                         # Preguntar si quiere continuar editando
                                         continuar_editando = input(f"\n¿Continuar editando el rol? [y/N]: ").strip().lower()
                                         if continuar_editando not in ['y', 'yes', 'si']:
                                             return False
                             except ValueError:
-                                print(f"❌ Formato inválido")
+                                print(f"❌ Formato invalido")
                         else:
-                            print(f"📌 Políticas AWS sin cambios")
+                            print(f"📌 Politicas AWS sin cambios")
                     
                     elif choice == 4:
-                        # Editar políticas MCI - con bucle interno
+                        # Editar politicas MCI - con bucle interno
                         while True:
-                            print(f"\nPolíticas MCI Building Blocks actuales:")
+                            print(f"\nPoliticas MCI Building Blocks actuales:")
                             mci_actuales = policies_data.get('mci_managed', [])
                             if mci_actuales:
                                 for i, policy in enumerate(mci_actuales, 1):
@@ -857,9 +857,9 @@ class DynamicRoleCreator:
                             
                             print(f"\nBuilding Blocks MCI disponibles:")
                             print(f"💡 Tip: ✅ = seleccionada, ⬜ = disponible")
-                            print(f"💡 Comportamiento: Seleccionar número agrega/quita la política")
+                            print(f"💡 Comportamiento: Seleccionar numero agrega/quita la politica")
                             
-                            # Obtener políticas dinámicamente del catálogo
+                            # Obtener politicas dinamicamente del catalogo
                             mci_policies = self.get_available_mci_policies()
                             all_mci_blocks = []
                             counter = 1
@@ -875,9 +875,9 @@ class DynamicRoleCreator:
                                         all_mci_blocks.append(policy_name)
                                     counter += 1
                             
-                            print(f"   {counter}) Limpiar todas las políticas")
+                            print(f"   {counter}) Limpiar todas las politicas")
                             
-                            choices = input(f"\nMCI Blocks [números separados por coma, {counter} para limpiar todas, Enter para mantener]: ").strip()
+                            choices = input(f"\nMCI Blocks [numeros separados por coma, {counter} para limpiar todas, Enter para mantener]: ").strip()
                             if choices:
                                 try:
                                     if choices == str(counter):
@@ -889,9 +889,9 @@ class DynamicRoleCreator:
                                         if 'policies' in rol_actual['metadata']:
                                             del rol_actual['metadata']['policies']
                                         cambios_realizados = True
-                                        print(f"✅ Todas las políticas MCI eliminadas")
+                                        print(f"✅ Todas las politicas MCI eliminadas")
                                     else:
-                                        # Comportamiento toggle: agregar si no está, quitar si ya está
+                                        # Comportamiento toggle: agregar si no esta, quitar si ya esta
                                         indices = [int(x.strip()) for x in choices.split(',') if x.strip()]
                                         nuevas_policies = list(mci_actuales)  # Copiar existentes
                                         
@@ -899,11 +899,11 @@ class DynamicRoleCreator:
                                             if 1 <= idx <= len(all_mci_blocks):
                                                 policy = all_mci_blocks[idx - 1]
                                                 if policy in nuevas_policies:
-                                                    # Ya está, quitarla
+                                                    # Ya esta, quitarla
                                                     nuevas_policies.remove(policy)
                                                     print(f"   ❌ Removida: {policy}")
                                                 else:
-                                                    # No está, agregarla
+                                                    # No esta, agregarla
                                                     nuevas_policies.append(policy)
                                                     print(f"   ✅ Agregada: {policy}")
                                         
@@ -916,26 +916,26 @@ class DynamicRoleCreator:
                                                 del rol_actual['metadata']['policies']
                                             cambios_realizados = True
                                             if nuevas_policies:
-                                                print(f"🔄 Políticas MCI actualizadas: {', '.join(nuevas_policies)}")
+                                                print(f"🔄 Politicas MCI actualizadas: {', '.join(nuevas_policies)}")
                                             else:
-                                                print(f"🔄 Todas las políticas MCI removidas")
+                                                print(f"🔄 Todas las politicas MCI removidas")
                                         else:
-                                            print(f"📌 Políticas MCI sin cambios")
+                                            print(f"📌 Politicas MCI sin cambios")
                                 except ValueError:
-                                    print(f"❌ Formato inválido")
+                                    print(f"❌ Formato invalido")
                             else:
-                                print(f"📌 Políticas MCI sin cambios")
+                                print(f"📌 Politicas MCI sin cambios")
                             
-                            # Preguntar si quiere agregar/modificar más políticas MCI
-                            mas_mci = input(f"\n¿Continuar con políticas MCI? [y/N]: ").strip().lower()
+                            # Preguntar si quiere agregar/modificar mas politicas MCI
+                            mas_mci = input(f"\n¿Continuar con politicas MCI? [y/N]: ").strip().lower()
                             if mas_mci not in ['y', 'yes', 'si']:
                                 break
                         
-                        # Después de salir del bucle de políticas MCI, preguntar si continuar editando otras cosas
+                        # Despues de salir del bucle de politicas MCI, preguntar si continuar editando otras cosas
                         if cambios_realizados:
                             continuar_editando = input(f"\n¿Continuar editando otras opciones del rol? [y/N]: ").strip().lower()
                             if continuar_editando not in ['y', 'yes', 'si']:
-                                # Guardar automáticamente y salir
+                                # Guardar automaticamente y salir
                                 with open(rol_seleccionado['archivo'], 'w', encoding='utf-8') as f:
                                     json.dump(rol_actual, f, indent=2, ensure_ascii=False)
                                 print(f"\n✅ ¡ROL ACTUALIZADO EXITOSAMENTE!")
@@ -943,9 +943,9 @@ class DynamicRoleCreator:
                                 return True
                     
                     elif choice == 5:
-                        # Editar tags específicos
+                        # Editar tags especificos
                         print(f"\nTags editables:")
-                        tags_editables = ['Propietario', 'Soporte', 'Contacto', 'Módulo', 'Versión']
+                        tags_editables = ['Propietario', 'Soporte', 'Contacto', 'Modulo', 'Version']
                         tags = rol_actual.get('metadata', {}).get('tags', {})
                         
                         for i, tag in enumerate(tags_editables, 1):
@@ -971,7 +971,7 @@ class DynamicRoleCreator:
                                     # Preguntar si quiere continuar editando
                                     continuar_editando = input(f"\n¿Continuar editando el rol? [y/N]: ").strip().lower()
                                     if continuar_editando not in ['y', 'yes', 'si']:
-                                        # Guardar automáticamente y salir
+                                        # Guardar automaticamente y salir
                                         with open(rol_seleccionado['archivo'], 'w', encoding='utf-8') as f:
                                             json.dump(rol_actual, f, indent=2, ensure_ascii=False)
                                         print(f"\n✅ ¡ROL ACTUALIZADO EXITOSAMENTE!")
@@ -986,7 +986,7 @@ class DynamicRoleCreator:
                                     if continuar_editando not in ['y', 'yes', 'si']:
                                         return False
                         except ValueError:
-                            print(f"📌 Operación cancelada")
+                            print(f"📌 Operacion cancelada")
                             # Preguntar si quiere continuar editando
                             continuar_editando = input(f"\n¿Continuar editando el rol? [y/N]: ").strip().lower()
                             if continuar_editando not in ['y', 'yes', 'si']:
@@ -1027,17 +1027,17 @@ class DynamicRoleCreator:
                             return False
                     
                     else:
-                        print(f"❌ Opción inválida")
+                        print(f"❌ Opcion invalida")
                         
                 except ValueError:
-                    print(f"❌ Ingresa un número válido")
+                    print(f"❌ Ingresa un numero valido")
             
         except Exception as e:
             print(f"Error leyendo rol: {e}")
             return False
 
     def seleccionar_opcion_simple(self, titulo, opciones):
-        """Selector genérico para opciones simples."""
+        """Selector generico para opciones simples."""
         print(f"\n{titulo}:")
         
         for i, opcion in enumerate(opciones, 1):
@@ -1176,41 +1176,41 @@ class DynamicRoleCreator:
             # Tags ya conocidos
             tags_obligatorios = {
                 "Ambiente": ambiente,
-                "País": info_rol['pais_name'],
+                "Pais": info_rol['pais_name'],
                 "Gerencia": info_rol['gerencia_name'],
-                "Aplicación": info_rol['aplicacion'],
+                "Aplicacion": info_rol['aplicacion'],
                 "Name": info_rol['nombre_rol'],
-                "Fechas de Creación": "2025-09-21",
+                "Fechas de Creacion": "2025-09-21",
                 "Tipo de Recurso": "IAM Role"
             }
             
             # Tags que necesitamos preguntar
             tags_por_solicitar = {
-                "Módulo": "Tipo de módulo (ej: Aplicación, DB, POC)",
-                "Alcance SOX": "¿Está en alcance SOX? (Si/No)",
+                "Modulo": "Tipo de modulo (ej: Aplicacion, DB, POC)",
+                "Alcance SOX": "¿Esta en alcance SOX? (Si/No)",
                 "Propietario": "Email del responsable (ej: tu-email@mci.com)",
-                "Proveedor": "¿Quién desarrolla? (Inhouse/Tercero)",
+                "Proveedor": "¿Quien desarrolla? (Inhouse/Tercero)",
                 "Layer": "Capa del sistema (ej: Data Analytics & AI)",
                 "Dominio": "Dominio AMX (ej: Digital Services)",
                 "Subdominio": "Subdominio AMX (ej: Data Platform)",
                 "Soporte": "Email de soporte (ej: soporte@mci.com)",
-                "Contacto": "Email de contacto técnico",
+                "Contacto": "Email de contacto tecnico",
                 "Proyecto": "Nombre del proyecto (ej: DataAnalytics)",
-                "Creado Por": "Quién creó el rol (ej: DevOps Team)",
-                "Ciclo de Vida": "Ciclo de vida (ej: Desarrollo, Producción)",
-                "Versión": "Versión del rol (ej: 1.0.0)",
+                "Creado Por": "Quien creo el rol (ej: DevOps Team)",
+                "Ciclo de Vida": "Ciclo de vida (ej: Desarrollo, Produccion)",
+                "Version": "Version del rol (ej: 1.0.0)",
                 "Map-migrated": "¿Migrado? (Si/No)"
             }
             
-            print(f"Tags automáticos:")
+            print(f"Tags automaticos:")
             for key, value in tags_obligatorios.items():
                 print(f"   {key}: {value}")
             
             print(f"\nTags requeridos adicionales:")
             
-            # Dirección con selector
+            # Direccion con selector
             direccion = self.seleccionar_o_crear_direccion()
-            tags_obligatorios["Dirección"] = direccion
+            tags_obligatorios["Direccion"] = direccion
             
             # Cuenta con selector
             cuenta = self.seleccionar_cuenta_aws()
@@ -1238,16 +1238,16 @@ class DynamicRoleCreator:
             
             # Resto de tags por solicitar (campos de texto)
             tags_restantes = {
-                "Módulo": "Tipo de módulo (ej: Aplicación, DB, POC)",
+                "Modulo": "Tipo de modulo (ej: Aplicacion, DB, POC)",
                 "Propietario": "Email del responsable (ej: tu-email@mci.com)",
                 "Layer": "Capa del sistema (ej: Data Analytics & AI)",
                 "Dominio": "Dominio AMX (ej: Digital Services)",
                 "Subdominio": "Subdominio AMX (ej: Data Platform)",
                 "Soporte": "Email de soporte (ej: soporte@mci.com)",
-                "Contacto": "Email de contacto técnico",
+                "Contacto": "Email de contacto tecnico",
                 "Proyecto": "Nombre del proyecto (ej: DataAnalytics)",
-                "Creado Por": "Quién creó el rol (ej: DevOps Team)",
-                "Versión": "Versión del rol (ej: 1.0.0)"
+                "Creado Por": "Quien creo el rol (ej: DevOps Team)",
+                "Version": "Version del rol (ej: 1.0.0)"
             }
             
             for key, descripcion in tags_restantes.items():
@@ -1316,20 +1316,20 @@ def main():
     """Punto de entrada principal - FLUJO DIRECTO."""
     try:
         creator = DynamicRoleCreator()
-        # Usar el nuevo flujo con selección de acción
+        # Usar el nuevo flujo con seleccion de accion
         creator.print_banner()
         
-        # Seleccionar acción
+        # Seleccionar accion
         accion = creator.seleccionar_accion()
         
         if accion == "crear":
-            # Usar método actualizado para creación
+            # Usar metodo actualizado para creacion
             info_rol = creator.generar_nombre_rol_directo()
             if not info_rol:
                 print("Proceso cancelado.")
                 return False
             
-            # Configuración del rol
+            # Configuracion del rol
             print(f"\nCONFIGURACION DEL ROL")
             print(f"-" * 30)
             
@@ -1338,7 +1338,7 @@ def main():
                 print("Descripcion muy corta.")
                 descripcion = input(f"Descripcion del rol: ").strip()
             
-            # Seleccionar políticas
+            # Seleccionar politicas
             politicas_seleccionadas = creator.seleccionar_politicas()
             
             # Ambiente
@@ -1369,7 +1369,7 @@ def main():
             print(f"Aplicacion: {info_rol['aplicacion']}")
             print(f"Pais: {info_rol['pais_code']} - {info_rol['pais_name']}")
             
-            # Mostrar políticas seleccionadas
+            # Mostrar politicas seleccionadas
             print(f"\nPOLITICAS ASIGNADAS:")
             if politicas_seleccionadas['aws_managed']:
                 print(f"  AWS Managed:")

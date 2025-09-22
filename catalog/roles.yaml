@@ -1,7 +1,7 @@
 # catalog/roles.yaml
 # ==========================================
 # ENTERPRISE IAM ROLES CATALOG
-# Fuente única de verdad para todos los roles
+# Fuente unica de verdad para todos los roles
 # ==========================================
 
 roles:
@@ -21,34 +21,34 @@ roles:
         - type: "s3_tag_based_read"
     canonical_tags:
       Ambiente: "Dev"
-      País: "GT"
-      Dirección: "Tecnología"
+      Pais: "GT"
+      Direccion: "Tecnologia"
       Gerencia: "MCI"
       Cuenta: "393209814297"
-      Módulo: "DataAnalytics"
+      Modulo: "DataAnalytics"
       "Alcance SOX": "No"
       Propietario: "BI-Team"
       Proveedor: "inhouse"
       Layer: "Processing"
       Dominio: "Analytics"
       Subdominio: "BusinessIntelligence"
-      Aplicación: "bi-processor"
+      Aplicacion: "bi-processor"
       Name: "bi-analytics-dev-processor"
       Soporte: "BI-Team"
       Contacto: "bi-team@claro.com"
       Proyecto: "DataAnalytics"
-      "Fechas de Creación": "2024-01-15T10:00:00Z"
+      "Fechas de Creacion": "2024-01-15T10:00:00Z"
       "Creado Por": "terraform-iac"
       "Tipo de Recurso": "IAM-Role"
       "Ciclo de Vida": "monitoreoymantenimiento"
-      Versión: "1.0"
+      Version: "1.0"
       "Map-migrated": "mig_analytics_001"
 
   # ===================
   # DATA ENGINEERING ROLES
   # ===================
   data-engineering-etl-processor:
-    description: "Rol para ETL de ingeniería de datos"
+    description: "Rol para ETL de ingenieria de datos"
     trust_policy: "glue_service"
     permission_boundary: "app_standard"
     policies:
@@ -60,34 +60,34 @@ roles:
         - type: "lambda_tag_based_invoke"
     canonical_tags:
       Ambiente: "Dev"
-      País: "GT"
-      Dirección: "Tecnología"
+      Pais: "GT"
+      Direccion: "Tecnologia"
       Gerencia: "MCI"
       Cuenta: "393209814297"
-      Módulo: "DataEngineering"
-      "Alcance SOX": "Sí"
+      Modulo: "DataEngineering"
+      "Alcance SOX": "Si"
       Propietario: "Data-Engineering-Team"
       Proveedor: "inhouse"
       Layer: "Processing"
       Dominio: "DataPlatform"
       Subdominio: "ETL"
-      Aplicación: "data-etl-processor"
+      Aplicacion: "data-etl-processor"
       Name: "data-engineering-etl-processor"
       Soporte: "Data-Engineering-Team"
       Contacto: "data-engineering@claro.com"
       Proyecto: "DataPlatform"
-      "Fechas de Creación": "2024-01-15T10:00:00Z"
+      "Fechas de Creacion": "2024-01-15T10:00:00Z"
       "Creado Por": "terraform-iac"
       "Tipo de Recurso": "IAM-Role"
       "Ciclo de Vida": "monitoreoymantenimiento"
-      Versión: "1.0"
+      Version: "1.0"
       "Map-migrated": "mig_data_eng_001"
 
   # ===================
   # APPLICATION ROLES
   # ===================
   web-api-lambda-execution:
-    description: "Rol de ejecución para APIs web en Lambda"
+    description: "Rol de ejecucion para APIs web en Lambda"
     trust_policy: "lambda_service"
     permission_boundary: "app_standard"
     policies:
@@ -99,34 +99,34 @@ roles:
         - type: "sqs_tag_based_produce"
     canonical_tags:
       Ambiente: "Dev"
-      País: "GT"
-      Dirección: "Tecnología"
+      Pais: "GT"
+      Direccion: "Tecnologia"
       Gerencia: "MCI"
       Cuenta: "393209814297"
-      Módulo: "WebAPI"
+      Modulo: "WebAPI"
       "Alcance SOX": "No"
       Propietario: "Development-Team"
       Proveedor: "inhouse"
       Layer: "Application"
       Dominio: "WebServices"
       Subdominio: "API"
-      Aplicación: "web-api"
+      Aplicacion: "web-api"
       Name: "web-api-lambda-execution"
       Soporte: "Development-Team"
       Contacto: "development@claro.com"
       Proyecto: "WebPlatform"
-      "Fechas de Creación": "2024-01-15T10:00:00Z"
+      "Fechas de Creacion": "2024-01-15T10:00:00Z"
       "Creado Por": "terraform-iac"
       "Tipo de Recurso": "IAM-Role"
       "Ciclo de Vida": "monitoreoymantenimiento"
-      Versión: "1.0"
+      Version: "1.0"
       "Map-migrated": "mig_web_api_001"
 
   # ===================
   # CONTAINER ROLES
   # ===================
   ecs-task-execution:
-    description: "Rol de ejecución para tareas ECS"
+    description: "Rol de ejecucion para tareas ECS"
     trust_policy: "ecs_service"
     permission_boundary: "platform_boundary"
     policies:
@@ -137,27 +137,27 @@ roles:
         - type: "lambda_execution_basic"
     canonical_tags:
       Ambiente: "Dev"
-      País: "GT"
-      Dirección: "Tecnología"
+      Pais: "GT"
+      Direccion: "Tecnologia"
       Gerencia: "MCI"
       Cuenta: "393209814297"
-      Módulo: "ContainerPlatform"
+      Modulo: "ContainerPlatform"
       "Alcance SOX": "No"
       Propietario: "Platform-Team"
       Proveedor: "inhouse"
       Layer: "Infrastructure"
       Dominio: "ContainerServices"
       Subdominio: "ECS"
-      Aplicación: "ecs-platform"
+      Aplicacion: "ecs-platform"
       Name: "ecs-task-execution"
       Soporte: "Platform-Team"
       Contacto: "platform@claro.com"
       Proyecto: "ContainerPlatform"
-      "Fechas de Creación": "2024-01-15T10:00:00Z"
+      "Fechas de Creacion": "2024-01-15T10:00:00Z"
       "Creado Por": "terraform-iac"
       "Tipo de Recurso": "IAM-Role"
       "Ciclo de Vida": "monitoreoymantenimiento"
-      Versión: "1.0"
+      Version: "1.0"
       "Map-migrated": "mig_ecs_001"
 
 # ===================

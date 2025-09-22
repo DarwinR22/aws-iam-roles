@@ -37,8 +37,8 @@ data "aws_iam_policy_document" "sns_tag_based_publish" {
     
     condition {
       test     = "StringEquals"
-      variable = "aws:ResourceTag/Aplicación"
-      values   = ["$${aws:PrincipalTag/Aplicación}"]
+      variable = "aws:ResourceTag/Aplicacion"
+      values   = ["$${aws:PrincipalTag/Aplicacion}"]
     }
   }
   
@@ -96,8 +96,8 @@ data "aws_iam_policy_document" "sns_tag_based_subscribe" {
     
     condition {
       test     = "StringEquals"
-      variable = "aws:ResourceTag/Aplicación"
-      values   = ["$${aws:PrincipalTag/Aplicación}"]
+      variable = "aws:ResourceTag/Aplicacion"
+      values   = ["$${aws:PrincipalTag/Aplicacion}"]
     }
   }
   

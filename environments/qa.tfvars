@@ -32,9 +32,9 @@ external_services = {
 }
 
 # Configuracion de politicas especificas para QA
-allow_experimental_permissions = false # Más restrictivo que DEV
+allow_experimental_permissions = false # Mas restrictivo que DEV
 enable_debug_logging           = true
-session_duration_hours         = 4 # Un poco más de tiempo para testing
+session_duration_hours         = 4 # Un poco mas de tiempo para testing
 
 # Configuracion de tags especificos para QA
 default_cost_center = "QA-OPERATIONS"

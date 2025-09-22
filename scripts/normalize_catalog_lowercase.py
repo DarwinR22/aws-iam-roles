@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Script para normalizar catalog/policies.yaml a lowercase
-Convierte todos los valores de tags (excepto Name) a minúsculas
+Convierte todos los valores de tags (excepto Name) a minusculas
 """
 
 import yaml
@@ -11,7 +11,7 @@ import sys
 def normalize_to_lowercase(text):
     """Convierte texto a lowercase, eliminando espacios extra"""
     if isinstance(text, str):
-        # Mantener Name tal como está
+        # Mantener Name tal como esta
         if text.startswith("MCI-") or text.startswith("App-") or text.startswith("Platform-"):
             return text
         # Para otros valores, convertir a lowercase y quitar espacios
@@ -19,22 +19,22 @@ def normalize_to_lowercase(text):
     return text
 
 def normalize_catalog():
-    """Normaliza el catálogo completo a lowercase"""
+    """Normaliza el catalogo completo a lowercase"""
     catalog_path = os.path.join(os.path.dirname(__file__), "..", "catalog", "policies.yaml")
     
     print("🔄 Normalizando catalog/policies.yaml a lowercase...")
     
-    # Leer catálogo
+    # Leer catalogo
     with open(catalog_path, 'r', encoding='utf-8') as f:
         catalog = yaml.safe_load(f)
     
-    # Normalizar todas las políticas
+    # Normalizar todas las politicas
     if 'policies' in catalog:
         for policy_name, policy_config in catalog['policies'].items():
             if 'canonical_tags' in policy_config:
                 normalized_tags = {}
                 for tag_key, tag_value in policy_config['canonical_tags'].items():
-                    # Mantener Name tal como está, normalizar todo lo demás
+                    # Mantener Name tal como esta, normalizar todo lo demas
                     if tag_key == "Name":
                         normalized_tags[tag_key] = tag_value
                     else:
@@ -43,11 +43,11 @@ def normalize_catalog():
                 policy_config['canonical_tags'] = normalized_tags
                 print(f"  ✅ Normalizado: {policy_name}")
     
-    # Escribir catálogo normalizado
+    # Escribir catalogo normalizado
     with open(catalog_path, 'w', encoding='utf-8') as f:
         yaml.dump(catalog, f, default_flow_style=False, allow_unicode=True, sort_keys=False)
     
-    print("✅ Catálogo normalizado completamente a lowercase")
+    print("✅ Catalogo normalizado completamente a lowercase")
     print("🎯 Ahora todos los tags son consistentes y simples")
 
 if __name__ == "__main__":

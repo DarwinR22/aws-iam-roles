@@ -1,4 +1,4 @@
-# Makefile para gestión simplificada de Terraform
+# Makefile para gestion simplificada de Terraform
 # Uso: make setup, make plan, make apply
 
 .PHONY: help setup init plan apply clean
@@ -9,14 +9,14 @@ AWS_REGION := us-east-1
 
 help: ## Mostrar ayuda
 	@echo "🚀 Comandos disponibles:"
-	@echo "  make setup  - Configuración inicial (recomendado para nuevos desarrolladores)"
+	@echo "  make setup  - Configuracion inicial (recomendado para nuevos desarrolladores)"
 	@echo "  make init   - Inicializar Terraform"
 	@echo "  make plan   - Ver cambios planeados"
 	@echo "  make apply  - Aplicar cambios"
 	@echo "  make clean  - Limpiar archivos temporales"
 
-setup: ## Configuración inicial completa
-	@echo "🔧 Configuración inicial del repositorio..."
+setup: ## Configuracion inicial completa
+	@echo "🔧 Configuracion inicial del repositorio..."
 	@echo "📍 Verificando credenciales AWS..."
 	@aws sts get-caller-identity > /dev/null 2>&1 || (echo "❌ Credenciales AWS no configuradas. Ejecuta: aws configure" && exit 1)
 	@echo "✅ Credenciales AWS verificadas"
@@ -24,8 +24,8 @@ setup: ## Configuración inicial completa
 	@cd $(TF_DIR) && terraform init -backend=true -input=false
 	@echo "✅ Repositorio listo para usar"
 	@echo ""
-	@echo "🎯 Próximos pasos:"
-	@echo "  - make plan     # Ver qué se va a crear"
+	@echo "🎯 Proximos pasos:"
+	@echo "  - make plan     # Ver que se va a crear"
 	@echo "  - make apply    # Aplicar cambios"
 
 init: ## Inicializar Terraform

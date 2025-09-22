@@ -1,22 +1,22 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-DEMO: SISTEMA ESCALABLE DE GESTIÓN DE POLÍTICAS
+DEMO: SISTEMA ESCALABLE DE GESTIoN DE POLiTICAS
 ===============================================
-Demostración completa de las capacidades del sistema dinámico
+Demostracion completa de las capacidades del sistema dinamico
 
 🎯 PROBLEMA RESUELTO:
-   - Escalabilidad de 10 → 100+ políticas sin modificar código
-   - CRUD completo de políticas
-   - Validaciones automáticas
-   - Integración dinámica con Terraform
+   - Escalabilidad de 10 → 100+ politicas sin modificar codigo
+   - CRUD completo de politicas
+   - Validaciones automaticas
+   - Integracion dinamica con Terraform
 
 🚀 CAPACIDADES INCLUIDAS:
-   ✅ Gestión completa de políticas (CRUD)
-   ✅ Carga dinámica en Terraform
-   ✅ Validaciones automáticas de integridad
-   ✅ Integración con creación de roles
-   ✅ Escalabilidad automática
+   ✅ Gestion completa de politicas (CRUD)
+   ✅ Carga dinamica en Terraform
+   ✅ Validaciones automaticas de integridad
+   ✅ Integracion con creacion de roles
+   ✅ Escalabilidad automatica
 """
 
 import os
@@ -31,7 +31,7 @@ def print_header(title):
     print("="*80)
 
 def print_section(title):
-    """Imprimir sección con estilo"""
+    """Imprimir seccion con estilo"""
     print(f"\n📋 {title}")
     print("-" * 60)
 
@@ -53,8 +53,8 @@ def run_command(command, description):
         return False
 
 def main():
-    """Función principal de demostración"""
-    print_header("DEMO: SISTEMA ESCALABLE DE GESTIÓN DE POLÍTICAS IAM")
+    """Funcion principal de demostracion"""
+    print_header("DEMO: SISTEMA ESCALABLE DE GESTIoN DE POLiTICAS IAM")
     
     # Verificar estructura del proyecto
     script_dir = Path(__file__).parent
@@ -64,9 +64,9 @@ def main():
     print(f"📂 Scripts disponibles:")
     
     scripts = [
-        ('manage_policies.py', 'Gestión CRUD de políticas'),
-        ('validate_policies.py', 'Validación automática del catálogo'),
-        ('create_role_dinamico_clean.py', 'Creación de roles con políticas dinámicas')
+        ('manage_policies.py', 'Gestion CRUD de politicas'),
+        ('validate_policies.py', 'Validacion automatica del catalogo'),
+        ('create_role_dinamico_clean.py', 'Creacion de roles con politicas dinamicas')
     ]
     
     for script, description in scripts:
@@ -75,19 +75,19 @@ def main():
         print(f"   {status} {script}: {description}")
     
     # Demostrar capacidades del sistema
-    print_section("1. VALIDACIÓN AUTOMÁTICA DEL CATÁLOGO")
+    print_section("1. VALIDACIoN AUTOMaTICA DEL CATaLOGO")
     
     validate_script = script_dir / "validate_policies.py"
     if validate_script.exists():
-        success = run_command(f"python {validate_script}", "Validar integridad del catálogo de políticas")
+        success = run_command(f"python {validate_script}", "Validar integridad del catalogo de politicas")
         if not success:
-            print("⚠️ Se encontraron problemas en el catálogo. Revisar y corregir antes de continuar.")
+            print("⚠️ Se encontraron problemas en el catalogo. Revisar y corregir antes de continuar.")
     else:
-        print("❌ Script de validación no encontrado")
+        print("❌ Script de validacion no encontrado")
     
-    print_section("2. ESTADÍSTICAS DEL CATÁLOGO ACTUAL")
+    print_section("2. ESTADiSTICAS DEL CATaLOGO ACTUAL")
     
-    # Cargar catálogo para mostrar estadísticas
+    # Cargar catalogo para mostrar estadisticas
     catalog_path = project_root / "catalog" / "policies.yaml"
     
     if catalog_path.exists():
@@ -99,8 +99,8 @@ def main():
             policies = catalog.get('policies', {})
             policy_blocks = catalog.get('policy_blocks', {})
             
-            print(f"📊 ESTADÍSTICAS ACTUALES:")
-            print(f"   📋 Total de políticas: {len(policies)}")
+            print(f"📊 ESTADiSTICAS ACTUALES:")
+            print(f"   📋 Total de politicas: {len(policies)}")
             print(f"   📦 Policy blocks: {len(policy_blocks)}")
             
             # Agrupar por servicio
@@ -112,25 +112,25 @@ def main():
             
             print(f"   🔐 Servicios cubiertos:")
             for service, count in sorted(services.items()):
-                print(f"      - {service}: {count} políticas")
+                print(f"      - {service}: {count} politicas")
             
         except Exception as e:
-            print(f"❌ Error leyendo catálogo: {e}")
+            print(f"❌ Error leyendo catalogo: {e}")
     else:
-        print("❌ Catálogo de políticas no encontrado")
+        print("❌ Catalogo de politicas no encontrado")
     
-    print_section("3. SISTEMA DINÁMICO EN TERRAFORM")
+    print_section("3. SISTEMA DINaMICO EN TERRAFORM")
     
-    print("🔧 CONFIGURACIÓN DINÁMICA:")
-    print("   ✅ Data sources generados automáticamente desde YAML")
+    print("🔧 CONFIGURACIoN DINaMICA:")
+    print("   ✅ Data sources generados automaticamente desde YAML")
     print("   ✅ Policy attachments escalables")
-    print("   ✅ Sin hardcodeo de nombres de políticas")
-    print("   ✅ Escalabilidad de 10 → 100+ políticas sin cambios")
+    print("   ✅ Sin hardcodeo de nombres de politicas")
+    print("   ✅ Escalabilidad de 10 → 100+ politicas sin cambios")
     
-    # Mostrar configuración actual
+    # Mostrar configuracion actual
     terraform_files = [
-        ('environments/dev/dynamic_policies.tf', 'Cargador dinámico de políticas'),
-        ('environments/dev/main.tf', 'Configuración principal con sistema dinámico')
+        ('environments/dev/dynamic_policies.tf', 'Cargador dinamico de politicas'),
+        ('environments/dev/main.tf', 'Configuracion principal con sistema dinamico')
     ]
     
     for tf_file, description in terraform_files:
@@ -140,75 +140,75 @@ def main():
     
     print_section("4. FLUJO DE TRABAJO ESCALABLE")
     
-    print("🔄 FLUJO TÍPICO DE EXPANSIÓN:")
-    print("   1️⃣ Agregar nueva política con manage_policies.py")
-    print("   2️⃣ Validar catálogo con validate_policies.py")
-    print("   3️⃣ Terraform detecta automáticamente la nueva política")
-    print("   4️⃣ Roles pueden usar la nueva política inmediatamente")
-    print("   5️⃣ Sin cambios manuales en código Terraform")
+    print("🔄 FLUJO TiPICO DE EXPANSIoN:")
+    print("   1️⃣ Agregar nueva politica con manage_policies.py")
+    print("   2️⃣ Validar catalogo con validate_policies.py")
+    print("   3️⃣ Terraform detecta automaticamente la nueva politica")
+    print("   4️⃣ Roles pueden usar la nueva politica inmediatamente")
+    print("   5️⃣ Sin cambios manuales en codigo Terraform")
     
-    print_section("5. CAPACIDADES DE GESTIÓN")
+    print_section("5. CAPACIDADES DE GESTIoN")
     
     manage_script = script_dir / "manage_policies.py"
     if manage_script.exists():
         print("📋 OPERACIONES DISPONIBLES EN manage_policies.py:")
-        print("   ✅ Crear nuevas políticas con auto-generación de metadatos")
-        print("   ✅ Editar políticas existentes")
-        print("   ✅ Eliminar políticas obsoletas")
-        print("   ✅ Buscar y filtrar políticas")
-        print("   ✅ Validaciones automáticas de formato")
-        print("   ✅ Auto-normalización CamelCase")
+        print("   ✅ Crear nuevas politicas con auto-generacion de metadatos")
+        print("   ✅ Editar politicas existentes")
+        print("   ✅ Eliminar politicas obsoletas")
+        print("   ✅ Buscar y filtrar politicas")
+        print("   ✅ Validaciones automaticas de formato")
+        print("   ✅ Auto-normalizacion CamelCase")
         
         print(f"\n💡 Para usar: python {manage_script}")
     
-    print_section("6. INTEGRACIÓN CON ROLES")
+    print_section("6. INTEGRACIoN CON ROLES")
     
     role_script = script_dir / "create_role_dinamico_clean.py"
     if role_script.exists():
-        print("🔗 INTEGRACIÓN DINÁMICA:")
-        print("   ✅ Carga automática de políticas desde catálogo")
-        print("   ✅ Visualización de políticas con descripción y SOX")
-        print("   ✅ Actualización automática cuando se agregan políticas")
-        print("   ✅ Sin necesidad de modificar código del script")
+        print("🔗 INTEGRACIoN DINaMICA:")
+        print("   ✅ Carga automatica de politicas desde catalogo")
+        print("   ✅ Visualizacion de politicas con descripcion y SOX")
+        print("   ✅ Actualizacion automatica cuando se agregan politicas")
+        print("   ✅ Sin necesidad de modificar codigo del script")
         
         print(f"\n💡 Para usar: python {role_script}")
     
     print_section("7. EJEMPLO DE ESCALABILIDAD")
     
-    print("📈 ESCENARIO: De 10 a 100 políticas")
-    print("   📊 Estado actual: ~10 políticas MCI")
-    print("   🎯 Objetivo: 100+ políticas (10x crecimiento)")
+    print("📈 ESCENARIO: De 10 a 100 politicas")
+    print("   📊 Estado actual: ~10 politicas MCI")
+    print("   🎯 Objetivo: 100+ politicas (10x crecimiento)")
     print("   ")
     print("   ✅ SISTEMA ACTUAL (Escalable):")
-    print("      - Agregar políticas con manage_policies.py")
-    print("      - Terraform carga automáticamente desde YAML")
-    print("      - Roles detectan nuevas políticas automáticamente")
-    print("      - Zero cambios de código requeridos")
+    print("      - Agregar politicas con manage_policies.py")
+    print("      - Terraform carga automaticamente desde YAML")
+    print("      - Roles detectan nuevas politicas automaticamente")
+    print("      - Zero cambios de codigo requeridos")
     print("   ")
     print("   ❌ SISTEMA ANTERIOR (No escalable):")
     print("      - Hardcodear cada data source en Terraform")
-    print("      - Modificar manualmente mappings de políticas")
+    print("      - Modificar manualmente mappings de politicas")
     print("      - Actualizar scripts de roles manualmente")
-    print("      - 100+ líneas de código por política nueva")
+    print("      - 100+ lineas de codigo por politica nueva")
     
-    print_section("8. PRÓXIMOS PASOS RECOMENDADOS")
+    print_section("8. PRoXIMOS PASOS RECOMENDADOS")
     
     print("🚀 ACCIONES SUGERIDAS:")
-    print("   1️⃣ Validar catálogo actual con validate_policies.py")
-    print("   2️⃣ Probar creación de política con manage_policies.py")
-    print("   3️⃣ Verificar integración en Terraform (terraform plan)")
-    print("   4️⃣ Probar creación de rol con nuevas políticas")
-    print("   5️⃣ Establecer proceso de revisión para nuevas políticas")
+    print("   1️⃣ Validar catalogo actual con validate_policies.py")
+    print("   2️⃣ Probar creacion de politica con manage_policies.py")
+    print("   3️⃣ Verificar integracion en Terraform (terraform plan)")
+    print("   4️⃣ Probar creacion de rol con nuevas politicas")
+    print("   5️⃣ Establecer proceso de revision para nuevas politicas")
     
-    print_header("🎉 SISTEMA LISTO PARA ESCALAR DE 10 → 100+ POLÍTICAS")
+    print_header("🎉 SISTEMA LISTO PARA ESCALAR DE 10 → 100+ POLiTICAS")
     
     print("✅ BENEFICIOS LOGRADOS:")
-    print("   🔄 Escalabilidad automática sin modificar código")
-    print("   🛡️ Validaciones automáticas de integridad")
-    print("   📋 Gestión completa CRUD de políticas")
-    print("   🔗 Integración dinámica con todos los componentes")
-    print("   📊 Visibilidad completa del catálogo")
-    print("   🎯 Mantenimiento mínimo")
+    print("   🔄 Escalabilidad automatica sin modificar codigo")
+    print("   🛡️ Validaciones automaticas de integridad")
+    print("   📋 Gestion completa CRUD de politicas")
+    print("   🔗 Integracion dinamica con todos los componentes")
+    print("   📊 Visibilidad completa del catalogo")
+    print("   🎯 Mantenimiento minimo")
     
     print(f"\n💡 Para empezar: python {script_dir}/manage_policies.py")
 

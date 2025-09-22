@@ -1,35 +1,35 @@
 # ==============================================================================
-# Variables para el módulo IAM Policy
+# Variables para el modulo IAM Policy
 # ==============================================================================
 
 variable "policy_name" {
-  description = "Nombre de la política IAM"
+  description = "Nombre de la politica IAM"
   type        = string
 
   validation {
     condition     = length(var.policy_name) > 0 && length(var.policy_name) <= 128
-    error_message = "El nombre de la política debe tener entre 1 y 128 caracteres."
+    error_message = "El nombre de la politica debe tener entre 1 y 128 caracteres."
   }
 }
 
 variable "policy_document" {
-  description = "Documento de política IAM en formato JSON"
+  description = "Documento de politica IAM en formato JSON"
   type        = string
 
   validation {
     condition     = can(jsondecode(var.policy_document))
-    error_message = "El documento de política debe ser un JSON válido."
+    error_message = "El documento de politica debe ser un JSON valido."
   }
 }
 
 variable "description" {
-  description = "Descripción de la política IAM"
+  description = "Descripcion de la politica IAM"
   type        = string
   default     = ""
 }
 
 variable "path" {
-  description = "Ruta para la política IAM"
+  description = "Ruta para la politica IAM"
   type        = string
   default     = "/"
 
@@ -48,23 +48,23 @@ variable "tags" {
   type = object({
     ambiente    = string # dev, qa, prod, poc
     pais        = string # GT, SV, NI, HN, CR, RG
-    direccion   = string # Dirección solicitante
+    direccion   = string # Direccion solicitante
     gerencia    = string # Gerencia TI responsable
     cuenta      = string # Nombre de la cuenta organizacional
-    modulo      = string # Aplicación, DB, POC
-    alcance_sox = string # Sí/No
+    modulo      = string # Aplicacion, DB, POC
+    alcance_sox = string # Si/No
     propietario = string # Persona responsable
     proveedor   = string # Inhouse o tercero
     layer       = string # Ej. Data Analytics & AI
     dominio     = string # Dominio AMX
     subdominio  = string # Subdominio AMX
-    aplicacion  = string # Identificador de aplicación
+    aplicacion  = string # Identificador de aplicacion
     soporte     = string # Equipo/persona responsable del soporte
     contacto    = string # Correo de soporte
-    proyecto    = string # Código o nombre del proyecto
+    proyecto    = string # Codigo o nombre del proyecto
     creado_por  = string # Nombre o ID del creador
-    ciclo_vida  = string # Creación, Implementación, MonitoreoYMantenimiento, etc.
-    version     = string # Versión del recurso
+    ciclo_vida  = string # Creacion, Implementacion, MonitoreoYMantenimiento, etc.
+    version     = string # Version del recurso
   })
 
   validation {
@@ -74,12 +74,12 @@ variable "tags" {
 
   validation {
     condition     = contains(["GT", "SV", "NI", "HN", "CR", "RG"], var.tags.pais)
-    error_message = "El país debe ser: GT, SV, NI, HN, CR o RG"
+    error_message = "El pais debe ser: GT, SV, NI, HN, CR o RG"
   }
 
   validation {
-    condition     = contains(["Sí", "No"], var.tags.alcance_sox)
-    error_message = "Alcance SOX debe ser 'Sí' o 'No'"
+    condition     = contains(["Si", "No"], var.tags.alcance_sox)
+    error_message = "Alcance SOX debe ser 'Si' o 'No'"
   }
 
   validation {
@@ -104,6 +104,6 @@ variable "tags" {
       var.tags.ciclo_vida != "",
       var.tags.version != ""
     ])
-    error_message = "Todos los campos de tags son obligatorios y no pueden estar vacíos"
+    error_message = "Todos los campos de tags son obligatorios y no pueden estar vacios"
   }
 }

@@ -1,5 +1,5 @@
 # ==============================================================================
-# Outputs del módulo IAM Role
+# Outputs del modulo IAM Role
 # ==============================================================================
 
 output "role_arn" {
@@ -18,12 +18,12 @@ output "role_id" {
 }
 
 output "role_unique_id" {
-  description = "ID único del rol IAM creado"
+  description = "ID unico del rol IAM creado"
   value       = aws_iam_role.this.unique_id
 }
 
 output "role_create_date" {
-  description = "Fecha de creación del rol IAM"
+  description = "Fecha de creacion del rol IAM"
   value       = aws_iam_role.this.create_date
 }
 

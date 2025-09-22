@@ -48,8 +48,8 @@ data "aws_iam_policy_document" "bedrock_tag_based_read" {
     
     condition {
       test     = "StringEquals"
-      variable = "aws:ResourceTag/Aplicación"
-      values   = ["$${aws:PrincipalTag/Aplicación}"]
+      variable = "aws:ResourceTag/Aplicacion"
+      values   = ["$${aws:PrincipalTag/Aplicacion}"]
     }
   }
   
@@ -114,8 +114,8 @@ data "aws_iam_policy_document" "bedrock_tag_based_invoke" {
     
     condition {
       test     = "StringEquals"
-      variable = "aws:ResourceTag/Aplicación"
-      values   = ["$${aws:PrincipalTag/Aplicación}"]
+      variable = "aws:ResourceTag/Aplicacion"
+      values   = ["$${aws:PrincipalTag/Aplicacion}"]
     }
   }
   
@@ -156,8 +156,8 @@ data "aws_iam_policy_document" "bedrock_tag_based_invoke" {
     
     condition {
       test     = "StringEquals"
-      variable = "aws:ResourceTag/Aplicación"
-      values   = ["$${aws:PrincipalTag/Aplicación}"]
+      variable = "aws:ResourceTag/Aplicacion"
+      values   = ["$${aws:PrincipalTag/Aplicacion}"]
     }
   }
   
@@ -206,8 +206,8 @@ data "aws_iam_policy_document" "bedrock_tag_based_invoke" {
     
     condition {
       test     = "StringEquals"
-      variable = "aws:ResourceTag/Aplicación"
-      values   = ["$${aws:PrincipalTag/Aplicación}"]
+      variable = "aws:ResourceTag/Aplicacion"
+      values   = ["$${aws:PrincipalTag/Aplicacion}"]
     }
   }
   
@@ -247,8 +247,8 @@ data "aws_iam_policy_document" "bedrock_tag_based_invoke" {
     
     condition {
       test     = "StringEquals"
-      variable = "aws:ResourceTag/Aplicación"
-      values   = ["$${aws:PrincipalTag/Aplicación}"]
+      variable = "aws:ResourceTag/Aplicacion"
+      values   = ["$${aws:PrincipalTag/Aplicacion}"]
     }
   }
 }

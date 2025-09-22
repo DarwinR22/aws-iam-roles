@@ -3,7 +3,7 @@
 # Setup Inicial AWS - Solo para Administradores
 # =============================================================================
 # Este script configura los recursos AWS necesarios para que el repositorio
-# funcione completamente vía GitHub Actions. Los desarrolladores NO necesitan
+# funcione completamente via GitHub Actions. Los desarrolladores NO necesitan
 # herramientas locales instaladas.
 #
 # SOLO EJECUTAR UNA VEZ por cuenta AWS
@@ -12,22 +12,22 @@ echo "🚀 Configurando recursos AWS para repositorio IAM..."
 echo "=================================================="
 
 # =============================================================================
-# Variables de configuración
+# Variables de configuracion
 # =============================================================================
-AWS_PROFILE="default"  # Cambiar si usas un perfil específico
-AWS_REGION="us-east-1"  # Cambiar según tu región
+AWS_PROFILE="default"  # Cambiar si usas un perfil especifico
+AWS_REGION="us-east-1"  # Cambiar segun tu region
 ENVIRONMENT="dev"       # dev, qa, prod
 
-# Obtener información de la cuenta
+# Obtener informacion de la cuenta
 ACCOUNT_ID=$(aws sts get-caller-identity --profile $AWS_PROFILE --query Account --output text)
 if [ $? -ne 0 ]; then
-    echo "❌ Error: No se pudo obtener información de la cuenta AWS"
+    echo "❌ Error: No se pudo obtener informacion de la cuenta AWS"
     echo "Verifica tus credenciales AWS"
     exit 1
 fi
 
 echo "✅ Conectado a cuenta AWS: $ACCOUNT_ID"
-echo "📍 Región: $AWS_REGION"
+echo "📍 Region: $AWS_REGION"
 echo "🏷️  Ambiente: $ENVIRONMENT"
 
 # =============================================================================
@@ -57,7 +57,7 @@ else
         --versioning-configuration Status=Enabled \
         --profile $AWS_PROFILE
     
-    # Habilitar encriptación
+    # Habilitar encriptacion
     aws s3api put-bucket-encryption \
         --bucket $BUCKET_NAME \
         --server-side-encryption-configuration '{
@@ -71,7 +71,7 @@ else
         }' \
         --profile $AWS_PROFILE
     
-    # Bloquear acceso público
+    # Bloquear acceso publico
     aws s3api put-public-access-block \
         --bucket $BUCKET_NAME \
         --public-access-block-configuration \
@@ -123,7 +123,7 @@ else
     # Crear usuario
     aws iam create-user --user-name $IAM_USER --profile $AWS_PROFILE
     
-    # Crear política personalizada para el usuario
+    # Crear politica personalizada para el usuario
     POLICY_NAME="GitHubActionsIAMPolicy-${ENVIRONMENT}"
     
     cat > github-actions-policy.json << EOF
@@ -170,13 +170,13 @@ else
 }
 EOF
 
-    # Crear la política
+    # Crear la politica
     aws iam create-policy \
         --policy-name $POLICY_NAME \
         --policy-document file://github-actions-policy.json \
         --profile $AWS_PROFILE
     
-    # Adjuntar política al usuario
+    # Adjuntar politica al usuario
     aws iam attach-user-policy \
         --user-name $IAM_USER \
         --policy-arn "arn:aws:iam::${ACCOUNT_ID}:policy/${POLICY_NAME}" \
@@ -197,17 +197,17 @@ EOF
     echo "AWS_SECRET_ACCESS_KEY_${ENVIRONMENT^^}=${SECRET_ACCESS_KEY}"
     echo ""
     echo "⚠️  IMPORTANTE: Guarda estas credenciales de forma segura"
-    echo "📋 Configúralas en GitHub Settings > Secrets and variables > Actions"
+    echo "📋 Configuralas en GitHub Settings > Secrets and variables > Actions"
     
     # Limpiar archivo temporal
     rm github-actions-policy.json
 fi
 
 # =============================================================================
-# 4. Generar información para GitHub Variables
+# 4. Generar informacion para GitHub Variables
 # =============================================================================
 echo ""
-echo "4️⃣  Información para GitHub Repository Variables..."
+echo "4️⃣  Informacion para GitHub Repository Variables..."
 echo ""
 echo "📋 VARIABLES PARA GITHUB ACTIONS:"
 echo "=================================="
@@ -217,18 +217,18 @@ echo "AWS_REGION=${AWS_REGION}"
 echo ""
 
 # =============================================================================
-# 5. Crear archivo de configuración de referencia
+# 5. Crear archivo de configuracion de referencia
 # =============================================================================
 echo ""
-echo "5️⃣  Creando archivo de configuración de referencia..."
+echo "5️⃣  Creando archivo de configuracion de referencia..."
 
 cat > "aws-config-${ENVIRONMENT}.txt" << EOF
 # =============================================================================
-# Configuración AWS para ambiente: ${ENVIRONMENT}
+# Configuracion AWS para ambiente: ${ENVIRONMENT}
 # =============================================================================
 # Generado: $(date)
 # Cuenta AWS: ${ACCOUNT_ID}
-# Región: ${AWS_REGION}
+# Region: ${AWS_REGION}
 
 # Recursos creados:
 S3_BUCKET=${BUCKET_NAME}
@@ -246,20 +246,20 @@ IAM_USER=${IAM_USER}
 #    TERRAFORM_LOCK_TABLE_${ENVIRONMENT^^}=${TABLE_NAME}
 #    AWS_REGION=${AWS_REGION}
 
-# Para verificar la configuración:
+# Para verificar la configuracion:
 # aws s3 ls s3://${BUCKET_NAME} --profile ${AWS_PROFILE}
 # aws dynamodb describe-table --table-name ${TABLE_NAME} --profile ${AWS_PROFILE}
 # aws iam get-user --user-name ${IAM_USER} --profile ${AWS_PROFILE}
 EOF
 
-echo "✅ Configuración guardada en: aws-config-${ENVIRONMENT}.txt"
+echo "✅ Configuracion guardada en: aws-config-${ENVIRONMENT}.txt"
 
 # =============================================================================
 # RESUMEN FINAL
 # =============================================================================
 echo ""
 echo "=================================================="
-echo "🎉 ¡CONFIGURACIÓN AWS COMPLETADA!"
+echo "🎉 ¡CONFIGURACIoN AWS COMPLETADA!"
 echo "=================================================="
 echo ""
 echo "📋 Recursos creados en cuenta ${ACCOUNT_ID}:"
@@ -267,14 +267,14 @@ echo "   ✅ S3 Bucket: ${BUCKET_NAME}"
 echo "   ✅ DynamoDB Table: ${TABLE_NAME}"
 echo "   ✅ IAM User: ${IAM_USER}"
 echo ""
-echo "🔧 Próximos pasos:"
+echo "🔧 Proximos pasos:"
 echo "   1. Configurar credenciales en GitHub Actions (mostradas arriba)"
 echo "   2. Configurar variables en GitHub Repository"
 echo "   3. Los desarrolladores ya pueden usar el repositorio sin instalar nada"
 echo ""
 echo "📁 Archivos generados:"
-echo "   - aws-config-${ENVIRONMENT}.txt (configuración de referencia)"
+echo "   - aws-config-${ENVIRONMENT}.txt (configuracion de referencia)"
 echo ""
 echo "✅ ¡Los desarrolladores ahora pueden hacer git clone y usar el repositorio!"
-echo "✅ Todo se ejecutará automáticamente vía GitHub Actions"
+echo "✅ Todo se ejecutara automaticamente via GitHub Actions"
 echo ""

@@ -1,14 +1,14 @@
-# Obtener información de la cuenta y región actual
+# Obtener informacion de la cuenta y region actual
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
-# KMS Key para encriptación de DynamoDB
+# KMS Key para encriptacion de DynamoDB
 resource "aws_kms_key" "dynamodb_cmk" {
-  description             = "KMS Customer Managed Key para encriptación de DynamoDB Terraform Lock"
+  description             = "KMS Customer Managed Key para encriptacion de DynamoDB Terraform Lock"
   deletion_window_in_days = 7
   enable_key_rotation     = true
 
-  # Política de KMS requerida para cumplir con CKV2_AWS_64
+  # Politica de KMS requerida para cumplir con CKV2_AWS_64
   policy = jsonencode({
     Version = "2012-10-17"
     Id      = "key-policy-dynamodb-terraform-lock"
@@ -105,7 +105,7 @@ resource "aws_dynamodb_table" "terraform_lock" {
     type = "S"
   }
 
-  # Encriptación usando KMS Customer Managed Key
+  # Encriptacion usando KMS Customer Managed Key
   server_side_encryption {
     enabled     = true
     kms_key_arn = aws_kms_key.dynamodb_cmk.arn

@@ -12,23 +12,23 @@ echo 🚀 Configurando recursos AWS para repositorio IAM...
 echo ==================================================
 
 REM =============================================================================
-REM Variables de configuración
+REM Variables de configuracion
 REM =============================================================================
 set AWS_PROFILE=default
 set AWS_REGION=us-east-1
 set ENVIRONMENT=dev
 
-REM Obtener información de la cuenta
+REM Obtener informacion de la cuenta
 for /f "tokens=*" %%i in ('aws sts get-caller-identity --profile %AWS_PROFILE% --query Account --output text 2^>nul') do set ACCOUNT_ID=%%i
 if "%ACCOUNT_ID%"=="" (
-    echo ❌ Error: No se pudo obtener información de la cuenta AWS
+    echo ❌ Error: No se pudo obtener informacion de la cuenta AWS
     echo Verifica tus credenciales AWS
     pause
     exit /b 1
 )
 
 echo ✅ Conectado a cuenta AWS: %ACCOUNT_ID%
-echo 📍 Región: %AWS_REGION%
+echo 📍 Region: %AWS_REGION%
 echo 🏷️  Ambiente: %ENVIRONMENT%
 
 REM =============================================================================
@@ -56,10 +56,10 @@ if %errorlevel% equ 0 (
     REM Habilitar versionado
     aws s3api put-bucket-versioning --bucket %BUCKET_NAME% --versioning-configuration Status=Enabled --profile %AWS_PROFILE%
     
-    REM Habilitar encriptación
+    REM Habilitar encriptacion
     aws s3api put-bucket-encryption --bucket %BUCKET_NAME% --server-side-encryption-configuration "{\"Rules\":[{\"ApplyServerSideEncryptionByDefault\":{\"SSEAlgorithm\":\"AES256\"}}]}" --profile %AWS_PROFILE%
     
-    REM Bloquear acceso público
+    REM Bloquear acceso publico
     aws s3api put-public-access-block --bucket %BUCKET_NAME% --public-access-block-configuration BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true --profile %AWS_PROFILE%
     
     echo ✅ Bucket S3 creado y configurado: %BUCKET_NAME%
@@ -103,10 +103,10 @@ if %errorlevel% equ 0 (
     REM Crear usuario
     aws iam create-user --user-name %IAM_USER% --profile %AWS_PROFILE%
     
-    REM Crear política personalizada
+    REM Crear politica personalizada
     set POLICY_NAME=GitHubActionsIAMPolicy-%ENVIRONMENT%
     
-    REM Crear archivo de política temporal
+    REM Crear archivo de politica temporal
     (
     echo {
     echo     "Version": "2012-10-17",
@@ -151,10 +151,10 @@ if %errorlevel% equ 0 (
     echo }
     ) > github-actions-policy.json
     
-    REM Crear la política
+    REM Crear la politica
     aws iam create-policy --policy-name %POLICY_NAME% --policy-document file://github-actions-policy.json --profile %AWS_PROFILE%
     
-    REM Adjuntar política al usuario
+    REM Adjuntar politica al usuario
     aws iam attach-user-policy --user-name %IAM_USER% --policy-arn arn:aws:iam::%ACCOUNT_ID%:policy/%POLICY_NAME% --profile %AWS_PROFILE%
     
     REM Crear access keys
@@ -183,10 +183,10 @@ if %errorlevel% equ 0 (
 )
 
 REM =============================================================================
-REM 4. Generar información para GitHub Variables
+REM 4. Generar informacion para GitHub Variables
 REM =============================================================================
 echo.
-echo 4️⃣  Información para GitHub Repository Variables...
+echo 4️⃣  Informacion para GitHub Repository Variables...
 echo.
 echo 📋 VARIABLES PARA GITHUB ACTIONS:
 echo ==================================
@@ -196,18 +196,18 @@ echo AWS_REGION=%AWS_REGION%
 echo.
 
 REM =============================================================================
-REM 5. Crear archivo de configuración de referencia
+REM 5. Crear archivo de configuracion de referencia
 REM =============================================================================
 echo.
-echo 5️⃣  Creando archivo de configuración de referencia...
+echo 5️⃣  Creando archivo de configuracion de referencia...
 
 (
 echo # =============================================================================
-echo # Configuración AWS para ambiente: %ENVIRONMENT%
+echo # Configuracion AWS para ambiente: %ENVIRONMENT%
 echo # =============================================================================
 echo # Generado: %date% %time%
 echo # Cuenta AWS: %ACCOUNT_ID%
-echo # Región: %AWS_REGION%
+echo # Region: %AWS_REGION%
 echo.
 echo # Recursos creados:
 echo S3_BUCKET=%BUCKET_NAME%
@@ -225,20 +225,20 @@ echo #    TERRAFORM_STATE_BUCKET_%ENVIRONMENT%=%BUCKET_NAME%
 echo #    TERRAFORM_LOCK_TABLE_%ENVIRONMENT%=%TABLE_NAME%
 echo #    AWS_REGION=%AWS_REGION%
 echo.
-echo # Para verificar la configuración:
+echo # Para verificar la configuracion:
 echo # aws s3 ls s3://%BUCKET_NAME% --profile %AWS_PROFILE%
 echo # aws dynamodb describe-table --table-name %TABLE_NAME% --profile %AWS_PROFILE%
 echo # aws iam get-user --user-name %IAM_USER% --profile %AWS_PROFILE%
 ) > aws-config-%ENVIRONMENT%.txt
 
-echo ✅ Configuración guardada en: aws-config-%ENVIRONMENT%.txt
+echo ✅ Configuracion guardada en: aws-config-%ENVIRONMENT%.txt
 
 REM =============================================================================
 REM RESUMEN FINAL
 REM =============================================================================
 echo.
 echo ==================================================
-echo 🎉 ¡CONFIGURACIÓN AWS COMPLETADA!
+echo 🎉 ¡CONFIGURACIoN AWS COMPLETADA!
 echo ==================================================
 echo.
 echo 📋 Recursos creados en cuenta %ACCOUNT_ID%:
@@ -246,15 +246,15 @@ echo    ✅ S3 Bucket: %BUCKET_NAME%
 echo    ✅ DynamoDB Table: %TABLE_NAME%
 echo    ✅ IAM User: %IAM_USER%
 echo.
-echo 🔧 Próximos pasos:
+echo 🔧 Proximos pasos:
 echo    1. Configurar credenciales en GitHub Actions (mostradas arriba)
 echo    2. Configurar variables en GitHub Repository
 echo    3. Los desarrolladores ya pueden usar el repositorio sin instalar nada
 echo.
 echo 📁 Archivos generados:
-echo    - aws-config-%ENVIRONMENT%.txt (configuración de referencia)
+echo    - aws-config-%ENVIRONMENT%.txt (configuracion de referencia)
 echo.
 echo ✅ ¡Los desarrolladores ahora pueden hacer git clone y usar el repositorio!
-echo ✅ Todo se ejecutará automáticamente vía GitHub Actions
+echo ✅ Todo se ejecutara automaticamente via GitHub Actions
 echo.
 pause

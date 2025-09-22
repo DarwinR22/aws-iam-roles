@@ -1,5 +1,5 @@
-# Configuración específica de tags por política custom
-# Solo para políticas que necesiten valores diferentes a los default
+# Configuracion especifica de tags por politica custom
+# Solo para politicas que necesiten valores diferentes a los default
 
 policy_custom_tags = {
   "policy-rds-readonly" = {

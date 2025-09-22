@@ -3,7 +3,7 @@
 
 locals {
   # ============================================================================
-  # FUNCIÓN DE NORMALIZACIÓN AUTOMÁTICA
+  # FUNCIoN DE NORMALIZACIoN AUTOMaTICA
   # ============================================================================
   # Convierte CUALQUIER input a lowercase sin espacios ni guiones
   normalize_value = function(input) {
@@ -13,25 +13,25 @@ locals {
   # ============================================================================
   # DYNAMIC POLICY LOADER
   # ============================================================================
-  # Cargar catálogo de políticas dinámicamente
+  # Cargar catalogo de politicas dinamicamente
   policies_catalog_raw = file("${path.root}/../../catalog/policies.yaml")
   policies_catalog = yamldecode(local.policies_catalog_raw)
   
-  # Extraer políticas MCI TagBased automáticamente
+  # Extraer politicas MCI TagBased automaticamente
   mci_policies = {
     for policy_name, policy_config in local.policies_catalog.policies : 
     policy_name => policy_config
     if can(regex("^MCI-.+-TagBased-.+$", policy_name))
   }
   
-  # Tags canónicos base para todos los recursos (TODO LOWERCASE)
+  # Tags canonicos base para todos los recursos (TODO LOWERCASE)
   base_canonical_tags = {
     Ambiente           = "dev"
-    País              = "rg" 
-    Dirección         = "tecnología"
+    Pais              = "rg" 
+    Direccion         = "tecnologia"
     Gerencia          = "mci"
     Cuenta            = data.aws_caller_identity.current.account_id
-    Módulo            = "iamroles"
+    Modulo            = "iamroles"
     "Alcance SOX"     = "no"
     Propietario       = "devopsteam"
     Proveedor         = "claro"
@@ -41,11 +41,11 @@ locals {
     Soporte           = "devopsclarocomm"
     Contacto          = "devopsclarocomm"
     Proyecto          = "abacframework"
-    "Fechas de Creación" = formatdate("YYYY-MM-DD'T'hh:mm:ssZ", timestamp())
+    "Fechas de Creacion" = formatdate("YYYY-MM-DD'T'hh:mm:ssZ", timestamp())
     "Creado Por"      = "terraformiac"
     "Tipo de Recurso" = "iamrole"
     "Ciclo de Vida"   = "active"
-    Versión           = "2.0"
+    Version           = "2.0"
     "Map-migrated"    = "migrole001"
   }
 
@@ -59,16 +59,16 @@ locals {
     if can(jsondecode(file("${path.root}/../../gerencias/${role_file}")))
   }
 
-  # Extraer área/gerencia del path del archivo para tags automáticos
+  # Extraer area/gerencia del path del archivo para tags automaticos
   role_areas = {
     for role_file in local.role_files :
     replace(basename(role_file), ".json", "") => lower(length(split("/", role_file)) >= 2 ? split("/", role_file)[1] : split("/", role_file)[0])
   }
 
   # ============================================================================
-  # VALIDACIÓN DE TAGS OBLIGATORIOS
+  # VALIDACIoN DE TAGS OBLIGATORIOS
   # ============================================================================
-  # Verificar que todos los roles tengan los tags mínimos requeridos
+  # Verificar que todos los roles tengan los tags minimos requeridos
   roles_missing_tags = [
     for role_name, role_data in local.roles : {
       role = role_name
@@ -87,7 +87,7 @@ locals {
   validate_tags_count = length(local.roles_missing_tags)
 
   # ============================================================================
-  # VALIDACIÓN DE TAGS ÚNICOS (case-insensitive)
+  # VALIDACIoN DE TAGS uNICOS (case-insensitive)
   # ============================================================================
   # Detectar tags duplicados case-insensitive antes del deploy
   roles_with_duplicate_tags = [
@@ -156,7 +156,7 @@ locals {
 }
 
 # ============================================================================
-# VALIDACIÓN: Check obligatorio de tags 
+# VALIDACIoN: Check obligatorio de tags 
 # ============================================================================
 check "validate_required_tags" {
   assert {
@@ -181,7 +181,7 @@ check "validate_required_tags" {
   }
 }
 
-# VALIDACIÓN: Check para tags duplicados case-insensitive
+# VALIDACIoN: Check para tags duplicados case-insensitive
 check "validate_unique_tags" {
   assert {
     condition = length(local.roles_with_duplicate_tags) == 0
@@ -196,13 +196,13 @@ check "validate_unique_tags" {
     🛡️ AWS no permite tags con nombres similares (case-insensitive)
     Ejemplos de conflictos: Environment vs environment, Team vs team, etc.
     
-    Usa nomenclatura única y específica para evitar conflictos.
+    Usa nomenclatura unica y especifica para evitar conflictos.
     EOT
   }
 }# ============================================================================
-# BUILDING BLOCKS: Módulos de políticas ABAC
+# BUILDING BLOCKS: Modulos de politicas ABAC
 # ============================================================================
-# Incluir todos los módulos de building blocks para acceso a sus outputs
+# Incluir todos los modulos de building blocks para acceso a sus outputs
 
 module "s3_policies" {
   source = "../../policy_lib/s3"
@@ -224,11 +224,11 @@ module "commons_policies" {
   source = "../../policy_lib/commons"
 }
 
-# BUILDING BLOCKS: Políticas MCI genéricas (RECURSOS DINÁMICOS)
+# BUILDING BLOCKS: Politicas MCI genericas (RECURSOS DINaMICOS)
 # ============================================================================
-# Sistema escalable: Se crean automáticamente desde catalog/policies.yaml
+# Sistema escalable: Se crean automaticamente desde catalog/policies.yaml
 
-# Mapping de policy documents a módulos
+# Mapping de policy documents a modulos
 locals {
   policy_documents = {
     "s3.s3_tag_based_read"              = module.s3_policies.s3_tag_based_read_policy_json
@@ -243,17 +243,17 @@ locals {
   }
 }
 
-# Recursos dinámicos para crear todas las políticas MCI-*-TagBased-*
+# Recursos dinamicos para crear todas las politicas MCI-*-TagBased-*
 resource "aws_iam_policy" "mci_policies" {
   for_each = local.mci_policies
   
   name        = each.key
   description = each.value.description
   
-  # Usar el documento de política desde los módulos building blocks
+  # Usar el documento de politica desde los modulos building blocks
   policy = local.policy_documents[each.value.policy_document]
   
-  # Aplicar tags canónicos desde el catálogo
+  # Aplicar tags canonicos desde el catalogo
   tags = merge(
     local.base_canonical_tags,
     each.value.canonical_tags
@@ -264,10 +264,10 @@ resource "aws_iam_policy" "mci_policies" {
 data "aws_caller_identity" "current" {}
 
 # ============================================================================
-# TAG-BASED POLICIES: Políticas dinámicas basadas en etiquetas
+# TAG-BASED POLICIES: Politicas dinamicas basadas en etiquetas
 # ============================================================================
 
-# Crear políticas basadas en tags de equipo
+# Crear politicas basadas en tags de equipo
 resource "aws_iam_policy" "team_tag_policies" {
   for_each = var.team_tag_policies
 
@@ -294,7 +294,7 @@ resource "aws_iam_policy" "team_tag_policies" {
   )
 }
 
-# Crear roles IAM dinámicamente con tags por área
+# Crear roles IAM dinamicamente con tags por area
 module "iam_roles" {
   source = "../../modules/iam-role"
 
@@ -304,36 +304,36 @@ module "iam_roles" {
   description              = try(each.value.metadata.description, "IAM Role managed by Terraform")
   trust_policy_document    = jsonencode(each.value.assume_role_policy)
   
-  # Políticas AWS administradas
+  # Politicas AWS administradas
   managed_policy_arns = try(each.value.policies.aws_managed, [])
 
-  # Políticas inline como mapa
+  # Politicas inline como mapa
   inline_policies = try(each.value.policies.inline != null ? {
     "inline-policy" = jsonencode(each.value.policies.inline)
   } : {}, {})
 
-  # Tags canónicos requeridos (AUTO-NORMALIZACIÓN a lowercase)
+  # Tags canonicos requeridos (AUTO-NORMALIZACIoN a lowercase)
   canonical_tags = merge(
     local.base_canonical_tags,
     {
       Name        = each.value.metadata.role_name
-      Aplicación  = local.normalize_value(try(each.value.metadata.aplicacion, "unknown"))
+      Aplicacion  = local.normalize_value(try(each.value.metadata.aplicacion, "unknown"))
       Ambiente    = local.normalize_value(try(each.value.metadata.ambiente, "dev"))
-      País        = local.normalize_value(try(each.value.metadata.pais.code, "rg"))
+      Pais        = local.normalize_value(try(each.value.metadata.pais.code, "rg"))
       Gerencia    = local.normalize_value(try(each.value.metadata.gerencia.code, "mci"))
     }
   )
   
-  # Tags adicionales del rol específico
+  # Tags adicionales del rol especifico
   tags = try(each.value.tags, {})
 }
 
 # ============================================================================
-# ATTACHMENTS DINÁMICOS: Políticas MCI escalables
+# ATTACHMENTS DINaMICOS: Politicas MCI escalables
 # ============================================================================
-# Sistema que escala automáticamente con nuevas políticas en el catálogo
+# Sistema que escala automaticamente con nuevas politicas en el catalogo
 
-# Adjuntar políticas MCI genéricas a los roles (DINÁMICO)
+# Adjuntar politicas MCI genericas a los roles (DINaMICO)
 resource "aws_iam_role_policy_attachment" "mci_policy_attachments" {
   for_each = merge([
     for role_key, role_config in local.roles : {
@@ -342,18 +342,18 @@ resource "aws_iam_role_policy_attachment" "mci_policy_attachments" {
         role_key    = role_key
         policy_name = policy_name
       }
-      # Solo incluir si la política existe en el catálogo
+      # Solo incluir si la politica existe en el catalogo
       if contains(keys(local.mci_policies), policy_name)
     }
   ]...)
 
   role       = module.iam_roles[each.value.role_key].role_name
   
-  # Mapear dinámicamente a ARNs usando el recurso dinámico
+  # Mapear dinamicamente a ARNs usando el recurso dinamico
   policy_arn = aws_iam_policy.mci_policies[each.value.policy_name].arn
 }
 
-# Adjuntar políticas TAG-BASED a los roles
+# Adjuntar politicas TAG-BASED a los roles
 resource "aws_iam_role_policy_attachment" "team_tag_policy_attachments" {
   for_each = merge([
     for role_key, role_config in local.roles : {

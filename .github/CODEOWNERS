@@ -1,5 +1,5 @@
-# CODEOWNERS - Define quién debe revisar cambios en archivos específicos
-# Más info: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+# CODEOWNERS - Define quien debe revisar cambios en archivos especificos
+# Mas info: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
 
 # 👥 VALIDADORES AUTORIZADOS - Solo estos 4 usuarios pueden modificar el repo
 # CESAR EDUARDO CALMO CUSH (cesar.calmo_claroca)
@@ -7,23 +7,23 @@
 # JORGE MARIO RUBIO VIDAL (jorge.rubio_claroca)
 # OSMAR HERNAN PINEDA QUEZADA (osmar.pineda_claroca)
 
-# Configuraciones críticas de infraestructura (Terraform)
+# Configuraciones criticas de infraestructura (Terraform)
 *.tf                    @cesar.calmo_claroca @darwin.lopez_claroca @jorge.rubio_claroca @osmar.pineda_claroca
 *.tfvars               @cesar.calmo_claroca @darwin.lopez_claroca @jorge.rubio_claroca @osmar.pineda_claroca
 environments/prod/     @cesar.calmo_claroca @darwin.lopez_claroca @jorge.rubio_claroca @osmar.pineda_claroca
 
-# Políticas de IAM críticas (requieren revisión de seguridad)
+# Politicas de IAM criticas (requieren revision de seguridad)
 politicas/             @cesar.calmo_claroca @darwin.lopez_claroca @jorge.rubio_claroca @osmar.pineda_claroca
 
-# Scripts de creación de roles
+# Scripts de creacion de roles
 scripts/               @cesar.calmo_claroca @darwin.lopez_claroca @jorge.rubio_claroca @osmar.pineda_claroca
 
 # Workflows de CI/CD (DevOps)
 .github/workflows/     @cesar.calmo_claroca @darwin.lopez_claroca @jorge.rubio_claroca @osmar.pineda_claroca
 
-# Configuración root y documentación
+# Configuracion root y documentacion
 README.md              @cesar.calmo_claroca @darwin.lopez_claroca @jorge.rubio_claroca @osmar.pineda_claroca
 *.md                   @cesar.calmo_claroca @darwin.lopez_claroca @jorge.rubio_claroca @osmar.pineda_claroca
 
-# Por defecto, cualquier cambio requiere aprobación de al menos uno de los 4
+# Por defecto, cualquier cambio requiere aprobacion de al menos uno de los 4
 *                      @cesar.calmo_claroca @darwin.lopez_claroca @jorge.rubio_claroca @osmar.pineda_claroca
