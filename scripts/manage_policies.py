@@ -139,7 +139,7 @@ class PolicyManager:
             "Fechas de Creación": datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ"),
             "Creado Por": "TerraformIac",
             "Tipo de Recurso": "IamPolicy",
-            "Ciclo de Vida": "Active",
+            "Ciclo de Vida": "monitoreoymantenimiento",
             "Versión": "2.0",
             "Map-migrated": f"mig_{service.lower()}_policy_{len(self.policies_data['policies']) + 1:03d}"
         }
