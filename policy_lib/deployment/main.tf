@@ -3,25 +3,109 @@
 # DEPLOYMENT ABAC POLICY BUILDING BLOCKS
 # =============================================
 
-# TERRAFORM CORE DEPLOYMENT - Política 1 original
+# TERRAFORM CORE DEPLOYMENT - Política 1 original (SECURE)
 data "aws_iam_policy_document" "terraform_core_deployment" {
+  # IAM Read permissions (can be broader for discovery)
   statement {
-    sid    = "TerraformCoreDeployment"
+    sid    = "TerraformIAMRead"
     effect = "Allow"
     actions = [
-      "iam:*",
+      "iam:GetRole",
+      "iam:GetRolePolicy", 
+      "iam:GetPolicy",
+      "iam:GetPolicyVersion",
+      "iam:ListRoles",
+      "iam:ListPolicies",
+      "iam:ListAttachedRolePolicies",
+      "iam:ListRolePolicies",
+      # Organizations (unchanged)
       "organizations:Describe*",
       "organizations:List*"
     ]
     resources = ["*"]
     
-    # ABAC conditions for enterprise governance
     condition {
       test     = "StringEquals"
       variable = "aws:PrincipalTag/Department"
       values   = [var.department]
     }
-
+    
+    condition {
+      test     = "StringEquals"
+      variable = "aws:PrincipalTag/Environment"
+      values   = [var.environment]
+    }
+  }
+  
+  # IAM Write permissions (restricted to specific patterns)
+  statement {
+    sid    = "TerraformIAMWrite"
+    effect = "Allow"
+    actions = [
+      "iam:CreateRole",
+      "iam:UpdateRole",
+      "iam:DeleteRole",
+      "iam:CreatePolicy",
+      "iam:DeletePolicy",
+      "iam:AttachRolePolicy",
+      "iam:DetachRolePolicy",
+      "iam:PutRolePolicy",
+      "iam:DeleteRolePolicy",
+      "iam:TagRole",
+      "iam:UntagRole",
+      "iam:TagPolicy",
+      "iam:UntagPolicy"
+    ]
+    resources = [
+      # Roles managed by this framework
+      "arn:aws:iam::*:role/${var.department}-${var.environment}-*",
+      "arn:aws:iam::*:role/rol-${var.department}-*",
+      # Policies managed by this framework  
+      "arn:aws:iam::*:policy/MCI-${var.department}-*",
+      "arn:aws:iam::*:policy/${var.department}-${var.environment}-*"
+    ]
+    
+    condition {
+      test     = "StringEquals"
+      variable = "aws:PrincipalTag/Department"
+      values   = [var.department]
+    }
+    
+    condition {
+      test     = "StringEquals"
+      variable = "aws:PrincipalTag/Environment"
+      values   = [var.environment]
+    }
+  }
+  
+  # PassRole for service principals (restricted to managed roles)
+  statement {
+    sid    = "TerraformPassRole"
+    effect = "Allow"
+    actions = ["iam:PassRole"]
+    resources = [
+      "arn:aws:iam::*:role/${var.department}-${var.environment}-*",
+      "arn:aws:iam::*:role/rol-${var.department}-*"
+    ]
+    
+    condition {
+      test     = "StringEquals"
+      variable = "iam:PassedToService"
+      values   = [
+        "lambda.amazonaws.com",
+        "ec2.amazonaws.com",
+        "ecs-tasks.amazonaws.com",
+        "glue.amazonaws.com",
+        "states.amazonaws.com"
+      ]
+    }
+    
+    condition {
+      test     = "StringEquals"
+      variable = "aws:PrincipalTag/Department"
+      values   = [var.department]
+    }
+    
     condition {
       test     = "StringEquals"
       variable = "aws:PrincipalTag/Environment"
