@@ -25,7 +25,14 @@ data "aws_iam_policy_document" "eventbridge_tag_based_read" {
       "events:TestEventPattern"
     ]
     
-    resources = ["*"]
+    resources = [
+      "arn:aws:events:*:393209814297:rule/*",
+      "arn:aws:events:*:393209814297:event-bus/*",
+      "arn:aws:events:*:393209814297:archive/*",
+      "arn:aws:events:*:393209814297:replay/*",
+      "arn:aws:events:*:393209814297:connection/*",
+      "arn:aws:events:*:393209814297:destination/*"
+    ]
     
     condition {
       test     = "StringEquals"
@@ -98,7 +105,14 @@ data "aws_iam_policy_document" "eventbridge_tag_based_execute" {
       "events:DeleteDestination"
     ]
     
-    resources = ["*"]
+    resources = [
+      "arn:aws:events:*:393209814297:rule/*",
+      "arn:aws:events:*:393209814297:event-bus/*",
+      "arn:aws:events:*:393209814297:archive/*",
+      "arn:aws:events:*:393209814297:replay/*",
+      "arn:aws:events:*:393209814297:connection/*",
+      "arn:aws:events:*:393209814297:destination/*"
+    ]
     
     condition {
       test     = "StringEquals"
@@ -135,7 +149,14 @@ data "aws_iam_policy_document" "eventbridge_tag_based_execute" {
       "events:ListTagsForResource"
     ]
     
-    resources = ["*"]
+    resources = [
+      "arn:aws:events:*:393209814297:rule/*",
+      "arn:aws:events:*:393209814297:event-bus/*",
+      "arn:aws:events:*:393209814297:archive/*",
+      "arn:aws:events:*:393209814297:replay/*",
+      "arn:aws:events:*:393209814297:connection/*",
+      "arn:aws:events:*:393209814297:destination/*"
+    ]
     
     condition {
       test     = "StringEquals"
@@ -184,7 +205,14 @@ data "aws_iam_policy_document" "eventbridge_tag_based_execute" {
       "events:TestEventPattern"
     ]
     
-    resources = ["*"]
+    resources = [
+      "arn:aws:events:*:393209814297:rule/*",
+      "arn:aws:events:*:393209814297:event-bus/*",
+      "arn:aws:events:*:393209814297:archive/*",
+      "arn:aws:events:*:393209814297:replay/*",
+      "arn:aws:events:*:393209814297:connection/*",
+      "arn:aws:events:*:393209814297:destination/*"
+    ]
     
     condition {
       test     = "StringEquals"
@@ -225,7 +253,13 @@ data "aws_iam_policy_document" "eventbridge_tag_based_execute" {
       "firehose:PutRecordBatch"
     ]
     
-    resources = ["*"]
+    resources = [
+      "arn:aws:lambda:*:393209814297:function:*",
+      "arn:aws:sns:*:393209814297:*",
+      "arn:aws:sqs:*:393209814297:*",
+      "arn:aws:kinesis:*:393209814297:stream/*",
+      "arn:aws:firehose:*:393209814297:deliverystream/*"
+    ]
     
     condition {
       test     = "StringEquals"

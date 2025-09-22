@@ -37,7 +37,17 @@ data "aws_iam_policy_document" "glue_tag_based_read" {
       "glue:GetWorkflowRunProperties"
     ]
     
-    resources = ["*"]
+    resources = [
+      "arn:aws:glue:*:393209814297:catalog",
+      "arn:aws:glue:*:393209814297:database/*",
+      "arn:aws:glue:*:393209814297:table/*/*",
+      "arn:aws:glue:*:393209814297:job/*",
+      "arn:aws:glue:*:393209814297:crawler/*",
+      "arn:aws:glue:*:393209814297:trigger/*",
+      "arn:aws:glue:*:393209814297:devEndpoint/*",
+      "arn:aws:glue:*:393209814297:connection/*",
+      "arn:aws:glue:*:393209814297:workflow/*"
+    ]
     
     condition {
       test     = "StringEquals"
@@ -119,7 +129,17 @@ data "aws_iam_policy_document" "glue_tag_based_execute" {
       "glue:DeleteWorkflow"
     ]
     
-    resources = ["*"]
+    resources = [
+      "arn:aws:glue:*:393209814297:catalog",
+      "arn:aws:glue:*:393209814297:database/*",
+      "arn:aws:glue:*:393209814297:table/*/*",
+      "arn:aws:glue:*:393209814297:job/*",
+      "arn:aws:glue:*:393209814297:crawler/*",
+      "arn:aws:glue:*:393209814297:trigger/*",
+      "arn:aws:glue:*:393209814297:devEndpoint/*",
+      "arn:aws:glue:*:393209814297:connection/*",
+      "arn:aws:glue:*:393209814297:workflow/*"
+    ]
     
     condition {
       test     = "StringEquals"
@@ -166,7 +186,11 @@ data "aws_iam_policy_document" "glue_tag_based_execute" {
       "glue:ImportCatalogToGlue"
     ]
     
-    resources = ["*"]
+    resources = [
+      "arn:aws:glue:*:393209814297:catalog",
+      "arn:aws:glue:*:393209814297:database/*",
+      "arn:aws:glue:*:393209814297:table/*/*"
+    ]
     
     condition {
       test     = "StringEquals"
@@ -227,7 +251,17 @@ data "aws_iam_policy_document" "glue_tag_based_execute" {
       "glue:GetWorkflowRunProperties"
     ]
     
-    resources = ["*"]
+    resources = [
+      "arn:aws:glue:*:393209814297:catalog",
+      "arn:aws:glue:*:393209814297:database/*",
+      "arn:aws:glue:*:393209814297:table/*/*",
+      "arn:aws:glue:*:393209814297:job/*",
+      "arn:aws:glue:*:393209814297:crawler/*",
+      "arn:aws:glue:*:393209814297:trigger/*",
+      "arn:aws:glue:*:393209814297:devEndpoint/*",
+      "arn:aws:glue:*:393209814297:connection/*",
+      "arn:aws:glue:*:393209814297:workflow/*"
+    ]
     
     condition {
       test     = "StringEquals"

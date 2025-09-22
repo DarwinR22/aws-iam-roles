@@ -13,7 +13,9 @@ data "aws_iam_policy_document" "sns_tag_based_publish" {
       "sns:GetTopicAttributes"
     ]
     
-    resources = ["*"]
+    resources = [
+      "arn:aws:sns:*:393209814297:*"
+    ]
     
     condition {
       test     = "StringEquals"
@@ -68,7 +70,9 @@ data "aws_iam_policy_document" "sns_tag_based_subscribe" {
       "sns:GetTopicAttributes"
     ]
     
-    resources = ["*"]
+    resources = [
+      "arn:aws:sns:*:393209814297:*"
+    ]
     
     condition {
       test     = "StringEquals"

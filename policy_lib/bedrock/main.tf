@@ -21,7 +21,12 @@ data "aws_iam_policy_document" "bedrock_tag_based_read" {
       "bedrock:GetProvisionedModelThroughput"
     ]
     
-    resources = ["*"]
+    resources = [
+      "arn:aws:bedrock:*:393209814297:foundation-model/*",
+      "arn:aws:bedrock:*:393209814297:custom-model/*",
+      "arn:aws:bedrock:*:393209814297:provisioned-model/*",
+      "arn:aws:bedrock:*:393209814297:model-customization-job/*"
+    ]
     
     condition {
       test     = "StringEquals"
@@ -77,7 +82,12 @@ data "aws_iam_policy_document" "bedrock_tag_based_invoke" {
       "bedrock:DeleteProvisionedModelThroughput"
     ]
     
-    resources = ["*"]
+    resources = [
+      "arn:aws:bedrock:*:393209814297:foundation-model/*",
+      "arn:aws:bedrock:*:393209814297:custom-model/*",
+      "arn:aws:bedrock:*:393209814297:provisioned-model/*",
+      "arn:aws:bedrock:*:393209814297:model-customization-job/*"
+    ]
     
     condition {
       test     = "StringEquals"
@@ -114,7 +124,12 @@ data "aws_iam_policy_document" "bedrock_tag_based_invoke" {
       "bedrock:ListTagsForResource"
     ]
     
-    resources = ["*"]
+    resources = [
+      "arn:aws:bedrock:*:393209814297:foundation-model/*",
+      "arn:aws:bedrock:*:393209814297:custom-model/*",
+      "arn:aws:bedrock:*:393209814297:provisioned-model/*",
+      "arn:aws:bedrock:*:393209814297:model-customization-job/*"
+    ]
     
     condition {
       test     = "StringEquals"
@@ -159,7 +174,12 @@ data "aws_iam_policy_document" "bedrock_tag_based_invoke" {
       "bedrock:GetProvisionedModelThroughput"
     ]
     
-    resources = ["*"]
+    resources = [
+      "arn:aws:bedrock:*:393209814297:foundation-model/*",
+      "arn:aws:bedrock:*:393209814297:custom-model/*",
+      "arn:aws:bedrock:*:393209814297:provisioned-model/*",
+      "arn:aws:bedrock:*:393209814297:model-customization-job/*"
+    ]
     
     condition {
       test     = "StringEquals"

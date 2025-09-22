@@ -19,7 +19,11 @@ data "aws_iam_policy_document" "stepfunctions_tag_based_read" {
       "states:ListActivities"
     ]
     
-    resources = ["*"]
+    resources = [
+      "arn:aws:states:*:393209814297:stateMachine:*",
+      "arn:aws:states:*:393209814297:execution:*",
+      "arn:aws:states:*:393209814297:activity:*"
+    ]
     
     condition {
       test     = "StringEquals"
@@ -77,7 +81,11 @@ data "aws_iam_policy_document" "stepfunctions_tag_based_execute" {
       "states:SendTaskHeartbeat"
     ]
     
-    resources = ["*"]
+    resources = [
+      "arn:aws:states:*:393209814297:stateMachine:*",
+      "arn:aws:states:*:393209814297:execution:*",
+      "arn:aws:states:*:393209814297:activity:*"
+    ]
     
     condition {
       test     = "StringEquals"
@@ -114,7 +122,10 @@ data "aws_iam_policy_document" "stepfunctions_tag_based_execute" {
       "states:ListTagsForResource"
     ]
     
-    resources = ["*"]
+    resources = [
+      "arn:aws:states:*:393209814297:stateMachine:*",
+      "arn:aws:states:*:393209814297:activity:*"
+    ]
     
     condition {
       test     = "StringEquals"
