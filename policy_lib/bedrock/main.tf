@@ -61,7 +61,12 @@ data "aws_iam_policy_document" "bedrock_tag_based_read" {
       "bedrock:ListTagsForResource"
     ]
     
-    resources = ["*"]
+    resources = [
+      "arn:aws:bedrock:*:393209814297:foundation-model/*",
+      "arn:aws:bedrock:*:393209814297:custom-model/*",
+      "arn:aws:bedrock:*:393209814297:provisioned-model/*",
+      "arn:aws:bedrock:*:393209814297:model-customization-job/*"
+    ]
   }
 }
 

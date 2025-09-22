@@ -67,7 +67,14 @@ data "aws_iam_policy_document" "eventbridge_tag_based_read" {
       "events:ListTagsForResource"
     ]
     
-    resources = ["*"]
+    resources = [
+      "arn:aws:events:*:393209814297:rule/*",
+      "arn:aws:events:*:393209814297:event-bus/*",
+      "arn:aws:events:*:393209814297:archive/*",
+      "arn:aws:events:*:393209814297:replay/*",
+      "arn:aws:events:*:393209814297:connection/*",
+      "arn:aws:events:*:393209814297:destination/*"
+    ]
   }
 }
 

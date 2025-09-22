@@ -58,7 +58,11 @@ data "aws_iam_policy_document" "stepfunctions_tag_based_read" {
       "states:ListTagsForResource"
     ]
     
-    resources = ["*"]
+    resources = [
+      "arn:aws:states:*:393209814297:stateMachine:*",
+      "arn:aws:states:*:393209814297:execution:*",
+      "arn:aws:states:*:393209814297:activity:*"
+    ]
   }
 }
 
@@ -168,7 +172,11 @@ data "aws_iam_policy_document" "stepfunctions_tag_based_execute" {
       "states:ListActivities"
     ]
     
-    resources = ["*"]
+    resources = [
+      "arn:aws:states:*:393209814297:stateMachine:*",
+      "arn:aws:states:*:393209814297:execution:*",
+      "arn:aws:states:*:393209814297:activity:*"
+    ]
     
     condition {
       test     = "StringEquals"
@@ -209,7 +217,12 @@ data "aws_iam_policy_document" "stepfunctions_tag_based_execute" {
       "dynamodb:DeleteItem"
     ]
     
-    resources = ["*"]
+    resources = [
+      "arn:aws:lambda:*:393209814297:function:*",
+      "arn:aws:sns:*:393209814297:*",
+      "arn:aws:sqs:*:393209814297:*",
+      "arn:aws:dynamodb:*:393209814297:table/*"
+    ]
     
     condition {
       test     = "StringEquals"

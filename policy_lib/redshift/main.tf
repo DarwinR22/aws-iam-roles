@@ -70,7 +70,13 @@ data "aws_iam_policy_document" "redshift_tag_based_read" {
       "redshift:DescribeTags"
     ]
     
-    resources = ["*"]
+    resources = [
+      "arn:aws:redshift:*:393209814297:cluster:*",
+      "arn:aws:redshift:*:393209814297:snapshot:*",
+      "arn:aws:redshift:*:393209814297:subnetgroup:*",
+      "arn:aws:redshift:*:393209814297:parametergroup:*",
+      "arn:aws:redshift:*:393209814297:securitygroup:*"
+    ]
   }
 }
 
@@ -195,7 +201,13 @@ data "aws_iam_policy_document" "redshift_tag_based_write" {
       "redshift:GetClusterCredentials"
     ]
     
-    resources = ["*"]
+    resources = [
+      "arn:aws:redshift:*:393209814297:cluster:*",
+      "arn:aws:redshift:*:393209814297:snapshot:*",
+      "arn:aws:redshift:*:393209814297:subnetgroup:*",
+      "arn:aws:redshift:*:393209814297:parametergroup:*",
+      "arn:aws:redshift:*:393209814297:securitygroup:*"
+    ]
     
     condition {
       test     = "StringEquals"
