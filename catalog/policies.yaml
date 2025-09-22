@@ -221,6 +221,372 @@ policies:
       "Map-migrated": "MigSqsPolicy002"
 
   # ===================
+  # SNS ABAC POLICIES
+  # ===================
+  MCI-SNS-TagBased-Publish:
+    description: "SNS publish access based on matching topic tags with principal tags"
+    type: "managed"
+    policy_document: "sns.sns_tag_based_publish"
+    canonical_tags:
+      Ambiente: "Multi"
+      Pais: "RG"
+      Direccion: "Tecnologia"
+      Gerencia: "MCI"
+      Cuenta: "393209814297"
+      Modulo: "MessagingAccess"
+      "Alcance SOX": "No"
+      Propietario: "SecurityTeam"
+      Proveedor: "Claro"
+      Layer: "Security"
+      Dominio: "MessagingAccess"
+      Subdominio: "SNS"
+      Aplicación: "AbacPolicies"
+      Name: "MCI-SNS-TagBased-Publish"
+      Soporte: "SecurityTeam"
+      Contacto: "SecurityClaroComm"
+      Proyecto: "AbacFramework"
+      "Fechas de Creación": "2024-01-15T10:00:00Z"
+      "Creado Por": "TerraformIac"
+      "Tipo de Recurso": "IamPolicy"
+      "Ciclo de Vida": "Active"
+      Versión: "2.0"
+      "Map-migrated": "MigSnsPolicy001"
+
+  MCI-SNS-TagBased-Subscribe:
+    description: "SNS subscribe access based on matching topic tags with principal tags"
+    type: "managed"
+    policy_document: "sns.sns_tag_based_subscribe"
+    canonical_tags:
+      Ambiente: "Multi"
+      Pais: "RG"
+      Direccion: "Tecnologia"
+      Gerencia: "MCI"
+      Cuenta: "393209814297"
+      Modulo: "MessagingAccess"
+      "Alcance SOX": "No"
+      Propietario: "SecurityTeam"
+      Proveedor: "Claro"
+      Layer: "Security"
+      Dominio: "MessagingAccess"
+      Subdominio: "SNS"
+      Aplicación: "AbacPolicies"
+      Name: "MCI-SNS-TagBased-Subscribe"
+      Soporte: "SecurityTeam"
+      Contacto: "SecurityClaroComm"
+      Proyecto: "AbacFramework"
+      "Fechas de Creación": "2024-01-15T10:00:00Z"
+      "Creado Por": "TerraformIac"
+      "Tipo de Recurso": "IamPolicy"
+      "Ciclo de Vida": "Active"
+      Versión: "2.0"
+      "Map-migrated": "MigSnsPolicy002"
+
+  # ===================
+  # REDSHIFT ABAC POLICIES
+  # ===================
+  MCI-Redshift-TagBased-ReadOnly:
+    description: "Redshift read-only access based on matching cluster tags with principal tags"
+    type: "managed"
+    policy_document: "redshift.redshift_tag_based_read"
+    canonical_tags:
+      Ambiente: "Multi"
+      Pais: "RG"
+      Direccion: "Tecnologia"
+      Gerencia: "MCI"
+      Cuenta: "393209814297"
+      Modulo: "DatabaseAccess"
+      "Alcance SOX": "No"
+      Propietario: "SecurityTeam"
+      Proveedor: "Claro"
+      Layer: "Security"
+      Dominio: "DataAccess"
+      Subdominio: "Redshift"
+      Aplicación: "AbacPolicies"
+      Name: "MCI-Redshift-TagBased-ReadOnly"
+      Soporte: "SecurityTeam"
+      Contacto: "SecurityClaroComm"
+      Proyecto: "AbacFramework"
+      "Fechas de Creación": "2024-01-15T10:00:00Z"
+      "Creado Por": "TerraformIac"
+      "Tipo de Recurso": "IamPolicy"
+      "Ciclo de Vida": "Active"
+      Versión: "2.0"
+      "Map-migrated": "MigRedshiftPolicy001"
+
+  MCI-Redshift-TagBased-Write:
+    description: "Redshift write access based on matching cluster tags with principal tags"
+    type: "managed"
+    policy_document: "redshift.redshift_tag_based_write"
+    canonical_tags:
+      Ambiente: "Multi"
+      Pais: "RG"
+      Direccion: "Tecnologia"
+      Gerencia: "MCI"
+      Cuenta: "393209814297"
+      Modulo: "DatabaseAccess"
+      "Alcance SOX": "Si"
+      Propietario: "SecurityTeam"
+      Proveedor: "Claro"
+      Layer: "Security"
+      Dominio: "DataAccess"
+      Subdominio: "Redshift"
+      Aplicación: "AbacPolicies"
+      Name: "MCI-Redshift-TagBased-Write"
+      Soporte: "SecurityTeam"
+      Contacto: "SecurityClaroComm"
+      Proyecto: "AbacFramework"
+      "Fechas de Creación": "2024-01-15T10:00:00Z"
+      "Creado Por": "TerraformIac"
+      "Tipo de Recurso": "IamPolicy"
+      "Ciclo de Vida": "Active"
+      Versión: "2.0"
+      "Map-migrated": "MigRedshiftPolicy002"
+
+  # ===================
+  # GLUE ABAC POLICIES
+  # ===================
+  MCI-Glue-TagBased-ReadOnly:
+    description: "Glue read-only access based on matching resource tags with principal tags"
+    type: "managed"
+    policy_document: "glue.glue_tag_based_read"
+    canonical_tags:
+      Ambiente: "Multi"
+      Pais: "RG"
+      Direccion: "Tecnologia"
+      Gerencia: "MCI"
+      Cuenta: "393209814297"
+      Modulo: "ETLAccess"
+      "Alcance SOX": "No"
+      Propietario: "SecurityTeam"
+      Proveedor: "Claro"
+      Layer: "Security"
+      Dominio: "DataAccess"
+      Subdominio: "Glue"
+      Aplicación: "AbacPolicies"
+      Name: "MCI-Glue-TagBased-ReadOnly"
+      Soporte: "SecurityTeam"
+      Contacto: "SecurityClaroComm"
+      Proyecto: "AbacFramework"
+      "Fechas de Creación": "2024-01-15T10:00:00Z"
+      "Creado Por": "TerraformIac"
+      "Tipo de Recurso": "IamPolicy"
+      "Ciclo de Vida": "Active"
+      Versión: "2.0"
+      "Map-migrated": "MigGluePolicy001"
+
+  MCI-Glue-TagBased-Execute:
+    description: "Glue execute access based on matching resource tags with principal tags"
+    type: "managed"
+    policy_document: "glue.glue_tag_based_execute"
+    canonical_tags:
+      Ambiente: "Multi"
+      Pais: "RG"
+      Direccion: "Tecnologia"
+      Gerencia: "MCI"
+      Cuenta: "393209814297"
+      Modulo: "ETLAccess"
+      "Alcance SOX": "Si"
+      Propietario: "SecurityTeam"
+      Proveedor: "Claro"
+      Layer: "Security"
+      Dominio: "DataAccess"
+      Subdominio: "Glue"
+      Aplicación: "AbacPolicies"
+      Name: "MCI-Glue-TagBased-Execute"
+      Soporte: "SecurityTeam"
+      Contacto: "SecurityClaroComm"
+      Proyecto: "AbacFramework"
+      "Fechas de Creación": "2024-01-15T10:00:00Z"
+      "Creado Por": "TerraformIac"
+      "Tipo de Recurso": "IamPolicy"
+      "Ciclo de Vida": "Active"
+      Versión: "2.0"
+      "Map-migrated": "MigGluePolicy002"
+
+  # ===================
+  # STEP FUNCTIONS ABAC POLICIES
+  # ===================
+  MCI-StepFunctions-TagBased-ReadOnly:
+    description: "Step Functions read-only access based on matching state machine tags with principal tags"
+    type: "managed"
+    policy_document: "stepfunctions.stepfunctions_tag_based_read"
+    canonical_tags:
+      Ambiente: "Multi"
+      Pais: "RG"
+      Direccion: "Tecnologia"
+      Gerencia: "MCI"
+      Cuenta: "393209814297"
+      Modulo: "WorkflowAccess"
+      "Alcance SOX": "No"
+      Propietario: "SecurityTeam"
+      Proveedor: "Claro"
+      Layer: "Security"
+      Dominio: "ComputeAccess"
+      Subdominio: "StepFunctions"
+      Aplicación: "AbacPolicies"
+      Name: "MCI-StepFunctions-TagBased-ReadOnly"
+      Soporte: "SecurityTeam"
+      Contacto: "SecurityClaroComm"
+      Proyecto: "AbacFramework"
+      "Fechas de Creación": "2024-01-15T10:00:00Z"
+      "Creado Por": "TerraformIac"
+      "Tipo de Recurso": "IamPolicy"
+      "Ciclo de Vida": "Active"
+      Versión: "2.0"
+      "Map-migrated": "MigStepFunctionPolicy001"
+
+  MCI-StepFunctions-TagBased-Execute:
+    description: "Step Functions execute access based on matching state machine tags with principal tags"
+    type: "managed"
+    policy_document: "stepfunctions.stepfunctions_tag_based_execute"
+    canonical_tags:
+      Ambiente: "Multi"
+      Pais: "RG"
+      Direccion: "Tecnologia"
+      Gerencia: "MCI"
+      Cuenta: "393209814297"
+      Modulo: "WorkflowAccess"
+      "Alcance SOX": "Si"
+      Propietario: "SecurityTeam"
+      Proveedor: "Claro"
+      Layer: "Security"
+      Dominio: "ComputeAccess"
+      Subdominio: "StepFunctions"
+      Aplicación: "AbacPolicies"
+      Name: "MCI-StepFunctions-TagBased-Execute"
+      Soporte: "SecurityTeam"
+      Contacto: "SecurityClaroComm"
+      Proyecto: "AbacFramework"
+      "Fechas de Creación": "2024-01-15T10:00:00Z"
+      "Creado Por": "TerraformIac"
+      "Tipo de Recurso": "IamPolicy"
+      "Ciclo de Vida": "Active"
+      Versión: "2.0"
+      "Map-migrated": "MigStepFunctionPolicy002"
+
+  # ===================
+  # BEDROCK ABAC POLICIES
+  # ===================
+  MCI-Bedrock-TagBased-ReadOnly:
+    description: "Bedrock read-only access based on matching model tags with principal tags"
+    type: "managed"
+    policy_document: "bedrock.bedrock_tag_based_read"
+    canonical_tags:
+      Ambiente: "Multi"
+      Pais: "RG"
+      Direccion: "Tecnologia"
+      Gerencia: "MCI"
+      Cuenta: "393209814297"
+      Modulo: "AIAccess"
+      "Alcance SOX": "No"
+      Propietario: "SecurityTeam"
+      Proveedor: "Claro"
+      Layer: "Security"
+      Dominio: "AIAccess"
+      Subdominio: "Bedrock"
+      Aplicación: "AbacPolicies"
+      Name: "MCI-Bedrock-TagBased-ReadOnly"
+      Soporte: "SecurityTeam"
+      Contacto: "SecurityClaroComm"
+      Proyecto: "AbacFramework"
+      "Fechas de Creación": "2024-01-15T10:00:00Z"
+      "Creado Por": "TerraformIac"
+      "Tipo de Recurso": "IamPolicy"
+      "Ciclo de Vida": "Active"
+      Versión: "2.0"
+      "Map-migrated": "MigBedrockPolicy001"
+
+  MCI-Bedrock-TagBased-Invoke:
+    description: "Bedrock invoke access based on matching model tags with principal tags"
+    type: "managed"
+    policy_document: "bedrock.bedrock_tag_based_invoke"
+    canonical_tags:
+      Ambiente: "Multi"
+      Pais: "RG"
+      Direccion: "Tecnologia"
+      Gerencia: "MCI"
+      Cuenta: "393209814297"
+      Modulo: "AIAccess"
+      "Alcance SOX": "Si"
+      Propietario: "SecurityTeam"
+      Proveedor: "Claro"
+      Layer: "Security"
+      Dominio: "AIAccess"
+      Subdominio: "Bedrock"
+      Aplicación: "AbacPolicies"
+      Name: "MCI-Bedrock-TagBased-Invoke"
+      Soporte: "SecurityTeam"
+      Contacto: "SecurityClaroComm"
+      Proyecto: "AbacFramework"
+      "Fechas de Creación": "2024-01-15T10:00:00Z"
+      "Creado Por": "TerraformIac"
+      "Tipo de Recurso": "IamPolicy"
+      "Ciclo de Vida": "Active"
+      Versión: "2.0"
+      "Map-migrated": "MigBedrockPolicy002"
+
+  # ===================
+  # EVENTBRIDGE ABAC POLICIES
+  # ===================
+  MCI-EventBridge-TagBased-ReadOnly:
+    description: "EventBridge read-only access based on matching rule tags with principal tags"
+    type: "managed"
+    policy_document: "eventbridge.eventbridge_tag_based_read"
+    canonical_tags:
+      Ambiente: "Multi"
+      Pais: "RG"
+      Direccion: "Tecnologia"
+      Gerencia: "MCI"
+      Cuenta: "393209814297"
+      Modulo: "EventAccess"
+      "Alcance SOX": "No"
+      Propietario: "SecurityTeam"
+      Proveedor: "Claro"
+      Layer: "Security"
+      Dominio: "EventAccess"
+      Subdominio: "EventBridge"
+      Aplicación: "AbacPolicies"
+      Name: "MCI-EventBridge-TagBased-ReadOnly"
+      Soporte: "SecurityTeam"
+      Contacto: "SecurityClaroComm"
+      Proyecto: "AbacFramework"
+      "Fechas de Creación": "2024-01-15T10:00:00Z"
+      "Creado Por": "TerraformIac"
+      "Tipo de Recurso": "IamPolicy"
+      "Ciclo de Vida": "Active"
+      Versión: "2.0"
+      "Map-migrated": "MigEventBridgePolicy001"
+
+  MCI-EventBridge-TagBased-Execute:
+    description: "EventBridge execute access based on matching rule tags with principal tags"
+    type: "managed"
+    policy_document: "eventbridge.eventbridge_tag_based_execute"
+    canonical_tags:
+      Ambiente: "Multi"
+      Pais: "RG"
+      Direccion: "Tecnologia"
+      Gerencia: "MCI"
+      Cuenta: "393209814297"
+      Modulo: "EventAccess"
+      "Alcance SOX": "Si"
+      Propietario: "SecurityTeam"
+      Proveedor: "Claro"
+      Layer: "Security"
+      Dominio: "EventAccess"
+      Subdominio: "EventBridge"
+      Aplicación: "AbacPolicies"
+      Name: "MCI-EventBridge-TagBased-Execute"
+      Soporte: "SecurityTeam"
+      Contacto: "SecurityClaroComm"
+      Proyecto: "AbacFramework"
+      "Fechas de Creación": "2024-01-15T10:00:00Z"
+      "Creado Por": "TerraformIac"
+      "Tipo de Recurso": "IamPolicy"
+      "Ciclo de Vida": "Active"
+      Versión: "2.0"
+      "Map-migrated": "MigEventBridgePolicy002"
+
+  # ===================
   # PERMISSION BOUNDARIES
   # ===================
   App-StandardBoundary:
@@ -285,11 +651,46 @@ policies:
 # POLICY BLOCK MAPPINGS
 # ===================
 policy_blocks:
+  # S3 Building Blocks
   s3_tag_based_read: "s3.s3_tag_based_read"
   s3_tag_based_write: "s3.s3_tag_based_write"
+  
+  # DynamoDB Building Blocks
   dynamodb_tag_based_read: "dynamodb.dynamodb_tag_based_read"
   dynamodb_tag_based_write: "dynamodb.dynamodb_tag_based_write"
+  
+  # Lambda Building Blocks
   lambda_tag_based_invoke: "lambda.lambda_tag_based_invoke"
   lambda_execution_basic: "lambda.lambda_execution_basic"
+  
+  # SQS Building Blocks
   sqs_tag_based_produce: "sqs.sqs_tag_based_produce"
   sqs_tag_based_consume: "sqs.sqs_tag_based_consume"
+  
+  # SNS Building Blocks
+  sns_tag_based_publish: "sns.sns_tag_based_publish"
+  sns_tag_based_subscribe: "sns.sns_tag_based_subscribe"
+  
+  # Redshift Building Blocks
+  redshift_tag_based_read: "redshift.redshift_tag_based_read"
+  redshift_tag_based_write: "redshift.redshift_tag_based_write"
+  
+  # Glue Building Blocks
+  glue_tag_based_read: "glue.glue_tag_based_read"
+  glue_tag_based_execute: "glue.glue_tag_based_execute"
+  
+  # Step Functions Building Blocks
+  stepfunctions_tag_based_read: "stepfunctions.stepfunctions_tag_based_read"
+  stepfunctions_tag_based_execute: "stepfunctions.stepfunctions_tag_based_execute"
+  
+  # Bedrock Building Blocks
+  bedrock_tag_based_read: "bedrock.bedrock_tag_based_read"
+  bedrock_tag_based_invoke: "bedrock.bedrock_tag_based_invoke"
+  
+  # EventBridge Building Blocks
+  eventbridge_tag_based_read: "eventbridge.eventbridge_tag_based_read"
+  eventbridge_tag_based_execute: "eventbridge.eventbridge_tag_based_execute"
+  
+  # Permission Boundaries
+  app_standard_boundary: "commons.app_standard_boundary"
+  platform_boundary: "commons.platform_boundary"
