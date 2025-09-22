@@ -1,4 +1,4 @@
-# catalog/policies.yaml
+﻿# catalog/policies.yaml
 # ===============================================
 # ENTERPRISE IAM POLICIES CATALOG
 # Fuente �nica de verdad para todas las pol�ticas
@@ -54,16 +54,16 @@ policies:
       Layer: "Security"
       Dominio: "DataAccess"
       Subdominio: "S3"
-      Aplicaci�n: "AbacPolicies"
+      Aplicacion: "AbacPolicies"
       Name: "MCI-S3-TagBased-Write"
       Soporte: "SecurityTeam"
       Contacto: "SecurityClaroComm"
       Proyecto: "AbacFramework"
-      "Fechas de Creaci�n": "2024-01-15T10:00:00Z"
+      "Fechas de Creacion": "2024-01-15T10:00:00Z"
       "Creado Por": "TerraformIac"
       "Tipo de Recurso": "IamPolicy"
       "Ciclo de Vida": "Active"
-      Versi�n: "2.0"
+      Version: "2.0"
       "Map-migrated": "n/a"
 
   # ===================
@@ -86,16 +86,16 @@ policies:
       Layer: "Security"
       Dominio: "DataAccess"
       Subdominio: "DynamoDB"
-      Aplicaci�n: "AbacPolicies"
+      Aplicacion: "AbacPolicies"
       Name: "MCI-DynamoDB-TagBased-ReadOnly"
       Soporte: "SecurityTeam"
       Contacto: "SecurityClaroComm"
       Proyecto: "AbacFramework"
-      "Fechas de Creaci�n": "2024-01-15T10:00:00Z"
+      "Fechas de Creacion": "2024-01-15T10:00:00Z"
       "Creado Por": "TerraformIac"
       "Tipo de Recurso": "IamPolicy"
       "Ciclo de Vida": "Active"
-      Versi�n: "2.0"
+      Version: "2.0"
       "Map-migrated": "n/a"
 
   MCI-DynamoDB-TagBased-Write:
@@ -115,16 +115,16 @@ policies:
       Layer: "Security"
       Dominio: "DataAccess"
       Subdominio: "DynamoDB"
-      Aplicaci�n: "AbacPolicies"
+      Aplicacion: "AbacPolicies"
       Name: "MCI-DynamoDB-TagBased-Write"
       Soporte: "SecurityTeam"
       Contacto: "SecurityClaroComm"
       Proyecto: "AbacFramework"
-      "Fechas de Creaci�n": "2024-01-15T10:00:00Z"
+      "Fechas de Creacion": "2024-01-15T10:00:00Z"
       "Creado Por": "TerraformIac"
       "Tipo de Recurso": "IamPolicy"
       "Ciclo de Vida": "Active"
-      Versi�n: "2.0"
+      Version: "2.0"
       "Map-migrated": "n/a"
 
   # ===================
