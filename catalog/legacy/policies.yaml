@@ -694,3 +694,128 @@ policy_blocks:
   # Permission Boundaries
   app_standard_boundary: "commons.app_standard_boundary"
   platform_boundary: "commons.platform_boundary"
+  
+  # Deployment Building Blocks
+  deployment_terraform_core: "deployment.terraform_core"
+  deployment_s3_analytics: "deployment.s3_analytics"
+  deployment_cloudformation: "deployment.cloudformation"
+  deployment_lambda: "deployment.lambda"
+  deployment_logs: "deployment.logs"
+  
+  # ===================
+  # DEPLOYMENT POLICIES (GitHub Actions)
+  # ===================
+  MCI-Deployment-TerraformCore:
+    description: "Core Terraform deployment permissions for IAM and Organizations (GitHub Actions only)"
+    type: "managed"
+    policy_document: "deployment.terraform_core"
+    service: "deployment"
+    sox_compliance: true
+    canonical_tags:
+      Ambiente: "all"  # Deployment policies apply to all environments
+      Pais: "rg" 
+      Direccion: "ticenam"
+      Gerencia: "mci"
+      Cuenta: "393209814297"
+      Modulo: "deployment"
+      "Alcance SOX": "si"
+      Propietario: "darwinlopez"
+      Proveedor: "inhouse"
+      Layer: "cicd"
+      Dominio: "deployment"
+      Subdominio: "terraform"
+      Aplicacion: "githubactions"
+      Name: "MCI-Deployment-TerraformCore"
+      Soporte: "darwin.lopez@claro.com.gt"
+      
+  MCI-Deployment-S3Analytics:
+    description: "S3 deployment permissions for analytics buckets (GitHub Actions only)"
+    type: "managed"
+    policy_document: "deployment.s3_analytics"
+    service: "deployment"
+    sox_compliance: true
+    canonical_tags:
+      Ambiente: "all"
+      Pais: "rg"
+      Direccion: "ticenam"
+      Gerencia: "mci"
+      Cuenta: "393209814297"
+      Modulo: "deployment"
+      "Alcance SOX": "si"
+      Propietario: "darwinlopez"
+      Proveedor: "inhouse"
+      Layer: "cicd"
+      Dominio: "deployment"
+      Subdominio: "s3"
+      Aplicacion: "githubactions"
+      Name: "MCI-Deployment-S3Analytics"
+      Soporte: "darwin.lopez@claro.com.gt"
+      
+  MCI-Deployment-CloudFormation:
+    description: "CloudFormation deployment permissions (GitHub Actions only)"
+    type: "managed"
+    policy_document: "deployment.cloudformation"
+    service: "deployment"
+    sox_compliance: true
+    canonical_tags:
+      Ambiente: "all"
+      Pais: "rg"
+      Direccion: "ticenam"
+      Gerencia: "mci"
+      Cuenta: "393209814297"
+      Modulo: "deployment"
+      "Alcance SOX": "si"
+      Propietario: "darwinlopez"
+      Proveedor: "inhouse"
+      Layer: "cicd"
+      Dominio: "deployment"
+      Subdominio: "cloudformation"
+      Aplicacion: "githubactions"
+      Name: "MCI-Deployment-CloudFormation"
+      Soporte: "darwin.lopez@claro.com.gt"
+      
+  MCI-Deployment-Lambda:
+    description: "Lambda deployment permissions with IAM PassRole (GitHub Actions only)"
+    type: "managed"
+    policy_document: "deployment.lambda"
+    service: "deployment"
+    sox_compliance: true
+    canonical_tags:
+      Ambiente: "all"
+      Pais: "rg"
+      Direccion: "ticenam"
+      Gerencia: "mci"
+      Cuenta: "393209814297"
+      Modulo: "deployment"
+      "Alcance SOX": "si"
+      Propietario: "darwinlopez"
+      Proveedor: "inhouse"
+      Layer: "cicd"
+      Dominio: "deployment"
+      Subdominio: "lambda"
+      Aplicacion: "githubactions"
+      Name: "MCI-Deployment-Lambda"
+      Soporte: "darwin.lopez@claro.com.gt"
+      
+  MCI-Deployment-Logs:
+    description: "CloudWatch Logs deployment permissions (GitHub Actions only)"
+    type: "managed"
+    policy_document: "deployment.logs"
+    service: "deployment"
+    sox_compliance: true
+    canonical_tags:
+      Ambiente: "all"
+      Pais: "rg"
+      Direccion: "ticenam"
+      Gerencia: "mci"
+      Cuenta: "393209814297"
+      Modulo: "deployment"
+      "Alcance SOX": "si"
+      Propietario: "darwinlopez"
+      Proveedor: "inhouse"
+      Layer: "cicd"
+      Dominio: "deployment"
+      Subdominio: "logs"
+      Aplicacion: "githubactions"
+      Name: "MCI-Deployment-Logs"
+      Soporte: "darwin.lopez@claro.com.gt"

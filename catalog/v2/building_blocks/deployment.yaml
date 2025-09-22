@@ -1,0 +1,174 @@
+# catalog/v2/building_blocks/deployment.yaml
+# ============================================
+# DEPLOYMENT BUILDING BLOCKS
+# ============================================
+
+service: "deployment"
+description: "Building blocks para políticas de deployment y CI/CD"
+
+building_blocks:
+  # TERRAFORM CORE - Política 1 original
+  terraform_core_deployment:
+    description: "Core Terraform deployment permissions for IAM and Organizations"
+    terraform_module: "policy_lib/deployment"
+    data_source: "aws_iam_policy_document.terraform_core_deployment"
+    actions:
+      - "iam:*"
+      - "organizations:Describe*"
+      - "organizations:List*"
+    resources: ["*"]
+    conditions:
+      - type: "StringEquals"
+        variable: "aws:PrincipalTag/Department"
+        values: ["${var.department}"]
+      - type: "StringEquals"
+        variable: "aws:PrincipalTag/Environment"
+        values: ["${var.environment}"]
+
+  # S3 ANALYTICS - Política 2 original ampliada
+  s3_analytics_deployment:
+    description: "S3 Analytics and full bucket management deployment permissions"
+    terraform_module: "policy_lib/deployment"
+    data_source: "aws_iam_policy_document.s3_analytics_deployment"
+    actions:
+      - "s3:CreateBucket"
+      - "s3:DeleteBucket"
+      - "s3:ListBucket"
+      - "s3:GetBucketLocation"
+      - "s3:GetBucketTagging"
+      - "s3:PutBucketTagging"
+      - "s3:GetBucketVersioning"
+      - "s3:PutBucketVersioning"
+      - "s3:GetBucketAcl"
+      - "s3:PutBucketAcl"
+      - "s3:GetBucketCors"
+      - "s3:PutBucketCors"
+      - "s3:GetLifecycleConfiguration"
+      - "s3:PutLifecycleConfiguration"
+      - "s3:PutObject"
+      - "s3:GetObject"
+      - "s3:DeleteObject"
+      - "s3:GetBucketAnalyticsConfiguration"
+      - "s3:PutBucketAnalyticsConfiguration"
+      - "s3:GetBucketInventoryConfiguration"
+      - "s3:PutBucketInventoryConfiguration"
+      - "s3:GetBucketMetricsConfiguration"
+      - "s3:PutBucketMetricsConfiguration"
+    resources:
+      - "arn:aws:s3:::s3-data-analytics-*"
+      - "arn:aws:s3:::s3-data-analytics-*/*"
+      - "arn:aws:s3:::${var.department}-${var.environment}-*"
+      - "arn:aws:s3:::${var.department}-${var.environment}-*/*"
+    conditions:
+      - type: "StringEquals"
+        variable: "aws:PrincipalTag/Department"
+        values: ["${var.department}"]
+      - type: "StringEquals"
+        variable: "aws:PrincipalTag/Environment"
+        values: ["${var.environment}"]
+
+  # CLOUDFORMATION - Política 3 original
+  cloudformation_deployment:
+    description: "CloudFormation deployment permissions"
+    terraform_module: "policy_lib/deployment"
+    data_source: "aws_iam_policy_document.cloudformation_deployment"
+    actions:
+      - "cloudformation:CreateStack"
+      - "cloudformation:UpdateStack"
+      - "cloudformation:DeleteStack"
+      - "cloudformation:DescribeStacks"
+      - "cloudformation:ListStacks"
+      - "cloudformation:GetStackPolicy"
+      - "cloudformation:SetStackPolicy"
+      - "cloudformation:ValidateTemplate"
+    resources: ["*"]
+    conditions:
+      - type: "StringEquals"
+        variable: "aws:PrincipalTag/Department"
+        values: ["${var.department}"]
+      - type: "StringEquals"
+        variable: "aws:PrincipalTag/Environment"
+        values: ["${var.environment}"]
+
+  # LAMBDA - Política 4 original
+  lambda_deployment:
+    description: "Lambda deployment permissions with IAM PassRole"
+    terraform_module: "policy_lib/deployment"
+    data_source: "aws_iam_policy_document.lambda_deployment"
+    statements:
+      - sid: "LambdaCorePermissions"
+        actions:
+          - "lambda:CreateFunction"
+          - "lambda:UpdateFunctionCode"
+          - "lambda:UpdateFunctionConfiguration"
+          - "lambda:DeleteFunction"
+          - "lambda:GetFunction"
+          - "lambda:ListFunctions"
+          - "lambda:PublishVersion"
+          - "lambda:CreateAlias"
+          - "lambda:UpdateAlias"
+          - "lambda:GetFunctionConfiguration"
+          - "lambda:ListVersionsByFunction"
+        resources:
+          - "arn:aws:lambda:us-east-1:393209814297:function:*"
+          - "arn:aws:lambda:*:*:function:${var.department}-${var.environment}-*"
+      - sid: "IAMPassRoleForLambda"
+        actions: ["iam:PassRole"]
+        resources:
+          - "arn:aws:iam::393209814297:role/lambda_exec_role"
+          - "arn:aws:iam::*:role/${var.department}-${var.environment}-lambda-*"
+    conditions:
+      - type: "StringEquals"
+        variable: "aws:PrincipalTag/Department"
+        values: ["${var.department}"]
+      - type: "StringEquals"
+        variable: "aws:PrincipalTag/Environment"
+        values: ["${var.environment}"]
+
+  # LOGS - Política 5 original
+  logs_deployment:
+    description: "CloudWatch Logs deployment permissions"
+    terraform_module: "policy_lib/deployment"
+    data_source: "aws_iam_policy_document.logs_deployment"
+    actions:
+      - "logs:CreateLogGroup"
+      - "logs:CreateLogStream"
+      - "logs:PutLogEvents"
+      - "logs:DescribeLogGroups"
+      - "logs:DescribeLogStreams"
+      - "logs:PutRetentionPolicy"
+    resources:
+      - "arn:aws:logs:us-east-1:393209814297:*"
+      - "arn:aws:logs:*:*:log-group:/aws/lambda/${var.department}-${var.environment}-*"
+      - "arn:aws:logs:*:*:log-group:/aws/apigateway/${var.department}-${var.environment}-*"
+    conditions:
+      - type: "StringEquals"
+        variable: "aws:PrincipalTag/Department"
+        values: ["${var.department}"]
+      - type: "StringEquals"
+        variable: "aws:PrincipalTag/Environment"
+        values: ["${var.environment}"]
+
+# VARIABLES REQUIRED
+variables:
+  department:
+    description: "Department tag (MCI, sistemas, data-analytics)"
+    type: "string"
+    validation: ["MCI", "sistemas", "data-analytics"]
+  environment:
+    description: "Environment tag (dev, qa, prod)"
+    type: "string" 
+    validation: ["dev", "qa", "prod"]
+
+# INTEGRATION NOTES
+integration:
+  github_actions: true
+  terraform_native: true
+  abac_enabled: true
+  backward_compatible: true
+  original_policies:
+    - "MCI-Deployment-TerraformCore.json"
+    - "MCI-Deployment-S3Analytics.json"
+    - "MCI-Deployment-CloudFormation.json"
+    - "MCI-Deployment-Lambda.json"
+    - "MCI-Deployment-Logs.json"

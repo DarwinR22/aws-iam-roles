@@ -1,13 +1,27 @@
 ﻿# Main configuration for IAM roles deployment
 
 locals {
-  # Cargar catalogo de politicas
-  policies_catalog_raw = file("${path.root}/../../catalog/policies.yaml")
-  policies_catalog = yamldecode(local.policies_catalog_raw)
+  # Cargar catálogo V2 modular
+  v2_index_raw = file("${path.root}/../../catalog/v2/index.yaml")
+  v2_index = yamldecode(local.v2_index_raw)
   
-  # Extraer politicas MCI TagBased
+  # Cargar servicio S3 del catálogo V2
+  s3_catalog_raw = file("${path.root}/../../catalog/v2/services/s3.yaml")
+  s3_catalog = yamldecode(local.s3_catalog_raw)
+  
+  # Cargar servicio deployment del catálogo V2
+  deployment_catalog_raw = file("${path.root}/../../catalog/v2/services/deployment.yaml")
+  deployment_catalog = yamldecode(local.deployment_catalog_raw)
+  
+  # Combinar políticas de todos los servicios V2
+  all_v2_policies = merge(
+    local.s3_catalog.policies,
+    local.deployment_catalog.policies
+  )
+  
+  # Extraer políticas MCI TagBased para backward compatibility
   mci_policies = {
-    for policy_name, policy_config in local.policies_catalog.policies : 
+    for policy_name, policy_config in local.all_v2_policies : 
     policy_name => policy_config
     if can(regex("^MCI-.+-TagBased-.+$", policy_name))
   }

@@ -12,11 +12,31 @@ from datetime import datetime
 def generate_documentation():
     """Generate comprehensive IAM policies documentation"""
     
-    print("📚 Generating IAM documentation...")
+    print("📚 Generating IAM documentation from catalog V2...")
     
-    # Read policies catalog
-    with open('catalog/policies.yaml', 'r', encoding='utf-8') as f:
-        catalog = yaml.safe_load(f)
+    # Try to read V2 catalog first
+    try:
+        # Read V2 index
+        with open('catalog/v2/index.yaml', 'r', encoding='utf-8') as f:
+            v2_index = yaml.safe_load(f)
+        
+        # Combine all services from V2
+        all_policies = {}
+        for service_name, service_file in v2_index.get('services', {}).items():
+            service_path = f'catalog/v2/{service_file}'
+            if os.path.exists(service_path):
+                with open(service_path, 'r', encoding='utf-8') as f:
+                    service_catalog = yaml.safe_load(f)
+                all_policies.update(service_catalog.get('policies', {}))
+        
+        catalog = {'policies': all_policies}
+        print(f"✅ Using catalog V2 - {len(all_policies)} policies loaded")
+        
+    except FileNotFoundError:
+        print("⚠️ Catalog V2 not found, falling back to V1...")
+        # Fallback to V1 catalog
+        with open('catalog/policies.yaml', 'r', encoding='utf-8') as f:
+            catalog = yaml.safe_load(f)
     
     # Generate markdown documentation
     with open('POLICIES_DOCUMENTATION.md', 'w', encoding='utf-8') as f:

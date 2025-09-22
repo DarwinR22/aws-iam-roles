@@ -178,6 +178,88 @@ jobs:
           done
           echo "✅ All JSON files are valid"
 
+      - name: 📏 Validate Role Naming Convention
+        run: |
+          echo "📏 Validating role naming conventions..."
+          pip install PyYAML
+          
+          python -c "
+          import json
+          import os
+          import re
+          from pathlib import Path
+          
+          # Patrón de nomenclatura: rol-{gerencia}-{area}-{pais}-{aplicacion}
+          ROLE_NAME_PATTERN = r'^rol-[a-z]{2,6}-[a-z0-9\-]{2,15}-(gt|sv|ni|cr|hn|rg)-[a-z0-9\-]{2,20}$'
+          
+          # Buscar todos los archivos de roles
+          role_files = []
+          gerencias_path = Path('gerencias')
+          
+          if gerencias_path.exists():
+              for role_file in gerencias_path.glob('**/rol-*.json'):
+                  role_files.append(role_file)
+          
+          validation_errors = []
+          
+          for role_file in role_files:
+              try:
+                  with open(role_file, 'r', encoding='utf-8') as f:
+                      role_data = json.load(f)
+                  
+                  role_name = role_data.get('role_name', '')
+                  file_name = role_file.stem
+                  
+                  # Validar que el nombre del archivo coincida con role_name
+                  if role_name != file_name:
+                      validation_errors.append(f'❌ {role_file}: role_name (\"{role_name}\") no coincide con nombre del archivo (\"{file_name}\")')
+                  
+                  # Validar patrón de nomenclatura
+                  if not re.match(ROLE_NAME_PATTERN, role_name):
+                      validation_errors.append(f'❌ {role_file}: Nombre \"{role_name}\" no sigue el patrón rol-{{gerencia}}-{{area}}-{{pais}}-{{aplicacion}}')
+                  
+                  # Validar estructura de carpetas
+                  path_parts = role_file.parts
+                  if len(path_parts) >= 4:
+                      gerencia_folder = path_parts[1]
+                      area_folder = path_parts[2]
+                      
+                      # Extraer gerencia y área del nombre del rol
+                      role_parts = role_name.split('-')
+                      if len(role_parts) >= 4:
+                          role_gerencia = role_parts[1]
+                          role_area = role_parts[2]
+                          
+                          if gerencia_folder.lower() != role_gerencia.lower():
+                              validation_errors.append(f'❌ {role_file}: Gerencia en carpeta (\"{gerencia_folder}\") no coincide con rol (\"{role_gerencia}\")')
+                          
+                          if area_folder.lower() != role_area.lower():
+                              validation_errors.append(f'❌ {role_file}: Área en carpeta (\"{area_folder}\") no coincide con rol (\"{role_area}\")')
+                  
+                  # Validar tags requeridos
+                  tags = role_data.get('tags', {})
+                  required_tags = ['ambiente', 'pais', 'gerencia', 'area', 'Equipo', 'Proyecto', 'propietario']
+                  
+                  for required_tag in required_tags:
+                      if required_tag not in tags:
+                          validation_errors.append(f'❌ {role_file}: Falta tag requerido \"{required_tag}\"')
+                  
+                  print(f'✅ {role_file}: Validación exitosa')
+                  
+              except Exception as e:
+                  validation_errors.append(f'❌ {role_file}: Error de validación - {str(e)}')
+          
+          # Mostrar resultados
+          if validation_errors:
+              print('\n🚨 ERRORES DE VALIDACIÓN ENCONTRADOS:')
+              for error in validation_errors:
+                  print(error)
+              exit(1)
+          else:
+              print('\n✅ Todos los roles cumplen con las convenciones de nomenclatura')
+          "
+          echo "✅ Role naming validation completed"
+
       - name: 🔍 Validate Terraform Syntax
         working-directory: environments/${{ steps.env.outputs.environment }}
         run: |
@@ -256,7 +338,12 @@ jobs:
           
           policies_to_check = [
               'App-StandardBoundary',
-              'Platform-Boundary'
+              'Platform-Boundary',
+              'MCI-Deployment-TerraformCore',
+              'MCI-Deployment-S3Analytics',
+              'MCI-Deployment-CloudFormation',
+              'MCI-Deployment-Lambda',
+              'MCI-Deployment-Logs'
           ]
           
           for policy_name in policies_to_check:

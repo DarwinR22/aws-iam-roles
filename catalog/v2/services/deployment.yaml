@@ -1,0 +1,139 @@
+# 🚀 Políticas de Deployment y CI/CD
+# ===================================
+# Políticas específicas para GitHub Actions y deployment
+# ===================================
+
+service: "deployment"
+description: "Políticas para CI/CD, GitHub Actions y deployment automatizado"
+category: "infrastructure"
+owner: "MCI Infrastructure Team"
+sox_compliance: true
+
+policies:
+  MCI-Deployment-TerraformCore:
+    description: "Core Terraform deployment permissions for IAM and Organizations (GitHub Actions only)"
+    type: "managed"
+    policy_document: "deployment.terraform_core_deployment"
+    building_block: "policy_lib/deployment/main.tf:terraform_core_deployment"
+    sox_compliance: true
+    environments: ["all"]
+    canonical_tags:
+      Ambiente: "all"
+      Pais: "rg" 
+      Direccion: "ticenam"
+      Gerencia: "mci"
+      Cuenta: "393209814297"
+      Modulo: "deployment"
+      "Alcance SOX": "si"
+      Propietario: "darwinlopez"
+      Proveedor: "inhouse"
+      Layer: "cicd"
+      Dominio: "deployment"
+      Subdominio: "terraform"
+      Aplicacion: "githubactions"
+      Name: "MCI-Deployment-TerraformCore"
+      Soporte: "darwin.lopez@claro.com.gt"
+      
+  MCI-Deployment-S3Analytics:
+    description: "S3 Analytics and bucket management deployment permissions (GitHub Actions only)"
+    type: "managed"
+    policy_document: "deployment.s3_analytics_deployment"
+    building_block: "policy_lib/deployment/main.tf:s3_analytics_deployment"
+    sox_compliance: true
+    environments: ["all"]
+    canonical_tags:
+      Ambiente: "all"
+      Pais: "rg"
+      Direccion: "ticenam"
+      Gerencia: "mci"
+      Cuenta: "393209814297"
+      Modulo: "deployment"
+      "Alcance SOX": "si"
+      Propietario: "darwinlopez"
+      Proveedor: "inhouse"
+      Layer: "cicd"
+      Dominio: "deployment"
+      Subdominio: "s3"
+      Aplicacion: "githubactions"
+      Name: "MCI-Deployment-S3Analytics"
+      Soporte: "darwin.lopez@claro.com.gt"
+      
+  MCI-Deployment-CloudFormation:
+    description: "CloudFormation deployment permissions (GitHub Actions only)"
+    type: "managed"
+    policy_document: "deployment.cloudformation_deployment"
+    building_block: "policy_lib/deployment/main.tf:cloudformation_deployment"
+    sox_compliance: true
+    environments: ["all"]
+    canonical_tags:
+      Ambiente: "all"
+      Pais: "rg"
+      Direccion: "ticenam"
+      Gerencia: "mci"
+      Cuenta: "393209814297"
+      Modulo: "deployment"
+      "Alcance SOX": "si"
+      Propietario: "darwinlopez"
+      Proveedor: "inhouse"
+      Layer: "cicd"
+      Dominio: "deployment"
+      Subdominio: "cloudformation"
+      Aplicacion: "githubactions"
+      Name: "MCI-Deployment-CloudFormation"
+      Soporte: "darwin.lopez@claro.com.gt"
+      
+  MCI-Deployment-Lambda:
+    description: "Lambda deployment permissions with IAM PassRole (GitHub Actions only)"
+    type: "managed"
+    policy_document: "deployment.lambda_deployment"
+    building_block: "policy_lib/deployment/main.tf:lambda_deployment"
+    sox_compliance: true
+    environments: ["all"]
+    canonical_tags:
+      Ambiente: "all"
+      Pais: "rg"
+      Direccion: "ticenam"
+      Gerencia: "mci"
+      Cuenta: "393209814297"
+      Modulo: "deployment"
+      "Alcance SOX": "si"
+      Propietario: "darwinlopez"
+      Proveedor: "inhouse"
+      Layer: "cicd"
+      Dominio: "deployment"
+      Subdominio: "lambda"
+      Aplicacion: "githubactions"
+      Name: "MCI-Deployment-Lambda"
+      Soporte: "darwin.lopez@claro.com.gt"
+      
+  MCI-Deployment-Logs:
+    description: "CloudWatch Logs deployment permissions (GitHub Actions only)"
+    type: "managed"
+    policy_document: "deployment.logs_deployment"
+    building_block: "policy_lib/deployment/main.tf:logs_deployment"
+    sox_compliance: true
+    environments: ["all"]
+    canonical_tags:
+      Ambiente: "all"
+      Pais: "rg"
+      Direccion: "ticenam"
+      Gerencia: "mci"
+      Cuenta: "393209814297"
+      Modulo: "deployment"
+      "Alcance SOX": "si"
+      Propietario: "darwinlopez"
+      Proveedor: "inhouse"
+      Layer: "cicd"
+      Dominio: "deployment"
+      Subdominio: "logs"
+      Aplicacion: "githubactions"
+      Name: "MCI-Deployment-Logs"
+      Soporte: "darwin.lopez@claro.com.gt"
+
+# Building blocks para deployment
+building_blocks:
+  terraform_core: "deployment.terraform_core"
+  s3_analytics: "deployment.s3_analytics"
+  cloudformation: "deployment.cloudformation"
+  lambda: "deployment.lambda"
+  logs: "deployment.logs"

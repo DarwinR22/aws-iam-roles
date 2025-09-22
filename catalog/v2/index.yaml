@@ -1,0 +1,65 @@
+# 🗂️ Catálogo IAM Modular v2.0
+# ===================================
+# Índice principal del catálogo modular
+# Referencia a todos los servicios y gerencias
+# ===================================
+
+catalog_version: "2.0"
+created_date: "2025-09-22"
+description: "Catálogo modular para escalabilidad empresarial"
+
+# Configuración global
+global_settings:
+  account_id: "393209814297"
+  default_region: "us-east-1"
+  sox_compliance_required: true
+  
+# Referencias a catálogos por servicio
+services:
+  # Core AWS Services
+  s3: "./services/s3.yaml"
+  
+  # Infrastructure Services
+  deployment: "./services/deployment.yaml"
+  lambda: "./services/lambda.yaml"
+  dynamodb: "./services/dynamodb.yaml"
+  sqs: "./services/sqs.yaml"
+  sns: "./services/sns.yaml"
+  
+  # Analytics & Data
+  glue: "./services/glue.yaml"
+  redshift: "./services/redshift.yaml"
+  stepfunctions: "./services/stepfunctions.yaml"
+  
+  # AI/ML Services  
+  bedrock: "./services/bedrock.yaml"
+  
+  # Infrastructure
+  eventbridge: "./services/eventbridge.yaml"
+  
+  # CI/CD & Deployment
+  deployment: "./services/deployment.yaml"
+  
+  # Security & Governance
+  boundaries: "./services/boundaries.yaml"
+
+# Referencias a catálogos por gerencia
+gerencias:
+  MCI: "./gerencias/mci.yaml"
+  OID: "./gerencias/oid.yaml"
+  
+# Building blocks centralizados
+building_blocks: "./building_blocks.yaml"
+
+# Metadatos
+metadata:
+  total_services: 12
+  total_gerencias: 2
+  maintainer: "MCI Infrastructure Team"
+  contact: "darwin.lopez@claro.com.gt"
+  
+# Validación automática
+validation:
+  max_policies_per_service: 50
+  required_tags: ["Ambiente", "Pais", "Gerencia", "Cuenta"]
+  naming_pattern: "^MCI-.+-.+$"

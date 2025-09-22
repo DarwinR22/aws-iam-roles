@@ -1,0 +1,39 @@
+{
+  "role_name": "rol-mci-bi-rg-monitoreo",
+  "description": "fkdsjfsdjakfjsdakfjlsajflñsajfñjfñkaj",
+  "trust_policy": {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Principal": {
+          "Service": "ec2.amazonaws.com"
+        },
+        "Action": "sts:AssumeRole"
+      }
+    ]
+  },
+  "policies": {
+    "aws_managed": [],
+    "mci_managed": [
+      "MCI-S3-TagBased-ReadOnly"
+    ]
+  },
+  "tags": {
+    "ambiente": "dev",
+    "pais": "rg",
+    "servicio": "ec2",
+    "gerencia": "MCI",
+    "area": "bi",
+    "Equipo": "Devops",
+    "Proyecto": "Devops",
+    "propietario": "darwin.lopez@claro.com.gt",
+    "Aplicacion": "monitoreo",
+    "Version": "1.0.0",
+    "Fechas de Creacion": "2025-09-22",
+    "map-migrated": "n/a"
+  },
+  "gerencia_code": "MCI",
+  "area_code": "bi",
+  "note": "Rol ABAC creado automáticamente - 2025-09-22 16:25:24"
+}
