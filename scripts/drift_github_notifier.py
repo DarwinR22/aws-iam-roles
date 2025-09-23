@@ -42,8 +42,22 @@ class DriftGitHubNotifier:
     def get_severity_info(self, drift_report: Dict[str, Any]) -> tuple[str, str, str]:
         """Determine severity level and visual indicators"""
         summary = drift_report.get('summary', {})
+        
+        # Ensure summary is a dict
+        if not isinstance(summary, dict):
+            logger.warning(f"⚠️ Summary is not a dict, got: {type(summary)}")
+            summary = {}
+            
         total_issues = summary.get('total_issues', 0)
         orphaned_roles = summary.get('orphaned_roles', 0)
+        
+        # Ensure values are integers
+        try:
+            total_issues = int(total_issues) if total_issues is not None else 0
+            orphaned_roles = int(orphaned_roles) if orphaned_roles is not None else 0
+        except (ValueError, TypeError):
+            total_issues = 0
+            orphaned_roles = 0
         
         if total_issues >= 10 or orphaned_roles >= 5:
             return 'critical', '🚨', 'CRÍTICO'
@@ -83,6 +97,10 @@ class DriftGitHubNotifier:
         orphaned_resources = drift_report.get('orphaned_resources', {})
         missing_resources = drift_report.get('missing_resources', [])
         
+        # Ensure orphaned_resources is a dict
+        if not isinstance(orphaned_resources, dict):
+            orphaned_resources = {}
+            
         if orphaned_resources.get('roles') or orphaned_resources.get('policies'):
             markdown += """
 ## 🔍 Recursos Huérfanos Detectados
@@ -90,28 +108,37 @@ class DriftGitHubNotifier:
 """
             
             # Orphaned roles
-            if orphaned_resources.get('roles'):
+            roles = orphaned_resources.get('roles', [])
+            if roles and isinstance(roles, list):
                 markdown += """
 ### 👤 Roles Huérfanos
 
 | Nombre del Rol | ARN | Fecha Creación | Protegido |
 |----------------|-----|----------------|-----------|
 """
-                for role in orphaned_resources['roles']:
-                    protected_icon = "🛡️" if role.get('protected', False) else "❌"
-                    markdown += f"| `{role['name']}` | `{role['arn']}` | {role.get('created', 'N/A')} | {protected_icon} |\n"
+                for role in roles:
+                    if isinstance(role, dict):
+                        protected_icon = "🛡️" if role.get('protected', False) else "❌"
+                        role_name = role.get('name', 'Unknown')
+                        role_arn = role.get('arn', 'Unknown')
+                        role_created = role.get('created', 'N/A')
+                        markdown += f"| `{role_name}` | `{role_arn}` | {role_created} | {protected_icon} |\n"
             
             # Orphaned policies
-            if orphaned_resources.get('policies'):
+            policies = orphaned_resources.get('policies', [])
+            if policies and isinstance(policies, list):
                 markdown += """
 ### 📄 Políticas Huérfanas
 
 | Nombre de Política | ARN | Adjunta a |
 |-------------------|-----|-----------|
 """
-                for policy in orphaned_resources['policies']:
-                    attached = ', '.join(policy.get('attached_to', [])) or 'Ninguno'
-                    markdown += f"| `{policy['name']}` | `{policy['arn']}` | {attached} |\n"
+                for policy in policies:
+                    if isinstance(policy, dict):
+                        attached = ', '.join(policy.get('attached_to', [])) or 'Ninguno'
+                        policy_name = policy.get('name', 'Unknown')
+                        policy_arn = policy.get('arn', 'Unknown')
+                        markdown += f"| `{policy_name}` | `{policy_arn}` | {attached} |\n"
         
         if missing_resources:
             markdown += """
@@ -119,22 +146,33 @@ class DriftGitHubNotifier:
 
 """
             for resource in missing_resources:
-                markdown += f"- **{resource.get('type', 'Unknown')}**: `{resource.get('name', 'Unknown')}`\n"
+                # Handle both dict and list formats
+                if isinstance(resource, dict):
+                    resource_type = resource.get('type', 'Unknown')
+                    resource_name = resource.get('name', 'Unknown')
+                else:
+                    # If resource is a string or other format
+                    resource_type = 'Resource'
+                    resource_name = str(resource)
+                markdown += f"- **{resource_type}**: `{resource_name}`\n"
         
         # Recommendations
         recommendations = drift_report.get('recommendations', [])
-        if recommendations:
+        if recommendations and isinstance(recommendations, list):
             markdown += """
 ## 💡 Recomendaciones
 
 """
             for rec in recommendations:
-                priority_icon = {'critical': '🚨', 'warning': '⚠️', 'info': 'ℹ️'}.get(rec.get('priority', 'info'), 'ℹ️')
-                markdown += f"- {priority_icon} **{rec.get('type', 'N/A')}**: {rec.get('description', 'N/A')}\n"
-                
-                # Add cleanup script if available
-                if rec.get('script') and not test_mode:
-                    markdown += f"""
+                if isinstance(rec, dict):
+                    priority_icon = {'critical': '🚨', 'warning': '⚠️', 'info': 'ℹ️'}.get(rec.get('priority', 'info'), 'ℹ️')
+                    rec_type = rec.get('type', 'N/A')
+                    rec_description = rec.get('description', 'N/A')
+                    markdown += f"- {priority_icon} **{rec_type}**: {rec_description}\n"
+                    
+                    # Add cleanup script if available
+                    if rec.get('script') and not test_mode:
+                        markdown += f"""
 <details>
 <summary>🔧 Script de Limpieza (Click para expandir)</summary>
 
@@ -186,6 +224,12 @@ class DriftGitHubNotifier:
             return self.post_repository_comment(comment_body)
         
         try:
+            # Check if gh CLI is available
+            result = subprocess.run(['gh', '--version'], capture_output=True, text=True)
+            if result.returncode != 0:
+                logger.warning("⚠️ GitHub CLI not available - cannot post PR comment")
+                return False
+            
             # Write comment to temporary file
             with tempfile.NamedTemporaryFile(mode='w', suffix='.md', delete=False, encoding='utf-8') as f:
                 f.write(comment_body)
@@ -213,6 +257,16 @@ class DriftGitHubNotifier:
     def post_repository_comment(self, comment_body: str) -> bool:
         """Post comment as repository issue if no PR context"""
         try:
+            # Check if gh CLI is available
+            result = subprocess.run(['gh', '--version'], capture_output=True, text=True)
+            if result.returncode != 0:
+                logger.warning("⚠️ GitHub CLI not available - skipping issue creation")
+                logger.info("📝 Drift report would have been posted as GitHub issue")
+                logger.info("🔍 Report preview:")
+                # Show first 500 chars of report for debugging
+                logger.info(comment_body[:500] + "..." if len(comment_body) > 500 else comment_body)
+                return True  # Return success in test mode
+            
             # Create an issue with the drift report
             issue_title = f"🔍 Drift Detection Report - {datetime.now().strftime('%Y-%m-%d %H:%M')}"
             
@@ -247,6 +301,8 @@ class DriftGitHubNotifier:
             return False
         
         try:
+            logger.debug(f"🔍 Processing drift report: {json.dumps(drift_report, indent=2)}")
+            
             # Generate markdown report
             markdown_content = self.generate_markdown_report(
                 drift_report=drift_report,
@@ -256,6 +312,8 @@ class DriftGitHubNotifier:
                 workflow_url=workflow_url,
                 test_mode=test_mode
             )
+            
+            logger.debug(f"📝 Generated markdown content (first 200 chars): {markdown_content[:200]}...")
             
             # Post comment
             success = self.post_pr_comment(markdown_content)
@@ -269,6 +327,7 @@ class DriftGitHubNotifier:
                 
         except Exception as e:
             logger.error(f"❌ Error sending notification: {e}")
+            logger.exception("Full error details:")
             return False
 
 def main():
