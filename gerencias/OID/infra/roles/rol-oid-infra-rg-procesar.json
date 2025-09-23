@@ -1,0 +1,40 @@
+{
+  "role_name": "rol-oid-infra-rg-procesar",
+  "description": "hskhfsjhfjashfjsahfjkasff",
+  "trust_policy": {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Principal": {
+          "Service": "ec2.amazonaws.com"
+        },
+        "Action": "sts:AssumeRole"
+      }
+    ]
+  },
+  "policies": {
+    "aws_managed": [],
+    "mci_managed": [
+      "MCI-S3-TagBased-ReadOnly",
+      "MCI-S3-TagBased-Write"
+    ]
+  },
+  "tags": {
+    "ambiente": "dev",
+    "pais": "rg",
+    "servicio": "ec2",
+    "gerencia": "OID-NOLEOLLOROS",
+    "area": "infra",
+    "Equipo": "devops",
+    "Proyecto": "devops",
+    "propietario": "darwin.lopez@claro.com.gt",
+    "Aplicacion": "devops",
+    "Version": "1.0.1",
+    "Fechas de Creacion": "2025-09-23",
+    "map-migrated": "n/a"
+  },
+  "gerencia_code": "OID-NOLEOLLOROS",
+  "area_code": "infra",
+  "note": "Rol ABAC creado automáticamente - 2025-09-23 11:02:56"
+}
