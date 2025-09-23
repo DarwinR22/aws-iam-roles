@@ -1,0 +1,147 @@
+name: 🧪 Test GitHub Notifications
+
+on:
+  workflow_dispatch:
+    inputs:
+      test_type:
+        description: 'Tipo de prueba de notificación'
+        required: true
+        default: 'info'
+        type: choice
+        options:
+          - info
+          - warning
+          - critical
+      environment:
+        description: 'Ambiente de prueba'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - qa
+          - prod
+
+permissions:
+  contents: read
+  issues: write      # Para crear issues si no hay PR
+  pull-requests: write  # Para comentar en PRs
+
+jobs:
+  test-notifications:
+    name: 🧪 Test GitHub Notifications
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: 📦 Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+
+      - name: 📋 Generate Test Drift Report
+        run: |
+          # Crear un drift report de prueba basado en el tipo seleccionado
+          cat > test-drift-report.json << 'EOF'
+          {
+            "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "environment": "${{ github.event.inputs.environment }}",
+            "summary": {
+              "test_mode": true,
+              "test_type": "${{ github.event.inputs.test_type }}",
+              "orphaned_roles": 2,
+              "orphaned_policies": 1,
+              "missing_resources": 0,
+              "total_issues": 3
+            },
+            "orphaned_resources": {
+              "roles": [
+                {
+                  "name": "test-orphaned-role-1",
+                  "arn": "arn:aws:iam::123456789012:role/test-orphaned-role-1",
+                  "created": "2024-01-15T10:30:00Z",
+                  "protected": false
+                },
+                {
+                  "name": "test-orphaned-role-2", 
+                  "arn": "arn:aws:iam::123456789012:role/test-orphaned-role-2",
+                  "created": "2024-01-10T14:20:00Z",
+                  "protected": false
+                }
+              ],
+              "policies": [
+                {
+                  "name": "test-orphaned-policy",
+                  "arn": "arn:aws:iam::123456789012:policy/test-orphaned-policy", 
+                  "created": "2024-01-12T09:15:00Z",
+                  "attached_to": []
+                }
+              ]
+            },
+            "missing_resources": [],
+            "recommendations": [
+              {
+                "type": "cleanup_script",
+                "description": "Remove orphaned test resources",
+                "priority": "${{ github.event.inputs.test_type }}",
+                "script": "# Test cleanup commands\necho 'terraform state rm aws_iam_role.test_orphaned_role_1'\necho 'terraform state rm aws_iam_role.test_orphaned_role_2'\necho 'terraform state rm aws_iam_policy.test_orphaned_policy'"
+              }
+            ],
+            "metadata": {
+              "execution_time_seconds": 15.2,
+              "aws_region": "us-east-1",
+              "terraform_version": "1.6.0",
+              "scan_mode": "test"
+            }
+          }
+          EOF
+
+          # Reemplazar variables en el JSON
+          sed -i "s/\$(date -u +%Y-%m-%dT%H:%M:%SZ)/$(date -u +%Y-%m-%dT%H:%M:%SZ)/g" test-drift-report.json
+          
+          echo "📋 Test drift report generado:"
+          cat test-drift-report.json | jq '.'
+
+      - name: � Send Test GitHub Notification
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          echo "� Enviando notificación de prueba via GitHub..."
+          
+          # Usar el script de GitHub comments
+          python scripts/drift_github_notifier.py \
+            --report-file test-drift-report.json \
+            --deployment-type "test-notification" \
+            --environment ${{ github.event.inputs.environment }} \
+            --commit-sha ${{ github.sha }} \
+            --workflow-url "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            --test-mode \
+            --verbose
+
+      - name: 🎯 Test Results
+        run: |
+          echo "✅ Test de notificación completado"
+          echo "📊 Tipo de prueba: ${{ github.event.inputs.test_type }}"
+          echo "🌍 Ambiente: ${{ github.event.inputs.environment }}"
+          echo "� Revisa los comentarios del PR o los Issues del repositorio"
+          
+          echo ""
+          echo "🔍 Lugares donde buscar la notificación:"
+          echo "• Si hay PR abierto: comentario en el PR"
+          echo "• Si no hay PR: nuevo Issue en el repositorio"
+          echo "• Recibirás notificación GitHub automáticamente"
+
+      - name: 💾 Upload Test Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-drift-report-${{ github.event.inputs.environment }}-${{ github.event.inputs.test_type }}
+          path: test-drift-report.json

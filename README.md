@@ -38,9 +38,13 @@ This repository implements a **zero-trust, tag-based ABAC architecture** for AWS
 
 - ✅ **CI/CD Completo** - Validación → Plan → Deploy → Verificación automática
 - ✅ **Backend S3/DynamoDB** - Estado centralizado y locks de Terraform
-- ✅ **Tag-Based Policies** - 4 políticas inteligentes escalables automáticamente
+- ✅ **Tag-Based Policies** - 4 políticas inteligentes escalables automáticamente  
 - ✅ **Auto-discovery** - Encuentra automáticamente archivos de roles/políticas
 - ✅ **Multi-ambiente** - dev/qa/prod con separación automática por tags
+- 🆕 **Drift Detection** - Sistema empresarial de detección y limpieza automática
+- � **GitHub Notifications** - Reportes automáticos como comentarios en PR/Issues
+- 🔄 **CI/CD Integration** - Deployment automático con verificaciones pre/post
+- 🛡️ **Enterprise Safety** - Protección de recursos críticos y thresholds inteligentes
 
 ---
 
@@ -166,6 +170,17 @@ mkdir -p MCI/TuEquipo
 # ... editar archivos JSON
 ```
 
+### 5. ¡Recibe Notificaciones Automáticas! (Opcional pero Recomendado)
+```bash
+# NO necesitas configurar nada extra
+# El sistema usa las notificaciones GitHub que ya recibes
+
+# Para probar:
+# GitHub Actions → Test GitHub Notifications
+```
+
+� **Sistema de Notificaciones Inteligente**: Recibe reportes automáticos de drift detection directamente en GitHub como comentarios en PR o Issues. **Cero configuración** - usa las notificaciones que ya tienes.
+
 ---
 
 ## 🔄 Uso Diario (Desarrolladores Existentes)
@@ -275,6 +290,42 @@ Esto crea automáticamente:
 ### 3. ¡Listo para usar! 
 
 Los desarrolladores ya pueden crear roles sin necesidad de AWS CLI, Terraform, o Python instalados.
+
+---
+
+## 🏢 Arquitectura Empresarial
+
+### 🔍 Sistema de Drift Detection
+
+**Detección inteligente de recursos huérfanos y discrepancias**:
+
+```
+Pre-Deployment     │ Deployment      │ Post-Deployment
+                   │                 │
+┌─────────────────┐ │ ┌─────────────┐ │ ┌─────────────────┐
+│ • Scan AWS      │ │ │ • Apply TF  │ │ │ • Verify State  │
+│ • Find Orphans  │─┼▶│ • Clean Up  │─┼▶│ • Send Report   │
+│ • Generate      │ │ │ • Deploy    │ │ │ • Email Alerts  │
+│   Cleanup       │ │ │             │ │ │                 │
+└─────────────────┘ │ └─────────────┘ │ └─────────────────┘
+```
+
+### � Sistema de Notificaciones
+
+**Reportes automáticos directamente en GitHub**:
+
+| Tipo | Ubicación | Notificación | Configuración |
+|------|-----------|--------------|---------------|
+| � **PR Comments** | Comentarios en Pull Request | ✅ Automática GitHub | ✅ Cero configuración |
+| 📋 **Issues** | Nuevo Issue en repositorio | ✅ Automática GitHub | ✅ Cero configuración |
+| 🔍 **Artifacts** | Archivos descargables | ✅ En workflow | ✅ Siempre disponible |
+
+### 🛡️ Protecciones Empresariales
+
+- **Recursos protegidos**: Roles/políticas críticos nunca se eliminan
+- **Thresholds inteligentes**: Límites automáticos para prevenir errores masivos
+- **Auditoría completa**: Logs detallados de todas las operaciones
+- **Rollback automático**: Reversión en caso de fallos críticos
 
 ---
 

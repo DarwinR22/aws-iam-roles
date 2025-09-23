@@ -336,6 +336,22 @@ jobs:
           path: drift-report.json
           retention-days: 30
 
+      - name: 📝 Send Pre-Deployment Drift Report
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          # Send GitHub comment with drift report
+          python scripts/drift_github_notifier.py \
+            --report-file drift-report.json \
+            --deployment-type "pre-deployment" \
+            --environment ${{ needs.validate.outputs.environment }} \
+            --commit-sha ${{ github.sha }} \
+            --workflow-url "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            --verbose
+
       - name: 🔧 Setup Terraform for Cleanup
         uses: hashicorp/setup-terraform@v3
         with:
@@ -479,6 +495,22 @@ jobs:
           name: post-deployment-drift-report-${{ needs.validate.outputs.environment }}
           path: drift-report.json
           retention-days: 90
+
+      - name: 📝 Send Post-Deployment Drift Report
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          # Send GitHub comment with drift report
+          python scripts/drift_github_notifier.py \
+            --report-file drift-report.json \
+            --deployment-type "post-deployment" \
+            --environment ${{ needs.validate.outputs.environment }} \
+            --commit-sha ${{ github.sha }} \
+            --workflow-url "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            --verbose
 
   post-deployment-tests:
     name: 🧪 Post-Deployment Tests
