@@ -94,13 +94,22 @@ class DriftDetectionEngine:
                 for role in page['Roles']:
                     role_name = role['RoleName']
                     
-                    # Get role tags
+                    # Skip AWS managed service roles
+                    if (role_name.startswith('AWSServiceRole') or 
+                        role_name.startswith('AWSReservedSSO') or 
+                        role_name.startswith('AWSControlTower') or
+                        role_name.startswith('aws-controltower')):
+                        continue
+                    
+                    # Get role tags (with error handling for permission issues)
                     try:
                         tags_response = self.iam_client.list_role_tags(RoleName=role_name)
                         tags = {tag['Key']: tag['Value'] for tag in tags_response['Tags']}
                         
-                        # Only include roles managed by our framework
-                        if tags.get('Modulo') == 'iamroles' or role_name.startswith('rol-'):
+                        # Only include roles managed by our framework or following our naming convention
+                        if (tags.get('Modulo') == 'iamroles' or 
+                            role_name.startswith('rol-') or
+                            role_name.startswith('github-actions')):
                             aws_resources['roles'][role_name] = {
                                 'arn': role['Arn'],
                                 'created': role['CreateDate'].isoformat(),
@@ -108,7 +117,17 @@ class DriftDetectionEngine:
                                 'managed_by_framework': True
                             }
                     except Exception as e:
-                        logger.warning(f"⚠️ Error getting tags for role {role_name}: {e}")
+                        # For permission errors, check if it follows our naming pattern
+                        if role_name.startswith('rol-') or role_name.startswith('github-actions'):
+                            logger.info(f"ℹ️ Including role {role_name} based on naming pattern (permission error: {e})")
+                            aws_resources['roles'][role_name] = {
+                                'arn': role['Arn'],
+                                'created': role['CreateDate'].isoformat(),
+                                'tags': {},
+                                'managed_by_framework': True
+                            }
+                        else:
+                            logger.debug(f"🔒 Skipping role {role_name} due to permission error: {e}")
             
             # Scan managed policies
             policy_paginator = self.iam_client.get_paginator('list_policies')

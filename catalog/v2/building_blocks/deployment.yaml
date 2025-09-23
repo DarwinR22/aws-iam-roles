@@ -8,7 +8,6 @@
         variable: "aws:PrincipalTag/Ambiente"
         values: ["${var.environment}"]
 
-  # CLOUDFORMATION - Política 3 original mejorada
 # DEPLOYMENT BUILDING BLOCKS
 # ============================================
 
