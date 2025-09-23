@@ -29,6 +29,11 @@ output "logs_deployment_policy" {
   value       = data.aws_iam_policy_document.logs_deployment.json
 }
 
+output "dynamodb_deployment_policy" {
+  description = "DynamoDB deployment policy document"
+  value       = data.aws_iam_policy_document.dynamodb_deployment.json
+}
+
 # COMBINED POLICY DOCUMENTS
 output "full_deployment_policy" {
   description = "Full deployment access policy (all services)"

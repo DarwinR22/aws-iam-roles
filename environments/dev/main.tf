@@ -79,22 +79,35 @@ resource "aws_iam_policy" "mci_policies" {
   )
 }
 
-# Generar documentos de politica dinamicamente
+# Generar documentos de politica usando policy_lib modules
+module "deployment_policies" {
+  source = "../../policy_lib/deployment"
+  
+  department  = "MCI"
+  environment = "dev"
+}
+
+# Asignar documentos de politica desde modules
 data "aws_iam_policy_document" "mci_policies" {
   for_each = local.mci_policies
   
-  # Ejemplo basico - necesitarias expandir segun tus policy_lib modules
-  statement {
-    effect = "Allow"
-    actions = ["s3:GetObject"] # Placeholder - usar policy_document real
-    resources = ["*"]
-    
-    condition {
-      test     = "StringEquals"
-      variable = "aws:PrincipalTag/Aplicacion"
-      values   = ["${data.aws_caller_identity.current.account_id}"]
-    }
-  }
+  # Usar los documentos de politica reales de policy_lib/deployment
+  source_policy_documents = [
+    each.key == "MCI-Deployment-TerraformCore" ? module.deployment_policies.terraform_core_deployment_policy :
+    each.key == "MCI-Deployment-S3Analytics" ? module.deployment_policies.s3_analytics_deployment_policy :
+    each.key == "MCI-Deployment-CloudFormation" ? module.deployment_policies.cloudformation_deployment_policy :
+    each.key == "MCI-Deployment-Lambda" ? module.deployment_policies.lambda_deployment_policy :
+    each.key == "MCI-Deployment-Logs" ? module.deployment_policies.logs_deployment_policy :
+    each.key == "MCI-Deployment-DynamoDB" ? module.deployment_policies.dynamodb_deployment_policy :
+    jsonencode({
+      Version = "2012-10-17"
+      Statement = [{
+        Effect = "Deny"
+        Action = "*"
+        Resource = "*"
+      }]
+    })
+  ]
 }
 
 # ============================================================================
