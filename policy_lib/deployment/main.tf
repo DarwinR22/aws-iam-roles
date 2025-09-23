@@ -61,7 +61,7 @@ data "aws_iam_policy_document" "terraform_core_deployment" {
       "arn:aws:iam::*:role/${var.department}-${var.environment}-*",
       "arn:aws:iam::*:role/rol-${var.department}-*",
       # Policies managed by this framework  
-      "arn:aws:iam::*:policy/MCI-${var.department}-*",
+      "arn:aws:iam::*:policy/MCI-*",
       "arn:aws:iam::*:policy/${var.department}-${var.environment}-*"
     ]
     
