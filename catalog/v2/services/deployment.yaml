@@ -130,6 +130,30 @@ policies:
       Name: "MCI-Deployment-Logs"
       Soporte: "darwin.lopez@claro.com.gt"
 
+  MCI-Deployment-DynamoDB:
+    description: "DynamoDB Terraform lock table permissions (GitHub Actions only)"
+    type: "managed"
+    policy_document: "deployment.dynamodb_deployment"
+    building_block: "policy_lib/deployment/main.tf:dynamodb_deployment"
+    sox_compliance: true
+    environments: ["all"]
+    canonical_tags:
+      Ambiente: "all"
+      Pais: "rg"
+      Direccion: "ticenam"
+      Gerencia: "mci"
+      Cuenta: "393209814297"
+      Modulo: "deployment"
+      "Alcance SOX": "si"
+      Propietario: "darwinlopez"
+      Proveedor: "inhouse"
+      Layer: "cicd"
+      Dominio: "deployment"
+      Subdominio: "dynamodb"
+      Aplicacion: "githubactions"
+      Name: "MCI-Deployment-DynamoDB"
+      Soporte: "darwin.lopez@claro.com.gt"
+
 # Building blocks para deployment
 building_blocks:
   terraform_core: "deployment.terraform_core"
@@ -137,3 +161,4 @@ building_blocks:
   cloudformation: "deployment.cloudformation"
   lambda: "deployment.lambda"
   logs: "deployment.logs"
+  dynamodb: "deployment.dynamodb"

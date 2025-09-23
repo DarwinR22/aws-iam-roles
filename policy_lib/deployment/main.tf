@@ -112,6 +112,36 @@ data "aws_iam_policy_document" "terraform_core_deployment" {
       values   = [var.environment]
     }
   }
+
+  # Terraform State S3 Backend Access
+  statement {
+    sid    = "TerraformStateBackend"
+    effect = "Allow"
+    actions = [
+      "s3:ListBucket",
+      "s3:GetObject",
+      "s3:PutObject",
+      "s3:DeleteObject",
+      "s3:GetBucketVersioning",
+      "s3:GetBucketLocation"
+    ]
+    resources = [
+      "arn:aws:s3:::s3-data-analytics-raw-${var.environment}-tfstate",
+      "arn:aws:s3:::s3-data-analytics-raw-${var.environment}-tfstate/*"
+    ]
+    
+    condition {
+      test     = "StringEquals"
+      variable = "aws:PrincipalTag/Department"
+      values   = [var.department]
+    }
+    
+    condition {
+      test     = "StringEquals"
+      variable = "aws:PrincipalTag/Environment"
+      values   = [var.environment]
+    }
+  }
 }
 
 # S3 ANALYTICS DEPLOYMENT - Política 2 original (ampliada)
@@ -294,6 +324,35 @@ data "aws_iam_policy_document" "logs_deployment" {
   }
 }
 
+# DYNAMODB TERRAFORM LOCK - Nueva Política
+data "aws_iam_policy_document" "dynamodb_deployment" {
+  statement {
+    sid    = "DynamoDBTerraformLock"
+    effect = "Allow"
+    actions = [
+      "dynamodb:GetItem",
+      "dynamodb:PutItem",
+      "dynamodb:DeleteItem",
+      "dynamodb:DescribeTable"
+    ]
+    resources = [
+      "arn:aws:dynamodb:us-east-1:393209814297:table/dynamodb-db-${var.environment}-terraform-lock"
+    ]
+    
+    condition {
+      test     = "StringEquals"
+      variable = "aws:PrincipalTag/Department"
+      values   = [var.department]
+    }
+    
+    condition {
+      test     = "StringEquals"
+      variable = "aws:PrincipalTag/Environment"
+      values   = [var.environment]
+    }
+  }
+}
+
 # COMBINACIONES PARA ROLES COMPUESTOS
 data "aws_iam_policy_document" "full_deployment_access" {
   source_policy_documents = [
@@ -301,7 +360,8 @@ data "aws_iam_policy_document" "full_deployment_access" {
     data.aws_iam_policy_document.s3_analytics_deployment.json,
     data.aws_iam_policy_document.cloudformation_deployment.json,
     data.aws_iam_policy_document.lambda_deployment.json,
-    data.aws_iam_policy_document.logs_deployment.json
+    data.aws_iam_policy_document.logs_deployment.json,
+    data.aws_iam_policy_document.dynamodb_deployment.json
   ]
 }
 
