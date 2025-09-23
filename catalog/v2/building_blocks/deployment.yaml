@@ -1,13 +1,4 @@
 # catalog/v2/building_blocks/deployment.yaml
-# ===================================    resources: ["*"]
-    conditions:
-      - type: "StringEquals"
-        variable: "aws:PrincipalTag/Gerencia"
-        values: ["${var.department}"]
-      - type: "StringEquals"
-        variable: "aws:PrincipalTag/Ambiente"
-        values: ["${var.environment}"]
-
 # DEPLOYMENT BUILDING BLOCKS
 # ============================================
 

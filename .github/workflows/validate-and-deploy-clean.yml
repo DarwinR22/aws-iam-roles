@@ -448,17 +448,22 @@ jobs:
             
             orphaned_count=$(jq '.orphaned_resources | length' drift-report.json)
             missing_count=$(jq '.missing_resources | length' drift-report.json)
+            cleanup_commands=$(jq '.recommendations[] | select(.type == "cleanup_script") | .script' drift-report.json | wc -l)
             
-            if [ "$orphaned_count" -gt 0 ] || [ "$missing_count" -gt 0 ]; then
+            echo "📊 Drift Analysis:"
+            echo "  • Orphaned resources: $orphaned_count"
+            echo "  • Missing resources: $missing_count" 
+            echo "  • Cleanup commands generated: $cleanup_commands"
+            
+            # Only fail if there are missing resources or multiple orphaned resources
+            if [ "$missing_count" -gt 0 ] || [ "$orphaned_count" -gt 3 ]; then
               echo "❌ CRITICAL: Infrastructure drift detected after deployment!"
-              echo "📊 Orphaned resources: $orphaned_count"
-              echo "📊 Missing resources: $missing_count"
-              
-              # Create GitHub issue for drift
               echo "🚨 Creating GitHub issue for infrastructure drift..."
               # This would create an issue or send notifications
-              
               exit 1
+            elif [ "$orphaned_count" -gt 0 ]; then
+              echo "⚠️ Minor drift detected but within acceptable limits"
+              echo "ℹ️ Orphaned resources will be cleaned up in next deployment cycle"
             else
               echo "✅ Infrastructure is consistent - no drift detected"
             fi

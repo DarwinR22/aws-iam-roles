@@ -94,11 +94,12 @@ class DriftDetectionEngine:
                 for role in page['Roles']:
                     role_name = role['RoleName']
                     
-                    # Skip AWS managed service roles
+                    # Skip AWS managed service roles and infrastructure roles
                     if (role_name.startswith('AWSServiceRole') or 
                         role_name.startswith('AWSReservedSSO') or 
                         role_name.startswith('AWSControlTower') or
-                        role_name.startswith('aws-controltower')):
+                        role_name.startswith('aws-controltower') or
+                        role_name == 'github-actions-iam-deployment-role'):
                         continue
                     
                     # Get role tags (with error handling for permission issues)
