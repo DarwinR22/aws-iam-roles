@@ -171,6 +171,7 @@ data "aws_iam_policy_document" "terraform_state_backend" {
       "s3:GetBucketTagging",
       "s3:PutEncryptionConfiguration",
       "s3:GetEncryptionConfiguration",
+      "s3:GetAccelerateConfiguration",
       "s3:ListBucketMultipartUploads",
       "s3:AbortMultipartUpload"
     ]
@@ -216,6 +217,7 @@ data "aws_iam_policy_document" "s3_analytics_deployment" {
       "s3:PutBucketWebsite",
       "s3:PutEncryptionConfiguration",
       "s3:GetEncryptionConfiguration",
+      "s3:GetAccelerateConfiguration",
       "s3:PutReplicationConfiguration",
       "s3:GetReplicationConfiguration",
       "s3:GetLifecycleConfiguration",
