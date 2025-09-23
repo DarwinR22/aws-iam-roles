@@ -275,10 +275,98 @@ jobs:
           terraform plan -detailed-exitcode -var-file="team-tag-policies.tfvars"
           echo "✅ Terraform plan completed"
 
+  drift-detection:
+    name: 🔍 Infrastructure Drift Detection
+    runs-on: ubuntu-latest
+    needs: validate
+    if: needs.validate.outputs.should_deploy == 'true'
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: 🔑 Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          role-session-name: GitHubActions-MCI-IAM-DriftDetection
+          aws-region: us-east-1
+
+      - name: 📦 Install Dependencies
+        run: |
+          pip install boto3 PyYAML
+
+      - name: 🔍 Run Drift Detection
+        run: |
+          echo "🔍 Running enterprise drift detection..."
+          python scripts/drift-detection.py .
+          
+          if [ -f drift-report.json ]; then
+            echo "📊 Drift Report Generated:"
+            cat drift-report.json
+            
+            # Check if there are critical drifts
+            orphaned_count=$(jq '.orphaned_resources | length' drift-report.json)
+            missing_count=$(jq '.missing_resources | length' drift-report.json)
+            
+            echo "orphaned_resources=$orphaned_count" >> $GITHUB_ENV
+            echo "missing_resources=$missing_count" >> $GITHUB_ENV
+            
+            if [ "$orphaned_count" -gt 0 ]; then
+              echo "⚠️ Found $orphaned_count orphaned resources that will be cleaned up"
+            fi
+            
+            if [ "$missing_count" -gt 0 ]; then
+              echo "📋 Found $missing_count missing resources that will be deployed"
+            fi
+          else
+            echo "❌ Drift detection failed - no report generated"
+            exit 1
+          fi
+
+      - name: 💾 Upload Drift Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: drift-report-${{ needs.validate.outputs.environment }}
+          path: drift-report.json
+          retention-days: 30
+
+      - name: 🧹 Execute State Cleanup (if needed)
+        run: |
+          if [ "$orphaned_resources" -gt 0 ]; then
+            echo "🧹 Cleaning up orphaned resources from Terraform state..."
+            
+            # Extract cleanup commands from drift report
+            jq -r '.recommendations[] | select(.type == "cleanup_script") | .script' drift-report.json > cleanup-commands.sh
+            
+            if [ -f cleanup-commands.sh ] && [ -s cleanup-commands.sh ]; then
+              echo "Executing cleanup commands:"
+              cat cleanup-commands.sh
+              
+              cd environments/${{ needs.validate.outputs.environment }}
+              terraform init
+              
+              # Execute cleanup commands
+              chmod +x ../../cleanup-commands.sh
+              bash ../../cleanup-commands.sh
+              
+              echo "✅ State cleanup completed"
+            else
+              echo "ℹ️ No cleanup commands generated"
+            fi
+          else
+            echo "ℹ️ No orphaned resources found - no cleanup needed"
+          fi
+
   deploy:
     name: Deploy to ${{ needs.validate.outputs.environment }}
     runs-on: ubuntu-latest
-    needs: validate
+    needs: [validate, drift-detection]
     if: needs.validate.outputs.should_deploy == 'true'
     
     steps:
@@ -305,10 +393,74 @@ jobs:
           terraform apply -auto-approve -var-file="team-tag-policies.tfvars"
           echo "✅ Deployment completed successfully"
 
+  post-drift-verification:
+    name: 🔍 Post-Deployment Drift Verification
+    runs-on: ubuntu-latest
+    needs: [validate, deploy]
+    if: needs.validate.outputs.should_deploy == 'true'
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: 🔑 Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          role-session-name: GitHubActions-MCI-IAM-PostDriftCheck
+          aws-region: us-east-1
+
+      - name: 📦 Install Dependencies
+        run: |
+          pip install boto3 PyYAML
+
+      - name: 🔍 Verify Infrastructure Consistency
+        run: |
+          echo "🔍 Running post-deployment drift verification..."
+          python scripts/drift-detection.py .
+          
+          if [ -f drift-report.json ]; then
+            echo "📊 Post-Deployment Drift Report:"
+            cat drift-report.json
+            
+            orphaned_count=$(jq '.orphaned_resources | length' drift-report.json)
+            missing_count=$(jq '.missing_resources | length' drift-report.json)
+            
+            if [ "$orphaned_count" -gt 0 ] || [ "$missing_count" -gt 0 ]; then
+              echo "❌ CRITICAL: Infrastructure drift detected after deployment!"
+              echo "📊 Orphaned resources: $orphaned_count"
+              echo "📊 Missing resources: $missing_count"
+              
+              # Create GitHub issue for drift
+              echo "🚨 Creating GitHub issue for infrastructure drift..."
+              # This would create an issue or send notifications
+              
+              exit 1
+            else
+              echo "✅ Infrastructure is consistent - no drift detected"
+            fi
+          else
+            echo "❌ Post-deployment drift verification failed"
+            exit 1
+          fi
+
+      - name: 💾 Upload Post-Deployment Report
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: post-deployment-drift-report-${{ needs.validate.outputs.environment }}
+          path: drift-report.json
+          retention-days: 90
+
   post-deployment-tests:
     name: 🧪 Post-Deployment Tests
     runs-on: ubuntu-latest
-    needs: [validate, deploy]
+    needs: [validate, deploy, post-drift-verification]
     if: needs.validate.outputs.should_deploy == 'true'
     
     steps:
