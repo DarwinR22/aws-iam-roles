@@ -63,6 +63,7 @@ building_blocks:
       - "s3:PutBucketInventoryConfiguration"
       - "s3:GetBucketMetricsConfiguration"
       - "s3:PutBucketMetricsConfiguration"
+      - "S3:GetBucketPolicy"
     resources:
       - "arn:aws:s3:::s3-data-analytics-*"
       - "arn:aws:s3:::s3-data-analytics-*/*"
