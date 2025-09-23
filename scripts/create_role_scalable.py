@@ -688,7 +688,7 @@ class MCI_RoleCreator:
         print("=" * 40)
         
         # Prefijo fijo basado en la selección organizacional y país
-        role_prefix = f"rol-{gerencia_code.lower()}-{area_code.lower()}-{pais}"
+        role_prefix = f"rol-{gerencia_code.lower()}-{area_code}-{pais}"
         print(f"\n🔒 Prefijo fijo: {role_prefix}-")
         print("💡 Solo completa: [aplicacion]")
         print("📄 Ejemplos:")
