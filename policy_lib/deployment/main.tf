@@ -426,6 +426,8 @@ data "aws_iam_policy_document" "dynamodb_deployment" {
 data "aws_iam_policy_document" "full_deployment_access" {
   source_policy_documents = [
     data.aws_iam_policy_document.terraform_core_deployment.json,
+    data.aws_iam_policy_document.organizations_deployment.json,
+    data.aws_iam_policy_document.terraform_state_backend.json,
     data.aws_iam_policy_document.s3_analytics_deployment.json,
     data.aws_iam_policy_document.cloudformation_deployment.json,
     data.aws_iam_policy_document.lambda_deployment.json,
