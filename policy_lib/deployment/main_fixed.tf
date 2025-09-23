@@ -32,7 +32,7 @@ data "aws_iam_policy_document" "terraform_core_deployment" {
     
     condition {
       test     = "StringEquals"
-      variable = "aws:PrincipalTag/Ambiente"
+      variable = "aws:PrincipalTag/Environment"
       values   = [var.environment]
     }
   }
@@ -73,7 +73,7 @@ data "aws_iam_policy_document" "terraform_core_deployment" {
     
     condition {
       test     = "StringEquals"
-      variable = "aws:PrincipalTag/Ambiente"
+      variable = "aws:PrincipalTag/Environment"
       values   = [var.environment]
     }
   }
@@ -108,7 +108,7 @@ data "aws_iam_policy_document" "terraform_core_deployment" {
     
     condition {
       test     = "StringEquals"
-      variable = "aws:PrincipalTag/Ambiente"
+      variable = "aws:PrincipalTag/Environment"
       values   = [var.environment]
     }
   }
@@ -138,7 +138,7 @@ data "aws_iam_policy_document" "terraform_core_deployment" {
     
     condition {
       test     = "StringEquals"
-      variable = "aws:PrincipalTag/Ambiente"
+      variable = "aws:PrincipalTag/Environment"
       values   = [var.environment]
     }
   }
@@ -193,7 +193,7 @@ data "aws_iam_policy_document" "s3_analytics_deployment" {
 
     condition {
       test     = "StringEquals"
-      variable = "aws:PrincipalTag/Ambiente"
+      variable = "aws:PrincipalTag/Environment"
       values   = [var.environment]
     }
   }
@@ -224,7 +224,7 @@ data "aws_iam_policy_document" "cloudformation_deployment" {
 
     condition {
       test     = "StringEquals"
-      variable = "aws:PrincipalTag/Ambiente"
+      variable = "aws:PrincipalTag/Environment"
       values   = [var.environment]
     }
   }
@@ -262,7 +262,7 @@ data "aws_iam_policy_document" "lambda_deployment" {
 
     condition {
       test     = "StringEquals"
-      variable = "aws:PrincipalTag/Ambiente"
+      variable = "aws:PrincipalTag/Environment"
       values   = [var.environment]
     }
   }
@@ -284,7 +284,7 @@ data "aws_iam_policy_document" "lambda_deployment" {
 
     condition {
       test     = "StringEquals"
-      variable = "aws:PrincipalTag/Ambiente"
+      variable = "aws:PrincipalTag/Environment"
       values   = [var.environment]
     }
   }
@@ -318,7 +318,7 @@ data "aws_iam_policy_document" "logs_deployment" {
 
     condition {
       test     = "StringEquals"
-      variable = "aws:PrincipalTag/Ambiente"
+      variable = "aws:PrincipalTag/Environment"
       values   = [var.environment]
     }
   }
@@ -347,7 +347,7 @@ data "aws_iam_policy_document" "dynamodb_deployment" {
     
     condition {
       test     = "StringEquals"
-      variable = "aws:PrincipalTag/Ambiente"
+      variable = "aws:PrincipalTag/Environment"
       values   = [var.environment]
     }
   }

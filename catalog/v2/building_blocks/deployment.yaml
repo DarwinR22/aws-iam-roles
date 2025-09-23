@@ -1,5 +1,14 @@
 # catalog/v2/building_blocks/deployment.yaml
-# ============================================
+# ===================================    resources: ["*"]
+    conditions:
+      - type: "StringEquals"
+        variable: "aws:PrincipalTag/Gerencia"
+        values: ["${var.department}"]
+      - type: "StringEquals"
+        variable: "aws:PrincipalTag/Ambiente"
+        values: ["${var.environment}"]
+
+  # CLOUDFORMATION - Política 3 original mejorada
 # DEPLOYMENT BUILDING BLOCKS
 # ============================================
 
@@ -19,10 +28,10 @@ building_blocks:
     resources: ["*"]
     conditions:
       - type: "StringEquals"
-        variable: "aws:PrincipalTag/Department"
+        variable: "aws:PrincipalTag/Gerencia"
         values: ["${var.department}"]
       - type: "StringEquals"
-        variable: "aws:PrincipalTag/Environment"
+        variable: "aws:PrincipalTag/Ambiente"
         values: ["${var.environment}"]
 
   # S3 ANALYTICS - Política 2 original ampliada
@@ -61,10 +70,10 @@ building_blocks:
       - "arn:aws:s3:::${var.department}-${var.environment}-*/*"
     conditions:
       - type: "StringEquals"
-        variable: "aws:PrincipalTag/Department"
+        variable: "aws:PrincipalTag/Gerencia"
         values: ["${var.department}"]
       - type: "StringEquals"
-        variable: "aws:PrincipalTag/Environment"
+        variable: "aws:PrincipalTag/Ambiente"
         values: ["${var.environment}"]
 
   # CLOUDFORMATION - Política 3 original
@@ -84,10 +93,10 @@ building_blocks:
     resources: ["*"]
     conditions:
       - type: "StringEquals"
-        variable: "aws:PrincipalTag/Department"
+        variable: "aws:PrincipalTag/Gerencia"
         values: ["${var.department}"]
       - type: "StringEquals"
-        variable: "aws:PrincipalTag/Environment"
+        variable: "aws:PrincipalTag/Ambiente"
         values: ["${var.environment}"]
 
   # LAMBDA - Política 4 original
@@ -119,10 +128,10 @@ building_blocks:
           - "arn:aws:iam::*:role/${var.department}-${var.environment}-lambda-*"
     conditions:
       - type: "StringEquals"
-        variable: "aws:PrincipalTag/Department"
+        variable: "aws:PrincipalTag/Gerencia"
         values: ["${var.department}"]
       - type: "StringEquals"
-        variable: "aws:PrincipalTag/Environment"
+        variable: "aws:PrincipalTag/Ambiente"
         values: ["${var.environment}"]
 
   # LOGS - Política 5 original
@@ -143,10 +152,10 @@ building_blocks:
       - "arn:aws:logs:*:*:log-group:/aws/apigateway/${var.department}-${var.environment}-*"
     conditions:
       - type: "StringEquals"
-        variable: "aws:PrincipalTag/Department"
+        variable: "aws:PrincipalTag/Gerencia"
         values: ["${var.department}"]
       - type: "StringEquals"
-        variable: "aws:PrincipalTag/Environment"
+        variable: "aws:PrincipalTag/Ambiente"
         values: ["${var.environment}"]
 
 # VARIABLES REQUIRED
