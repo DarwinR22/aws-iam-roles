@@ -267,14 +267,15 @@ class DriftGitHubNotifier:
                 logger.info(comment_body[:500] + "..." if len(comment_body) > 500 else comment_body)
                 return True  # Return success in test mode
             
-            # Create an issue with the drift report
+            # Create an issue with the drift report (without label to avoid permission issues)
             issue_title = f"🔍 Drift Detection Report - {datetime.now().strftime('%Y-%m-%d %H:%M')}"
             
             with tempfile.NamedTemporaryFile(mode='w', suffix='.md', delete=False, encoding='utf-8') as f:
                 f.write(comment_body)
                 temp_file = f.name
             
-            cmd = ['gh', 'issue', 'create', '--title', issue_title, '--body-file', temp_file, '--label', 'drift-detection']
+            # Try without label first
+            cmd = ['gh', 'issue', 'create', '--title', issue_title, '--body-file', temp_file]
             
             result = subprocess.run(cmd, capture_output=True, text=True)
             

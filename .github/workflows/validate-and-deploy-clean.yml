@@ -24,8 +24,10 @@ on:
           - prod
 
 permissions:
-  id-token: write   # Requerido para OIDC authentication con AWS
-  contents: read    # Requerido para checkout del repositorio
+  id-token: write        # Requerido para OIDC authentication con AWS
+  contents: read         # Requerido para checkout del repositorio
+  issues: write          # Requerido para crear Issues con drift reports
+  pull-requests: write   # Requerido para comentar en PRs
 
 env:
   TF_VERSION: "1.6.0"
