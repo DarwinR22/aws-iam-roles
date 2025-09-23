@@ -128,7 +128,8 @@ data "aws_iam_policy_document" "terraform_core_deployment" {
       "s3:PutObject",
       "s3:DeleteObject",
       "s3:GetBucketVersioning",
-      "s3:GetBucketLocation"
+      "s3:GetBucketLocation",
+      "s3:GetBucketWebsite"
     ]
     resources = [
       "arn:aws:s3:::s3-data-analytics-raw-${var.environment}-tfstate",
@@ -168,6 +169,8 @@ data "aws_iam_policy_document" "s3_analytics_deployment" {
       "s3:PutBucketAcl",
       "s3:GetBucketCors",
       "s3:PutBucketCors",
+      "s3:GetBucketWebsite",
+      "s3:PutBucketWebsite",
       "s3:GetLifecycleConfiguration",
       "s3:PutLifecycleConfiguration",
       # Object operations
