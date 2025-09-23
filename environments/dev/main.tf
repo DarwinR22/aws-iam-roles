@@ -19,11 +19,11 @@ locals {
     local.deployment_catalog.policies
   )
   
-  # Extraer políticas MCI TagBased para backward compatibility
+  # Extraer todas las políticas MCI del catálogo V2
   mci_policies = {
     for policy_name, policy_config in local.all_v2_policies : 
     policy_name => policy_config
-    if can(regex("^MCI-.+-TagBased-.+$", policy_name))
+    if can(regex("^MCI-.+", policy_name))
   }
 
   # Buscar archivos de roles
@@ -65,7 +65,7 @@ locals {
 
 data "aws_caller_identity" "current" {}
 
-# Crear politicas MCI TagBased
+# Crear políticas MCI desde catálogo V2
 resource "aws_iam_policy" "mci_policies" {
   for_each = local.mci_policies
   
