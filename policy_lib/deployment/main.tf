@@ -44,6 +44,7 @@ data "aws_iam_policy_document" "terraform_core_deployment" {
     actions = [
       "iam:CreateRole",
       "iam:UpdateRole",
+      "iam:UpdateRoleDescription",
       "iam:DeleteRole",
       "iam:CreatePolicy",
       "iam:DeletePolicy",
