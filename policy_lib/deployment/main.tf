@@ -51,6 +51,7 @@ data "aws_iam_policy_document" "terraform_core_deployment" {
       "iam:CreatePolicy",
       "iam:CreatePolicyVersion",
       "iam:DeletePolicy",
+      "iam:DeletePolicyVersion",
       "iam:AttachRolePolicy",
       "iam:DetachRolePolicy",
       "iam:PutRolePolicy",
