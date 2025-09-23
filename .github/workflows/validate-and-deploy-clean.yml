@@ -336,6 +336,11 @@ jobs:
           path: drift-report.json
           retention-days: 30
 
+      - name: 🔧 Setup Terraform for Cleanup
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
       - name: 🧹 Execute State Cleanup (if needed)
         run: |
           if [ "$orphaned_resources" -gt 0 ]; then
@@ -345,19 +350,32 @@ jobs:
             jq -r '.recommendations[] | select(.type == "cleanup_script") | .script' drift-report.json > cleanup-commands.sh
             
             if [ -f cleanup-commands.sh ] && [ -s cleanup-commands.sh ]; then
-              echo "Executing cleanup commands:"
+              echo "📋 Cleanup commands to execute:"
               cat cleanup-commands.sh
               
+              # Count commands to validate safety
+              command_count=$(wc -l < cleanup-commands.sh)
+              echo "ℹ️ Total cleanup commands: $command_count"
+              
+              if [ "$command_count" -gt 10 ]; then
+                echo "⚠️ Too many cleanup commands ($command_count) - manual review required"
+                echo "🔒 Skipping automatic cleanup for safety"
+                exit 0
+              fi
+              
+              # Setup terraform and execute cleanup
               cd environments/${{ needs.validate.outputs.environment }}
+              
+              echo "🔧 Initializing Terraform..."
               terraform init
               
-              # Execute cleanup commands
+              echo "🧹 Executing cleanup commands..."
               chmod +x ../../cleanup-commands.sh
               bash ../../cleanup-commands.sh
               
               echo "✅ State cleanup completed"
             else
-              echo "ℹ️ No cleanup commands generated"
+              echo "ℹ️ No cleanup commands generated - all orphaned resources are protected"
             fi
           else
             echo "ℹ️ No orphaned resources found - no cleanup needed"

@@ -203,8 +203,28 @@ class DriftDetectionEngine:
         for resource in self.drift_report['orphaned_resources']:
             if resource['type'] == 'role' and resource['recommendation'] == 'REMOVE_FROM_STATE_AND_AWS':
                 role_name = resource['name']
+                
+                # CRITICAL: Never delete essential infrastructure roles
+                protected_roles = [
+                    'github-actions-iam-deployment-role',
+                    'github-actions',
+                    'aws-',
+                    'AWSServiceRole',
+                    'AWSReservedSSO',
+                    'AWSControlTower'
+                ]
+                
+                # Check if role is protected
+                is_protected = any(role_name.startswith(prefix) for prefix in protected_roles)
+                
+                if is_protected:
+                    logger.warning(f"🔒 PROTECTED: Skipping cleanup of critical role: {role_name}")
+                    continue
+                
+                logger.info(f"🧹 Adding cleanup commands for orphaned role: {role_name}")
                 cleanup_commands.append(f'terraform state rm \'module.iam_roles["{role_name}"]\'')
-                cleanup_commands.append(f'aws iam delete-role --role-name {role_name}')
+                # Only remove from state, let manual review handle AWS deletion
+                # cleanup_commands.append(f'aws iam delete-role --role-name {role_name}')
         
         return '\n'.join(cleanup_commands)
     
