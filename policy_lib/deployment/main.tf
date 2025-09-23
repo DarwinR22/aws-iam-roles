@@ -118,7 +118,40 @@ data "aws_iam_policy_document" "terraform_core_deployment" {
     }
   }
 
-  # Terraform State S3 Backend Access
+# ORGANIZATIONS CONTEXT - Nueva Política para soporte de AWS Organizations
+data "aws_iam_policy_document" "organizations_deployment" {
+  statement {
+    sid    = "OrganizationsReadAccess"
+    effect = "Allow"
+    actions = [
+      "organizations:DescribeAccount",
+      "organizations:DescribeOrganization",
+      "organizations:DescribeOrganizationalUnit",
+      "organizations:DescribePolicy",
+      "organizations:ListChildren",
+      "organizations:ListParents",
+      "organizations:ListPoliciesForTarget",
+      "organizations:ListRoots",
+      "organizations:ListPolicies",
+      "organizations:ListTargetsForPolicy"
+    ]
+    resources = ["*"]
+    
+    condition {
+      test     = "StringEquals"
+      variable = "aws:PrincipalTag/Gerencia"
+      values   = [var.department]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:PrincipalTag/Ambiente"
+      values   = [var.environment]
+    }
+  }
+}
+
+# TERRAFORM STATE S3 BACKEND ACCESS - Política ampliada
   statement {
     sid    = "TerraformStateBackend"
     effect = "Allow"
@@ -129,7 +162,15 @@ data "aws_iam_policy_document" "terraform_core_deployment" {
       "s3:DeleteObject",
       "s3:GetBucketVersioning",
       "s3:GetBucketLocation",
-      "s3:GetBucketWebsite"
+      "s3:GetBucketWebsite",
+      "s3:PutBucketAcl",
+      "s3:GetBucketAcl",
+      "s3:PutBucketTagging",
+      "s3:GetBucketTagging",
+      "s3:PutEncryptionConfiguration",
+      "s3:GetEncryptionConfiguration",
+      "s3:ListBucketMultipartUploads",
+      "s3:AbortMultipartUpload"
     ]
     resources = [
       "arn:aws:s3:::s3-data-analytics-raw-${var.environment}-tfstate",
@@ -171,12 +212,18 @@ data "aws_iam_policy_document" "s3_analytics_deployment" {
       "s3:PutBucketCors",
       "s3:GetBucketWebsite",
       "s3:PutBucketWebsite",
+      "s3:PutEncryptionConfiguration",
+      "s3:GetEncryptionConfiguration",
+      "s3:PutReplicationConfiguration",
+      "s3:GetReplicationConfiguration",
       "s3:GetLifecycleConfiguration",
       "s3:PutLifecycleConfiguration",
       # Object operations
       "s3:PutObject",
       "s3:GetObject", 
       "s3:DeleteObject",
+      "s3:ListBucketMultipartUploads",
+      "s3:AbortMultipartUpload",
       # Analytics específico
       "s3:GetBucketAnalyticsConfiguration",
       "s3:PutBucketAnalyticsConfiguration",
@@ -340,10 +387,20 @@ data "aws_iam_policy_document" "dynamodb_deployment" {
     sid    = "DynamoDBTerraformLock"
     effect = "Allow"
     actions = [
+      "dynamodb:ListTables",
+      "dynamodb:CreateTable",
+      "dynamodb:DescribeTable",
+      "dynamodb:DeleteTable",
+      "dynamodb:UpdateTable",
       "dynamodb:GetItem",
       "dynamodb:PutItem",
+      "dynamodb:UpdateItem",
       "dynamodb:DeleteItem",
-      "dynamodb:DescribeTable"
+      "dynamodb:BatchWriteItem",
+      "dynamodb:BatchGetItem",
+      "dynamodb:TagResource",
+      "dynamodb:UntagResource",
+      "dynamodb:ListTagsOfResource"
     ]
     resources = [
       "arn:aws:dynamodb:us-east-1:393209814297:table/dynamodb-db-${var.environment}-terraform-lock"
