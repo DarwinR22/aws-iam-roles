@@ -178,7 +178,8 @@ data "aws_iam_policy_document" "s3_analytics_deployment" {
       "s3:PutBucketInventoryConfiguration",
       "s3:GetBucketMetricsConfiguration",
       "s3:PutBucketMetricsConfiguration",
-      "s3:GetBucketPolicy"
+      "s3:GetBucketPolicy",
+      "s3:PutBucketPolicy"
     ]
     resources = [
       "arn:aws:s3:::s3-data-analytics-*",
