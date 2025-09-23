@@ -374,34 +374,7 @@ jobs:
         run: |
           echo "📚 Generating IAM documentation..."
           pip install PyYAML
-          
-          python -c "
-          import json
-          import yaml
-          import os
-          
-          # Read policies catalog
-          with open('catalog/policies.yaml', 'r') as f:
-              catalog = yaml.safe_load(f)
-          
-          # Generate markdown documentation
-          with open('POLICIES_DOCUMENTATION.md', 'w') as f:
-              f.write('# 📋 IAM Policies Documentation\n\n')
-              f.write('Auto-generated documentation for all IAM policies.\n\n')
-              
-              for policy_name, policy_data in catalog['policies'].items():
-                  f.write(f'## {policy_name}\n\n')
-                  f.write(f'**Description:** {policy_data[\"description\"]}\n\n')
-                  f.write(f'**Type:** {policy_data[\"type\"]}\n\n')
-                  f.write(f'**Policy Document:** {policy_data[\"policy_document\"]}\n\n')
-                  f.write('**Tags:**\n')
-                  for tag_key, tag_value in policy_data['canonical_tags'].items():
-                      f.write(f'- {tag_key}: {tag_value}\n')
-                  f.write('\n---\n\n')
-          
-          print('✅ Documentation generated successfully')
-          "
-          
+          python generate_docs.py
           echo "✅ Documentation generation completed"
 
       - name: 📤 Commit Documentation
