@@ -30,7 +30,8 @@ locals {
         Action = [
           "s3:GetObject",
           "s3:GetObjectVersion",
-          "s3:GetObjectAttributes"
+          "s3:GetObjectAttributes",
+          "s3:GetObjectTagging"
         ]
         Resource = "${var.s3_bucket_arn}/${var.s3_path_prefix}*"
       },
@@ -41,6 +42,7 @@ locals {
         Action = [
           "s3:PutObject",
           "s3:PutObjectAcl",
+          "s3:PutObjectTagging",
           "s3:DeleteObject"
         ]
         Resource = "${var.s3_bucket_arn}/${var.s3_path_prefix}*"
