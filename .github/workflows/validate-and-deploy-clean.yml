@@ -330,7 +330,7 @@ jobs:
           fi
 
       - name: 💾 Upload Drift Report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: drift-report-${{ needs.validate.outputs.environment }}
           path: drift-report.json
@@ -450,7 +450,7 @@ jobs:
           fi
 
       - name: 💾 Upload Post-Deployment Report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: post-deployment-drift-report-${{ needs.validate.outputs.environment }}
