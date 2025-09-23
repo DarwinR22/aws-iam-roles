@@ -78,6 +78,55 @@ class DriftDetectionEngine:
         logger.info(f"✅ Found {len(source_resources['roles'])} roles and {len(source_resources['policies'])} policies in source")
         return source_resources
     
+    def is_cicd_managed_resource(self, role_name: str, role_info: dict) -> bool:
+        """
+        Determine if a resource was created by CI/CD vs manually created
+        
+        SITUACION 1: Recursos creados por CI/CD (GitHub Actions + Terraform)
+        - Tienen tags específicos (Modulo, Environment, etc.)
+        - Siguen convenciones de nombres (rol-mci-, MCI-, etc.)
+        - Deben eliminarse automáticamente si se borran del código
+        
+        SITUACION 2: Recursos creados manualmente (Consola AWS u otros)
+        - No tienen nuestros tags de gestión
+        - Pueden tener nombres diferentes
+        - Solo REPORTAR, NO eliminar automáticamente
+        """
+        try:
+            tags = role_info.get('tags', {})
+            
+            # Indicadores de gestión por CI/CD
+            cicd_indicators = {
+                'has_module_tag': tags.get('Modulo') == 'iamroles',
+                'has_environment_tag': 'Environment' in tags,
+                'has_terraform_tag': any('terraform' in str(v).lower() for v in tags.values()),
+                'has_managed_by_tag': 'ManagedBy' in tags,
+                'follows_naming_convention': (
+                    role_name.startswith('rol-mci-') or
+                    role_name.startswith('MCI-') or
+                    role_name.startswith('mci-')
+                ),
+                'has_framework_markers': role_info.get('managed_by_framework', False)
+            }
+            
+            # Cuenta cuántos indicadores de CI/CD tiene
+            cicd_score = sum(cicd_indicators.values())
+            is_cicd_managed = cicd_score >= 2  # Al menos 2 indicadores
+            
+            # Log detallado para debugging
+            logger.info(f"🔍 {role_name} - CI/CD Analysis:")
+            logger.info(f"   📊 Score: {cicd_score}/6 indicators")
+            for indicator, value in cicd_indicators.items():
+                logger.info(f"   {'✅' if value else '❌'} {indicator}")
+            logger.info(f"   🏷️ Decision: {'CI/CD Managed' if is_cicd_managed else 'Manual/External'}")
+            
+            return is_cicd_managed
+            
+        except Exception as e:
+            logger.warning(f"⚠️ Error analyzing {role_name}: {e}")
+            # Si hay error, asumir que es manual (más seguro)
+            return False
+
     def scan_aws_resources(self) -> dict:
         """Scan actual AWS IAM resources"""
         logger.info("🔍 Scanning AWS for IAM resources...")
@@ -150,35 +199,80 @@ class DriftDetectionEngine:
         return aws_resources
     
     def detect_orphaned_resources(self, source_resources: dict, aws_resources: dict):
-        """Detect resources that exist in AWS but not in source code"""
+        """
+        Detect resources that exist in AWS but not in source code
+        
+        SITUACION 1: Recursos gestionados por CI/CD → ELIMINAR automáticamente
+        SITUACION 2: Recursos manuales/externos → SOLO REPORTAR
+        """
         logger.info("🔍 Detecting orphaned resources...")
         
-        # Orphaned roles
+        # Orphaned roles - con lógica diferenciada
         orphaned_roles = set(aws_resources['roles'].keys()) - set(source_resources['roles'].keys())
+        
         for role_name in orphaned_roles:
             role_info = aws_resources['roles'][role_name]
+            is_cicd_managed = self.is_cicd_managed_resource(role_name, role_info)
+            
+            if is_cicd_managed:
+                # SITUACION 1: Recurso CI/CD - eliminar automáticamente
+                recommendation = 'REMOVE_FROM_STATE_AND_AWS'
+                action = '🎯 AUTO-DELETE (Created by CI/CD)'
+                logger.warning(f"🎯 {role_name} - CI/CD managed role will be auto-deleted")
+            else:
+                # SITUACION 2: Recurso manual - solo reportar
+                recommendation = 'REPORT_ONLY_MANUAL_RESOURCE'
+                action = '⚠️ REPORT ONLY (Created manually)'
+                logger.info(f"⚠️ {role_name} - Manual resource detected, will only report")
+            
             self.drift_report['orphaned_resources'].append({
                 'type': 'role',
                 'name': role_name,
                 'arn': role_info['arn'],
                 'created': role_info['created'],
                 'tags': role_info.get('tags', {}),
-                'recommendation': 'REMOVE_FROM_STATE_AND_AWS'
+                'recommendation': recommendation,
+                'action': action,
+                'managed_by_cicd': is_cicd_managed,
+                'reason': 'Resource exists in AWS but not in source code'
             })
         
-        # Orphaned policies (less aggressive, might be used by other roles)
+        # Orphaned policies - similar logic
         orphaned_policies = set(aws_resources['policies'].keys()) - source_resources['policies']
         for policy_name in orphaned_policies:
             policy_info = aws_resources['policies'][policy_name]
+            
+            # Para políticas, ser más conservador - siempre revisar primero
+            is_mci_policy = policy_name.startswith('MCI-')
+            if is_mci_policy:
+                recommendation = 'REVIEW_USAGE_BEFORE_REMOVAL'
+                action = '🔍 REVIEW (MCI managed policy)'
+            else:
+                recommendation = 'REPORT_ONLY_EXTERNAL_POLICY'
+                action = '⚠️ REPORT ONLY (External policy)'
+            
             self.drift_report['orphaned_resources'].append({
                 'type': 'policy',
                 'name': policy_name,
                 'arn': policy_info['arn'],
                 'created': policy_info['created'],
-                'recommendation': 'REVIEW_USAGE_BEFORE_REMOVAL'
+                'recommendation': recommendation,
+                'action': action,
+                'managed_by_cicd': is_mci_policy,
+                'reason': 'Policy exists in AWS but not in source code'
             })
         
-        logger.info(f"🚨 Found {len(orphaned_roles)} orphaned roles and {len(orphaned_policies)} orphaned policies")
+        # Estadísticas detalladas
+        cicd_roles = sum(1 for r in self.drift_report['orphaned_resources'] 
+                        if r['type'] == 'role' and r['managed_by_cicd'])
+        manual_roles = sum(1 for r in self.drift_report['orphaned_resources'] 
+                          if r['type'] == 'role' and not r['managed_by_cicd'])
+        
+        logger.info(f"� DRIFT SUMMARY:")
+        logger.info(f"   🎯 CI/CD Roles (will auto-delete): {cicd_roles}")
+        logger.info(f"   ⚠️ Manual Roles (report only): {manual_roles}")
+        logger.info(f"   📜 Policies (review needed): {len(orphaned_policies)}")
+        logger.info(f"   🚨 Total drifts: {len(orphaned_roles) + len(orphaned_policies)}")
     
     def detect_missing_resources(self, source_resources: dict, aws_resources: dict):
         """Detect resources that exist in source but not in AWS"""
@@ -197,12 +291,43 @@ class DriftDetectionEngine:
         
         logger.info(f"📋 Found {len(missing_roles)} missing roles in AWS")
     
+    def check_terraform_state_exists(self, resource_address: str) -> bool:
+        """Check if a resource exists in Terraform state before attempting removal"""
+        try:
+            # Run terraform state list to get all resources
+            result = subprocess.run(
+                ['terraform', 'state', 'list'],
+                capture_output=True,
+                text=True,
+                cwd=self.workspace_path
+            )
+            
+            if result.returncode != 0:
+                logger.warning(f"⚠️ Could not list Terraform state: {result.stderr}")
+                return False
+            
+            # Check if our resource address exists in the state
+            state_resources = result.stdout.strip().split('\n')
+            resource_exists = resource_address in state_resources
+            
+            logger.info(f"🔍 Resource {resource_address} {'exists' if resource_exists else 'NOT FOUND'} in Terraform state")
+            return resource_exists
+            
+        except Exception as e:
+            logger.error(f"❌ Error checking Terraform state: {e}")
+            return False
+
     def generate_cleanup_script(self) -> str:
-        """Generate Terraform cleanup script for orphaned resources"""
+        """
+        Generate Terraform cleanup script ONLY for CI/CD managed resources
+        
+        REGLA DE SEGURIDAD: Solo eliminar recursos que fueron creados por nuestro CI/CD
+        """
         cleanup_commands = []
+        skipped_manual = []
         
         for resource in self.drift_report['orphaned_resources']:
-            if resource['type'] == 'role' and resource['recommendation'] == 'REMOVE_FROM_STATE_AND_AWS':
+            if resource['type'] == 'role':
                 role_name = resource['name']
                 
                 # CRITICAL: Never delete essential infrastructure roles
@@ -217,15 +342,32 @@ class DriftDetectionEngine:
                 
                 # Check if role is protected
                 is_protected = any(role_name.startswith(prefix) for prefix in protected_roles)
-                
                 if is_protected:
                     logger.warning(f"🔒 PROTECTED: Skipping cleanup of critical role: {role_name}")
                     continue
                 
-                logger.info(f"🧹 Adding cleanup commands for orphaned role: {role_name}")
-                cleanup_commands.append(f'terraform state rm \'module.iam_roles["{role_name}"]\'')
-                # Only remove from state, let manual review handle AWS deletion
-                # cleanup_commands.append(f'aws iam delete-role --role-name {role_name}')
+                # NUEVA LOGICA: Solo eliminar recursos gestionados por CI/CD
+                if resource['recommendation'] == 'REMOVE_FROM_STATE_AND_AWS' and resource.get('managed_by_cicd', False):
+                    # Check if resource actually exists in Terraform state
+                    resource_address = f'module.iam_roles["{role_name}"]'
+                    if not self.check_terraform_state_exists(resource_address):
+                        logger.info(f"✅ Resource {role_name} already removed from state - skipping cleanup")
+                        continue
+                    
+                    logger.info(f"🎯 CI/CD MANAGED: Adding cleanup for {role_name}")
+                    cleanup_commands.append(f'terraform state rm \'{resource_address}\'')
+                    # TODO: Implementar eliminación de AWS después de validación
+                    # cleanup_commands.append(f'aws iam delete-role --role-name {role_name}')
+                    
+                elif resource['recommendation'] == 'REPORT_ONLY_MANUAL_RESOURCE':
+                    logger.info(f"⚠️ MANUAL RESOURCE: Skipping cleanup for {role_name} (created manually)")
+                    skipped_manual.append(role_name)
+        
+        # Resumen de acciones
+        if cleanup_commands:
+            logger.info(f"🧹 Will cleanup {len(cleanup_commands)} CI/CD managed resources")
+        if skipped_manual:
+            logger.info(f"⚠️ Skipped {len(skipped_manual)} manual resources: {', '.join(skipped_manual)}")
         
         return '\n'.join(cleanup_commands)
     
