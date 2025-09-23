@@ -6,6 +6,8 @@
 
 **Enterprise-grade IAM management with Attribute-Based Access Control (ABAC), automated governance, and comprehensive security guardrails for Claro CENAM.**
 
+> 🎯 **NEW**: Intelligent drift detection now differentiates between CI/CD managed resources (auto-cleanup) vs manually created resources (report-only) for enhanced safety.
+
 ## 🏗️ Architecture Overview
 
 This repository implements a **zero-trust, tag-based ABAC architecture** for AWS IAM management with enterprise governance and compliance capabilities.
