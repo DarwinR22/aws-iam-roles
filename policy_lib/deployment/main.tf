@@ -19,6 +19,7 @@ data "aws_iam_policy_document" "terraform_core_deployment" {
       "iam:ListPolicyVersions",
       "iam:ListAttachedRolePolicies",
       "iam:ListRolePolicies",
+      "iam:ListInstanceProfilesForRole",
       # Organizations (unchanged)
       "organizations:Describe*",
       "organizations:List*"
