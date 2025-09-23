@@ -117,6 +117,7 @@ data "aws_iam_policy_document" "terraform_core_deployment" {
       values   = [var.environment]
     }
   }
+}
 
 # ORGANIZATIONS CONTEXT - Nueva Política para soporte de AWS Organizations
 data "aws_iam_policy_document" "organizations_deployment" {
@@ -152,6 +153,7 @@ data "aws_iam_policy_document" "organizations_deployment" {
 }
 
 # TERRAFORM STATE S3 BACKEND ACCESS - Política ampliada
+data "aws_iam_policy_document" "terraform_state_backend" {
   statement {
     sid    = "TerraformStateBackend"
     effect = "Allow"
