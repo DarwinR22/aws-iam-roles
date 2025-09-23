@@ -18,7 +18,9 @@
         "iam:ListPolicies",
         "iam:CreatePolicyVersion",
         "iam:DeletePolicyVersion",
+        "iam:GetPolicyVersion",
         "iam:ListPolicyVersions",
+        "iam:SetDefaultPolicyVersion",
         "iam:PutRolePolicy",
         "iam:DeleteRolePolicy",
         "iam:GetRolePolicy",
@@ -26,6 +28,9 @@
         "iam:TagRole",
         "iam:UntagRole",
         "iam:ListRoleTags",
+        "iam:TagPolicy",
+        "iam:UntagPolicy",
+        "iam:ListPolicyTags",
         "iam:PassRole"
       ],
       "Resource": "*"

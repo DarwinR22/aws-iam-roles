@@ -14,8 +14,5 @@ terraform {
   }
 }
 
-# Provider configuration will be inherited from parent module
-provider "aws" {
-  # Configuration will be inherited from the calling module
-  # No explicit configuration needed here
-}
+# Provider configuration is inherited from parent module
+# No explicit provider block needed - using required_providers above
