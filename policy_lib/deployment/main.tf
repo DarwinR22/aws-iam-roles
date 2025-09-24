@@ -173,6 +173,13 @@ data "aws_iam_policy_document" "terraform_state_backend" {
       "s3:PutEncryptionConfiguration",
       "s3:GetEncryptionConfiguration",
       "s3:GetAccelerateConfiguration",
+      "s3:GetBucketLogging",
+      "s3:GetBucketRequestPayment",
+      "s3:GetBucketEncryption",
+      "s3:GetBucketLifecycle",
+      "s3:GetBucketNotification",
+      "s3:GetBucketObjectLockConfiguration",
+      "s3:GetBucketIntelligentTieringConfiguration",
       "s3:ListBucketMultipartUploads",
       "s3:AbortMultipartUpload"
     ]
@@ -237,7 +244,15 @@ data "aws_iam_policy_document" "s3_analytics_deployment" {
       "s3:GetBucketMetricsConfiguration",
       "s3:PutBucketMetricsConfiguration",
       "s3:GetBucketPolicy",
-      "s3:PutBucketPolicy"
+      "s3:PutBucketPolicy",
+      # Permisos adicionales solicitados por Ricardo Brenes
+      "s3:GetBucketLogging",
+      "s3:GetBucketRequestPayment",
+      "s3:GetBucketEncryption",
+      "s3:GetBucketLifecycle",
+      "s3:GetBucketNotification",
+      "s3:GetBucketObjectLockConfiguration",
+      "s3:GetBucketIntelligentTieringConfiguration"
     ]
     resources = [
       "arn:aws:s3:::s3-data-analytics-*",

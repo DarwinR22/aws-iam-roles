@@ -2,7 +2,7 @@
 
 Auto-generated documentation for all IAM policies.
 
-**Generated:** 2025-09-22 18:09:14 UTC
+**Generated:** 2025-09-24 09:45:32 UTC
 
 ---
 
@@ -17,6 +17,7 @@ Auto-generated documentation for all IAM policies.
 - [MCI-Deployment-CloudFormation](#mcideploymentcloudformation)
 - [MCI-Deployment-Lambda](#mcideploymentlambda)
 - [MCI-Deployment-Logs](#mcideploymentlogs)
+- [MCI-Deployment-DynamoDB](#mcideploymentdynamodb)
 
 ---
 
@@ -380,12 +381,52 @@ resource "aws_iam_policy" "example" {
 
 ---
 
+## MCI-Deployment-DynamoDB
+
+**Description:** DynamoDB Terraform lock table permissions (GitHub Actions only)
+
+**Type:** managed
+
+**Policy Document:** `deployment.dynamodb_deployment`
+
+### 🏷️ **Canonical Tags:**
+
+| Tag | Value |
+|-----|-------|
+| Ambiente | all |
+| Pais | rg |
+| Direccion | ticenam |
+| Gerencia | mci |
+| Cuenta | 393209814297 |
+| Modulo | deployment |
+| Alcance SOX | si |
+| Propietario | darwinlopez |
+| Proveedor | inhouse |
+| Layer | cicd |
+| Dominio | deployment |
+| Subdominio | dynamodb |
+| Aplicacion | githubactions |
+| Name | MCI-Deployment-DynamoDB |
+| Soporte | darwin.lopez@claro.com.gt |
+
+### 💡 **Usage Example:**
+
+```hcl
+resource "aws_iam_policy" "example" {
+  name        = "MCI-Deployment-DynamoDB"
+  description = "DynamoDB Terraform lock table permissions (GitHub Actions only)"
+  policy      = data.aws_iam_policy_document.policy.json
+}
+```
+
+---
+
 ## 📊 Summary
 
-**Total Policies:** 9
+**Total Policies:** 10
 
 **Policies by Type:**
-- managed: 9
+- managed: 10
 
 ---
 
