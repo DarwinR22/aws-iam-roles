@@ -184,8 +184,8 @@ data "aws_iam_policy_document" "terraform_state_backend" {
       "s3:AbortMultipartUpload"
     ]
     resources = [
-      "arn:aws:s3:::s3-data-analytics-raw-${var.environment}-tfstate",
-      "arn:aws:s3:::s3-data-analytics-raw-${var.environment}-tfstate/*"
+      "arn:aws:s3:::s3-data-analytics-${var.environment}-tfstate-datalake",
+      "arn:aws:s3:::s3-data-analytics-${var.environment}-tfstate-datalake/*"
     ]
     
     condition {
