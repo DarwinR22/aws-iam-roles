@@ -51,41 +51,15 @@ class MCI_RoleCreator:
 
     def cargar_catalogo_politicas(self):
         """Cargar políticas del catálogo ABAC V2 modular."""
-        # Primero intentar catálogo V2 modular
+        # Solo usar catálogo V2 modular - V1 legacy eliminado
         v2_index_file = self.catalog_path / "v2" / "index.yaml"
         if v2_index_file.exists():
             return self._cargar_catalogo_v2()
         
-        # Fallback a catálogo V1 si V2 no existe
-        catalog_file = self.catalog_path / "policies.yaml"
-        if not catalog_file.exists():
-            print(f"⚠️  Catálogo no encontrado: {catalog_file}")
-            return {}
-        
-        try:
-            with open(catalog_file, 'r', encoding='utf-8') as f:
-                catalog = yaml.safe_load(f)
-            
-            # Organizar políticas por servicio
-            policies_by_service = {}
-            
-            for policy_name, policy_info in catalog.get('policies', {}).items():
-                service = policy_info.get('service', 'unknown')
-                
-                if service not in policies_by_service:
-                    policies_by_service[service] = []
-                
-                policies_by_service[service].append({
-                    'name': policy_name,
-                    'description': policy_info.get('description', ''),
-                    'sox_compliance': policy_info.get('sox_compliance', False)
-                })
-            
-            return policies_by_service
-            
-        except Exception as e:
-            print(f"❌ Error cargando catálogo: {e}")
-            return {}
+        # Sin fallback - solo V2 existe
+        print(f"❌ Catálogo V2 no encontrado: {v2_index_file}")
+        print("📂 Estructura esperada: catalog/v2/index.yaml")
+        return {}
 
     def _cargar_catalogo_v2(self):
         """Cargar catálogo V2 modular."""
@@ -124,39 +98,10 @@ class MCI_RoleCreator:
             
         except Exception as e:
             print(f"❌ Error cargando catálogo V2: {e}")
-            print("🔄 Fallback a catálogo V1...")
-            return self._cargar_catalogo_v1()
+            print("� Verificar estructura: catalog/v2/index.yaml y servicios")
+            return {}
 
-    def _cargar_catalogo_v1(self):
-        """Cargar catálogo V1 legacy."""
-        catalog_file = self.catalog_path / "policies.yaml"
-        if not catalog_file.exists():
-            return {}
-        
-        try:
-            with open(catalog_file, 'r', encoding='utf-8') as f:
-                catalog = yaml.safe_load(f)
-            
-            # Organizar políticas por servicio (lógica original)
-            policies_by_service = {}
-            
-            for policy_name, policy_info in catalog.get('policies', {}).items():
-                service = policy_info.get('service', 'unknown')
-                
-                if service not in policies_by_service:
-                    policies_by_service[service] = []
-                
-                policies_by_service[service].append({
-                    'name': policy_name,
-                    'description': policy_info.get('description', ''),
-                    'sox_compliance': policy_info.get('sox_compliance', False)
-                })
-            
-            return policies_by_service
-            
-        except Exception as e:
-            print(f"❌ Error cargando catálogo V1: {e}")
-            return {}
+    # Método _cargar_catalogo_v1 eliminado - solo V2 soportado
 
     def print_banner(self):
         """Banner del script."""

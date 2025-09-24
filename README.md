@@ -85,24 +85,26 @@ MCI/                        # Estructura principal
 
 ## 🎯 Políticas Genéricas Reutilizables (Sistema MCI-*)
 
-### ✨ **NOVEDAD**: Políticas Genéricas Listas para Usar
+### ✨ **POLÍTICAS V2**: Catálogo Modular ABAC
 
-El repositorio incluye **7 políticas genéricas** con prefijo `MCI-*` que pueden reutilizarse en cualquier rol:
+El repositorio implementa **políticas ABAC** con control basado en tags desde el catálogo V2:
 
 ```
-politicas/
-├── MCI-S3-ReadOnly.json           # Lectura completa S3
-├── MCI-S3-ReadWrite.json          # Lectura/escritura S3
-├── MCI-DynamoDB-ReadOnly.json     # Lectura DynamoDB
-├── MCI-DynamoDB-ReadWrite.json    # Lectura/escritura DynamoDB
-├── MCI-CloudWatch-Logs.json       # Escritura CloudWatch Logs
-├── MCI-Secrets-ReadOnly.json      # Lectura Secrets Manager
-└── MCI-Lambda-VPC.json            # Ejecución Lambda en VPC
+catalog/v2/services/
+├── s3.yaml                        # Políticas S3 ABAC
+│   ├── MCI-S3-TagBased-ReadOnly   # ✅ Acceso por tags coincidentes
+│   ├── MCI-S3-TagBased-Write      # ✅ Escritura por tags coincidentes
+│   ├── MCI-S3-ReadOnly            # ✅ Lectura básica S3
+│   └── MCI-S3-Write               # ✅ Escritura básica S3
+└── deployment.yaml                # Políticas deployment
+    ├── MCI-Deployment-TerraformCore
+    ├── MCI-Deployment-S3Analytics
+    └── MCI-Deployment-CloudFormation
 ```
 
 ### 🚀 Uso en Roles
 
-**En lugar de crear políticas específicas**, simplemente referencia las genéricas:
+**Referencia las políticas del catálogo V2**:
 
 ```json
 {
@@ -112,21 +114,20 @@ politicas/
       "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
     ],
     "custom": [
-      "MCI-S3-ReadOnly",
-      "MCI-DynamoDB-ReadWrite", 
-      "MCI-CloudWatch-Logs"
+      "MCI-S3-TagBased-ReadOnly",
+      "MCI-Deployment-TerraformCore"
     ]
   }
 }
 ```
 
-### ✅ Ventajas del Sistema MCI-*
+### ✅ Ventajas del Sistema V2 ABAC
 
-- **🔄 Reutilización**: Una política = múltiples roles
-- **🛡️ Seguridad**: Permisos auditados y probados
-- **⚡ Velocidad**: No crear políticas custom por cada rol
-- **📏 Consistencia**: Mismos permisos en todos los ambientes
-- **🔧 Mantenimiento**: Un cambio actualiza todos los roles
+- **🏷️ Tag-Based Security**: Solo acceso a recursos con tags coincidentes
+- **� Catálogo Modular**: Políticas organizadas por servicio
+- **🛡️ Zero-Trust**: Principio de menor privilegio automático
+- **⚡ Escalabilidad**: Agregar servicios sin modificar código
+- **🔧 Governance**: Tags obligatorios para compliance
 
 ---
 
@@ -220,9 +221,8 @@ cp ../BI/mi_primer_rol.json mi-nuevo-rol.json
       "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
     ],
     "custom": [
-      "MCI-S3-ReadOnly",
-      "MCI-DynamoDB-ReadWrite",
-      "MCI-CloudWatch-Logs"
+      "MCI-S3-TagBased-ReadOnly",
+      "MCI-Deployment-TerraformCore"
     ]
   },
   "tags": {
@@ -475,9 +475,8 @@ ls politicas/policy-s3-read.json
       "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
     ],
     "custom": [
-      "MCI-S3-ReadOnly",
-      "MCI-Secrets-ReadOnly",
-      "MCI-CloudWatch-Logs"
+      "MCI-S3-TagBased-ReadOnly",
+      "MCI-Deployment-TerraformCore"
     ]
   }
 }
@@ -497,8 +496,8 @@ ls politicas/policy-s3-read.json
       "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
     ],
     "custom": [
-      "MCI-S3-ReadWrite",
-      "MCI-CloudWatch-Logs"
+      "MCI-S3-TagBased-Write",
+      "MCI-Deployment-TerraformCore"
     ]
   }
 }
@@ -518,8 +517,8 @@ ls politicas/policy-s3-read.json
       "arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole"
     ],
     "custom": [
-      "MCI-S3-ReadWrite",
-      "MCI-DynamoDB-ReadWrite"
+      "MCI-S3-TagBased-Write",
+      "MCI-Deployment-S3Analytics"
     ]
   }
 }
@@ -576,12 +575,12 @@ Este proyecto está bajo la Licencia MIT - ver [LICENSE](LICENSE) para detalles.
 
 ## 🏷️ Versión
 
-**v2.1.0** - Sistema de políticas genéricas MCI-* + script interactivo mejorado
+**v2.2.0** - Catálogo V2 modular ABAC + limpieza de legacy
 
-**Última actualización**: Enero 2025
+**Última actualización**: Septiembre 2025
 
-### 🆕 Novedades v2.1.0
-- ✅ **Políticas Genéricas MCI-***: 7 políticas reutilizables listas para usar
-- ✅ **Script Interactivo Mejorado**: `create_role.py` con prompts y auto-formato
-- ✅ **Limpieza de Repositorio**: Eliminados scripts obsoletos y archivos duplicados
-- ✅ **Documentación Actualizada**: Ejemplos con nuevas políticas genéricas
+### 🆕 Novedades v2.2.0
+- ✅ **Catálogo V2 Modular**: Políticas organizadas por servicio en YAML
+- ✅ **Políticas ABAC Reales**: Tag-based access control funcional
+- ✅ **Limpieza Legacy**: Eliminadas referencias a policies.yaml V1
+- ✅ **Scripts Modernizados**: Solo soportan catálogo V2

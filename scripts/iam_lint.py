@@ -168,36 +168,16 @@ class IAMLinter:
         """Validar que las políticas referenciadas existan."""
         is_valid = True
         
-        # Cargar catálogo de políticas - Priorizar V2
+        # Solo usar catálogo V2 - V1 legacy eliminado
         v2_index_file = self.catalog_path / "v2" / "index.yaml"
         if v2_index_file.exists():
             print("📂 Usando catálogo V2 modular...")
             return self._validate_catalog_v2()
         
-        # Fallback a catálogo V1
-        catalog_file = self.catalog_path / "policies.yaml"
-        if not catalog_file.exists():
-            self.log_warning(f"No se encontró catálogo de políticas: {catalog_file}")
-            return True
-        
-        print("📂 Usando catálogo V1 legacy...")
-        try:
-            with open(catalog_file, 'r', encoding='utf-8') as f:
-                catalog = yaml.safe_load(f)
-            
-            available_policies = set(catalog.get('policies', {}).keys())
-            
-            # Verificar políticas MCI
-            mci_policies = role_data.get('policies', {}).get('mci_managed', [])
-            for policy in mci_policies:
-                if policy not in available_policies:
-                    self.log_error(f"{role_file}: Política MCI '{policy}' no existe en el catálogo")
-                    is_valid = False
-            
-        except Exception as e:
-            self.log_warning(f"Error validando políticas: {e}")
-        
-        return is_valid
+        # Sin fallback - solo V2 existe
+        self.log_error(f"Catálogo V2 no encontrado: {v2_index_file}")
+        self.log_error("📂 Estructura esperada: catalog/v2/index.yaml")
+        return False
 
     def _validate_catalog_v2(self) -> bool:
         """Validar catálogo V2 modular."""
@@ -303,64 +283,19 @@ class IAMLinter:
         return all_valid
 
     def validate_policies(self) -> bool:
-        """Validar estructura del catálogo de políticas."""
-        print("\n🔍 VALIDANDO CATÁLOGO DE POLÍTICAS...")
+        """Validar estructura del catálogo de políticas V2."""
+        print("\n🔍 VALIDANDO CATÁLOGO DE POLÍTICAS V2...")
         print("=" * 50)
         
-        catalog_file = self.catalog_path / "policies.yaml"
+        # Solo validar catálogo V2
+        v2_index_file = self.catalog_path / "v2" / "index.yaml"
         
-        if not catalog_file.exists():
-            self.log_error(f"Catálogo de políticas no encontrado: {catalog_file}")
+        if not v2_index_file.exists():
+            self.log_error(f"Catálogo V2 no encontrado: {v2_index_file}")
             return False
         
-        # Validar YAML
-        try:
-            with open(catalog_file, 'r', encoding='utf-8') as f:
-                catalog = yaml.safe_load(f)
-        except yaml.YAMLError as e:
-            self.log_error(f"YAML inválido en {catalog_file}: {e}")
-            return False
-        
-        # Validar estructura
-        if 'policies' not in catalog:
-            self.log_error("Catálogo no tiene sección 'policies'")
-            return False
-        
-        policies = catalog['policies']
-        print(f"📋 Encontradas {len(policies)} políticas en el catálogo")
-        
-        all_valid = True
-        
-        for policy_name, policy_config in policies.items():
-            # Validar nomenclatura de política
-            if not re.match(self.POLICY_NAME_PATTERN, policy_name):
-                self.log_error(f"Política '{policy_name}' no sigue patrón MCI-{{Servicio}}-{{Acción}}")
-                all_valid = False
-            
-            # Validar campos requeridos
-            required_fields = ['description', 'type', 'canonical_tags']
-            for field in required_fields:
-                if field not in policy_config:
-                    self.log_error(f"Política '{policy_name}' falta campo '{field}'")
-                    all_valid = False
-            
-            # Validar archivo de política existe
-            if 'policy_document' in policy_config:
-                policy_doc = policy_config['policy_document']
-                # Buscar archivo correspondiente
-                policy_file_found = False
-                for policy_dir in self.policy_lib_path.iterdir():
-                    if policy_dir.is_dir():
-                        policy_files = list(policy_dir.glob(f"*{policy_name}*.json"))
-                        if policy_files:
-                            policy_file_found = True
-                            break
-                
-                if not policy_file_found:
-                    self.log_warning(f"Política '{policy_name}': No se encontró archivo JSON correspondiente")
-        
-        print(f"✅ Validación de catálogo completada")
-        return all_valid
+        # Delegar validación a método V2
+        return self._validate_catalog_v2()
 
     def print_summary(self):
         """Imprimir resumen de validación."""

@@ -33,10 +33,9 @@ def generate_documentation():
         print(f"✅ Using catalog V2 - {len(all_policies)} policies loaded")
         
     except FileNotFoundError:
-        print("⚠️ Catalog V2 not found, falling back to V1...")
-        # Fallback to V1 catalog
-        with open('catalog/legacy/policies.yaml', 'r', encoding='utf-8') as f:
-            catalog = yaml.safe_load(f)
+        print("❌ Catalog V2 not found - no fallback available")
+        print("📂 Expected structure: catalog/v2/index.yaml")
+        return
     
     # Generate markdown documentation
     with open('POLICIES_DOCUMENTATION.md', 'w', encoding='utf-8') as f:

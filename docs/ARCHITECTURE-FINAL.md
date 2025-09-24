@@ -15,9 +15,10 @@
 │   ├── lambda/                      # Lambda tag-based policies
 │   └── commons/                     # Trust policies
 │
-├── 📋 catalog/                       # Single Source of Truth
-│   ├── policies.yaml                # Policies with canonical tags
-│   └── roles.yaml                   # Role definitions
+├── 📋 catalog/                       # Catálogo Modular V2
+│   └── v2/                          # Estructura modular por servicios
+│       ├── index.yaml               # Índice principal
+│       └── services/                # Políticas por servicio
 │
 ├── 🏢 gerencias/                     # Organizational Structure
 │   └── MCI/                         # Management divisions
@@ -57,8 +58,8 @@
 - `MCI-Lambda-TagBased-Invoke` → Lambda execution by tag matching
 
 ### 📋 **Single Source of Truth (catalog/):**
-- **policies.yaml** → All policies with canonical tags
-- **roles.yaml** → Role definitions and configurations
+- **catalog/v2/index.yaml** → Catálogo modular principal
+- **catalog/v2/services/*.yaml** → Políticas organizadas por servicio
 
 ### 🏢 **Organizational Management (gerencias/):**
 - Dynamic detection of management/area structure
