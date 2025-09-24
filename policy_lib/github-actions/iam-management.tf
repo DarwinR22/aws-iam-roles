@@ -51,7 +51,9 @@ data "aws_iam_policy_document" "github_actions_iam_management" {
       "iam:ListPolicyTags"
     ]
     resources = [
-      "arn:aws:iam::393209814297:policy/MCI/*"
+      "arn:aws:iam::393209814297:policy/MCI/*",
+      "arn:aws:iam::393209814297:policy/Platform-*", 
+      "arn:aws:iam::393209814297:policy/App-*"
     ]
   }
   
