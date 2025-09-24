@@ -57,7 +57,7 @@ echo 🎉 ¡Actualizacion completada!
 echo.
 echo 📋 Permisos agregados:
 echo    ✅ IAM: CreateRole, DeleteRole, GetRole, etc.
-echo    ✅ S3: Acceso completo al bucket s3-data-analytics-raw-dev-tfstate
+echo    ✅ S3: Acceso completo al bucket s3-data-analytics-dev-tfstate-datalake
 echo    ✅ DynamoDB: Acceso a tabla dynamodb-db-dev-terraform-lock
 echo    ✅ STS: GetCallerIdentity
 echo.

@@ -77,7 +77,7 @@ The current GitHub Actions role was missing critical permissions, causing deploy
 - **IAM**: All resources (`*`) - Required for role/policy management
 - **Organizations**: All resources (`*`) - Read-only, organization context
 - **S3**: Scoped to specific buckets:
-  - `s3-data-analytics-raw-dev-tfstate/*` (Terraform state)
+  - `s3-data-analytics-dev-tfstate-datalake/*` (Terraform state)
   - `s3-data-analytics-*/*` (Analytics buckets)
 - **DynamoDB**: Scoped to specific lock table
 - **STS**: Identity operations only

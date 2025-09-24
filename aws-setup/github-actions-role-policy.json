@@ -41,8 +41,8 @@
         "s3:GetBucketLocation"
       ],
       "Resource": [
-        "arn:aws:s3:::s3-data-analytics-raw-dev-tfstate",
-        "arn:aws:s3:::s3-data-analytics-raw-dev-tfstate/*"
+        "arn:aws:s3:::s3-data-analytics-dev-tfstate-datalake",
+        "arn:aws:s3:::s3-data-analytics-dev-tfstate-datalake/*"
       ]
     },
     {

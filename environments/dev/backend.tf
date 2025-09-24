@@ -1,6 +1,6 @@
 terraform {
   backend "s3" {
-    bucket         = "s3-data-analytics-raw-dev-tfstate"
+    bucket         = "s3-data-analytics-dev-tfstate-datalake"
     key            = "environments/dev/iam-roles/terraform.tfstate"
     region         = "us-east-1"
     dynamodb_table = "dynamodb-db-dev-terraform-lock"
@@ -52,7 +52,7 @@ provider "aws" {
       # Additional management tags
       ManagedBy       = "Terraform"
       Repository      = "mci-aws-iam"
-      StateLocation   = "s3://s3-data-analytics-raw-dev-tfstate"
+      StateLocation   = "s3://s3-data-analytics-dev-tfstate-datalake"
       TerraformVersion = "1.6.0"
     }
   }
