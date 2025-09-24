@@ -6,7 +6,9 @@
 
 **Enterprise-grade IAM management with Attribute-Based Access Control (ABAC), automated governance, and comprehensive security guardrails for Claro CENAM.**
 
-> 🎯 **NEW**: Intelligent drift detection now differentiates between CI/CD managed resources (auto-cleanup) vs manually created resources (report-only) for enhanced safety.
+> 🔐 **NEW**: Enterprise KMS encryption implemented! Customer-managed keys now secure DynamoDB state locks and S3 Terraform state with automatic key rotation and optimized costs.
+
+> 🎯 **UPDATE**: Intelligent drift detection now differentiates between CI/CD managed resources (auto-cleanup) vs manually created resources (report-only) for enhanced safety.
 
 ## 🏗️ Architecture Overview
 

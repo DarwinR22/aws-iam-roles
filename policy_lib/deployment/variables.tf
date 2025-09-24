@@ -4,12 +4,12 @@
 # =============================================
 
 variable "department" {
-  description = "Gerencia tag for ABAC policies (MCI, sistemas, data-analytics)" 
+  description = "Gerencia tag for ABAC policies (MCI, sistemas, data-analytics)"
   type        = string
   validation {
     condition = contains([
       "MCI",
-      "sistemas", 
+      "sistemas",
       "data-analytics"
     ], var.department)
     error_message = "Department must be one of: MCI, sistemas, data-analytics."

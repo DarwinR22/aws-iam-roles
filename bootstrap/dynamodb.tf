@@ -134,7 +134,7 @@ resource "aws_dynamodb_table" "terraform_lock" {
 
 # Verificar que el bucket S3 existe
 data "aws_s3_bucket" "tfstate" {
-  bucket = "s3-data-analytics-raw-dev-tfstate"
+  bucket = "s3-data-analytics-dev-tfstate-datalake"
 }
 
 output "dynamodb_table_name" {

@@ -13,7 +13,8 @@ terraform {
 }
 
 provider "aws" {
-  region = var.aws_region
+  region  = var.aws_region
+  profile = "darkhn"
   
   default_tags {
     tags = {

@@ -11,7 +11,7 @@ data "aws_iam_policy_document" "terraform_core_deployment" {
     effect = "Allow"
     actions = [
       "iam:GetRole",
-      "iam:GetRolePolicy", 
+      "iam:GetRolePolicy",
       "iam:GetPolicy",
       "iam:GetPolicyVersion",
       "iam:ListRoles",
@@ -25,20 +25,20 @@ data "aws_iam_policy_document" "terraform_core_deployment" {
       "organizations:List*"
     ]
     resources = ["*"]
-    
+
     condition {
       test     = "StringEquals"
       variable = "aws:PrincipalTag/Gerencia"
       values   = [var.department]
     }
-    
+
     condition {
       test     = "StringEquals"
       variable = "aws:PrincipalTag/Ambiente"
       values   = [var.environment]
     }
   }
-  
+
   # IAM Write permissions (restricted to specific patterns)
   statement {
     sid    = "TerraformIAMWrite"
@@ -70,34 +70,34 @@ data "aws_iam_policy_document" "terraform_core_deployment" {
       "arn:aws:iam::*:policy/MCI-*",
       "arn:aws:iam::*:policy/${var.department}-${var.environment}-*"
     ]
-    
+
     condition {
       test     = "StringEquals"
       variable = "aws:PrincipalTag/Gerencia"
       values   = [var.department]
     }
-    
+
     condition {
       test     = "StringEquals"
       variable = "aws:PrincipalTag/Ambiente"
       values   = [var.environment]
     }
   }
-  
+
   # PassRole for service principals (restricted to managed roles)
   statement {
-    sid    = "TerraformPassRole"
-    effect = "Allow"
+    sid     = "TerraformPassRole"
+    effect  = "Allow"
     actions = ["iam:PassRole"]
     resources = [
       "arn:aws:iam::*:role/${var.department}-${var.environment}-*",
       "arn:aws:iam::*:role/rol-${var.department}-*"
     ]
-    
+
     condition {
       test     = "StringEquals"
       variable = "iam:PassedToService"
-      values   = [
+      values = [
         "lambda.amazonaws.com",
         "ec2.amazonaws.com",
         "ecs-tasks.amazonaws.com",
@@ -105,13 +105,13 @@ data "aws_iam_policy_document" "terraform_core_deployment" {
         "states.amazonaws.com"
       ]
     }
-    
+
     condition {
       test     = "StringEquals"
       variable = "aws:PrincipalTag/Gerencia"
       values   = [var.department]
     }
-    
+
     condition {
       test     = "StringEquals"
       variable = "aws:PrincipalTag/Ambiente"
@@ -138,7 +138,7 @@ data "aws_iam_policy_document" "organizations_deployment" {
       "organizations:ListTargetsForPolicy"
     ]
     resources = ["*"]
-    
+
     condition {
       test     = "StringEquals"
       variable = "aws:PrincipalTag/Gerencia"
@@ -187,17 +187,57 @@ data "aws_iam_policy_document" "terraform_state_backend" {
       "arn:aws:s3:::s3-data-analytics-${var.environment}-tfstate-datalake",
       "arn:aws:s3:::s3-data-analytics-${var.environment}-tfstate-datalake/*"
     ]
-    
+
     condition {
       test     = "StringEquals"
       variable = "aws:PrincipalTag/Gerencia"
       values   = [var.department]
     }
-    
+
     condition {
       test     = "StringEquals"
       variable = "aws:PrincipalTag/Ambiente"
       values   = [var.environment]
+    }
+  }
+}
+
+# KMS DEPLOYMENT - Política para Customer Managed Keys
+data "aws_iam_policy_document" "kms_deployment" {
+  statement {
+    sid    = "KMSDeploymentAccess"
+    effect = "Allow"
+    actions = [
+      "kms:Decrypt",
+      "kms:DescribeKey",
+      "kms:Encrypt",
+      "kms:GenerateDataKey*",
+      "kms:ReEncrypt*",
+      "kms:CreateGrant"
+    ]
+    resources = [
+      "arn:aws:kms:us-east-1:393209814297:key/*"
+    ]
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:PrincipalTag/Gerencia"
+      values   = [var.department]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:PrincipalTag/Ambiente"
+      values   = [var.environment]
+    }
+
+    condition {
+      test     = "ForAnyValue:StringEquals"
+      variable = "kms:ViaService"
+      values = [
+        "s3.us-east-1.amazonaws.com",
+        "dynamodb.us-east-1.amazonaws.com"
+      ]
     }
   }
 }
@@ -210,7 +250,7 @@ data "aws_iam_policy_document" "s3_analytics_deployment" {
     actions = [
       # Bucket management
       "s3:CreateBucket",
-      "s3:DeleteBucket", 
+      "s3:DeleteBucket",
       "s3:ListBucket",
       "s3:GetBucketLocation",
       "s3:GetBucketTagging",
@@ -232,7 +272,7 @@ data "aws_iam_policy_document" "s3_analytics_deployment" {
       "s3:PutLifecycleConfiguration",
       # Object operations
       "s3:PutObject",
-      "s3:GetObject", 
+      "s3:GetObject",
       "s3:DeleteObject",
       "s3:ListBucketMultipartUploads",
       "s3:AbortMultipartUpload",
@@ -261,7 +301,7 @@ data "aws_iam_policy_document" "s3_analytics_deployment" {
       "arn:aws:s3:::${var.department}-${var.environment}-*",
       "arn:aws:s3:::${var.department}-${var.environment}-*/*"
     ]
-    
+
     condition {
       test     = "StringEquals"
       variable = "aws:PrincipalTag/Gerencia"
@@ -291,8 +331,8 @@ data "aws_iam_policy_document" "cloudformation_deployment" {
       "cloudformation:SetStackPolicy",
       "cloudformation:ValidateTemplate"
     ]
-    resources = ["*"]  # Original era "*" para CloudFormation
-    
+    resources = ["*"] # Original era "*" para CloudFormation
+
     condition {
       test     = "StringEquals"
       variable = "aws:PrincipalTag/Gerencia"
@@ -327,10 +367,10 @@ data "aws_iam_policy_document" "lambda_deployment" {
       "lambda:ListVersionsByFunction"
     ]
     resources = [
-      "arn:aws:lambda:us-east-1:393209814297:function:*",  # Original pattern
-      "arn:aws:lambda:*:*:function:${var.department}-${var.environment}-*"  # ABAC pattern
+      "arn:aws:lambda:us-east-1:393209814297:function:*",                  # Original pattern
+      "arn:aws:lambda:*:*:function:${var.department}-${var.environment}-*" # ABAC pattern
     ]
-    
+
     condition {
       test     = "StringEquals"
       variable = "aws:PrincipalTag/Gerencia"
@@ -343,16 +383,16 @@ data "aws_iam_policy_document" "lambda_deployment" {
       values   = [var.environment]
     }
   }
-  
+
   statement {
-    sid    = "IAMPassRoleForLambda"
-    effect = "Allow"
+    sid     = "IAMPassRoleForLambda"
+    effect  = "Allow"
     actions = ["iam:PassRole"]
     resources = [
-      "arn:aws:iam::393209814297:role/lambda_exec_role",  # Original specific role
-      "arn:aws:iam::*:role/${var.department}-${var.environment}-lambda-*"  # ABAC pattern
+      "arn:aws:iam::393209814297:role/lambda_exec_role",                  # Original specific role
+      "arn:aws:iam::*:role/${var.department}-${var.environment}-lambda-*" # ABAC pattern
     ]
-    
+
     condition {
       test     = "StringEquals"
       variable = "aws:PrincipalTag/Gerencia"
@@ -382,7 +422,7 @@ data "aws_iam_policy_document" "logs_deployment" {
       "logs:PutRetentionPolicy"
     ]
     resources = [
-      "arn:aws:logs:us-east-1:393209814297:*",  # Original pattern
+      "arn:aws:logs:us-east-1:393209814297:*", # Original pattern
       "arn:aws:logs:*:*:log-group:/aws/lambda/${var.department}-${var.environment}-*",
       "arn:aws:logs:*:*:log-group:/aws/apigateway/${var.department}-${var.environment}-*"
     ]
@@ -425,13 +465,13 @@ data "aws_iam_policy_document" "dynamodb_deployment" {
     resources = [
       "arn:aws:dynamodb:us-east-1:393209814297:table/dynamodb-db-${var.environment}-terraform-lock"
     ]
-    
+
     condition {
       test     = "StringEquals"
       variable = "aws:PrincipalTag/Gerencia"
       values   = [var.department]
     }
-    
+
     condition {
       test     = "StringEquals"
       variable = "aws:PrincipalTag/Ambiente"
@@ -446,6 +486,7 @@ data "aws_iam_policy_document" "full_deployment_access" {
     data.aws_iam_policy_document.terraform_core_deployment.json,
     data.aws_iam_policy_document.organizations_deployment.json,
     data.aws_iam_policy_document.terraform_state_backend.json,
+    data.aws_iam_policy_document.kms_deployment.json,
     data.aws_iam_policy_document.s3_analytics_deployment.json,
     data.aws_iam_policy_document.cloudformation_deployment.json,
     data.aws_iam_policy_document.lambda_deployment.json,
