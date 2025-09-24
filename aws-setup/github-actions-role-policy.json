@@ -61,6 +61,26 @@
         "sts:GetCallerIdentity"
       ],
       "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "kms:Decrypt",
+        "kms:DescribeKey",
+        "kms:Encrypt",
+        "kms:GenerateDataKey*",
+        "kms:ReEncrypt*",
+        "kms:CreateGrant"
+      ],
+      "Resource": "arn:aws:kms:us-east-1:393209814297:key/fe44eac8-0501-4620-bba9-b0155ed1b1a1",
+      "Condition": {
+        "StringEquals": {
+          "kms:ViaService": [
+            "s3.us-east-1.amazonaws.com",
+            "dynamodb.us-east-1.amazonaws.com"
+          ]
+        }
+      }
     }
   ]
 }
