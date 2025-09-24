@@ -30,7 +30,10 @@
     "area": "BI",
     "proposito": "analytics",
     "nivel_acceso": "readonly",
-    "creado_por": "enterprise_setup"
+    "creado_por": "enterprise_setup",
+    "Equipo": "BI-Analytics",
+    "Proyecto": "MCI-DataAnalytics",
+    "propietario": "MCI-BI-Team"
   },
   "gerencia_code": "MCI",
   "area_code": "BI",

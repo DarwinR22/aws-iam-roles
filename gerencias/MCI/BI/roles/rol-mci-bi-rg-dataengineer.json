@@ -31,7 +31,10 @@
     "area": "BI",
     "proposito": "data_engineering", 
     "nivel_acceso": "readwrite",
-    "creado_por": "enterprise_setup"
+    "creado_por": "enterprise_setup",
+    "Equipo": "BI-DataEngineering",
+    "Proyecto": "MCI-DataPlatform",
+    "propietario": "MCI-BI-Team"
   },
   "gerencia_code": "MCI",
   "area_code": "BI",
