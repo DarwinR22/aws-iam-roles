@@ -88,13 +88,5 @@ data "aws_iam_policy_document" "github_actions_terraform_backend" {
     }
   }
   
-  # Identity context
-  statement {
-    sid    = "GetCallerIdentity"
-    effect = "Allow"
-    actions = [
-      "sts:GetCallerIdentity"
-    ]
-    resources = ["*"]
-  }
+
 }

@@ -85,7 +85,7 @@ data "aws_iam_policy_document" "github_actions_iam_management" {
     ]
   }
   
-  # Simulación de políticas (testing)
+  # Simulación de políticas (testing) - Restringido a roles MCI
   statement {
     sid    = "IAMPolicySimulation"
     effect = "Allow"
@@ -93,16 +93,11 @@ data "aws_iam_policy_document" "github_actions_iam_management" {
       "iam:SimulatePrincipalPolicy",
       "iam:SimulateCustomPolicy"
     ]
-    resources = ["*"]
+    resources = [
+      "arn:aws:iam::393209814297:role/MCI/*",
+      "arn:aws:iam::393209814297:role/GitHubActions/*"
+    ]
   }
   
-  # Identity context
-  statement {
-    sid    = "GetCallerIdentity"
-    effect = "Allow"
-    actions = [
-      "sts:GetCallerIdentity"
-    ]
-    resources = ["*"]
-  }
+
 }
