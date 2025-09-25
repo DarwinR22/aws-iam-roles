@@ -86,7 +86,7 @@ role:
     
     # Lifecycle management
     "Ciclo de Vida": "Creacion"
-    "Versión": "v1.0.0"
+    "Versión": "v1.0.1"  # Bumped to trigger workflow
     "Fecha de Creacion": "2025-09-16"
 
 # Environment variables for multi-environment deployment

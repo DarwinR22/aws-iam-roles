@@ -10,18 +10,8 @@ permissions:
 on:
   push:
     branches: [dev]
-    paths:
-      - 'definitions/**'
-      - 'generators/**'
-      - 'templates/**'
   
   workflow_dispatch:
-    inputs:
-      apply_changes:
-        description: 'Apply changes to AWS (requires approval)'
-        required: false
-        default: false
-        type: boolean
 
 jobs:
   generate-terraform:
@@ -29,6 +19,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Debug Workflow Activation
+      run: |
+        echo "🚀 Workflow activated successfully!"
+        echo "Branch: ${{ github.ref }}"
+        echo "Event: ${{ github.event_name }}"
+        echo "Repository: ${{ github.repository }}"
+        
     - name: Checkout Repository
       uses: actions/checkout@v4
       with:
