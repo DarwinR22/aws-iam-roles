@@ -61,7 +61,20 @@ jobs:
         terraform init -backend=false
         terraform validate
 
-    - name: 📊 Check for Changes
+    - name: � Terraform Plan Preview
+      id: plan
+      run: |
+        echo "## 🗂️ Terraform Plan Preview" >> $GITHUB_STEP_SUMMARY
+        echo "### 📊 What would be deployed:" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        cd generated
+        echo '```hcl' >> $GITHUB_STEP_SUMMARY
+        terraform plan -no-color -input=false 2>&1 | head -50 >> $GITHUB_STEP_SUMMARY || echo "⚠️ Plan requires AWS credentials - showing validation only" >> $GITHUB_STEP_SUMMARY
+        echo '```' >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "✅ Terraform syntax and structure validated successfully" >> $GITHUB_STEP_SUMMARY
+
+    - name: �📊 Check for Changes
       id: changes
       run: |
         git config --global user.name "🤖 IAM Generator Bot"
