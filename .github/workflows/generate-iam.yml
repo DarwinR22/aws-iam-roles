@@ -12,6 +12,14 @@ on:
     branches: [main]
     paths:
       - 'definitions/**'
+  
+  workflow_dispatch:
+    inputs:
+      force_push:
+        description: 'Force push to protected branch (admin only)'
+        required: false
+        default: false
+        type: boolean
 
 jobs:
   generate-and-validate:
