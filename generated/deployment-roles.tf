@@ -6,7 +6,7 @@
 # This file is auto-generated from YAML definitions.
 # DO NOT EDIT MANUALLY - Changes will be overwritten.
 # 
-# Generated: 2025-09-25T12:39:15.942718
+# Generated: 2025-09-25T12:46:00.290162
 # Source: Multiple role definitions in definitions/roles/
 # ==============================================================================
 
@@ -16,6 +16,9 @@
 # Generated from: definitions/roles/github-deployment-role.yaml
 # DO NOT EDIT MANUALLY - Changes will be overwritten
 
+# Get current AWS account ID
+data "aws_caller_identity" "current" {}
+
 # Trust policy for the role
 data "aws_iam_policy_document" "github_actions_iam_deployment_role_trust" {
   # OIDC Trust Policy for GitHub Actions
@@ -24,7 +27,7 @@ data "aws_iam_policy_document" "github_actions_iam_deployment_role_trust" {
     
     principals {
       type        = "Federated"
-      identifiers = ["arn:aws:iam::${account_id}:oidc-provider/token.actions.githubusercontent.com"]
+      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/token.actions.githubusercontent.com"]
     }
 
     actions = ["sts:AssumeRoleWithWebIdentity"]
@@ -58,7 +61,7 @@ resource "aws_iam_role" "github_actions_iam_deployment_role" {
     "Pais" = "rg"
     "Gerencia" = "MCI"
     "Area" = "DevOps"
-    "Ambiente" = "${environment}"
+    "Ambiente" = "dev"
     "Direccion" = "TIRegional"
     "Modulo" = "IAM"
     "Alcance SOX" = "No"
@@ -79,7 +82,7 @@ resource "aws_iam_role" "github_actions_iam_deployment_role" {
     # Auto-generated tags
     "ManagedBy" = "terraform"
     "Source"    = "definitions/roles/github-deployment-role.yaml"
-    "Generated" = "2025-09-25T12:39:15.941292"
+    "Generated" = "2025-09-25T12:46:00.289916"
   }
 }
 

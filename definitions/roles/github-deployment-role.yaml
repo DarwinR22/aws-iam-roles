@@ -60,7 +60,7 @@ role:
     "Pais": "rg"
     "Gerencia": "MCI"
     "Area": "DevOps"
-    "Ambiente": "${environment}"
+    "Ambiente": "dev"
     "Direccion": "TIRegional"
     "Modulo": "IAM"
     
