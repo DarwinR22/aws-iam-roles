@@ -199,16 +199,22 @@ class IAMGenerator:
         return params
     
     def generate_roles(self) -> list:
-        """Generate all role Terraform files"""
+        """Generate consolidated role Terraform files following best practices"""
         generated_files = []
         roles_dir = self.definitions_dir / "roles"
         
         if not roles_dir.exists():
             print(f"⚠️  No roles directory found: {roles_dir}")
             return generated_files
-            
+        
+        # Load role template
         role_template = self.jinja_env.get_template('role.tf.j2')
         
+        # Categorize roles by type for best practices
+        deployment_roles = []
+        application_roles = []
+        
+        # Process all YAML files in roles directory
         for yaml_file in roles_dir.glob("*.yaml"):
             print(f"🔄 Processing role: {yaml_file.name}")
             
@@ -222,23 +228,82 @@ class IAMGenerator:
                 definition['role']['name']
             )
             
-            # Render template
-            terraform_code = role_template.render(
-                role=definition['role'],
-                source_file=f"definitions/roles/{yaml_file.name}",
-                generation_time=datetime.now().isoformat(),
-                account_id=self.account_id
+            # Categorize by role type (deployment vs application)
+            role_name = definition['role']['name'].lower()
+            if 'github' in role_name or 'deployment' in role_name or 'ci' in role_name or 'cd' in role_name:
+                deployment_roles.append({
+                    'definition': definition,
+                    'yaml_file': yaml_file,
+                    'terraform_code': role_template.render(
+                        role=definition['role'],
+                        source_file=f"definitions/roles/{yaml_file.name}",
+                        generation_time=datetime.now().isoformat(),
+                        account_id=self.account_id
+                    )
+                })
+            else:
+                application_roles.append({
+                    'definition': definition,
+                    'yaml_file': yaml_file,
+                    'terraform_code': role_template.render(
+                        role=definition['role'],
+                        source_file=f"definitions/roles/{yaml_file.name}",
+                        generation_time=datetime.now().isoformat(),
+                        account_id=self.account_id
+                    )
+                })
+        
+        # Generate deployment-roles.tf (infrastructure/CI-CD roles)
+        if deployment_roles:
+            deployment_content = self._generate_consolidated_roles_file(
+                deployment_roles, 
+                "Deployment and Infrastructure Roles",
+                "CI/CD, GitHub Actions, and infrastructure automation roles"
             )
-            
-            # Write generated file
-            output_file = self.generated_dir / "roles" / f"{definition['role']['terraform_name']}.tf"
-            with open(output_file, 'w') as f:
-                f.write(terraform_code)
-                
-            generated_files.append(output_file)
-            print(f"✅ Generated: {output_file}")
+            deployment_file = self.generated_dir / "deployment-roles.tf"
+            with open(deployment_file, 'w') as f:
+                f.write(deployment_content)
+            generated_files.append(deployment_file)
+            print(f"✅ Generated: deployment-roles.tf ({len(deployment_roles)} roles)")
+        
+        # Generate application-roles.tf (business/application roles)  
+        if application_roles:
+            application_content = self._generate_consolidated_roles_file(
+                application_roles,
+                "Application and Business Roles", 
+                "Business user roles for applications, analytics, and services"
+            )
+            application_file = self.generated_dir / "application-roles.tf"
+            with open(application_file, 'w') as f:
+                f.write(application_content)
+            generated_files.append(application_file)
+            print(f"✅ Generated: application-roles.tf ({len(application_roles)} roles)")
         
         return generated_files
+    
+    def _generate_consolidated_roles_file(self, roles: list, title: str, description: str) -> str:
+        """Generate a consolidated Terraform file with multiple roles"""
+        header = f'''# ==============================================================================
+# {title}
+# ==============================================================================
+# {description}
+# 
+# This file is auto-generated from YAML definitions.
+# DO NOT EDIT MANUALLY - Changes will be overwritten.
+# 
+# Generated: {datetime.now().isoformat()}
+# Source: Multiple role definitions in definitions/roles/
+# ==============================================================================
+
+'''
+        
+        content = header
+        for role_data in roles:
+            content += f"\n# Role from: {role_data['yaml_file'].name}\n"
+            content += role_data['terraform_code']
+            content += "\n\n"
+        
+        return content
     
     def clean_generated(self):
         """Remove all generated files"""
