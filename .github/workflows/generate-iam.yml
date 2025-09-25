@@ -1,5 +1,11 @@
 name: 🤖 Auto-Generate IAM Terraform
 
+# Grant special permissions to GITHUB_TOKEN
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write
+
 on:
   push:
     branches: [main, dev]
