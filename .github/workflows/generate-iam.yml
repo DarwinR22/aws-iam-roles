@@ -22,17 +22,13 @@ permissions:
         fiAWS
 
 on:
-  push:
+  # Solo ejecutar en PR para evitar loops infinitos
+  pull_request:
     branches: [main, dev]
-    paths: 
+    paths:
       - 'definitions/**'
       - 'generators/**'
       - 'templates/**'
-  
-  pull_request:
-    branches: [main]
-    paths:
-      - 'definitions/**'
   
   workflow_dispatch:
     inputs:
