@@ -1,4 +1,5 @@
 name: Auto-Generate IAM Terraform
+# Updated: 2025-09-25 - Added push trigger and ready to test policy attachments
 
 permissions:
   contents: write
@@ -7,6 +8,13 @@ permissions:
   id-token: write
 
 on:
+  push:
+    branches: [dev]
+    paths:
+      - 'definitions/**'
+      - 'generators/**'
+      - 'templates/**'
+  
   workflow_dispatch:
     inputs:
       apply_changes:
