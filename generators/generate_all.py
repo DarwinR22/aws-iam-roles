@@ -35,6 +35,7 @@ class IAMGenerator:
         self.templates_dir = repo_root / "templates" 
         self.generated_dir = repo_root / "generated"
         self.catalog_dir = repo_root / "catalog"
+        # Policy attachments disabled - policies created as independent modules
         
         # Setup Jinja2
         self.jinja_env = Environment(
