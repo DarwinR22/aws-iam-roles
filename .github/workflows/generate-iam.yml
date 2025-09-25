@@ -9,8 +9,7 @@ permissions:
 
 on:
   push:
-    branches: [main, dev]
-    paths: 
+    branches: [main, dev    - name: 🚀 Terraform Apply
       - 'definitions/**'
       - 'generators/**'
       - 'templates/**'
@@ -207,10 +206,22 @@ jobs:
         aws-region: us-east-1
         audience: sts.amazonaws.com
 
-    - name: 🚀 Terraform Plan
+    - name: � Import Existing Resources
       run: |
         cd generated
         terraform init
+        
+        echo "🔍 Checking for existing resources..."
+        
+        # Try to import the IAM role if it exists
+        echo "📦 Attempting to import existing IAM role..."
+        terraform import aws_iam_role.github_actions_iam_deployment_role github-actions-iam-deployment-role || true
+        
+        echo "✅ Import process completed"
+
+    - name: 🚀 Terraform Plan
+      run: |
+        cd generated
         terraform plan -out=tfplan
         
     - name: 📊 Upload Plan
