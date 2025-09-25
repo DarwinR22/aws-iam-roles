@@ -1,0 +1,50 @@
+# Data source for current AWS caller identity
+data "aws_caller_identity" "current" {}
+
+# {{ policy_name }} Policy Module - Following ABAC Pattern
+# Converted from {{ source_yaml_path }}
+resource "aws_iam_policy" "main" {
+  name_prefix = "{{ policy_name | lower | replace('_', '-') }}-"
+  path        = "/policies/"
+  description = var.policy_description
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {% for statement in statements %}
+      {
+        {% if statement.sid %}Sid    = "{{ statement.sid }}"{% endif %}
+        Effect = "{{ statement.effect }}"
+        Action = {{ statement.actions | tojson }}
+        Resource = {{ statement.resources | tojson }}
+        {% if statement.abac_conditions %}
+        Condition = {
+          {% set conditions_by_test = {} %}
+          {% for condition in statement.abac_conditions %}
+            {% set _ = conditions_by_test.update({condition.test: conditions_by_test.get(condition.test, []) + [condition]}) if conditions_by_test.get(condition.test) else conditions_by_test.update({condition.test: [condition]}) %}
+          {% endfor %}
+          {% for test_type in conditions_by_test.keys() %}
+          {{ test_type }} = {
+            {% for condition in conditions_by_test[test_type] %}
+            {% if condition.variable == "aws:PrincipalTag/Gerencia" or condition.variable == "aws:PrincipalTag/Area" %}
+            "{{ condition.variable }}" = var.abac_conditions["{{ condition.variable }}"]
+            {% else %}
+            "{{ condition.variable }}" = {{ condition['values'] | tojson }}
+            {% endif %}
+            {% if not loop.last %},{% endif %}
+            {% endfor %}
+          }
+          {% if not loop.last %},{% endif %}
+          {% endfor %}
+        }
+        {% endif %}
+      }{% if not loop.last %},{% endif %}
+      {% endfor %}
+    ]
+  })
+
+  tags = merge(var.common_tags, {
+    Name = "{{ policy_name | lower | replace('_', '-') }}-${var.environment}"
+    Type = "Policy"
+  })
+}

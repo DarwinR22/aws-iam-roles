@@ -1,0 +1,48 @@
+# Auto-generated policy: {{ policy.name }}
+# Generated from: {{ source_file }}
+# DO NOT EDIT MANUALLY - Changes will be overwritten
+
+data "aws_iam_policy_document" "{{ policy.terraform_name }}" {
+  {% for statement in policy.statements %}
+  statement {
+    sid    = "{{ statement.sid }}"
+    effect = "{{ statement.effect | default('Allow') }}"
+    
+    actions = [
+      {% for action in statement.actions %}
+      "{{ action }}",
+      {% endfor %}
+    ]
+    
+    {% if statement.resources %}
+    resources = [
+      {% for resource in statement.resources %}
+      "{{ resource }}",
+      {% endfor %}
+    ]
+    {% else %}
+    resources = ["*"]
+    {% endif %}
+
+    {% if statement.abac_conditions %}
+    {% for condition in statement.abac_conditions %}
+    condition {
+      test     = "{{ condition.test }}"
+      variable = "{{ condition.variable }}"
+      values   = [
+        {% for value in condition['values'] %}
+        "{{ value }}",
+        {% endfor %}
+      ]
+    }
+    {% endfor %}
+    {% endif %}
+  }
+  {% endfor %}
+}
+
+# Output for use in roles
+output "{{ policy.terraform_name }}_policy" {
+  description = "{{ policy.description }}"
+  value       = data.aws_iam_policy_document.{{ policy.terraform_name }}.json
+}

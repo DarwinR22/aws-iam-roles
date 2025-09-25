@@ -1,0 +1,157 @@
+# GitHub Actions IAM Management Permissions  
+# Provides comprehensive IAM permissions for infrastructure deployment
+# Enables creation, modification and management of IAM roles and policies
+
+policy:
+  name: "GithubActions-IAMManagement"
+  description: "Complete IAM management permissions for infrastructure deployment"
+  service: "iam"
+  category: "infrastructure"
+  
+  # Metadata for policy management
+  metadata:
+    version: "1.0.0"
+    created_by: "DevOps Team"
+    last_updated: "2025-09-25"
+    purpose: "IAM resource management for Terraform deployments"
+    risk_level: "high"
+    
+  # IAM Policy statements organized by function
+  statements:
+    # Read permissions for IAM resources
+    - sid: "IAMReadPermissions"
+      effect: "Allow"
+      actions:
+        - "iam:GetRole"
+        - "iam:GetRolePolicy"
+        - "iam:GetPolicy"
+        - "iam:GetPolicyVersion"
+        - "iam:ListRoles"
+        - "iam:ListPolicies"
+        - "iam:ListPolicyVersions"
+        - "iam:ListAttachedRolePolicies"
+        - "iam:ListRolePolicies"
+        - "iam:ListInstanceProfilesForRole"
+        - "iam:ListRoleTags"
+      resources: 
+        - "*"
+      description: "Read access to IAM resources for state management"
+      
+    # Write permissions for IAM roles
+    - sid: "IAMRoleManagement" 
+      effect: "Allow"
+      actions:
+        - "iam:CreateRole"
+        - "iam:DeleteRole"
+        - "iam:UpdateRole"
+        - "iam:TagRole"
+        - "iam:UntagRole"
+        - "iam:PutRolePolicy"
+        - "iam:DeleteRolePolicy"
+      resources:
+        - "arn:aws:iam::${account_id}:role/${role_prefix}*"
+      description: "Management of IAM roles with organizational prefix"
+      
+      # ABAC conditions for role management
+      conditions:
+        - test: "StringEquals"
+          variable: "aws:RequestedRegion"
+          values: ["${aws_region}"]
+        - test: "StringLike"
+          variable: "iam:RoleName"
+          values: ["${role_prefix}*"]
+          
+    # Policy management permissions
+    - sid: "IAMPolicyManagement"
+      effect: "Allow" 
+      actions:
+        - "iam:CreatePolicy"
+        - "iam:DeletePolicy"
+        - "iam:CreatePolicyVersion"
+        - "iam:DeletePolicyVersion"
+        - "iam:SetDefaultPolicyVersion"
+      resources:
+        - "arn:aws:iam::${account_id}:policy/${policy_prefix}*"
+      description: "Management of IAM policies with organizational prefix"
+      
+      conditions:
+        - test: "StringLike"
+          variable: "iam:PolicyName"
+          values: ["${policy_prefix}*"]
+          
+    # Role-Policy attachment permissions
+    - sid: "IAMAttachmentManagement"
+      effect: "Allow"
+      actions:
+        - "iam:AttachRolePolicy"
+        - "iam:DetachRolePolicy"
+        - "iam:PassRole"
+      resources:
+        - "arn:aws:iam::${account_id}:role/${role_prefix}*"
+        - "arn:aws:iam::${account_id}:policy/${policy_prefix}*"
+        - "arn:aws:iam::aws:policy/*"
+      description: "Attach/detach policies to/from managed roles"
+      
+      conditions:
+        - test: "StringLike"
+          variable: "iam:RoleName"
+          values: ["${role_prefix}*"]
+
+  # ABAC conditions for organizational compliance
+  abac_conditions:
+    - test: "StringEquals"
+      variable: "aws:PrincipalTag/Gerencia"
+      values: ["MCI"]
+      description: "Ensure principal belongs to MCI"
+      
+    - test: "StringEquals"
+      variable: "aws:PrincipalTag/Ambiente" 
+      values: ["${environment}"]
+      description: "Restrict to specific environment"
+      
+    - test: "StringEquals"
+      variable: "aws:PrincipalTag/Layer"
+      values: ["Devops"]
+      description: "Ensure principal is for DevOps operations"
+
+# Variables for environment and organizational customization
+variables:
+  environment:
+    description: "Target environment for IAM management"
+    type: "string"
+    default: "dev"
+    allowed_values: ["dev", "qa", "prod"]
+    
+  aws_region:
+    description: "AWS region for resource management"
+    type: "string"
+    default: "us-east-1"
+    
+  account_id:
+    description: "AWS account ID"
+    type: "string"
+    default: "393209814297"
+    
+  role_prefix:
+    description: "Prefix for IAM roles that can be managed"
+    type: "string"
+    default: "mci-${environment}"
+    
+  policy_prefix:
+    description: "Prefix for IAM policies that can be managed"
+    type: "string" 
+    default: "MCI-${environment}"
+
+# Security constraints and recommendations
+security:
+  constraints:
+    - "Only roles with organizational prefix can be managed"
+    - "All operations are logged via CloudTrail"
+    - "ABAC conditions enforce organizational boundaries"
+    - "PassRole is restricted to managed roles only"
+  
+  recommendations:
+    - "Monitor IAM operations via CloudWatch"
+    - "Review IAM changes in pull requests"
+    - "Use least privilege principle for new policies"
+    - "Regular access review of created resources"

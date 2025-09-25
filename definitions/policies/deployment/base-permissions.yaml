@@ -1,0 +1,59 @@
+# GitHub Actions Base Permissions
+# Provides fundamental permissions required for any deployment operation
+# These are the minimal permissions needed for identity verification
+
+policy:
+  name: "GithubActions-BasePermissions"
+  description: "Base permissions for GitHub Actions deployment operations"
+  service: "sts"
+  category: "base"
+  
+  # Metadata for policy management
+  metadata:
+    version: "1.0.0"
+    created_by: "DevOps Team"
+    last_updated: "2025-09-25"
+    purpose: "Identity verification and basic AWS operations"
+    
+  # Policy statements
+  statements:
+    - sid: "STSGetCallerIdentity"
+      effect: "Allow"
+      actions:
+        - "sts:GetCallerIdentity"
+      resources: 
+        - "*"
+      description: "Allow identity verification for deployment operations"
+      
+    - sid: "BasicAWSAccess"
+      effect: "Allow"
+      actions:
+        - "sts:DecodeAuthorizationMessage"
+      resources: 
+        - "*"
+      description: "Allow decoding of authorization messages for debugging"
+
+  # ABAC conditions for organizational compliance
+  abac_conditions:
+    - test: "StringEquals"
+      variable: "aws:PrincipalTag/Gerencia"
+      values: ["MCI"]
+      description: "Ensure principal belongs to MCI"
+      
+    - test: "StringEquals"
+      variable: "aws:PrincipalTag/Ambiente"
+      values: ["${environment}"]
+      description: "Restrict to specific environment"
+      
+    - test: "StringEquals"
+      variable: "aws:PrincipalTag/Layer"
+      values: ["Devops"]
+      description: "Ensure principal is for DevOps operations"
+
+# Variables that can be customized per environment
+variables:
+  environment:
+    description: "Target environment for deployment"
+    type: "string"
+    default: "dev"
+    allowed_values: ["dev", "qa", "prod"]

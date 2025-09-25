@@ -1,0 +1,72 @@
+# Auto-generated role: {{ role.name }}
+# Generated from: {{ source_file }}
+# DO NOT EDIT MANUALLY - Changes will be overwritten
+
+# Trust policy for the role
+data "aws_iam_policy_document" "{{ role.terraform_name }}_trust" {
+  {% for trust in role.trust_policy %}
+  statement {
+    effect = "Allow"
+    
+    principals {
+      {% if trust.service %}
+      type        = "Service"
+      identifiers = ["{{ trust.service }}"]
+      {% elif trust.federated %}
+      type        = "Federated" 
+      identifiers = ["{{ trust.federated }}"]
+      {% elif trust.aws %}
+      type        = "AWS"
+      identifiers = ["{{ trust.aws }}"]
+      {% endif %}
+    }
+
+    {% if trust.condition %}
+    condition {
+      test     = "{{ trust.condition.test }}"
+      variable = "{{ trust.condition.variable }}"
+      values   = [
+        {% for value in trust.condition.values %}
+        "{{ value }}",
+        {% endfor %}
+      ]
+    }
+    {% endif %}
+  }
+  {% endfor %}
+}
+
+# IAM Role
+resource "aws_iam_role" "{{ role.terraform_name }}" {
+  name               = "{{ role.name }}"
+  description        = "{{ role.description }}"
+  assume_role_policy = data.aws_iam_policy_document.{{ role.terraform_name }}_trust.json
+
+  {% if role.max_session_duration %}
+  max_session_duration = {{ role.max_session_duration }}
+  {% endif %}
+
+  tags = {
+    {% for key, value in role.tags.items() %}
+    "{{ key }}" = "{{ value }}"
+    {% endfor %}
+    # Auto-generated tags
+    "ManagedBy" = "terraform"
+    "Source"    = "{{ source_file }}"
+    "Generated" = "{{ generation_time }}"
+  }
+}
+
+# Attach policies to role
+{% for policy_name in role.policies %}
+resource "aws_iam_role_policy_attachment" "{{ role.terraform_name }}_{{ loop.index }}" {
+  role       = aws_iam_role.{{ role.terraform_name }}.name
+  policy_arn = "arn:aws:iam::{{ account_id }}:policy/{{ policy_name }}"
+}
+{% endfor %}
+
+# Output role ARN
+output "{{ role.terraform_name }}_arn" {
+  description = "ARN of {{ role.name }} role"
+  value       = aws_iam_role.{{ role.terraform_name }}.arn
+}

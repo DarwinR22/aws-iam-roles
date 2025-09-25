@@ -13,7 +13,9 @@
 environments/prod/     @cesar.calmo_claroca @darwin.lopez_claroca @jorge.rubio_claroca @osmar.pineda_claroca
 
 # Politicas de IAM criticas (requieren revision de seguridad)
-politicas/             @cesar.calmo_claroca @darwin.lopez_claroca @jorge.rubio_claroca @osmar.pineda_claroca
+policy_lib/            @cesar.calmo_claroca @darwin.lopez_claroca @jorge.rubio_claroca @osmar.pineda_claroca
+catalog/               @cesar.calmo_claroca @darwin.lopez_claroca @jorge.rubio_claroca @osmar.pineda_claroca
+gerencias/             @cesar.calmo_claroca @darwin.lopez_claroca @jorge.rubio_claroca @osmar.pineda_claroca
 
 # Scripts de creacion de roles
 scripts/               @cesar.calmo_claroca @darwin.lopez_claroca @jorge.rubio_claroca @osmar.pineda_claroca

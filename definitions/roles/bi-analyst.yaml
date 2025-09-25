@@ -1,0 +1,49 @@
+# BI Data Analyst Role
+# Read-only access for business intelligence analysts
+
+role:
+  name: "MCI-BI-DataAnalyst"
+  description: "BI Data Analyst with read-only access to analytics resources"
+  
+  # ABAC Tags (REQUIRED)
+  tags:
+    Gerencia: "MCI"
+    Area: "BI" 
+    Nivel: "Analyst"
+    Ambiente: "dev"
+    Pais: "rg"
+    Direccion: "ticenam"
+    Cuenta: "393209814297"
+    Propietario: "darwinlopez"
+    Proveedor: "inhouse"
+    "Alcance SOX": "si"
+
+  # Trust policy - who can assume this role
+  trust_policy:
+    - service: "ec2.amazonaws.com"
+    - federated: "arn:aws:iam::393209814297:saml-provider/AzureAD"
+      condition:
+        test: "StringEquals"
+        variable: "SAML:Role"
+        values: ["BI-Analyst"]
+
+  # Policies attached to this role  
+  policies:
+    - "MCI-S3-AnalyticsRead"
+    - "MCI-Redshift-QueryBasic"
+    - "MCI-Glue-CatalogRead"
+    - "MCI-CloudWatch-LogsRead"
+
+  # Session configuration
+  max_session_duration: 3600  # 1 hour
+
+  # Metadata
+  owner: "BI Team Lead"
+  created_date: "2025-09-25"
+  last_review: "2025-09-25"
+  next_review: "2025-12-25"
+  
+  # Business justification
+  business_purpose: "Enable BI analysts to access data for reporting and analytics"
+  data_access_level: "Read-only to analytics datasets"
+  compliance_notes: "SOX compliant - read-only access only"

@@ -1,0 +1,122 @@
+# GitHub Actions Deployment Role Definition
+# Main role configuration that combines all modular permissions
+# Defines OIDC trust policy and references component policies
+
+role:
+  name: "github-actions-iam-deployment-role"
+  description: "Rol IAM para despliegues automaticos desde GitHub Actions (repositorio: ClaroCENAM/mci-aws-iam) utilizando OIDC. Permite unicamente la creacion y administracion de recursos IAM a traves de la canalizacion (pipeline) de Terraform"
+  path: "/"
+  max_session_duration: 3600
+  
+  # Metadata for role management
+  metadata:
+    version: "1.0.0"
+    created_by: "DevOps Team"
+    created_date: "2025-09-16"
+    last_updated: "2025-09-25"
+    purpose: "GitHub Actions CI/CD deployment automation"
+    risk_level: "high"
+    
+  # OIDC Trust Policy Configuration
+  trust_policy:
+    type: "oidc"
+    
+    # GitHub OIDC Provider configuration  
+    oidc_config:
+      provider_arn: "arn:aws:iam::${account_id}:oidc-provider/token.actions.githubusercontent.com"
+      audience: "sts.amazonaws.com"
+      
+      # Repository access configuration
+      repositories:
+        - "repo:ClaroCENAM/*"  # Allow all repos under ClaroCENAM org
+        
+      # Additional OIDC conditions for security
+      conditions:
+        - test: "StringEquals"
+          variable: "token.actions.githubusercontent.com:aud"
+          values: ["sts.amazonaws.com"]
+          
+        - test: "StringLike"
+          variable: "token.actions.githubusercontent.com:sub"
+          values: ["repo:ClaroCENAM/*"]
+
+  # Referenced policy modules - these will be combined into the role
+  policy_modules:
+    - name: "base-permissions"
+      file: "base-permissions.yaml"
+      description: "Fundamental AWS permissions for identity verification"
+      
+    - name: "terraform-backend"
+      file: "terraform-backend.yaml" 
+      description: "S3, DynamoDB, and KMS access for Terraform state"
+      
+    - name: "iam-management"
+      file: "iam-management.yaml"
+      description: "Complete IAM management permissions for deployment"
+
+  # Organizational tags for compliance and governance
+  tags:
+    # Core organizational tags
+    "Pais": "rg"
+    "Gerencia": "MCI"
+    "Ambiente": "${environment}"
+    "Direccion": "TIRegional"
+    "Modulo": "IAM"
+    
+    # Compliance and governance
+    "Alcance SOX": "No"
+    "Propietario": "DarwinLopez"
+    "Proveedor": "InHouse"
+    
+    # Technical classification
+    "Layer": "Devops"
+    "Dominio": "BusinessIntelligence"
+    "Subdominio": "Analytics"
+    "Aplicacion": "CICD"
+    
+    # Resource identification
+    "Name": "github-actions-iam-deployment-role"
+    "Tipo de Recurso": "IAMRole"
+    
+    # Contact and support information
+    "Soporte": "darwin.lopez@claro.com.gt"
+    "Contacto": "darwin.lopez@claro.com.gt"
+    "Creado Por": "DarwinLopez"
+    
+    # Lifecycle management
+    "Ciclo de Vida": "Creacion"
+    "Versión": "v1.0.0"
+    "Fecha de Creacion": "2025-09-16"
+
+# Environment variables for multi-environment deployment
+variables:
+  environment:
+    description: "Target environment for role deployment"
+    type: "string"
+    default: "dev"
+    allowed_values: ["dev", "qa", "prod"]
+    
+  account_id:
+    description: "AWS account ID where role will be created"
+    type: "string"
+    default: "393209814297"
+
+# Deployment configuration
+deployment:
+  # Terraform generation settings
+  terraform:
+    generate_inline_policies: true
+    separate_policy_files: false
+    include_data_sources: true
+    
+  # Validation settings
+  validation:
+    check_policy_syntax: true
+    validate_abac_conditions: true
+    verify_oidc_configuration: true
+    
+  # Security settings
+  security:
+    enable_cloudtrail_logging: true
+    require_mfa_for_sensitive_ops: false  # OIDC already provides strong auth
+    session_timeout_minutes: 60

@@ -1,0 +1,50 @@
+# S3 Analytics Read Policy
+# Provides read-only access to analytics S3 buckets with ABAC controls
+
+policy:
+  name: "MCI-S3-AnalyticsRead"
+  description: "Read-only access to analytics S3 buckets for BI team"
+  service: "s3"
+  
+  statements:
+    - sid: "S3AnalyticsRead"
+      effect: "Allow"
+      actions:
+        - "s3:GetObject"
+        - "s3:GetObjectVersion"
+        - "s3:ListBucket"
+        - "s3:ListBucketVersions"
+        - "s3:GetBucketLocation"
+      
+      resources:
+        - "arn:aws:s3:::mci-${environment}-analytics/*"
+        - "arn:aws:s3:::mci-${environment}-datalake/*"
+        - "arn:aws:s3:::shared-${environment}-reports/*"
+      
+      abac_conditions:
+        - test: "StringEquals"
+          variable: "aws:PrincipalTag/Gerencia"
+          values: ["MCI"]
+        
+        - test: "StringEquals"
+          variable: "aws:PrincipalTag/Ambiente"
+          values: ["${environment}"]
+        
+        - test: "StringLike"
+          variable: "s3:prefix"
+          values: 
+            - "${area}/*"
+            - "shared/*"
+            - "public/*"
+
+  # Metadata
+  environments: ["dev", "qa", "prod"]
+  sox_compliance: true
+  owner: "MCI Data Team"
+  created_date: "2025-09-25"
+  
+  # Tags for the policy itself
+  tags:
+    Service: "S3"
+    AccessLevel: "Read"
+    DataClassification: "Internal"
