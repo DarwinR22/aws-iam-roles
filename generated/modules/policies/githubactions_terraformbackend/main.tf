@@ -2,7 +2,7 @@
 data "aws_caller_identity" "current" {}
 
 # GithubActions-TerraformBackend Policy Module - Following ABAC Pattern
-# Converted from definitions/policies/deployment\terraform-backend.yaml
+# Converted from definitions/policies/deployment/terraform-backend.yaml
 resource "aws_iam_policy" "main" {
   name_prefix = "githubactions-terraformbackend-"
   path        = "/policies/"

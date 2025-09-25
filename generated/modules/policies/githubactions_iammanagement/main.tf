@@ -2,7 +2,7 @@
 data "aws_caller_identity" "current" {}
 
 # GithubActions-IAMManagement Policy Module - Following ABAC Pattern
-# Converted from definitions/policies/deployment\iam-management.yaml
+# Converted from definitions/policies/deployment/iam-management.yaml
 resource "aws_iam_policy" "main" {
   name_prefix = "githubactions-iammanagement-"
   path        = "/policies/"
