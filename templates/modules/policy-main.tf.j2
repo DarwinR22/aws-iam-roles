@@ -23,19 +23,13 @@ resource "aws_iam_policy" "main" {
           {% for condition in statement.abac_conditions %}
             {% set _ = conditions_by_test.update({condition.test: conditions_by_test.get(condition.test, []) + [condition]}) if conditions_by_test.get(condition.test) else conditions_by_test.update({condition.test: [condition]}) %}
           {% endfor %}
-          {% for test_type in conditions_by_test.keys() %}
+          {%- for test_type in conditions_by_test.keys() %}
           {{ test_type }} = {
-            {% for condition in conditions_by_test[test_type] %}
-            {% if condition.variable == "aws:PrincipalTag/Gerencia" or condition.variable == "aws:PrincipalTag/Area" %}
-            "{{ condition.variable }}" = var.abac_conditions["{{ condition.variable }}"]
-            {% else %}
-            "{{ condition.variable }}" = {{ condition['values'] | tojson }}
-            {% endif %}
-            {% if not loop.last %},{% endif %}
-            {% endfor %}
-          }
-          {% if not loop.last %},{% endif %}
-          {% endfor %}
+            {%- for condition in conditions_by_test[test_type] %}
+            "{{ condition.variable }}" = {% if condition.variable == "aws:PrincipalTag/Gerencia" or condition.variable == "aws:PrincipalTag/Area" %}var.abac_conditions["{{ condition.variable }}"]{% else %}{{ condition['values'] | tojson }}{% endif %}{% if not loop.last %},{% endif %}
+            {%- endfor %}
+          }{% if not loop.last %},{% endif %}
+          {%- endfor %}
         }
         {% endif %}
       }{% if not loop.last %},{% endif %}
