@@ -12,11 +12,13 @@ resource "aws_iam_policy" "main" {
     Version = "2012-10-17"
     Statement = [
       {
-Sid    = "STSGetCallerIdentity"        Effect = "Allow"
+Sid    = "STSGetCallerIdentity"
+Effect = "Allow"
         Action = ["sts:GetCallerIdentity"]
         Resource = ["*"]
       },      {
-Sid    = "BasicAWSAccess"        Effect = "Allow"
+Sid    = "BasicAWSAccess"
+Effect = "Allow"
         Action = ["sts:DecodeAuthorizationMessage"]
         Resource = ["*"]
       }    ]

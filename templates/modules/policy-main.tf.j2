@@ -13,8 +13,8 @@ resource "aws_iam_policy" "main" {
     Statement = [
       {% for statement in statements %}
       {
-        {% if statement.sid %}Sid    = "{{ statement.sid }}"{% endif %}
-        Effect = "{{ statement.effect }}"
+        {% if statement.sid %}Sid    = "{{ statement.sid }}"
+        {% endif %}Effect = "{{ statement.effect }}"
         Action = {{ statement.actions | tojson }}
         Resource = {{ statement.resources | tojson }}
         {% if statement.abac_conditions %}

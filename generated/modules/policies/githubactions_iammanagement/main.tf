@@ -12,19 +12,23 @@ resource "aws_iam_policy" "main" {
     Version = "2012-10-17"
     Statement = [
       {
-Sid    = "IAMReadPermissions"        Effect = "Allow"
+Sid    = "IAMReadPermissions"
+Effect = "Allow"
         Action = ["iam:GetRole", "iam:GetRolePolicy", "iam:GetPolicy", "iam:GetPolicyVersion", "iam:ListRoles", "iam:ListPolicies", "iam:ListPolicyVersions", "iam:ListAttachedRolePolicies", "iam:ListRolePolicies", "iam:ListInstanceProfilesForRole", "iam:ListRoleTags"]
         Resource = ["*"]
       },      {
-Sid    = "IAMRoleManagement"        Effect = "Allow"
+Sid    = "IAMRoleManagement"
+Effect = "Allow"
         Action = ["iam:CreateRole", "iam:DeleteRole", "iam:UpdateRole", "iam:TagRole", "iam:UntagRole", "iam:PutRolePolicy", "iam:DeleteRolePolicy"]
         Resource = ["arn:aws:iam::${account_id}:role/${role_prefix}*"]
       },      {
-Sid    = "IAMPolicyManagement"        Effect = "Allow"
+Sid    = "IAMPolicyManagement"
+Effect = "Allow"
         Action = ["iam:CreatePolicy", "iam:DeletePolicy", "iam:CreatePolicyVersion", "iam:DeletePolicyVersion", "iam:SetDefaultPolicyVersion"]
         Resource = ["arn:aws:iam::${account_id}:policy/${policy_prefix}*"]
       },      {
-Sid    = "IAMAttachmentManagement"        Effect = "Allow"
+Sid    = "IAMAttachmentManagement"
+Effect = "Allow"
         Action = ["iam:AttachRolePolicy", "iam:DetachRolePolicy", "iam:PassRole"]
         Resource = ["arn:aws:iam::${account_id}:role/${role_prefix}*", "arn:aws:iam::${account_id}:policy/${policy_prefix}*", "arn:aws:iam::aws:policy/*"]
       }    ]
