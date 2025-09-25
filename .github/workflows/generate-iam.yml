@@ -5,6 +5,7 @@ permissions:
   contents: write
   pull-requests: write
   actions: write
+  id-token: write  # Required for OIDC authentication with AWS
 
 on:
   push:
