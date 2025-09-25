@@ -236,6 +236,10 @@ class IAMGenerator:
                 definition['role']['name']
             )
             
+            # Extract policy names from policy_modules for template
+            policy_modules = definition.get('role', {}).get('policy_modules', [])
+            definition['role']['policies'] = [pm['name'] for pm in policy_modules]
+            
             # Categorize by role type (deployment vs application)
             role_name = definition['role']['name'].lower()
             if 'github' in role_name or 'deployment' in role_name or 'ci' in role_name or 'cd' in role_name:

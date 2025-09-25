@@ -91,13 +91,26 @@ resource "aws_iam_role" "{{ role.terraform_name }}" {
   }
 }
 
-# Attach policies to role
+# Create policies as independent modules (not attached to role)
 {% for policy_name in role.policies %}
-resource "aws_iam_role_policy_attachment" "{{ role.terraform_name }}_{{ loop.index }}" {
-  role       = aws_iam_role.{{ role.terraform_name }}.name
-  policy_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/{{ policy_name }}"
+module "{{ (policy_name | lower | replace('-', '_') | replace('githubactions_', '')) }}" {
+  source = "./modules/policies/{{ (policy_name | lower | replace('-', '_')) }}"
+  
+  environment = "{{ role.tags.Ambiente | default('dev') }}"
+  
+  common_tags = {
+    "Gerencia" = "{{ role.tags.Gerencia }}"
+    "Area" = "{{ role.tags.Area }}"  
+    "Ambiente" = "{{ role.tags.Ambiente }}"
+  }
 }
 {% endfor %}
+
+# To attach policies to role later, manually add:
+# resource "aws_iam_role_policy_attachment" "role_policy" {
+#   role       = aws_iam_role.{{ role.terraform_name }}.name  
+#   policy_arn = module.POLICY_MODULE.policy_arn
+# }
 
 # Output role ARN
 output "{{ role.terraform_name }}_arn" {
