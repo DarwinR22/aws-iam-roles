@@ -6,7 +6,7 @@
 # This file is auto-generated from YAML definitions.
 # DO NOT EDIT MANUALLY - Changes will be overwritten.
 # 
-# Generated: 2025-09-25T20:56:21.303342
+# Generated: 2025-09-25T20:59:12.240509
 # Source: Multiple role definitions in definitions/roles/
 # ==============================================================================
 
@@ -82,7 +82,7 @@ resource "aws_iam_role" "github_actions_iam_deployment_role" {
     # Auto-generated tags
     "ManagedBy" = "terraform"
     "Source"    = "definitions/roles/github-deployment-role.yaml"
-    "Generated" = "2025-09-25T20:56:21.303233"
+    "Generated" = "2025-09-25T20:59:12.240402"
   }
 }
 
