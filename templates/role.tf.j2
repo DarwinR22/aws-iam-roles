@@ -26,9 +26,13 @@ data "aws_iam_policy_document" "{{ role.terraform_name }}_trust" {
       test     = "{{ trust.condition.test }}"
       variable = "{{ trust.condition.variable }}"
       values   = [
-        {% for value in trust.condition.values %}
+        {% if trust.condition.values is iterable and trust.condition.values is not string %}
+          {% for value in trust.condition.values %}
         "{{ value }}",
-        {% endfor %}
+          {% endfor %}
+        {% else %}
+        "{{ trust.condition.values }}",
+        {% endif %}
       ]
     }
     {% endif %}
