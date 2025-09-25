@@ -12,16 +12,16 @@ resource "aws_iam_policy" "main" {
     Version = "2012-10-17"
     Statement = [
       {
-Sid    = "STSGetCallerIdentity"
-Effect = "Allow"
-        Action = ["sts:GetCallerIdentity"]
+        Sid      = "STSGetCallerIdentity"
+        Effect   = "Allow"
+        Action   = ["sts:GetCallerIdentity"]
         Resource = ["*"]
-      },      {
-Sid    = "BasicAWSAccess"
-Effect = "Allow"
-        Action = ["sts:DecodeAuthorizationMessage"]
+        }, {
+        Sid      = "BasicAWSAccess"
+        Effect   = "Allow"
+        Action   = ["sts:DecodeAuthorizationMessage"]
         Resource = ["*"]
-      }    ]
+    }]
   })
 
   tags = merge(var.common_tags, {
