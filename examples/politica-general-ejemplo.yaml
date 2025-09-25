@@ -1,0 +1,45 @@
+# Ejemplo: Política General que puedes crear ANTES de los roles
+# Esta política es reutilizable y tiene ABAC incorporado
+
+policy:
+  name: "MCI-DynamoDB-GeneralRead"
+  description: "Acceso general de lectura a DynamoDB con controles ABAC"
+  service: "dynamodb"
+  
+  statements:
+    - sid: "DynamoDBReadAccess"
+      effect: "Allow"
+      actions:
+        - "dynamodb:GetItem"
+        - "dynamodb:Query" 
+        - "dynamodb:Scan"
+        - "dynamodb:BatchGetItem"
+        
+      resources:
+        - "arn:aws:dynamodb:${region}:${account_id}:table/mci-${environment}-*"
+        
+      # ✅ ABAC CONDITIONS - Están en la POLÍTICA, no en el rol
+      abac_conditions:
+        - test: "StringEquals"
+          variable: "aws:PrincipalTag/Gerencia"  # El rol DEBE tener este tag
+          values: ["MCI"]
+          
+        - test: "StringEquals" 
+          variable: "aws:PrincipalTag/Ambiente"  # El rol DEBE tener este tag
+          values: ["${environment}"]
+          
+        - test: "ForAllValues:StringEquals"
+          variable: "dynamodb:LeadingKeys"
+          values: ["${area}"]  # Solo pueden leer sus propios datos
+
+# Metadata
+environments: ["dev", "qa", "prod"]
+owner: "MCI Platform Team"
+created_date: "2025-09-25"
+
+# Tags para la política misma
+tags:
+  Service: "DynamoDB"
+  AccessLevel: "Read"
+  PolicyType: "General"
+  Reusable: "Yes"

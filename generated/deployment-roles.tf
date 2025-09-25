@@ -6,7 +6,7 @@
 # This file is auto-generated from YAML definitions.
 # DO NOT EDIT MANUALLY - Changes will be overwritten.
 # 
-# Generated: 2025-09-25T22:25:14.920871
+# Generated: 2025-09-25T16:52:47.147065
 # Source: Multiple role definitions in definitions/roles/
 # ==============================================================================
 
@@ -24,7 +24,7 @@ data "aws_iam_policy_document" "github_actions_iam_deployment_role_trust" {
   # OIDC Trust Policy for GitHub Actions
   statement {
     effect = "Allow"
-
+    
     principals {
       type        = "Federated"
       identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/token.actions.githubusercontent.com"]
@@ -35,14 +35,14 @@ data "aws_iam_policy_document" "github_actions_iam_deployment_role_trust" {
     condition {
       test     = "StringEquals"
       variable = "token.actions.githubusercontent.com:aud"
-      values = [
+      values   = [
         "sts.amazonaws.com"
       ]
     }
     condition {
       test     = "StringLike"
       variable = "token.actions.githubusercontent.com:sub"
-      values = [
+      values   = [
         "repo:ClaroCENAM/*"
       ]
     }
@@ -58,31 +58,31 @@ resource "aws_iam_role" "github_actions_iam_deployment_role" {
   max_session_duration = 3600
 
   tags = {
-    "Pais"              = "rg"
-    "Gerencia"          = "MCI"
-    "Area"              = "DevOps"
-    "Ambiente"          = "dev"
-    "Direccion"         = "TIRegional"
-    "Modulo"            = "IAM"
-    "Alcance SOX"       = "No"
-    "Propietario"       = "DarwinLopez"
-    "Proveedor"         = "InHouse"
-    "Layer"             = "Devops"
-    "Dominio"           = "BusinessIntelligence"
-    "Subdominio"        = "Analytics"
-    "Aplicacion"        = "CICD"
-    "Name"              = "github-actions-iam-deployment-role"
-    "Tipo de Recurso"   = "IAMRole"
-    "Soporte"           = "darwin.lopez@claro.com.gt"
-    "Contacto"          = "darwin.lopez@claro.com.gt"
-    "Creado Por"        = "DarwinLopez"
-    "Ciclo de Vida"     = "Creacion"
-    "Versión"           = "v1.0.0"
+    "Pais" = "rg"
+    "Gerencia" = "MCI"
+    "Area" = "DevOps"
+    "Ambiente" = "dev"
+    "Direccion" = "TIRegional"
+    "Modulo" = "IAM"
+    "Alcance SOX" = "No"
+    "Propietario" = "DarwinLopez"
+    "Proveedor" = "InHouse"
+    "Layer" = "Devops"
+    "Dominio" = "BusinessIntelligence"
+    "Subdominio" = "Analytics"
+    "Aplicacion" = "CICD"
+    "Name" = "github-actions-iam-deployment-role"
+    "Tipo de Recurso" = "IAMRole"
+    "Soporte" = "darwin.lopez@claro.com.gt"
+    "Contacto" = "darwin.lopez@claro.com.gt"
+    "Creado Por" = "DarwinLopez"
+    "Ciclo de Vida" = "Creacion"
+    "Versión" = "v1.0.0"
     "Fecha de Creacion" = "2025-09-16"
     # Auto-generated tags
     "ManagedBy" = "terraform"
     "Source"    = "definitions/roles/github-deployment-role.yaml"
-    "Generated" = "2025-09-25T22:25:14.920770"
+    "Generated" = "2025-09-25T16:52:47.145880"
   }
 }
 

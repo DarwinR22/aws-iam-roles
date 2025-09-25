@@ -5,7 +5,21 @@ permissions:
   contents: write
   pull-requests: write
   actions: write
-  id-token: write  # Required for OIDC authentication with AWS
+  id-token: write  # Required for OIDC authentica    - name: 📦 Import Existing Resources
+      run: |
+        cd generated
+        terraform init
+        
+        echo "🔍 Checking for existing resources..."
+        
+        # Check if resource is already in state, import only if needed
+        echo "📦 Checking if IAM role is already managed by Terraform..."
+        if ! terraform state show aws_iam_role.github_actions_iam_deployment_role >/dev/null 2>&1; then
+          echo "📦 Role not in state, attempting import..."
+          terraform import aws_iam_role.github_actions_iam_deployment_role github-actions-iam-deployment-role || true
+        else
+          echo "✅ Role already managed by Terraform, skipping import"
+        fiAWS
 
 on:
   push:

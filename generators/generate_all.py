@@ -241,6 +241,7 @@ class IAMGenerator:
                     'yaml_file': yaml_file,
                     'terraform_code': role_template.render(
                         role=definition['role'],
+                        policy_modules=definition.get('role', {}).get('policy_modules', []),
                         source_file=f"definitions/roles/{yaml_file.name}",
                         generation_time=datetime.now().isoformat(),
                         account_id=self.account_id
@@ -252,6 +253,7 @@ class IAMGenerator:
                     'yaml_file': yaml_file,
                     'terraform_code': role_template.render(
                         role=definition['role'],
+                        policy_modules=definition.get('role', {}).get('policy_modules', []),
                         source_file=f"definitions/roles/{yaml_file.name}",
                         generation_time=datetime.now().isoformat(),
                         account_id=self.account_id
