@@ -48,6 +48,11 @@ jobs:
         echo "🔍 Validating YAML definitions..."
         python generators/generate_all.py --validate-only
 
+    - name: 🛠️ Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: 1.6.0
+
     - name: 🏗️ Generate Terraform Files
       run: |
         echo "🏗️ Generating Terraform from YAML definitions..."
@@ -66,11 +71,6 @@ jobs:
         terraform fmt -recursive .
         echo "✅ Terraform fmt applied successfully"
 
-    - name: ✅ Validate Generated Terraform
-      uses: hashicorp/setup-terraform@v2
-      with:
-        terraform_version: 1.6.0
-    
     - name: 🔧 Terraform Format Check
       run: |
         cd generated
