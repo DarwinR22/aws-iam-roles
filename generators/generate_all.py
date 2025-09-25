@@ -236,9 +236,21 @@ class IAMGenerator:
                 definition['role']['name']
             )
             
-            # Extract policy names from policy_modules for template
+            # Extract real policy names from policy_modules for template
             policy_modules = definition.get('role', {}).get('policy_modules', [])
-            definition['role']['policies'] = [pm['name'] for pm in policy_modules]
+            real_policy_names = []
+            
+            for pm in policy_modules:
+                policy_file = self.definitions_dir / "policies" / "deployment" / pm['file']
+                if policy_file.exists():
+                    with open(policy_file, 'r') as f:
+                        policy_def = yaml.safe_load(f)
+                        real_name = policy_def['policy']['name']
+                        real_policy_names.append(real_name)
+                else:
+                    print(f"⚠️  Policy file not found: {policy_file}")
+                    
+            definition['role']['policies'] = real_policy_names
             
             # Categorize by role type (deployment vs application)
             role_name = definition['role']['name'].lower()

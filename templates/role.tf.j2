@@ -93,8 +93,9 @@ resource "aws_iam_role" "{{ role.terraform_name }}" {
 
 # Create policies as independent modules (not attached to role)
 {% for policy_name in role.policies %}
-module "{{ (policy_name | lower | replace('-', '_') | replace('githubactions_', '')) }}" {
-  source = "./modules/policies/{{ (policy_name | lower | replace('-', '_')) }}"
+{% set terraform_name = (policy_name | lower | replace('-', '_')) %}
+module "{{ terraform_name }}" {
+  source = "./modules/policies/{{ terraform_name }}"
   
   environment = "{{ role.tags.Ambiente | default('dev') }}"
   
