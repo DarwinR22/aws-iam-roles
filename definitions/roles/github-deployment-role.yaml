@@ -59,6 +59,7 @@ role:
     # Core organizational tags
     "Pais": "rg"
     "Gerencia": "MCI"
+    "Area": "DevOps"
     "Ambiente": "${environment}"
     "Direccion": "TIRegional"
     "Modulo": "IAM"
