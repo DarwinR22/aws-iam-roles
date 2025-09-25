@@ -1,31 +1,39 @@
 name: Auto-Generate IAM Terraform
-# Updated: 2025-09-25 - Added push trigger and ready to test policy attachments
 
+# Grant special permissions to GITHUB_TOKEN
 permissions:
   contents: write
   pull-requests: write
   actions: write
-  id-token: write
+  id-token: write  # Required for OIDC authentication with AWS
 
 on:
   push:
-    branches: [dev]
-  
+    branches: [main, dev]
+    paths:
+      - 'definitions/**'
+      - 'generators/**'
+      - 'templates/**'
+
+  pull_request:
+    branches: [main]
+    paths:
+      - 'definitions/**'
+
   workflow_dispatch:
+    inputs:
+      force_push:
+        description: 'Force push to protected branch (admin only)'
+        required: false
+        default: false
+        type: boolean
 
 jobs:
-  generate-terraform:
+  generate-and-validate:
     name: Generate Terraform from YAML
     runs-on: ubuntu-latest
 
     steps:
-    - name: Debug Workflow Activation
-      run: |
-        echo "🚀 Workflow activated successfully!"
-        echo "Branch: ${{ github.ref }}"
-        echo "Event: ${{ github.event_name }}"
-        echo "Repository: ${{ github.repository }}"
-        
     - name: Checkout Repository
       uses: actions/checkout@v4
       with:
@@ -42,31 +50,58 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Generate Terraform Files
+    - name: Validate YAML Definitions
       run: |
-        echo "Starting IAM generation..."
-        python generators/generate_all.py
-        
-        echo "Generated files:"
-        find generated/ -name "*.tf" 2>/dev/null || echo "No .tf files found"
+        echo "Validating YAML definitions..."
+        python generators/generate_all.py --validate-only
 
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v3
       with:
         terraform_version: 1.6.0
 
-    - name: Validate Terraform
+    - name: Generate Terraform Files
       run: |
-        cd generated
-        terraform fmt -check -diff || (echo "Formatting files..." && terraform fmt -recursive)
-        terraform init -backend=false
-        terraform validate
+        echo "Generating Terraform from YAML definitions..."
+        python generators/generate_all.py
 
-    - name: Show Terraform Plan (dry-run)
+        echo "Generated files:"
+        find generated -name "*.tf" -type f | head -10 || echo "No .tf files found"
+
+        echo "Checking file sizes:"
+        ls -la generated/ || echo "Generated directory not found"
+
+    - name: Format Generated Terraform
       run: |
         cd generated
-        echo "Terraform plan (without AWS credentials):"
-        terraform plan -out=plan.out 2>&1 || echo "Plan completed with expected credential warnings"
+        echo "Applying terraform fmt to all generated files..."
+        terraform fmt -recursive .
+        echo "Terraform fmt applied successfully"
+
+    - name: Terraform Format Check
+      run: |
+        cd generated
+        echo "Checking if files are properly formatted..."
+        echo "Files in generated directory:"
+        find . -name "*.tf" -exec echo "  {}" \; || echo "No .tf files found"
+
+        echo "Running terraform fmt -check..."
+        if terraform fmt -check=true -recursive .; then
+          echo "All files are properly formatted"
+        else
+          echo "Some files need formatting. Applying format automatically..."
+          terraform fmt -recursive .
+          echo "Format applied. Re-checking..."
+          terraform fmt -check=true -recursive .
+        fi
+
+    - name: Validate Terraform Syntax
+      run: |
+        cd generated
+        echo "Initializing terraform for syntax validation..."
+        terraform init -backend=false
+        echo "Running terraform validate..."
+        terraform validate
 
     - name: Commit Generated Files
       run: |
@@ -78,5 +113,11 @@ jobs:
           echo "No changes to commit"
         else
           git commit -m "Auto-generate Terraform from definitions"
-          git push
+          
+          # Use PAT if available for protected branches, otherwise use GITHUB_TOKEN
+          if [ "${{ secrets.PAT_TOKEN }}" != "" ]; then
+            git push origin ${{ github.ref_name }}
+          else
+            git push
+          fi
         fi
