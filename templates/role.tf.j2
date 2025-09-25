@@ -18,11 +18,11 @@ data "aws_iam_policy_document" "{{ role.terraform_name }}_trust" {
 
     {% for condition in role.trust_policy.oidc_config.conditions %}
     condition {
-      test     = "{{ condition.test }}"
-      variable = "{{ condition.variable }}"
+      test     = "{{ condition['test'] }}"
+      variable = "{{ condition['variable'] }}"
       values   = [
-        {% for value in condition.values %}
-        "{{ value }}",
+        {% for value in condition['values'] %}
+        "{{ value }}"{{ "," if not loop.last else "" }}
         {% endfor %}
       ]
     }

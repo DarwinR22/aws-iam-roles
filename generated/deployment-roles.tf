@@ -1,0 +1,93 @@
+# ==============================================================================
+# Deployment and Infrastructure Roles
+# ==============================================================================
+# CI/CD, GitHub Actions, and infrastructure automation roles
+# 
+# This file is auto-generated from YAML definitions.
+# DO NOT EDIT MANUALLY - Changes will be overwritten.
+# 
+# Generated: 2025-09-25T12:39:15.942718
+# Source: Multiple role definitions in definitions/roles/
+# ==============================================================================
+
+
+# Role from: github-deployment-role.yaml
+# Auto-generated role: github-actions-iam-deployment-role
+# Generated from: definitions/roles/github-deployment-role.yaml
+# DO NOT EDIT MANUALLY - Changes will be overwritten
+
+# Trust policy for the role
+data "aws_iam_policy_document" "github_actions_iam_deployment_role_trust" {
+  # OIDC Trust Policy for GitHub Actions
+  statement {
+    effect = "Allow"
+    
+    principals {
+      type        = "Federated"
+      identifiers = ["arn:aws:iam::${account_id}:oidc-provider/token.actions.githubusercontent.com"]
+    }
+
+    actions = ["sts:AssumeRoleWithWebIdentity"]
+
+    condition {
+      test     = "StringEquals"
+      variable = "token.actions.githubusercontent.com:aud"
+      values   = [
+        "sts.amazonaws.com"
+      ]
+    }
+    condition {
+      test     = "StringLike"
+      variable = "token.actions.githubusercontent.com:sub"
+      values   = [
+        "repo:ClaroCENAM/*"
+      ]
+    }
+  }
+}
+
+# IAM Role
+resource "aws_iam_role" "github_actions_iam_deployment_role" {
+  name               = "github-actions-iam-deployment-role"
+  description        = "Rol IAM para despliegues automaticos desde GitHub Actions (repositorio: ClaroCENAM/mci-aws-iam) utilizando OIDC. Permite unicamente la creacion y administracion de recursos IAM a traves de la canalizacion (pipeline) de Terraform"
+  assume_role_policy = data.aws_iam_policy_document.github_actions_iam_deployment_role_trust.json
+
+  max_session_duration = 3600
+
+  tags = {
+    "Pais" = "rg"
+    "Gerencia" = "MCI"
+    "Area" = "DevOps"
+    "Ambiente" = "${environment}"
+    "Direccion" = "TIRegional"
+    "Modulo" = "IAM"
+    "Alcance SOX" = "No"
+    "Propietario" = "DarwinLopez"
+    "Proveedor" = "InHouse"
+    "Layer" = "Devops"
+    "Dominio" = "BusinessIntelligence"
+    "Subdominio" = "Analytics"
+    "Aplicacion" = "CICD"
+    "Name" = "github-actions-iam-deployment-role"
+    "Tipo de Recurso" = "IAMRole"
+    "Soporte" = "darwin.lopez@claro.com.gt"
+    "Contacto" = "darwin.lopez@claro.com.gt"
+    "Creado Por" = "DarwinLopez"
+    "Ciclo de Vida" = "Creacion"
+    "Versión" = "v1.0.0"
+    "Fecha de Creacion" = "2025-09-16"
+    # Auto-generated tags
+    "ManagedBy" = "terraform"
+    "Source"    = "definitions/roles/github-deployment-role.yaml"
+    "Generated" = "2025-09-25T12:39:15.941292"
+  }
+}
+
+# Attach policies to role
+
+# Output role ARN
+output "github_actions_iam_deployment_role_arn" {
+  description = "ARN of github-actions-iam-deployment-role role"
+  value       = aws_iam_role.github_actions_iam_deployment_role.arn
+}
+
