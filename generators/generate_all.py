@@ -2,6 +2,7 @@
 """
 MCI AWS IAM Policy and Role Generator
 ====================================
+Updated: 2025-09-25 - Added terraform plan support to workflow
 
 Generates Terraform code from YAML/JSON definitions.
 Replaces manual policy_lib/ and modules/ with declarative approach.
