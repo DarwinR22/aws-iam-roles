@@ -7,6 +7,7 @@ Updated: 2025-09-25 - Added workflow_dispatch for manual execution
 Updated: 2025-09-25 - Testing branch protection bypass for admin user
 Updated: 2025-09-25 - Fixed terraform fmt and syntax issues - Ready for production!
 Updated: 2025-09-25 - Added detailed logging and auto-format to debug pipeline issues
+Updated: 2025-09-25 - FIXED policy_modules attachment bug - policies should now attach to roles
 
 Generates Terraform code from YAML/JSON definitions.
 Replaces manual policy_lib/ and modules/ with declarative approach.
