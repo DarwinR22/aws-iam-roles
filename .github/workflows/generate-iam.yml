@@ -220,12 +220,12 @@ jobs:
         path: generated/tfplan
 
   terraform-apply:
-    name: 🚀 Terraform Apply (Production)
+    name: 🚀 Terraform Apply (Dev)
     runs-on: ubuntu-latest
     needs: terraform-plan
     if: github.ref == 'refs/heads/dev'
     environment: 
-      name: production
+      name: dev
       url: https://console.aws.amazon.com/iam/
     
     steps:
@@ -250,10 +250,22 @@ jobs:
         name: terraform-plan
         path: generated/
 
-    - name: 🚀 Terraform Apply
+    - name: � Import Existing Resources
       run: |
         cd generated
         terraform init
+        
+        echo "🔍 Checking for existing resources..."
+        
+        # Try to import the IAM role if it exists
+        echo "📦 Attempting to import existing IAM role..."
+        terraform import aws_iam_role.github_actions_iam_deployment_role github-actions-iam-deployment-role || true
+        
+        echo "✅ Import process completed"
+
+    - name: 🚀 Terraform Apply
+      run: |
+        cd generated
         echo "🔍 Validating plan..."
         terraform show tfplan
         echo ""
