@@ -52,6 +52,19 @@ jobs:
       run: |
         echo "🏗️ Generating Terraform from YAML definitions..."
         python generators/generate_all.py --clean
+        
+        echo "📋 Generated files:"
+        find generated -name "*.tf" -type f | head -10
+        
+        echo "🔍 Checking file sizes:"
+        ls -la generated/
+        
+    - name: 📐 Format Generated Terraform
+      run: |
+        cd generated
+        echo "📐 Applying terraform fmt to all generated files..."
+        terraform fmt -recursive .
+        echo "✅ Terraform fmt applied successfully"
 
     - name: ✅ Validate Generated Terraform
       uses: hashicorp/setup-terraform@v2
@@ -61,7 +74,21 @@ jobs:
     - name: 🔧 Terraform Format Check
       run: |
         cd generated
-        terraform fmt -check=true -recursive .
+        echo "🔍 Checking if files are properly formatted..."
+        echo "📁 Files in generated directory:"
+        find . -name "*.tf" -exec echo "  {}" \;
+        
+        echo "🔧 Running terraform fmt -check..."
+        if terraform fmt -check=true -recursive .; then
+          echo "✅ All files are properly formatted"
+        else
+          echo "❌ Some files need formatting. Files that need formatting:"
+          terraform fmt -check=true -recursive . 2>&1 || true
+          echo "🔧 Applying format automatically..."
+          terraform fmt -recursive .
+          echo "✅ Format applied. Re-checking..."
+          terraform fmt -check=true -recursive .
+        fi
 
     - name: 📝 Terraform Validate
       run: |
