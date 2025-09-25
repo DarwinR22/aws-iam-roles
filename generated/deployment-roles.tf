@@ -6,7 +6,7 @@
 # This file is auto-generated from YAML definitions.
 # DO NOT EDIT MANUALLY - Changes will be overwritten.
 # 
-# Generated: 2025-09-25T17:44:21.196958
+# Generated: 2025-09-25T17:47:32.213791
 # Source: Multiple role definitions in definitions/roles/
 # ==============================================================================
 
@@ -83,7 +83,7 @@ resource "aws_iam_role" "github_actions_iam_deployment_role" {
     # Auto-generated tags
     "ManagedBy" = "terraform"
     "Source"    = "definitions/roles/github-deployment-role.yaml"
-    "Generated" = "2025-09-25T17:44:21.196742"
+    "Generated" = "2025-09-25T17:47:32.213578"
   }
 }
 
@@ -99,6 +99,14 @@ module "githubactions_basepermissions" {
     "aws:PrincipalTag/Area"     = ["DevOps"]
     "aws:PrincipalTag/Ambiente" = ["dev"]
   }
+  
+  # AWS Configuration
+  aws_region            = "us-east-1"
+  role_prefix          = "MCI-"
+  policy_prefix        = "MCI-"
+  s3_bucket_name       = "mci-terraform-state"
+  dynamodb_table_name  = "mci-terraform-locks"
+  kms_key_id          = "*"
   
   common_tags = {
     "Gerencia" = "MCI"
@@ -118,6 +126,14 @@ module "githubactions_terraformbackend" {
     "aws:PrincipalTag/Ambiente" = ["dev"]
   }
   
+  # AWS Configuration
+  aws_region            = "us-east-1"
+  role_prefix          = "MCI-"
+  policy_prefix        = "MCI-"
+  s3_bucket_name       = "mci-terraform-state"
+  dynamodb_table_name  = "mci-terraform-locks"
+  kms_key_id          = "*"
+  
   common_tags = {
     "Gerencia" = "MCI"
     "Area" = "DevOps"  
@@ -135,6 +151,14 @@ module "githubactions_iammanagement" {
     "aws:PrincipalTag/Area"     = ["DevOps"]
     "aws:PrincipalTag/Ambiente" = ["dev"]
   }
+  
+  # AWS Configuration
+  aws_region            = "us-east-1"
+  role_prefix          = "MCI-"
+  policy_prefix        = "MCI-"
+  s3_bucket_name       = "mci-terraform-state"
+  dynamodb_table_name  = "mci-terraform-locks"
+  kms_key_id          = "*"
   
   common_tags = {
     "Gerencia" = "MCI"

@@ -16,7 +16,11 @@ resource "aws_iam_policy" "main" {
         {% if statement.sid %}Sid    = "{{ statement.sid }}"
         {% endif %}Effect = "{{ statement.effect }}"
         Action = {{ statement.actions | tojson }}
-        Resource = {{ statement.resources | tojson }}
+        Resource = [
+        {%- for resource in statement.resources %}
+          "{{ resource | replace('${account_id}', '${data.aws_caller_identity.current.account_id}') | replace('${aws_region}', '${var.aws_region}') | replace('${role_prefix}', '${var.role_prefix}') | replace('${policy_prefix}', '${var.policy_prefix}') | replace('${s3_bucket_name}', '${var.s3_bucket_name}') | replace('${dynamodb_table_name}', '${var.dynamodb_table_name}') | replace('${kms_key_id}', '${var.kms_key_id}') }}"{{ "," if not loop.last else "" }}
+        {%- endfor %}
+        ]
         {% if statement.abac_conditions %}
         Condition = {
           {% set conditions_by_test = {} %}

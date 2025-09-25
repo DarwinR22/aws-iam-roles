@@ -21,3 +21,40 @@ variable "common_tags" {
   type        = map(string)
   default     = {}
 }
+
+# AWS Configuration Variables
+variable "aws_region" {
+  description = "AWS region for resources"
+  type        = string
+  default     = "us-east-1"
+}
+
+variable "role_prefix" {
+  description = "Prefix for IAM roles"
+  type        = string
+  default     = "MCI-"
+}
+
+variable "policy_prefix" {
+  description = "Prefix for IAM policies"
+  type        = string
+  default     = "MCI-"
+}
+
+variable "s3_bucket_name" {
+  description = "S3 bucket name for Terraform backend"
+  type        = string
+  default     = "mci-terraform-state"
+}
+
+variable "dynamodb_table_name" {
+  description = "DynamoDB table name for Terraform state locking"
+  type        = string
+  default     = "mci-terraform-locks"
+}
+
+variable "kms_key_id" {
+  description = "KMS key ID for encryption"
+  type        = string
+  default     = "*"
+}

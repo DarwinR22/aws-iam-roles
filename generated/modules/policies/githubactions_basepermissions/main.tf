@@ -15,12 +15,12 @@ resource "aws_iam_policy" "main" {
 Sid    = "STSGetCallerIdentity"
 Effect = "Allow"
         Action = ["sts:GetCallerIdentity"]
-        Resource = ["*"]
+        Resource = [          "*"        ]
       },      {
 Sid    = "BasicAWSAccess"
 Effect = "Allow"
         Action = ["sts:DecodeAuthorizationMessage"]
-        Resource = ["*"]
+        Resource = [          "*"        ]
       }    ]
   })
 

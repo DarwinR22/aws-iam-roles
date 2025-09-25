@@ -106,6 +106,14 @@ module "{{ terraform_name }}" {
     "aws:PrincipalTag/Ambiente" = ["{{ role.tags.Ambiente }}"]
   }
   
+  # AWS Configuration
+  aws_region            = "us-east-1"
+  role_prefix          = "MCI-"
+  policy_prefix        = "MCI-"
+  s3_bucket_name       = "mci-terraform-state"
+  dynamodb_table_name  = "mci-terraform-locks"
+  kms_key_id          = "*"
+  
   common_tags = {
     "Gerencia" = "{{ role.tags.Gerencia }}"
     "Area" = "{{ role.tags.Area }}"  

@@ -15,17 +15,17 @@ resource "aws_iam_policy" "main" {
 Sid    = "TerraformS3StateAccess"
 Effect = "Allow"
         Action = ["s3:GetObject", "s3:PutObject", "s3:DeleteObject", "s3:ListBucket", "s3:GetBucketVersioning", "s3:GetBucketLocation"]
-        Resource = ["arn:aws:s3:::${s3_bucket_name}", "arn:aws:s3:::${s3_bucket_name}/*"]
+        Resource = [          "arn:aws:s3:::${var.s3_bucket_name}",          "arn:aws:s3:::${var.s3_bucket_name}/*"        ]
       },      {
 Sid    = "TerraformDynamoDBLockAccess"
 Effect = "Allow"
         Action = ["dynamodb:GetItem", "dynamodb:PutItem", "dynamodb:DeleteItem", "dynamodb:DescribeTable"]
-        Resource = ["arn:aws:dynamodb:${aws_region}:${account_id}:table/${dynamodb_table_name}"]
+        Resource = [          "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/${var.dynamodb_table_name}"        ]
       },      {
 Sid    = "TerraformKMSAccess"
 Effect = "Allow"
         Action = ["kms:Decrypt", "kms:DescribeKey", "kms:Encrypt", "kms:GenerateDataKey*", "kms:ReEncrypt*", "kms:CreateGrant"]
-        Resource = ["arn:aws:kms:${aws_region}:${account_id}:key/${kms_key_id}"]
+        Resource = [          "arn:aws:kms:${var.aws_region}:${data.aws_caller_identity.current.account_id}:key/${var.kms_key_id}"        ]
       }    ]
   })
 
