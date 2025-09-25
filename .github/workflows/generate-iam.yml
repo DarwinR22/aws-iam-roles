@@ -126,6 +126,11 @@ jobs:
     - name: 🚀 Commit Generated Files
       if: steps.changes.outputs.changes == 'true' && github.event_name == 'push'
       run: |
+        # Configure git with PAT token for branch protection bypass
+        git config --global user.email "action@github.com"
+        git config --global user.name "GitHub Action"
+        git remote set-url origin https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }}.git
+        
         git add generated/
         git commit -m "🤖 Auto-generate Terraform from definitions
         
