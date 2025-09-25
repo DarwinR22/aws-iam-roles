@@ -6,7 +6,7 @@
 # This file is auto-generated from YAML definitions.
 # DO NOT EDIT MANUALLY - Changes will be overwritten.
 # 
-# Generated: 2025-09-25T17:42:24.946088
+# Generated: 2025-09-25T17:44:21.196958
 # Source: Multiple role definitions in definitions/roles/
 # ==============================================================================
 
@@ -83,7 +83,7 @@ resource "aws_iam_role" "github_actions_iam_deployment_role" {
     # Auto-generated tags
     "ManagedBy" = "terraform"
     "Source"    = "definitions/roles/github-deployment-role.yaml"
-    "Generated" = "2025-09-25T17:42:24.945836"
+    "Generated" = "2025-09-25T17:44:21.196742"
   }
 }
 
@@ -92,6 +92,13 @@ module "githubactions_basepermissions" {
   source = "./modules/policies/githubactions_basepermissions"
   
   environment = "dev"
+  
+  # ABAC conditions for policy restrictions
+  abac_conditions = {
+    "aws:PrincipalTag/Gerencia" = ["MCI"]
+    "aws:PrincipalTag/Area"     = ["DevOps"]
+    "aws:PrincipalTag/Ambiente" = ["dev"]
+  }
   
   common_tags = {
     "Gerencia" = "MCI"
@@ -104,6 +111,13 @@ module "githubactions_terraformbackend" {
   
   environment = "dev"
   
+  # ABAC conditions for policy restrictions
+  abac_conditions = {
+    "aws:PrincipalTag/Gerencia" = ["MCI"]
+    "aws:PrincipalTag/Area"     = ["DevOps"]
+    "aws:PrincipalTag/Ambiente" = ["dev"]
+  }
+  
   common_tags = {
     "Gerencia" = "MCI"
     "Area" = "DevOps"  
@@ -114,6 +128,13 @@ module "githubactions_iammanagement" {
   source = "./modules/policies/githubactions_iammanagement"
   
   environment = "dev"
+  
+  # ABAC conditions for policy restrictions
+  abac_conditions = {
+    "aws:PrincipalTag/Gerencia" = ["MCI"]
+    "aws:PrincipalTag/Area"     = ["DevOps"]
+    "aws:PrincipalTag/Ambiente" = ["dev"]
+  }
   
   common_tags = {
     "Gerencia" = "MCI"

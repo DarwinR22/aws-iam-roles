@@ -99,6 +99,13 @@ module "{{ terraform_name }}" {
   
   environment = "{{ role.tags.Ambiente | default('dev') }}"
   
+  # ABAC conditions for policy restrictions
+  abac_conditions = {
+    "aws:PrincipalTag/Gerencia" = ["{{ role.tags.Gerencia }}"]
+    "aws:PrincipalTag/Area"     = ["{{ role.tags.Area }}"]
+    "aws:PrincipalTag/Ambiente" = ["{{ role.tags.Ambiente }}"]
+  }
+  
   common_tags = {
     "Gerencia" = "{{ role.tags.Gerencia }}"
     "Area" = "{{ role.tags.Area }}"  
