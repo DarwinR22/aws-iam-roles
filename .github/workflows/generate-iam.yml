@@ -1,4 +1,4 @@
-name: Auto-Generate IAM Terraform
+name: 🤖 Auto-Generate IAM Terraform
 
 # Grant special permissions to GITHUB_TOKEN
 permissions:
@@ -10,16 +10,16 @@ permissions:
 on:
   push:
     branches: [main, dev]
-    paths:
+    paths: 
       - 'definitions/**'
       - 'generators/**'
       - 'templates/**'
-
+  
   pull_request:
     branches: [main]
     paths:
       - 'definitions/**'
-
+  
   workflow_dispatch:
     inputs:
       force_push:
@@ -30,94 +30,265 @@ on:
 
 jobs:
   generate-and-validate:
-    name: Generate Terraform from YAML
+    name: 🚀 Generate Terraform from YAML
     runs-on: ubuntu-latest
-
+    
     steps:
-    - name: Checkout Repository
+    - name: 📥 Checkout Repository
       uses: actions/checkout@v4
       with:
         token: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
         fetch-depth: 0
 
-    - name: Setup Python
+    - name: 🐍 Setup Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.11'
 
-    - name: Install Dependencies
+    - name: 📦 Install Dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -r requirements.txt
+        pip install -r generators/requirements.txt
 
-    - name: Validate YAML Definitions
+    - name: 🔍 Validate YAML Definitions
       run: |
-        echo "Validating YAML definitions..."
+        echo "🔍 Validating YAML definitions..."
         python generators/generate_all.py --validate-only
 
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v3
+    - name: 🛠️ Setup Terraform
+      uses: hashicorp/setup-terraform@v2
       with:
         terraform_version: 1.6.0
 
-    - name: Generate Terraform Files
+    - name: 🏗️ Generate Terraform Files
       run: |
-        echo "Generating Terraform from YAML definitions..."
-        python generators/generate_all.py
-
-        echo "Generated files:"
-        find generated -name "*.tf" -type f | head -10 || echo "No .tf files found"
-
-        echo "Checking file sizes:"
-        ls -la generated/ || echo "Generated directory not found"
-
-    - name: Format Generated Terraform
+        echo "🏗️ Generating Terraform from YAML definitions..."
+        python generators/generate_all.py --clean
+        
+        echo "📋 Generated files:"
+        find generated -name "*.tf" -type f | head -10
+        
+        echo "🔍 Checking file sizes:"
+        ls -la generated/
+        
+    - name: 📐 Format Generated Terraform
       run: |
         cd generated
-        echo "Applying terraform fmt to all generated files..."
+        echo "📐 Applying terraform fmt to all generated files..."
         terraform fmt -recursive .
-        echo "Terraform fmt applied successfully"
+        echo "✅ Terraform fmt applied successfully"
 
-    - name: Terraform Format Check
+    - name: 🔧 Terraform Format Check
       run: |
         cd generated
-        echo "Checking if files are properly formatted..."
-        echo "Files in generated directory:"
-        find . -name "*.tf" -exec echo "  {}" \; || echo "No .tf files found"
-
-        echo "Running terraform fmt -check..."
+        echo "🔍 Checking if files are properly formatted..."
+        echo "📁 Files in generated directory:"
+        find . -name "*.tf" -exec echo "  {}" \;
+        
+        echo "🔧 Running terraform fmt -check..."
         if terraform fmt -check=true -recursive .; then
-          echo "All files are properly formatted"
+          echo "✅ All files are properly formatted"
         else
-          echo "Some files need formatting. Applying format automatically..."
+          echo "❌ Some files need formatting. Files that need formatting:"
+          terraform fmt -check=true -recursive . 2>&1 || true
+          echo "🔧 Applying format automatically..."
           terraform fmt -recursive .
-          echo "Format applied. Re-checking..."
+          echo "✅ Format applied. Re-checking..."
           terraform fmt -check=true -recursive .
         fi
 
-    - name: Validate Terraform Syntax
+    - name: 📝 Terraform Validate
       run: |
-        cd generated
-        echo "Initializing terraform for syntax validation..."
+        cd generated  
         terraform init -backend=false
-        echo "Running terraform validate..."
         terraform validate
 
-    - name: Commit Generated Files
+    - name: � Terraform Plan Preview
+      id: plan
       run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
+        echo "## 🗂️ Terraform Plan Preview" >> $GITHUB_STEP_SUMMARY
+        echo "### 📊 What would be deployed:" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        cd generated
+        echo '```hcl' >> $GITHUB_STEP_SUMMARY
+        terraform plan -no-color -input=false 2>&1 | head -50 >> $GITHUB_STEP_SUMMARY || echo "⚠️ Plan requires AWS credentials - showing validation only" >> $GITHUB_STEP_SUMMARY
+        echo '```' >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "✅ Terraform syntax and structure validated successfully" >> $GITHUB_STEP_SUMMARY
+
+    - name: �📊 Check for Changes
+      id: changes
+      run: |
+        git config --global user.name "🤖 IAM Generator Bot"
+        git config --global user.email "iam-generator@mci.com"
+        
+        if [[ -n $(git status --porcelain generated/) ]]; then
+          echo "changes=true" >> $GITHUB_OUTPUT
+          echo "📝 Generated files have changes"
+        else
+          echo "changes=false" >> $GITHUB_OUTPUT  
+          echo "✅ No changes in generated files"
+        fi
+
+    - name: 🚀 Commit Generated Files
+      if: steps.changes.outputs.changes == 'true' && github.event_name == 'push'
+      run: |
+        # Configure git with PAT token for branch protection bypass
+        git config --global user.email "action@github.com"
+        git config --global user.name "GitHub Action"
+        git remote set-url origin https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }}.git
         
         git add generated/
-        if git diff --staged --quiet; then
-          echo "No changes to commit"
-        else
-          git commit -m "Auto-generate Terraform from definitions"
+        git commit -m "🤖 Auto-generate Terraform from definitions
+        
+        Generated from commit: ${{ github.sha }}
+        Definitions changed in: ${{ github.event.head_commit.message }}
+        
+        Files updated:
+        $(git diff --cached --name-only generated/)"
+        
+        git push origin ${{ github.ref_name }}
+
+    - name: 💬 Comment on PR
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const fs = require('fs');
+          const path = require('path');
           
-          # Use PAT if available for protected branches, otherwise use GITHUB_TOKEN
-          if [ "${{ secrets.PAT_TOKEN }}" != "" ]; then
-            git push origin ${{ github.ref_name }}
-          else
-            git push
-          fi
-        fi
+          // Get list of generated files
+          const { execSync } = require('child_process');
+          const changedFiles = execSync('git diff --name-only generated/ || true').toString().trim();
+          
+          if (changedFiles) {
+            const comment = `## 🤖 IAM Terraform Generation Preview
+            
+            This PR will generate/update the following Terraform files:
+            
+            \`\`\`
+            ${changedFiles}
+            \`\`\`
+            
+            ### 📋 Validation Results:
+            - ✅ YAML definitions are valid
+            - ✅ Generated Terraform is properly formatted
+            - ✅ Terraform validation passed
+            
+            Once merged, these files will be automatically committed to the repository.`;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+          }
+
+  terraform-plan:
+    name: 📋 Terraform Plan (Dev)
+    runs-on: ubuntu-latest
+    needs: generate-and-validate
+    if: github.ref == 'refs/heads/dev'
+    
+    steps:
+    - name: 📥 Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: 🔧 Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: 1.6.0
+
+    - name: 🔐 Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+        aws-region: us-east-1
+        audience: sts.amazonaws.com
+
+    - name: � Import Existing Resources
+      run: |
+        cd generated
+        terraform init
+        
+        echo "🔍 Checking for existing resources..."
+        
+        # Try to import the IAM role if it exists
+        echo "📦 Attempting to import existing IAM role..."
+        terraform import aws_iam_role.github_actions_iam_deployment_role github-actions-iam-deployment-role || true
+        
+        echo "✅ Import process completed"
+
+    - name: 🚀 Terraform Plan
+      run: |
+        cd generated
+        terraform plan -out=tfplan
+        
+    - name: 📊 Upload Plan and State
+      uses: actions/upload-artifact@v4
+      with:
+        name: terraform-plan-and-state
+        path: |
+          generated/tfplan
+          generated/.terraform/
+          generated/terraform.tfstate*
+
+  terraform-apply:
+    name: 🚀 Terraform Apply (Dev)
+    runs-on: ubuntu-latest
+    needs: terraform-plan
+    if: github.ref == 'refs/heads/dev'
+    environment: 
+      name: dev
+      url: https://console.aws.amazon.com/iam/
+    
+    steps:
+    - name: 📥 Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: 🔧 Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: 1.6.0
+
+    - name: 🔐 Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+        aws-region: us-east-1
+        audience: sts.amazonaws.com
+
+    - name: 📥 Download Plan and State
+      uses: actions/download-artifact@v4
+      with:
+        name: terraform-plan-and-state
+        path: generated/
+
+    - name: � Import Existing Resources
+      run: |
+        cd generated
+        terraform init
+        
+        echo "🔍 Checking for existing resources..."
+        
+        # Try to import the IAM role if it exists
+        echo "📦 Attempting to import existing IAM role..."
+        terraform import aws_iam_role.github_actions_iam_deployment_role github-actions-iam-deployment-role || true
+        
+        echo "✅ Import process completed"
+
+    - name: 🚀 Terraform Apply
+      run: |
+        cd generated
+        echo "🔍 Validating plan..."
+        terraform show tfplan
+        echo ""
+        echo "🚀 Applying plan..."
+        terraform apply tfplan
+        
+    - name: 📋 Show Final State
+      run: |
+        cd generated
+        echo "📋 Final Terraform State:"
+        terraform show
