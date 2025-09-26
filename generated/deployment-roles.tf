@@ -6,7 +6,7 @@
 # This file is auto-generated from YAML definitions.
 # DO NOT EDIT MANUALLY - Changes will be overwritten.
 # 
-# Generated: 2025-09-26T15:17:29.177190
+# Generated: 2025-09-26T16:40:39.708442
 # Source: Multiple role definitions in definitions/roles/
 # ==============================================================================
 
@@ -77,13 +77,13 @@ resource "aws_iam_role" "github_actions_iam_deployment_role" {
     "Contacto"             = "darwin.lopez@claro.com.gt"
     "Creado Por"           = "DarwinLopez"
     "Ciclo de Vida"        = "Creacion"
-    "Versión"              = "v1.0.7"
+    "Versión"              = "v1.0.8"
     "Fecha de Creacion"    = "2025-09-16"
     "Última Actualización" = "2025-09-26"
     # Auto-generated tags
     "ManagedBy" = "terraform"
     "Source"    = "definitions/roles/github-deployment-role.yaml"
-    "Generated" = "2025-09-26T15:17:29.177059"
+    "Generated" = "2025-09-26T16:40:39.708299"
   }
 }
 
