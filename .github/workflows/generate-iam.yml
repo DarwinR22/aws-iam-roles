@@ -136,34 +136,52 @@ jobs:
         terraform init
         terraform validate
 
-    - name: � Terraform Plan Preview
+    - name: 📋 Terraform Plan Preview
       id: plan
       run: |
+        cd generated
         echo "## 🗂️ Terraform Plan Preview" >> $GITHUB_STEP_SUMMARY
         echo "### 📊 What would be deployed:" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
-        cd generated
-        echo '```hcl' >> $GITHUB_STEP_SUMMARY
-        # Show detailed plan with option for full analysis
+        
+        # Show generated files count
         echo "📁 Generated files: $(find . -name '*.tf' | wc -l) Terraform files" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         
-        # Always show a preview of the plan for analysis
-        echo "🔍 Terraform Plan Preview:" >> $GITHUB_STEP_SUMMARY
-        terraform plan -no-color -input=false > plan_output.txt 2>&1 || echo "⚠️ Plan failed - check logs below" >> $GITHUB_STEP_SUMMARY
+        # Run terraform plan with clean output formatting
+        echo "🔍 Running Terraform Plan..."
+        echo '```terraform' >> $GITHUB_STEP_SUMMARY
         
-        # Show plan summary (first and last parts)
-        echo "📋 Plan Summary:" >> $GITHUB_STEP_SUMMARY
-        head -30 plan_output.txt >> $GITHUB_STEP_SUMMARY || true
-        echo "..." >> $GITHUB_STEP_SUMMARY
-        echo "� Plan Results:" >> $GITHUB_STEP_SUMMARY  
-        tail -10 plan_output.txt >> $GITHUB_STEP_SUMMARY || true
+        # Capture plan output with proper formatting and console display
+        if terraform plan -no-color -input=false 2>&1 | tee plan_output.txt; then
+          echo "✅ Terraform plan completed successfully" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "⚠️ Terraform plan encountered issues - check details below" >> $GITHUB_STEP_SUMMARY
+        fi
         
-        # Save full plan for detailed analysis
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "💾 Full plan saved as artifact for detailed analysis" >> $GITHUB_STEP_SUMMARY
+        # Parse and format plan output for summary
+        if grep -q "No changes" plan_output.txt; then
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ No changes detected - infrastructure is up to date" >> $GITHUB_STEP_SUMMARY
+        elif grep -q "Plan:" plan_output.txt; then
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "� Plan Summary:" >> $GITHUB_STEP_SUMMARY
+          grep "Plan:" plan_output.txt | tail -1 >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "📋 Resource Changes Preview:" >> $GITHUB_STEP_SUMMARY
+          # Show key sections of the plan
+          grep -A 15 "Terraform will perform the following actions:" plan_output.txt | head -15 >> $GITHUB_STEP_SUMMARY 2>/dev/null || true
+        else
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "📋 Plan Output Preview:" >> $GITHUB_STEP_SUMMARY
+          head -20 plan_output.txt >> $GITHUB_STEP_SUMMARY 2>/dev/null || true
+          echo "..." >> $GITHUB_STEP_SUMMARY
+          tail -10 plan_output.txt >> $GITHUB_STEP_SUMMARY 2>/dev/null || true
+        fi
+        
         echo '```' >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
+        echo "💾 Full detailed plan available in artifacts for complete analysis" >> $GITHUB_STEP_SUMMARY
         echo "✅ Terraform syntax and structure validated successfully" >> $GITHUB_STEP_SUMMARY
 
     - name: 📤 Upload Terraform Plan for Analysis
@@ -296,7 +314,18 @@ jobs:
     - name: 🚀 Terraform Plan
       run: |
         cd generated
-        terraform plan -out=tfplan
+        echo "🔍 Generating execution plan..."
+        echo "================================================"
+        
+        # Create plan with detailed output
+        terraform plan -out=tfplan -input=false
+        
+        echo "================================================"
+        echo "📋 Plan Summary:"
+        terraform show -no-color tfplan | head -50
+        echo "..."
+        echo "================================================"
+        echo "✅ Plan generated successfully and saved as tfplan"
         
     - name: 📊 Upload Plan and State
       uses: actions/upload-artifact@v4
