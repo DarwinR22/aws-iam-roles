@@ -86,9 +86,9 @@ role:
     
     # Lifecycle management
     "Ciclo de Vida": "Creacion"
-    "Versión": "v1.0.4"  # Trigger workflow with backend S3 fix
+    "Versión": "v1.0.5"  # Trigger workflow with correct S3 bucket
     "Fecha de Creacion": "2025-09-16"
-    "Última Actualización": "2025-09-25"
+    "Última Actualización": "2025-09-26"
 
 # Environment variables for multi-environment deployment
 variables:
