@@ -17,24 +17,24 @@ data "aws_caller_identity" "current" {}
 data "external" "obsolete_policies" {
   program = ["bash", "-c", <<-EOT
     # Buscar políticas con patrón obsoleto usando AWS CLI
-    obsolete_policies=$(aws iam list-policies --query 'Policies[?starts_with(PolicyName, `githubactions-`)].PolicyName' --output text)
+    obsolete_policies=$$(aws iam list-policies --query 'Policies[?starts_with(PolicyName, `githubactions-`)].PolicyName' --output text)
     
     # Filtrar solo las que tienen sufijos numéricos y crear JSON válido
     policy_list=""
     counter=0
     
-    for policy in $obsolete_policies; do
-      if [[ $policy =~ ^githubactions-(basepermissions|iammanagement|terraformbackend)-[0-9]+$ ]]; then
-        if [ $counter -gt 0 ]; then
-          policy_list="${policy_list},"
+    for policy in $$obsolete_policies; do
+      if [[ $$policy =~ ^githubactions-(basepermissions|iammanagement|terraformbackend)-[0-9]+$$ ]]; then
+        if [ $$counter -gt 0 ]; then
+          policy_list="$${policy_list},"
         fi
-        policy_list="${policy_list}\"policy_${counter}\": \"${policy}\""
-        counter=$((counter + 1))
+        policy_list="$${policy_list}\"policy_$${counter}\": \"$${policy}\""
+        counter=$$((counter + 1))
       fi
     done
     
     # Retornar JSON válido para Terraform (mapa de strings)
-    echo "{${policy_list}}"
+    echo "{$${policy_list}}"
   EOT
   ]
 }
