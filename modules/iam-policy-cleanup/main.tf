@@ -28,7 +28,7 @@ data "external" "obsolete_policies" {
         if [ $counter -gt 0 ]; then
           policy_list="$${policy_list},"
         fi
-        policy_list="$${policy_list}\"policy_${counter}\": \"$${policy}\""
+        policy_list="$${policy_list}\"policy_$${counter}\": \"$${policy}\""
         counter=$((counter + 1))
       fi
     done < /tmp/obsolete_policies.txt
