@@ -143,7 +143,15 @@ jobs:
         echo "" >> $GITHUB_STEP_SUMMARY
         cd generated
         echo '```hcl' >> $GITHUB_STEP_SUMMARY
-        terraform plan -no-color -input=false 2>&1 | head -50 >> $GITHUB_STEP_SUMMARY || echo "⚠️ Plan requires AWS credentials - showing validation only" >> $GITHUB_STEP_SUMMARY
+        # Solo hacer plan completo en branch main, para dev solo mostrar estructura
+        if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+          timeout 30 terraform plan -no-color -input=false 2>&1 | head -20 >> $GITHUB_STEP_SUMMARY || echo "⚠️ Plan timeout - full plan will run in deployment job" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "📁 Generated Terraform files:" >> $GITHUB_STEP_SUMMARY
+          find . -name "*.tf" -exec basename {} \; | sort >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "⚡ Skipping detailed plan for dev branch (faster validation)" >> $GITHUB_STEP_SUMMARY
+        fi
         echo '```' >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "✅ Terraform syntax and structure validated successfully" >> $GITHUB_STEP_SUMMARY
