@@ -25,11 +25,11 @@ data "external" "obsolete_policies" {
     
     while IFS= read -r policy || [[ -n "$$policy" ]]; do
       if [ -n "$$policy" ]; then
-        if [ $$counter -gt 0 ]; then
+        if [ $counter -gt 0 ]; then
           policy_list="$${policy_list},"
         fi
-        policy_list="$${policy_list}\"policy_$${counter}\": \"$${policy}\""
-        counter=$$((counter + 1))
+        policy_list="$${policy_list}\"policy_${counter}\": \"$${policy}\""
+        counter=$((counter + 1))
       fi
     done < /tmp/obsolete_policies.txt
     
