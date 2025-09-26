@@ -268,6 +268,11 @@ jobs:
     needs: generate-and-validate
     if: github.ref == 'refs/heads/dev'
     
+    env:
+      TF_LOG: ""          # Disable terraform logging to prevent debug output
+      TF_LOG_CORE: ""     # Disable core terraform logging
+      TF_LOG_PROVIDER: "" # Disable provider logging
+    
     steps:
     - name: 📥 Checkout Repository
       uses: actions/checkout@v4
@@ -317,15 +322,26 @@ jobs:
         echo "🔍 Generating execution plan..."
         echo "================================================"
         
-        # Create plan with detailed output
-        terraform plan -out=tfplan -input=false
+        # Create plan with clean output (prevent encoded characters in logs)
+        echo "Running terraform plan..."
+        terraform plan -out=tfplan -input=false -no-color > plan_detailed.log 2>&1
         
         echo "================================================"
-        echo "📋 Plan Summary:"
-        terraform show -no-color tfplan | head -50
-        echo "..."
+        echo "📋 Plan Results Summary:"
+        
+        # Parse plan results
+        if grep -q "No changes" plan_detailed.log; then
+          echo "✅ No changes detected - infrastructure is up to date"
+        elif grep -q "Plan:" plan_detailed.log; then
+          grep "Plan:" plan_detailed.log | tail -1
+          echo ""
+          echo "📋 Key Changes:"
+          grep -A 10 "Terraform will perform the following actions:" plan_detailed.log | head -10 || echo "No detailed changes found"
+        fi
+        
         echo "================================================"
         echo "✅ Plan generated successfully and saved as tfplan"
+        echo "📁 Full plan details saved in plan_detailed.log artifact"
         
     - name: 📊 Upload Plan and State
       uses: actions/upload-artifact@v4
@@ -333,6 +349,7 @@ jobs:
         name: terraform-plan-and-state
         path: |
           generated/tfplan
+          generated/plan_detailed.log
           generated/.terraform/
           generated/terraform.tfstate*
 
@@ -344,6 +361,11 @@ jobs:
     environment: 
       name: dev
       url: https://console.aws.amazon.com/iam/
+    
+    env:
+      TF_LOG: ""          # Disable terraform logging to prevent debug output
+      TF_LOG_CORE: ""     # Disable core terraform logging  
+      TF_LOG_PROVIDER: "" # Disable provider logging
     
     steps:
     - name: 📥 Checkout Repository
