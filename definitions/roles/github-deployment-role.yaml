@@ -1,4 +1,4 @@
-# GitHub Act    version: "v1.1.9"ons Deployment Role Definition
+# GitHub Act    version: "v1.2.0"ons Deployment Role Definition
 # Main role configuration that combines all modular permissions
 # Defines OIDC trust policy and references component policies
 
