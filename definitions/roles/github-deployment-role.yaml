@@ -86,7 +86,7 @@ role:
     
     # Lifecycle management
     "Ciclo de Vida": "Creacion"
-    "Versión": "v1.0.3"  # Trigger restored workflow
+    "Versión": "v1.0.4"  # Trigger workflow with backend S3 fix
     "Fecha de Creacion": "2025-09-16"
     "Última Actualización": "2025-09-25"
 
