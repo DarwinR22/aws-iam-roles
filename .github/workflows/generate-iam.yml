@@ -1,6 +1,6 @@
 name: 🤖 Auto-Generate IAM Terraform
 
-# Grant special permissions to GITHUB_TOKEN
+# Grant special permissions to GITHUB_TOKEN (Fixed dependencies)
 permissions:
   contents: write
   pull-requests: write
