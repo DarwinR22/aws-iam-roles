@@ -10,22 +10,28 @@ terraform {
   }
 }
 
-# Data source para obtener políticas existentes con patrón obsoleto
-data "aws_iam_policies" "obsolete_policies" {}
-
 # Data source para obtener información de la cuenta
 data "aws_caller_identity" "current" {}
 
-# Filtrar políticas que coincidan con el patrón obsoleto: githubactions-*-[números]
-locals {
-  # Obtener todas las políticas IAM
-  all_policies = data.aws_iam_policies.obsolete_policies.names
-  
-  # Filtrar políticas con el patrón obsoleto (con sufijos numéricos aleatorios)
-  obsolete_policy_names = [
-    for policy_name in local.all_policies : policy_name
-    if can(regex("^githubactions-(basepermissions|iammanagement|terraformbackend)-[0-9]+$", policy_name))
+# External data source para obtener políticas obsoletas via AWS CLI
+data "external" "obsolete_policies" {
+  program = ["bash", "-c", <<-EOT
+    # Buscar políticas con patrón obsoleto usando AWS CLI
+    aws iam list-policies --query 'Policies[?starts_with(PolicyName, `githubactions-`)].PolicyName' --output json > /tmp/all_policies.json
+    
+    # Filtrar solo las que tienen sufijos numéricos
+    obsolete_policies=$(cat /tmp/all_policies.json | jq -r '.[] | select(test("^githubactions-(basepermissions|iammanagement|terraformbackend)-[0-9]+$"))' | jq -R -s -c 'split("\n")[:-1]')
+    
+    # Retornar como JSON válido para Terraform
+    echo "{\"policies\": $obsolete_policies}"
+  EOT
   ]
+}
+
+# Filtrar políticas que coincidan con el patrón obsoleto
+locals {
+  # Obtener políticas obsoletas del data source external
+  obsolete_policy_names = jsondecode(data.external.obsolete_policies.result.policies)
   
   # Crear mapa de políticas obsoletas para resource for_each
   obsolete_policies_map = {
@@ -36,11 +42,7 @@ locals {
   }
 }
 
-# Data source para obtener detalles de cada política obsoleta
-data "aws_iam_policy" "obsolete" {
-  for_each = local.obsolete_policies_map
-  name     = each.value.name
-}
+# No necesitamos data source adicional, usamos el external data source
 
 # Resource para eliminar políticas obsoletas usando null_resource con provisioners
 resource "null_resource" "cleanup_obsolete_policies" {
