@@ -101,7 +101,7 @@ variables:
   dynamodb_table_name:
     description: "DynamoDB table name for state locking"
     type: "string" 
-    default: "dynamodb-db-dev-state-files-process"
+    default: "dynamodb-db-dev-terraform-lock"
     
   kms_key_id:
     description: "KMS key ID for encryption"
