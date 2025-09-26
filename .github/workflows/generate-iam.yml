@@ -14,6 +14,7 @@ on:
       - 'definitions/**'
       - 'generators/**'
       - 'templates/**'
+      - '.github/workflows/**'
   
   pull_request:
     branches: [main]
