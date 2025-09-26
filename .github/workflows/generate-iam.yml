@@ -40,6 +40,16 @@ jobs:
   generate-and-validate:
     name: 🚀 Generate Terraform from YAML
     runs-on: ubuntu-latest
+    
+    # Disable verbose debug output to prevent encoded character display
+    env:
+      TF_LOG: ""                    # Disable terraform verbose logging
+      TF_LOG_CORE: ""              # Disable terraform core logging  
+      TF_LOG_PROVIDER: ""          # Disable provider logging
+      RUNNER_DEBUG: "0"            # Disable GitHub Actions debug output
+      ACTIONS_RUNNER_DEBUG: "0"    # Disable runner debug mode
+      ACTIONS_STEP_DEBUG: "0"      # Disable step debug mode
+    
     permissions:
       contents: write
       pull-requests: write
@@ -152,14 +162,33 @@ jobs:
         echo "🔍 Running Terraform Plan..."
         echo '```terraform' >> $GITHUB_STEP_SUMMARY
         
-        # Capture plan output directly to file to avoid encoded duplication in logs
-        echo "Executing terraform plan (output saved to plan_output.txt)..."
+        # Capture plan with clean summary display (no verbose debug output)
+        echo "📋 Executing terraform plan..."
         if terraform plan -no-color -input=false > plan_output.txt 2>&1; then
-          echo "✅ Terraform plan completed successfully" >> $GITHUB_STEP_SUMMARY
-          echo "✅ Plan completed successfully"
+          echo "✅ Plan completed successfully" >> $GITHUB_STEP_SUMMARY
+          
+          # Extract and display clean summary in console (no encoded characters)
+          if grep -q "Plan:" plan_output.txt; then
+            plan_summary=$(grep "Plan:" plan_output.txt | tail -1)
+            echo "📊 PLAN SUMMARY: $plan_summary"
+            
+            # Show organized breakdown
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            if echo "$plan_summary" | grep -q "0 to add.*0 to change.*0 to destroy"; then
+              echo "✅ NO CHANGES - Infrastructure is up to date"
+            else
+              echo "🔄 CHANGES DETECTED:"
+              echo "$plan_summary" | sed 's/Plan: /  /'
+            fi
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          elif grep -q "No changes" plan_output.txt; then
+            echo "✅ NO CHANGES - Infrastructure matches configuration"
+          else
+            echo "📄 Plan generated - check artifacts for details"
+          fi
         else
-          echo "⚠️ Terraform plan encountered issues - check details below" >> $GITHUB_STEP_SUMMARY
           echo "⚠️ Plan encountered issues - check artifacts for details"
+          echo "⚠️ Terraform plan encountered issues - check details below" >> $GITHUB_STEP_SUMMARY
         fi
         
         # Parse and format plan output for summary
