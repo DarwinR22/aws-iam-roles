@@ -350,8 +350,8 @@ jobs:
   cleanup-old-policies:
     name: 🧹 Cleanup Old IAM Policies
     runs-on: ubuntu-latest
-    needs: [deploy-iam]
-    if: github.ref == 'refs/heads/dev' && needs.deploy-iam.result == 'success'
+    needs: [terraform-apply]
+    if: github.ref == 'refs/heads/dev' && needs.terraform-apply.result == 'success'
     permissions:
       contents: read
       id-token: write
