@@ -42,10 +42,6 @@ role:
 
   # Referenced policy modules - these will be combined into the role
   policy_modules:
-    - name: "base-permissions"
-      file: "base-permissions.yaml"
-      description: "Fundamental AWS permissions for identity verification"
-      
     - name: "terraform-backend"
       file: "terraform-backend.yaml" 
       description: "S3, DynamoDB, and KMS access for Terraform state"
