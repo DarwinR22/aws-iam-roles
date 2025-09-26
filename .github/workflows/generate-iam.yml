@@ -1,7 +1,16 @@
 name: 🤖 Auto-Generate IAM Terraform
 
 # Prevent multiple workflows running simultaneously to avoid state lock conflicts
-# Note: cancel-in-progress disabled to avoid orphaned Terraform state locks
+# Note: cancel-in-progress disa        # Show formatted plan sections for better readability
+        echo "📋 Plan Summary:" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        # Extract only the important parts with better formatting
+        grep -A 20 "Terraform will perform the following actions" plan_output.txt | head -25 >> $GITHUB_STEP_SUMMARY || true
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "---" >> $GITHUB_STEP_SUMMARY
+        echo "📊 Final Results:" >> $GITHUB_STEP_SUMMARY  
+        grep -E "Plan:|to add|to change|to destroy" plan_output.txt >> $GITHUB_STEP_SUMMARY || trueo avoid orphaned Terraform state locks
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
