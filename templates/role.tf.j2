@@ -128,8 +128,23 @@ module "{{ terraform_name }}" {
 #   policy_arn = module.POLICY_MODULE.policy_arn
 # }
 
+# Cleanup module for obsolete policies  
+module "cleanup_obsolete_policies" {
+  source = "../modules/iam-policy-cleanup"
+  
+  aws_region       = "us-east-1"
+  environment      = "{{ role.tags.Ambiente }}"
+  cleanup_enabled  = true
+}
+
 # Output role ARN
 output "{{ role.terraform_name }}_arn" {
   description = "ARN of {{ role.name }} role"
   value       = aws_iam_role.{{ role.terraform_name }}.arn
+}
+
+# Output cleanup summary
+output "cleanup_summary" {
+  description = "Summary of obsolete policy cleanup"
+  value       = module.cleanup_obsolete_policies.cleanup_summary
 }
