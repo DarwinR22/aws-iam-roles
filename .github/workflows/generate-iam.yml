@@ -1,5 +1,10 @@
 name: 🤖 Auto-Generate IAM Terraform
 
+# Prevent multiple workflows running simultaneously to avoid state lock conflicts
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 # Grant special permissions to GITHUB_TOKEN (Fixed dependencies)
 permissions:
   contents: write
