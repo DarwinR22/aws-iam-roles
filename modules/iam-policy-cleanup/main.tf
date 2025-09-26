@@ -16,25 +16,32 @@ data "aws_caller_identity" "current" {}
 # External data source para obtener políticas obsoletas via AWS CLI
 data "external" "obsolete_policies" {
   program = ["bash", "-c", <<-EOT
-    # Buscar políticas con patrón obsoleto usando AWS CLI
-    obsolete_policies=$$(aws iam list-policies --query 'Policies[?starts_with(PolicyName, `githubactions-`)].PolicyName' --output text)
+    # Buscar todas las políticas IAM y filtrar las obsoletas
+    aws iam list-policies --output json | jq -r '.Policies[] | select(.PolicyName | test("^githubactions-(basepermissions|iammanagement|terraformbackend)-[0-9]+$$")) | .PolicyName' > /tmp/obsolete_policies.txt
     
-    # Filtrar solo las que tienen sufijos numéricos y crear JSON válido
+    # Crear JSON válido para Terraform (mapa de strings)
     policy_list=""
     counter=0
     
-    for policy in $$obsolete_policies; do
-      if [[ $$policy =~ ^githubactions-(basepermissions|iammanagement|terraformbackend)-[0-9]+$$ ]]; then
+    while IFS= read -r policy || [[ -n "$$policy" ]]; do
+      if [ -n "$$policy" ]; then
         if [ $$counter -gt 0 ]; then
           policy_list="$${policy_list},"
         fi
         policy_list="$${policy_list}\"policy_$${counter}\": \"$${policy}\""
         counter=$$((counter + 1))
       fi
-    done
+    done < /tmp/obsolete_policies.txt
     
-    # Retornar JSON válido para Terraform (mapa de strings)
-    echo "{$${policy_list}}"
+    # Si no hay políticas, retornar objeto vacío
+    if [ -z "$$policy_list" ]; then
+      echo "{}"
+    else
+      echo "{$${policy_list}}"
+    fi
+    
+    # Limpiar archivo temporal
+    rm -f /tmp/obsolete_policies.txt
   EOT
   ]
 }
