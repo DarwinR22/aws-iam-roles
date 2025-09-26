@@ -137,8 +137,11 @@ class IAMGenerator:
                 
             self.validate_naming_convention(definition['policy']['name'], 'policy')
             
-            # Generate terraform name
+            # Generate terraform name with MCI prefix for consistency
             terraform_name = self.generate_terraform_name(definition['policy']['name'])
+            # Add MCI prefix to directory name for enterprise consistency
+            if not terraform_name.startswith('mci_'):
+                terraform_name = f"mci_{terraform_name}"
             
             # Create module directory
             module_dir = self.generated_dir / "modules" / "policies" / terraform_name

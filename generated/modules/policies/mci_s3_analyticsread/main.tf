@@ -4,7 +4,7 @@ data "aws_caller_identity" "current" {}
 # MCI-S3-AnalyticsRead Policy Module - Following ABAC Pattern
 # Converted from definitions/policies/s3-analytics-read.yaml
 resource "aws_iam_policy" "main" {
-  name_prefix = "mci-s3-analyticsread-"
+  name        = "mci-mci-s3-analyticsread"
   path        = "/policies/"
   description = var.policy_description
 

@@ -100,7 +100,21 @@ jobs:
     - name: 📝 Terraform Validate
       run: |
         cd generated  
-        terraform init -backend=false
+        
+        # Configure Terraform backend for state management
+        cat > backend.tf << EOF
+        terraform {
+          backend "s3" {
+            bucket         = "mci-terraform-state"
+            key            = "iam-management/terraform.tfstate"
+            region         = "us-east-1"
+            dynamodb_table = "mci-terraform-locks"
+            encrypt        = true
+          }
+        }
+        EOF
+        
+        terraform init
         terraform validate
 
     - name: � Terraform Plan Preview
@@ -210,6 +224,20 @@ jobs:
     - name: � Import Existing Resources
       run: |
         cd generated
+        
+        # Configure Terraform backend for state management
+        cat > backend.tf << EOF
+        terraform {
+          backend "s3" {
+            bucket         = "mci-terraform-state"
+            key            = "iam-management/terraform.tfstate" 
+            region         = "us-east-1"
+            dynamodb_table = "mci-terraform-locks"
+            encrypt        = true
+          }
+        }
+        EOF
+        
         terraform init
         
         echo "🔍 Checking for existing resources..."
@@ -268,6 +296,20 @@ jobs:
     - name: � Import Existing Resources
       run: |
         cd generated
+        
+        # Configure Terraform backend for state management
+        cat > backend.tf << EOF
+        terraform {
+          backend "s3" {
+            bucket         = "mci-terraform-state"
+            key            = "iam-management/terraform.tfstate" 
+            region         = "us-east-1"
+            dynamodb_table = "mci-terraform-locks"
+            encrypt        = true
+          }
+        }
+        EOF
+        
         terraform init
         
         echo "🔍 Checking for existing resources..."

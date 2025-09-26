@@ -95,7 +95,7 @@ resource "aws_iam_role" "{{ role.terraform_name }}" {
 {% for policy_name in role.policies %}
 {% set terraform_name = (policy_name | lower | replace('-', '_')) %}
 module "{{ terraform_name }}" {
-  source = "./modules/policies/{{ terraform_name }}"
+  source = "./modules/policies/mci_{{ terraform_name }}"
   
   environment = "{{ role.tags.Ambiente | default('dev') }}"
   

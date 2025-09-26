@@ -4,7 +4,7 @@ data "aws_caller_identity" "current" {}
 # GithubActions-BasePermissions Policy Module - Following ABAC Pattern
 # Converted from definitions/policies/deployment\base-permissions.yaml
 resource "aws_iam_policy" "main" {
-  name_prefix = "githubactions-basepermissions-"
+  name        = "mci-githubactions-basepermissions"
   path        = "/policies/"
   description = var.policy_description
 

@@ -36,6 +36,19 @@ policy:
       resources: 
         - "*"
       description: "Read access to IAM resources for state management"
+
+    # Additional read permissions for MCI policies
+    - sid: "IAMPolicyReadAccess"
+      effect: "Allow"
+      actions:
+        - "iam:GetPolicy"
+        - "iam:GetPolicyVersion"
+        - "iam:ListPolicyVersions"
+        - "iam:ListPolicyTags"
+      resources:
+        - "arn:aws:iam::${account_id}:policy/policies/*"
+        - "arn:aws:iam::${account_id}:policy/${policy_prefix}*"
+      description: "Read access to MCI-created policies for Terraform state"
       
     # Write permissions for IAM roles
     - sid: "IAMRoleManagement" 
@@ -70,6 +83,9 @@ policy:
         - "iam:CreatePolicyVersion"
         - "iam:DeletePolicyVersion"
         - "iam:SetDefaultPolicyVersion"
+        - "iam:TagPolicy"
+        - "iam:UntagPolicy"
+        - "iam:ListPolicyTags"
       resources:
         - "arn:aws:iam::${account_id}:policy/${policy_prefix}*"
       description: "Management of IAM policies with organizational prefix"

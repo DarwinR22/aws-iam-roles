@@ -6,7 +6,7 @@
 # This file is auto-generated from YAML definitions.
 # DO NOT EDIT MANUALLY - Changes will be overwritten.
 # 
-# Generated: 2025-09-25T17:47:32.213791
+# Generated: 2025-09-25T18:03:17.534286
 # Source: Multiple role definitions in definitions/roles/
 # ==============================================================================
 
@@ -83,13 +83,13 @@ resource "aws_iam_role" "github_actions_iam_deployment_role" {
     # Auto-generated tags
     "ManagedBy" = "terraform"
     "Source"    = "definitions/roles/github-deployment-role.yaml"
-    "Generated" = "2025-09-25T17:47:32.213578"
+    "Generated" = "2025-09-25T18:03:17.532841"
   }
 }
 
 # Create policies as independent modules (not attached to role)
 module "githubactions_basepermissions" {
-  source = "./modules/policies/githubactions_basepermissions"
+  source = "./modules/policies/mci_githubactions_basepermissions"
   
   environment = "dev"
   
@@ -115,7 +115,7 @@ module "githubactions_basepermissions" {
   }
 }
 module "githubactions_terraformbackend" {
-  source = "./modules/policies/githubactions_terraformbackend"
+  source = "./modules/policies/mci_githubactions_terraformbackend"
   
   environment = "dev"
   
@@ -141,7 +141,7 @@ module "githubactions_terraformbackend" {
   }
 }
 module "githubactions_iammanagement" {
-  source = "./modules/policies/githubactions_iammanagement"
+  source = "./modules/policies/mci_githubactions_iammanagement"
   
   environment = "dev"
   
