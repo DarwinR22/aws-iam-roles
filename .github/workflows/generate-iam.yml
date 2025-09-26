@@ -148,15 +148,18 @@ jobs:
         echo "📁 Generated files: $(find . -name '*.tf' | wc -l) Terraform files" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         
-        # Run terraform plan with clean output formatting
+        # Run terraform plan with clean output formatting (no duplication to console)
         echo "🔍 Running Terraform Plan..."
         echo '```terraform' >> $GITHUB_STEP_SUMMARY
         
-        # Capture plan output with proper formatting and console display
-        if terraform plan -no-color -input=false 2>&1 | tee plan_output.txt; then
+        # Capture plan output directly to file to avoid encoded duplication in logs
+        echo "Executing terraform plan (output saved to plan_output.txt)..."
+        if terraform plan -no-color -input=false > plan_output.txt 2>&1; then
           echo "✅ Terraform plan completed successfully" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Plan completed successfully"
         else
           echo "⚠️ Terraform plan encountered issues - check details below" >> $GITHUB_STEP_SUMMARY
+          echo "⚠️ Plan encountered issues - check artifacts for details"
         fi
         
         # Parse and format plan output for summary
@@ -269,9 +272,10 @@ jobs:
     if: github.ref == 'refs/heads/dev'
     
     env:
-      TF_LOG: ""          # Disable terraform logging to prevent debug output
-      TF_LOG_CORE: ""     # Disable core terraform logging
-      TF_LOG_PROVIDER: "" # Disable provider logging
+      TF_LOG: ""           # Disable terraform logging to prevent debug output
+      TF_LOG_CORE: ""      # Disable core terraform logging
+      TF_LOG_PROVIDER: ""  # Disable provider logging
+      RUNNER_DEBUG: "0"    # Disable GitHub Actions debug output
     
     steps:
     - name: 📥 Checkout Repository
@@ -324,7 +328,9 @@ jobs:
         
         # Create plan with clean output (prevent encoded characters in logs)
         echo "Running terraform plan..."
-        terraform plan -out=tfplan -input=false -no-color > plan_detailed.log 2>&1
+        {
+          terraform plan -out=tfplan -input=false -no-color
+        } > plan_detailed.log 2>&1
         
         echo "================================================"
         echo "📋 Plan Results Summary:"
@@ -363,9 +369,10 @@ jobs:
       url: https://console.aws.amazon.com/iam/
     
     env:
-      TF_LOG: ""          # Disable terraform logging to prevent debug output
-      TF_LOG_CORE: ""     # Disable core terraform logging  
-      TF_LOG_PROVIDER: "" # Disable provider logging
+      TF_LOG: ""           # Disable terraform logging to prevent debug output
+      TF_LOG_CORE: ""      # Disable core terraform logging  
+      TF_LOG_PROVIDER: ""  # Disable provider logging
+      RUNNER_DEBUG: "0"    # Disable GitHub Actions debug output
     
     steps:
     - name: 📥 Checkout Repository
