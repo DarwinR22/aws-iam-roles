@@ -38,6 +38,10 @@ class IAMGenerator:
         # Policy attachments disabled - policies created as independent modules
         # Workflow trigger comment
         
+        # Smart timestamp - preserve if no real changes
+        self.last_generation_time = self._get_last_generation_time()
+        self.current_generation_time = datetime.now().isoformat()
+        
         # Setup Jinja2
         self.jinja_env = Environment(
             loader=FileSystemLoader(str(self.templates_dir)),
@@ -52,6 +56,48 @@ class IAMGenerator:
         except Exception:
             print("⚠️  AWS credentials not available - using default account ID")
             self.account_id = "393209814297"  # MCI account
+    
+    def _get_last_generation_time(self) -> str:
+        """Get the last generation timestamp from existing files"""
+        try:
+            # Try to read from existing deployment-roles.tf
+            deployment_file = self.generated_dir / "deployment-roles.tf"
+            if deployment_file.exists():
+                content = deployment_file.read_text()
+                # Look for Generated tag in the content
+                import re
+                match = re.search(r'"Generated"\s*=\s*"([^"]+)"', content)
+                if match:
+                    return match.group(1)
+        except Exception:
+            pass
+        
+        # Default to current time if no existing timestamp found
+        return datetime.now().isoformat()
+    
+    def _should_update_timestamp(self, definition_content: str, yaml_path: Path) -> bool:
+        """Determine if timestamp should be updated based on real changes"""
+        try:
+            # Check if this is a version bump (explicit change)
+            if 'version' in definition_content and any(x in definition_content.lower() for x in ['v1.', 'v2.', 'version']):
+                # Parse version from YAML
+                data = yaml.safe_load(definition_content)
+                current_version = data.get('role', {}).get('metadata', {}).get('version', '1.0.0')
+                
+                # If version changed from last known, update timestamp
+                # (For simplicity, we'll update timestamp on any version that's not 1.0.0)
+                if current_version != '1.0.0':
+                    return True
+            
+            # Check if policy_modules list changed
+            if 'policy_modules:' in definition_content:
+                return True
+                
+            # Check if it's a forced regeneration (--clean flag will be handled separately)
+            return False
+            
+        except Exception:
+            return False
     
     def validate_yaml_schema(self, yaml_file: Path, schema_type: str) -> dict:
         """Validate YAML against expected schema"""
@@ -255,6 +301,11 @@ class IAMGenerator:
                     
             definition['role']['policies'] = real_policy_names
             
+            # Determine smart timestamp - only update if real changes detected
+            yaml_content = yaml_file.read_text()
+            should_update = self._should_update_timestamp(yaml_content, yaml_file)
+            generation_time = self.current_generation_time if should_update else self.last_generation_time
+            
             # Categorize by role type (deployment vs application)
             role_name = definition['role']['name'].lower()
             if 'github' in role_name or 'deployment' in role_name or 'ci' in role_name or 'cd' in role_name:
@@ -265,7 +316,7 @@ class IAMGenerator:
                         role=definition['role'],
                         policy_modules=definition.get('role', {}).get('policy_modules', []),
                         source_file=f"definitions/roles/{yaml_file.name}",
-                        generation_time=datetime.now().isoformat(),
+                        generation_time=generation_time,
                         account_id=self.account_id
                     )
                 })
@@ -277,7 +328,7 @@ class IAMGenerator:
                         role=definition['role'],
                         policy_modules=definition.get('role', {}).get('policy_modules', []),
                         source_file=f"definitions/roles/{yaml_file.name}",
-                        generation_time=datetime.now().isoformat(),
+                        generation_time=generation_time,
                         account_id=self.account_id
                     )
                 })
@@ -320,7 +371,7 @@ class IAMGenerator:
 # This file is auto-generated from YAML definitions.
 # DO NOT EDIT MANUALLY - Changes will be overwritten.
 # 
-# Generated: {datetime.now().isoformat()}
+# Generated: {self.current_generation_time}
 # Source: Multiple role definitions in definitions/roles/
 # ==============================================================================
 
