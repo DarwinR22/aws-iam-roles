@@ -32,6 +32,10 @@ jobs:
   generate-and-validate:
     name: 🚀 Generate Terraform from YAML
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      id-token: write  # Required for OIDC authentication
     
     steps:
     - name: 📥 Checkout Repository
@@ -59,6 +63,13 @@ jobs:
       uses: hashicorp/setup-terraform@v2
       with:
         terraform_version: 1.6.0
+
+    - name: 🔐 Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+        aws-region: us-east-1
+        audience: sts.amazonaws.com
 
     - name: 🏗️ Generate Terraform Files
       run: |
