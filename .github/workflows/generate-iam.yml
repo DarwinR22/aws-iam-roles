@@ -1,7 +1,7 @@
 name: 🤖 Auto-Generate IAM Terraform
 
 # Prevent multiple workflows running simultaneously to avoid state lock conflicts
-# Note: cancel-in-progress disabled to avoid orphaned Terraform state locks
+# Note: cancel-in-progress disabled to avoid or          echo "📊 Plan Summary:" >> $GITHUB_STEP_SUMMARYhaned Terraform state locks
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
@@ -172,14 +172,42 @@ jobs:
           grep "Plan:" plan_output.txt | tail -1 >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "📋 Resource Changes Preview:" >> $GITHUB_STEP_SUMMARY
-          # Show key sections of the plan
-          grep -A 15 "Terraform will perform the following actions:" plan_output.txt | head -15 >> $GITHUB_STEP_SUMMARY 2>/dev/null || true
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Extract and format plan details line by line (avoid single long line in preview)
+          temp_plan=$(mktemp)
+          grep -A 25 "Terraform will perform the following actions:" plan_output.txt | head -25 > "$temp_plan" 2>/dev/null || true
+          
+          # Add each line individually to preserve proper formatting
+          while IFS= read -r line || [ -n "$line" ]; do
+            echo "$line" >> $GITHUB_STEP_SUMMARY
+          done < "$temp_plan"
+          
+          rm -f "$temp_plan"
         else
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "📋 Plan Output Preview:" >> $GITHUB_STEP_SUMMARY
-          head -20 plan_output.txt >> $GITHUB_STEP_SUMMARY 2>/dev/null || true
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Format first part line by line  
+          temp_head=$(mktemp)
+          head -15 plan_output.txt > "$temp_head" 2>/dev/null || true
+          while IFS= read -r line || [ -n "$line" ]; do
+            echo "$line" >> $GITHUB_STEP_SUMMARY
+          done < "$temp_head"
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
           echo "..." >> $GITHUB_STEP_SUMMARY
-          tail -10 plan_output.txt >> $GITHUB_STEP_SUMMARY 2>/dev/null || true
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Format last part line by line
+          temp_tail=$(mktemp)
+          tail -8 plan_output.txt > "$temp_tail" 2>/dev/null || true
+          while IFS= read -r line || [ -n "$line" ]; do
+            echo "$line" >> $GITHUB_STEP_SUMMARY  
+          done < "$temp_tail"
+          
+          rm -f "$temp_head" "$temp_tail"
         fi
         
         echo '```' >> $GITHUB_STEP_SUMMARY
