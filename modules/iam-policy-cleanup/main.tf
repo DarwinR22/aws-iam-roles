@@ -16,8 +16,8 @@ data "aws_caller_identity" "current" {}
 # External data source para obtener políticas obsoletas via AWS CLI
 data "external" "obsolete_policies" {
   program = ["bash", "-c", <<-EOT
-    # Buscar todas las políticas IAM y filtrar las obsoletas
-    aws iam list-policies --output json | jq -r '.Policies[] | select(.PolicyName | test("^githubactions-(basepermissions|iammanagement|terraformbackend)-[0-9]+$$")) | .PolicyName' > /tmp/obsolete_policies.txt
+    # Buscar solo políticas creadas por el usuario (no las de AWS) y filtrar las obsoletas
+    aws iam list-policies --scope Local --output json | jq -r '.Policies[] | select(.PolicyName | test("^githubactions-(basepermissions|iammanagement|terraformbackend)-[0-9]+$$")) | .PolicyName' > /tmp/obsolete_policies.txt
     
     # Crear JSON válido para Terraform (mapa de strings)
     policy_list=""
