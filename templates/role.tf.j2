@@ -128,14 +128,15 @@ module "{{ terraform_name }}" {
 #   policy_arn = module.POLICY_MODULE.policy_arn
 # }
 
-# Cleanup module for obsolete policies  
-module "cleanup_obsolete_policies" {
-  source = "../modules/iam-policy-cleanup"
-  
-  aws_region       = "us-east-1"
-  environment      = "{{ role.tags.Ambiente }}"
-  cleanup_enabled  = true
-}
+# Cleanup module for obsolete policies (TEMPORARILY DISABLED - performance issue)
+# TODO: Re-enable after optimizing the external data source performance
+# module "cleanup_obsolete_policies" {
+#   source = "../modules/iam-policy-cleanup"
+#   
+#   aws_region       = "us-east-1"
+#   environment      = "{{ role.tags.Ambiente }}"
+#   cleanup_enabled  = true
+# }
 
 # Output role ARN
 output "{{ role.terraform_name }}_arn" {
@@ -143,8 +144,8 @@ output "{{ role.terraform_name }}_arn" {
   value       = aws_iam_role.{{ role.terraform_name }}.arn
 }
 
-# Output cleanup summary
-output "cleanup_summary" {
-  description = "Summary of obsolete policy cleanup"
-  value       = module.cleanup_obsolete_policies.cleanup_summary
-}
+# Output cleanup summary (DISABLED)
+# output "cleanup_summary" {
+#   description = "Summary of obsolete policy cleanup"  
+#   value       = module.cleanup_obsolete_policies.cleanup_summary
+# }
