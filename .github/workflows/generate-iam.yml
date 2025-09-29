@@ -56,7 +56,26 @@ jobs:
       id-token: write  # Required for OIDC authentication
     
     steps:
-    - name: 📥 Checkout Repository
+    - name: � Ensure repository up-to-date (fast-forward only)
+      if: github.event_name == 'push'
+      run: |
+        echo "🔄 Syncing before changes..."
+        git fetch origin ${GITHUB_REF_NAME}
+        # Intento FF-only; si falla, abortar con mensaje claro
+        if git merge-base --is-ancestor origin/${GITHUB_REF_NAME} ${GITHUB_REF_NAME}; then
+          echo "✅ Local already ahead or equal; continuing"
+        else
+          echo "Intentando fast-forward..."
+          if git pull --ff-only origin ${GITHUB_REF_NAME}; then
+            echo "✅ Fast-forward aplicado"
+          else
+            echo "❌ No se pudo fast-forward (historial divergente). Rebase manual requerido." >&2
+            exit 1
+          fi
+        fi
+        echo "Estado después de sync:" 
+        git --no-pager log --oneline -5
+    - name: �📥 Checkout Repository
       uses: actions/checkout@v4
       with:
         token: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
@@ -249,68 +268,95 @@ jobs:
           fi
         done
 
-        # Extraer diffs de atributos (~, +, -) dentro del bloque de acciones (limitar)
+        # Extraer diffs de atributos (~, +, -) dentro del bloque de acciones (más flexible)
         : > plan_attribute_changes.txt
         if [ -s plan_actions_block.txt ]; then
-          awk '/^ {2}[~+-] /{print}' plan_actions_block.txt > plan_attribute_changes.txt || true
+          # Captura líneas con símbolo diff al inicio tras espacios
+          grep -E '^[[:space:]]*[~+\-]' plan_actions_block.txt > plan_attribute_changes.txt || true
         fi
 
         if [ -s plan_attribute_changes.txt ]; then
-          # Detectar si únicamente cambió la etiqueta Generated
+          # Analizar y construir tabla contextual path|before|after
+          : > attr_changes_parsed.tmp
+          awk '
+            BEGIN { ctx="" }
+            /tags_all = \{/ { ctx="tags_all" }
+            /tags = \{/ && $0 !~ /tags_all/ { ctx="tags" }
+            /^}/ { ctx="" }
+            /->/ {
+              line=$0
+              # eliminar prefijo símbolos dif
+              gsub(/^[ \t~+\-]+/, "", line)
+              # intentar key="..." -> "..."
+              if (match(line, /^"[^"]+"/)) {
+                key=substr(line, RSTART+1, RLENGTH-2)
+                before=""; after=""
+                if (match(line, /= "[^"]*" -> "[^"]*"/)) {
+                  segment=substr(line, RSTART+3, RLENGTH-3)
+                  split(segment, parts, " -> ")
+                  if (length(parts)==2) {
+                    before=parts[1]; after=parts[2]
+                    gsub(/^[" ]+|[" ]+$/, "", before)
+                    gsub(/^[" ]+|[" ]+$/, "", after)
+                  }
+                }
+                path=key
+                if (ctx=="tags" || ctx=="tags_all") { path=ctx "[\"" key "\"]" }
+                if (after!="") { print path "|" before "|" after }
+              }
+            }
+          ' plan_actions_block.txt > attr_changes_parsed.tmp 2>/dev/null || true
+
           total_attr_lines=$(wc -l < plan_attribute_changes.txt || echo 0)
           only_generated=false
-          if [ "$total_attr_lines" -gt 0 ]; then
-            non_generated_lines=$(grep -v '"Generated"' plan_attribute_changes.txt | wc -l | xargs || echo 0)
-            if [ "$non_generated_lines" = "0" ]; then
+          if [ -s attr_changes_parsed.tmp ]; then
+            non_generated_paths=$(grep -v 'Generated' attr_changes_parsed.tmp | wc -l | xargs || echo 0)
+            total_paths=$(wc -l < attr_changes_parsed.tmp | xargs || echo 0)
+            if [ "$total_paths" != "0" ] && [ "$non_generated_paths" = "0" ]; then
               only_generated=true
             fi
           fi
 
+          echo "### 🔍 Atributos cambiados" >> $GITHUB_STEP_SUMMARY
           if [ "$only_generated" = true ]; then
-            echo "> ℹ️ Únicamente cambió la etiqueta temporal 'Generated' (cambio no funcional)." >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "ℹ️ Solo cambió el timestamp generado automáticamente (tags[\"Generated\"])." >> $GITHUB_STEP_SUMMARY
+            echo "No hay impacto funcional. Puedes ignorarlo o aplicar lifecycle ignore_changes." >> $GITHUB_STEP_SUMMARY
           fi
-
-          echo "### 🔍 Atributos cambiados (extracto)" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
+
+            # Mostrar diff crudo (truncado)
+          echo "#### Diff (crudo)" >> $GITHUB_STEP_SUMMARY
+          echo '' >> $GITHUB_STEP_SUMMARY
           echo '\`\`\`diff' >> $GITHUB_STEP_SUMMARY
           if [ "$only_generated" = true ]; then
-            head -5 plan_attribute_changes.txt >> $GITHUB_STEP_SUMMARY
+            grep 'Generated' plan_attribute_changes.txt | head -10 >> $GITHUB_STEP_SUMMARY || true
           else
-            # Filtrar 'Generated' si hay otros cambios para reducir ruido
-            if grep -q '"Generated"' plan_attribute_changes.txt; then
-              grep -v '"Generated"' plan_attribute_changes.txt | head -80 >> $GITHUB_STEP_SUMMARY || true
-            else
-              head -80 plan_attribute_changes.txt >> $GITHUB_STEP_SUMMARY
-            fi
+            # Priorizar líneas con ->
+            grep '->' plan_attribute_changes.txt | head -60 >> $GITHUB_STEP_SUMMARY || head -60 plan_attribute_changes.txt
           fi
-          lines_attr=$(wc -l < plan_attribute_changes.txt || echo 0)
-            if [ "$lines_attr" -gt 80 ]; then
-              echo "... ($lines_attr líneas en total, truncado a 80)" >> $GITHUB_STEP_SUMMARY
-            fi
           echo '\`\`\`' >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
-          # Construir tabla key|antes|después (máx 25) para líneas con ->
-          grep '->' plan_attribute_changes.txt | grep -v '"Generated"' | head -25 > attr_changes_table.tmp || true
-          if [ -s attr_changes_table.tmp ]; then
-            echo "#### Tabla de atributos cambiados" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
+          # Tabla parsed
+          if [ -s attr_changes_parsed.tmp ]; then
+            echo "#### Tabla de valores (parsed)" >> $GITHUB_STEP_SUMMARY
             echo "| Atributo | Antes | Después |" >> $GITHUB_STEP_SUMMARY
             echo "|---|---|---|" >> $GITHUB_STEP_SUMMARY
-            while IFS= read -r l; do
-              # Ejemplo línea: ~ "Generated" = "old" -> "new"
-              key=$(echo "$l" | sed -E 's/^[ ~+-]*"?([^" =]+)"?.*/\1/')
-              before=$(echo "$l" | sed -E 's/.*= "([^"]*)" -> ".*/\1/' )
-              after=$(echo "$l" | sed -E 's/.*-> "([^"]*)".*/\1/' )
-              # Evitar vacíos totales
-              if [ -n "$key" ] && [ -n "$after" ]; then
-                # Escapar pipes
-                b_esc=$(echo "$before" | sed 's/|/\\|/g')
-                a_esc=$(echo "$after" | sed 's/|/\\|/g')
-                echo "| $key | ${b_esc:--} | $a_esc |" >> $GITHUB_STEP_SUMMARY
-              fi
-            done < attr_changes_table.tmp
+            head -25 attr_changes_parsed.tmp | while IFS='|' read -r path before after; do
+              b_esc=$(echo "$before" | sed 's/|/\\|/g')
+              a_esc=$(echo "$after" | sed 's/|/\\|/g')
+              echo "| $path | ${b_esc:--} | $a_esc |" >> $GITHUB_STEP_SUMMARY
+            done
+            total_parsed=$(wc -l < attr_changes_parsed.tmp | xargs || echo 0)
+            if [ "$total_parsed" -gt 25 ]; then
+              echo "_(Truncado a 25 de $total_parsed cambios de atributos)_" >> $GITHUB_STEP_SUMMARY
+            fi
+            echo "" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          # Recomendación ignore_changes si solo Generated se modifica
+          if [ "$only_generated" = true ]; then
+            echo "> Sugerencia: añadir en el recurso terraform ->\n> lifecycle { ignore_changes = [ tags[\"Generated\"], tags_all[\"Generated\"] ] }" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
           fi
         fi
