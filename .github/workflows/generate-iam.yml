@@ -151,65 +151,126 @@ jobs:
       run: |
         cd generated
         echo "## 🗂️ Terraform Plan Preview" >> $GITHUB_STEP_SUMMARY
-        echo "### 📊 What would be deployed:" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
-        
-        # Show generated files count
-        echo "📁 Generated files: $(find . -name '*.tf' | wc -l) Terraform files" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        
-        # Run terraform plan with clean output formatting (no duplication to console)
+
+        # Run terraform plan (raw capture)
         echo "🔍 Running Terraform Plan..."
-        
-        # Capture plan with silent execution (prevent GitHub Actions debug output)
-        echo "📋 Executing terraform plan (silent mode)..."
-        TF_LOG="" TF_LOG_CORE="" TF_LOG_PROVIDER="" terraform plan -no-color -input=false > plan_raw.txt 2>/dev/null
-        
-        # Clean the plan output by removing debug lines and encoded characters
-        if [ -f plan_raw.txt ]; then
-          grep -v "::debug::" plan_raw.txt | \
-          grep -v "%0A" | \
-          grep -v "^data\." | \
-          grep -v "^module\." | \
-          sed 's/%0A/\n/g' > plan_output.txt
+        TF_LOG="" TF_LOG_CORE="" TF_LOG_PROVIDER="" terraform plan -no-color -input=false > plan_raw.txt 2>/dev/null || true
+
+        # Sanear salida básica
+        grep -v "::debug::" plan_raw.txt | grep -v "%0A" | grep -v "^data\." | grep -v "^module\." | sed 's/%0A/\n/g' > plan_output.txt || true
+
+        # Extraer totales
+        plan_totals=$(grep -E "^[0-9]+ to add, [0-9]+ to change, [0-9]+ to destroy\.$" plan_output.txt | tail -1 || true)
+        if [ -z "$plan_totals" ]; then
+          if grep -q "No changes" plan_output.txt; then
+            plan_totals="0 to add, 0 to change, 0 to destroy."
+          fi
         fi
 
-        # === Nuevo: Extraer bloque de acciones del plan limpio ===
+        echo "### 📊 Totales" >> $GITHUB_STEP_SUMMARY
+        if [ -n "$plan_totals" ]; then
+          echo "**Plan:** $plan_totals" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "No se detectaron totales (posible error de plan)." >> $GITHUB_STEP_SUMMARY
+        fi
+        echo "" >> $GITHUB_STEP_SUMMARY
+
+        # Conteo de archivos generados
+        echo "📁 Generated files: $(find . -name '*.tf' | wc -l) Terraform files" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+
+        # Bloque de acciones
         if grep -q "Terraform will perform the following actions:" plan_output.txt; then
           awk '/Terraform will perform the following actions:/{flag=1;next}/^[0-9]+ to add, [0-9]+ to change, [0-9]+ to destroy\.$/{flag=0}flag' plan_output.txt > plan_actions_block.txt || true
         else
           : > plan_actions_block.txt
         fi
 
-        # Crear lista resumida de recursos y acción (máx 25)
-        awk '/^ *# / && / will be / {print $0}' plan_output.txt | sed 's/^ *# //' | sed 's/ will be / -> /' | head -25 > plan_changes_list.txt || true
+        # Línea recurso -> acción normalizada
+        # Mapear textos terraform a create/update/replace/destroy
+        awk '/^ *# / && / will be / {print $0}' plan_output.txt | sed 's/^ *# //' > plan_changes_full.tmp || true
+        : > plan_change_types.txt
+        while IFS= read -r line; do
+          recurso=$(echo "$line" | sed 's/ will be .*//')
+          accion_raw=$(echo "$line" | sed 's/.* will be //')
+          accion="$(echo "$accion_raw" | awk '{print $1$2$3$4$5}')" # fallback
+          if echo "$accion_raw" | grep -q "created"; then accion="create"; fi
+          if echo "$accion_raw" | grep -q "updated in-place"; then accion="update"; fi
+          if echo "$accion_raw" | grep -q "destroyed"; then accion="destroy"; fi
+          if echo "$accion_raw" | grep -q "replaced"; then accion="replace"; fi
+          echo "$recurso -> $accion" >> plan_change_types.txt
+        done < plan_changes_full.tmp
 
-        # Añadir resumen derivado al Step Summary (si hay acciones)
-        if [ -s plan_changes_list.txt ]; then
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### 🧩 Resumen de recursos (derivado del plan)" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Recurso | Acción |" >> $GITHUB_STEP_SUMMARY
-          echo "|---|---|" >> $GITHUB_STEP_SUMMARY
-          while IFS='->' read -r res act; do
-            res_trim=$(echo "$res" | xargs)
-            act_trim=$(echo "$act" | xargs)
-            [ -n "$res_trim" ] && echo "| $res_trim | $act_trim |" >> $GITHUB_STEP_SUMMARY
-          done < plan_changes_list.txt
+        # Agrupar por acción
+        for a in create update replace destroy; do
+          grep " -> $a$" plan_change_types.txt | sed "s/ -> $a$//" > "group_$a.txt" || true
+        done
+
+        # Tabla resumen (máx 40 filas)
+        echo "### 🧩 Tabla de cambios por recurso" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "| Recurso | Acción |" >> $GITHUB_STEP_SUMMARY
+        echo "|---|---|" >> $GITHUB_STEP_SUMMARY
+        head -40 plan_change_types.txt | while IFS='->' read -r res act; do
+          r=$(echo "$res" | xargs); a=$(echo "$act" | xargs)
+          [ -n "$r" ] && [ -n "$a" ] && echo "| $r | $a |" >> $GITHUB_STEP_SUMMARY
+        done
+        total_lines=$(wc -l < plan_change_types.txt 2>/dev/null || echo 0)
+        if [ "$total_lines" -gt 40 ]; then
+          echo "_(Truncado a 40 de $total_lines recursos)_" >> $GITHUB_STEP_SUMMARY
+        fi
+        echo "" >> $GITHUB_STEP_SUMMARY
+
+        # Listas por categoría
+        echo "### 📦 Cambios por tipo" >> $GITHUB_STEP_SUMMARY
+        for a in create update replace destroy; do
+          count=$(grep -c " -> $a$" plan_change_types.txt 2>/dev/null || echo 0)
+          if [ "$count" -gt 0 ]; then
+            echo "#### $a ($count)" >> $GITHUB_STEP_SUMMARY
+            grep " -> $a$" plan_change_types.txt | sed "s/ -> $a$//" | head -30 | sed 's/^/- /' >> $GITHUB_STEP_SUMMARY
+            if [ "$count" -gt 30 ]; then
+              echo "- ... (truncado, ver artefacto plan_change_types.txt)" >> $GITHUB_STEP_SUMMARY
+            fi
+            echo "" >> $GITHUB_STEP_SUMMARY
+          fi
+        done
+
+        # Extraer diffs de atributos (~, +, -) dentro del bloque de acciones (limitar)
+        : > plan_attribute_changes.txt
+        if [ -s plan_actions_block.txt ]; then
+          awk '/^ {2}[~+-] /{print}' plan_actions_block.txt > plan_attribute_changes.txt || true
         fi
 
-        # Añadir bloque truncado del plan para inspección rápida
-        if [ -s plan_actions_block.txt ]; then
+        if [ -s plan_attribute_changes.txt ]; then
+          echo "### 🔍 Atributos cambiados (extracto)" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
+          echo '\`\`\`diff' >> $GITHUB_STEP_SUMMARY
+          head -80 plan_attribute_changes.txt >> $GITHUB_STEP_SUMMARY
+          lines_attr=$(wc -l < plan_attribute_changes.txt || echo 0)
+            if [ "$lines_attr" -gt 80 ]; then
+              echo "... ($lines_attr líneas en total, truncado a 80)" >> $GITHUB_STEP_SUMMARY
+            fi
+          echo '\`\`\`' >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+        fi
+
+        # Extracto del plan completo (truncado) para referencia
+        if [ -s plan_actions_block.txt ]; then
           echo "### 🧪 Extracto del plan (truncado)" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo '\`\`\`terraform' >> $GITHUB_STEP_SUMMARY
           head -100 plan_actions_block.txt >> $GITHUB_STEP_SUMMARY || true
-          total_lines=$(wc -l < plan_actions_block.txt || echo 0)
-          if [ "$total_lines" -gt 100 ]; then
-            echo "... (${total_lines} líneas en total, truncado a 100)" >> $GITHUB_STEP_SUMMARY
+          pl=$(wc -l < plan_actions_block.txt || echo 0)
+          if [ "$pl" -gt 100 ]; then
+            echo "... ($pl líneas en total, truncado a 100)" >> $GITHUB_STEP_SUMMARY
           fi
           echo '\`\`\`' >> $GITHUB_STEP_SUMMARY
+        fi
+
+        # Mensaje si no hay cambios
+        if grep -q "No changes" plan_output.txt; then
+          echo "✅ No hay cambios en la infraestructura" >> $GITHUB_STEP_SUMMARY
         fi
 
     - name: 📤 Upload Terraform Plan for Analysis
@@ -221,6 +282,8 @@ jobs:
           generated/plan_raw.txt
           generated/plan_actions_block.txt
           generated/plan_changes_list.txt
+          generated/plan_change_types.txt
+          generated/plan_attribute_changes.txt
           generated/*.tf
         retention-days: 7
 
