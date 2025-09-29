@@ -56,26 +56,7 @@ jobs:
       id-token: write  # Required for OIDC authentication
     
     steps:
-    - name: � Ensure repository up-to-date (fast-forward only)
-      if: github.event_name == 'push'
-      run: |
-        echo "🔄 Syncing before changes..."
-        git fetch origin ${GITHUB_REF_NAME}
-        # Intento FF-only; si falla, abortar con mensaje claro
-        if git merge-base --is-ancestor origin/${GITHUB_REF_NAME} ${GITHUB_REF_NAME}; then
-          echo "✅ Local already ahead or equal; continuing"
-        else
-          echo "Intentando fast-forward..."
-          if git pull --ff-only origin ${GITHUB_REF_NAME}; then
-            echo "✅ Fast-forward aplicado"
-          else
-            echo "❌ No se pudo fast-forward (historial divergente). Rebase manual requerido." >&2
-            exit 1
-          fi
-        fi
-        echo "Estado después de sync:" 
-        git --no-pager log --oneline -5
-    - name: �📥 Checkout Repository
+    - name: � Checkout Repository
       uses: actions/checkout@v4
       with:
         token: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
