@@ -163,12 +163,22 @@ jobs:
         
         # Capture plan with silent execution (prevent GitHub Actions debug output)
         echo "📋 Executing terraform plan (silent mode)..."
-        TF_LOG="" TF_LOG_CORE="" TF_LOG_PROVIDER="" terraform plan -no-color -input=false > plan_output.txt 2>/dev/null
+        TF_LOG="" TF_LOG_CORE="" TF_LOG_PROVIDER="" terraform plan -no-color -input=false > plan_raw.txt 2>/dev/null
+        
+        # Clean the plan output by removing debug lines and encoded characters
+        if [ -f plan_raw.txt ]; then
+          # Remove debug lines that start with various debug prefixes and contain %0A
+          grep -v "::debug::" plan_raw.txt | \
+          grep -v "%0A" | \
+          grep -v "^data\." | \
+          grep -v "^module\." | \
+          sed 's/%0A/\n/g' > plan_output.txt
+        fi
         
         if [ $? -eq 0 ]; then
           echo "✅ Plan completed successfully" >> $GITHUB_STEP_SUMMARY
           
-          # Extract clean plan summary
+          # Extract clean plan summary from cleaned file
           if grep -q "Plan:" plan_output.txt; then
             plan_line=$(grep "Plan:" plan_output.txt | tail -1)
             # Extract just the numbers part: "X to add, Y to change, Z to destroy"
@@ -224,6 +234,7 @@ jobs:
         name: terraform-plan-analysis
         path: |
           generated/plan_output.txt
+          generated/plan_raw.txt
           generated/*.tf
         retention-days: 7
 
