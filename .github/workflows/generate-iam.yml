@@ -167,6 +167,9 @@ jobs:
         TF_LOG="" TF_LOG_CORE="" TF_LOG_PROVIDER="" terraform plan -no-color -input=false > plan_output.txt 2>/dev/null
         if [ $? -eq 0 ]; then
           echo "✅ Plan completed successfully" >> $GITHUB_STEP_SUMMARY
+          # Add plan summary to Step Summary (using safe variable extraction)
+          plan_summary=$(grep "Plan:" plan_output.txt | tail -1 2>/dev/null | sed 's/Plan: //')
+          echo "📊 **Plan: $plan_summary**" >> $GITHUB_STEP_SUMMARY
           
           # Extract and display clean summary in console (no encoded characters)
           if grep -q "Plan:" plan_output.txt; then
