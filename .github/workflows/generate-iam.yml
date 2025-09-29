@@ -148,14 +148,6 @@ jobs:
 
     - name: 📋 Terraform Plan Preview
       id: plan
-      env:
-        TF_LOG: ""                      # Disable terraform debug output completely
-        TF_LOG_CORE: ""                 # Disable core terraform logging
-        TF_LOG_PROVIDER: ""             # Disable provider logging  
-        TF_IN_AUTOMATION: "true"        # Suppress terraform interactive prompts
-        TF_INPUT: "false"               # Disable terraform input prompts
-        RUNNER_DEBUG: "0"               # Disable GitHub runner debug
-        ACTIONS_STEP_DEBUG: "0"         # Disable step debug output
       run: |
         cd generated
         echo "## 🗂️ Terraform Plan Preview" >> $GITHUB_STEP_SUMMARY
@@ -170,14 +162,10 @@ jobs:
         echo "🔍 Running Terraform Plan..."
         echo '```terraform' >> $GITHUB_STEP_SUMMARY
         
-        # Run terraform plan with SILENT execution (prevent debug output in Step Summary)
-        echo "📋 Executing terraform plan (silent mode to prevent debug output)..."
-        
-        # Execute plan with completely suppressed output to prevent ::debug:: messages
-        terraform plan -no-color -input=false >/dev/null 2>&1 && PLAN_SUCCESS="true" || PLAN_SUCCESS="false"
-        terraform plan -no-color -input=false > plan_output.txt 2>/dev/null || echo "Plan failed" > plan_output.txt
-        
-        if [ "$PLAN_SUCCESS" = "true" ]; then
+        # Capture plan with silent execution (prevent GitHub Actions debug output)
+        echo "📋 Executing terraform plan (silent mode)..."
+        TF_LOG="" TF_LOG_CORE="" TF_LOG_PROVIDER="" terraform plan -no-color -input=false > plan_output.txt 2>/dev/null
+        if [ $? -eq 0 ]; then
           echo "✅ Plan completed successfully" >> $GITHUB_STEP_SUMMARY
           
           # Extract and display clean summary in console (no encoded characters)
