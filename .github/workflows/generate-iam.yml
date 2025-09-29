@@ -1,7 +1,7 @@
 name: 🤖 Auto-Generate IAM Terraform
 
 # Prevent multiple workflows running simultaneously to avoid state lock conflicts
-# Note: cancel-in-progress disabled to avoid or          echo "📊 Plan Summary:" >> $GITHUB_STEP_SUMMARYhaned Terraform state locks
+# Note: cancel-in-progress disabled to avoid orphaned Terraform state locks
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
@@ -149,110 +149,64 @@ jobs:
     - name: 📋 Terraform Plan Preview
       id: plan
       run: |
+        set -euo pipefail
         cd generated
-        echo "## 🗂️ Terraform Plan Preview" >> $GITHUB_STEP_SUMMARY
-        echo "### 📊 What would be deployed:" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        
-        # Show generated files count
-        echo "📁 Generated files: $(find . -name '*.tf' | wc -l) Terraform files" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        
-        # Run terraform plan with clean output formatting (no duplication to console)
-        echo "🔍 Running Terraform Plan..."
-        echo '```terraform' >> $GITHUB_STEP_SUMMARY
-        
-        # Capture plan with silent execution (prevent GitHub Actions debug output)
-        echo "📋 Executing terraform plan (silent mode)..."
-        TF_LOG="" TF_LOG_CORE="" TF_LOG_PROVIDER="" terraform plan -no-color -input=false > plan_output.txt 2>/dev/null
-        if [ $? -eq 0 ]; then
-          echo "✅ Plan completed successfully" >> $GITHUB_STEP_SUMMARY
-          # Add plan summary to Step Summary (using safe variable extraction)
-          plan_summary=$(grep "Plan:" plan_output.txt | tail -1 2>/dev/null | sed 's/Plan: //')
-          echo "📊 **Plan: $plan_summary**" >> $GITHUB_STEP_SUMMARY
-          
-          # Extract and display clean summary in console (no encoded characters)
-          if grep -q "Plan:" plan_output.txt; then
-            plan_summary=$(grep "Plan:" plan_output.txt | tail -1)
-            echo "📊 PLAN SUMMARY: $plan_summary"
-            
-            # Show organized breakdown
-            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            if echo "$plan_summary" | grep -q "0 to add.*0 to change.*0 to destroy"; then
-              echo "✅ NO CHANGES - Infrastructure is up to date"
-            else
-              echo "🔄 CHANGES DETECTED:"
-              echo "$plan_summary" | sed 's/Plan: /  /'
-            fi
-            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          elif grep -q "No changes" plan_output.txt; then
-            echo "✅ NO CHANGES - Infrastructure matches configuration"
-          else
-            echo "📄 Plan generated - check artifacts for details"
-          fi
-        else
-          echo "⚠️ Plan encountered issues - check artifacts for details"
-          echo "⚠️ Terraform plan encountered issues - check details below" >> $GITHUB_STEP_SUMMARY
+
+        # Asegura jq (por si la imagen cambia en el runner)
+        if ! command -v jq >/dev/null 2>&1; then
+          sudo apt-get update -y && sudo apt-get install -y jq
         fi
-        
-        # Parse and format plan output for summary
-        if grep -q "No changes" plan_output.txt; then
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "✅ No changes detected - infrastructure is up to date" >> $GITHUB_STEP_SUMMARY
-        elif grep -q "Plan:" plan_output.txt; then
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "� Plan Summary:" >> $GITHUB_STEP_SUMMARY
-          # Don't write plan_output.txt content to Step Summary (causes debug output)
-          # grep "Plan:" plan_output.txt | tail -1 >> $GITHUB_STEP_SUMMARY
-          echo "**Plan completed - see console output above for summary**" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "📋 Resource Changes Preview:" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          
-          # DISABLED: Don't write plan details to Step Summary (causes encoded debug output)
-          # temp_plan=$(mktemp)
-          # grep -A 25 "Terraform will perform the following actions:" plan_output.txt | head -25 > "$temp_plan" 2>/dev/null || true
-          # while IFS= read -r line || [ -n "$line" ]; do
-          #   echo "$line" >> $GITHUB_STEP_SUMMARY
-          # done < "$temp_plan"
-          # rm -f "$temp_plan"
-          echo "📋 Plan details available in console output above and in artifacts" >> $GITHUB_STEP_SUMMARY
-        else
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "📋 Plan Output Preview:" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          
-          # Format first part line by line  
-          temp_head=$(mktemp)
-          head -15 plan_output.txt > "$temp_head" 2>/dev/null || true
-          while IFS= read -r line || [ -n "$line" ]; do
-            echo "$line" >> $GITHUB_STEP_SUMMARY
-          done < "$temp_head"
-          
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "..." >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          
-          # Format last part line by line
-          temp_tail=$(mktemp)
-          tail -8 plan_output.txt > "$temp_tail" 2>/dev/null || true
-          while IFS= read -r line || [ -n "$line" ]; do
-            echo "$line" >> $GITHUB_STEP_SUMMARY  
-          done < "$temp_tail"
-          
-          rm -f "$temp_head" "$temp_tail"
-        fi
-        
-        echo '```' >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "💾 Full detailed plan available in artifacts for complete analysis" >> $GITHUB_STEP_SUMMARY
-        echo "✅ Terraform syntax and structure validated successfully" >> $GITHUB_STEP_SUMMARY
+
+        # Plan binario (necesario para JSON estable)
+        terraform plan -no-color -input=false -out=tfplan > /dev/null
+
+        # Convertir a JSON y guardar para artefactos
+        terraform show -json tfplan > plan.json
+
+        # Contadores robustos (si no hay cambios, que sean 0)
+        adds=$(jq '[.resource_changes // [] | .[] | select((.change.actions // []) | index("create"))] | length' plan.json)
+        changes=$(jq '[.resource_changes // [] | .[] | select((.change.actions // []) | index("update"))] | length' plan.json)
+        destroys=$(jq '[.resource_changes // [] | .[] | select((.change.actions // []) | index("delete"))] | length' plan.json)
+
+        # Tabla corta de cambios (máx. 20 filas)
+        jq -r '
+          .resource_changes // [] |
+          map({addr:.address, acts:(.change.actions // [] | join(","))}) |
+          .[] | "| \(.addr) | \(.acts) |"
+        ' plan.json | head -20 > rc_table.txt || true
+
+        {
+          echo "## 🗂️ Terraform Plan Preview"
+          echo ""
+          echo "### 📊 Resumen"
+          echo ""
+          echo "- **Archivos .tf generados:** $(find . -name '*.tf' | wc -l)"
+          echo "- **Plan:** ${adds} to add, ${changes} to change, ${destroys} to destroy"
+          echo ""
+          echo "### 🔎 Cambios por recurso (top 20)"
+          echo ""
+          echo "| Recurso | Acciones |"
+          echo "|---|---|"
+          cat rc_table.txt || true
+          echo ""
+          echo "> ℹ️ El plan completo se adjunta como artefacto."
+        } >> "$GITHUB_STEP_SUMMARY"
+
+        # También deja una versión legible del plan para artefactos
+        terraform show -no-color tfplan > plan_output.txt
+
+        # Outputs para pasos posteriores
+        echo "adds=${adds}" >> $GITHUB_OUTPUT
+        echo "changes=${changes}" >> $GITHUB_OUTPUT
+        echo "destroys=${destroys}" >> $GITHUB_OUTPUT
 
     - name: 📤 Upload Terraform Plan for Analysis
       uses: actions/upload-artifact@v4
       with:
         name: terraform-plan-analysis
         path: |
+          generated/tfplan
+          generated/plan.json
           generated/plan_output.txt
           generated/*.tf
         retention-days: 7
