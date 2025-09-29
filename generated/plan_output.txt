@@ -1,4 +1,4 @@
-[command]/home/runner/work/_temp/8bc2afed-ce2d-4f2c-a258-c2154a5646ce/terraform-bin plan -no-color -input=false
+[command]/home/runner/work/_temp/b5afa401-196c-420b-88df-4436b05ca210/terraform-bin plan -no-color -input=false
 aws_iam_role.github_actions_iam_deployment_role: Refreshing state... [id=github-actions-iam-deployment-role]
 
 Terraform used the selected providers to generate the following execution
@@ -22,7 +22,7 @@ Terraform will perform the following actions:
             "Direccion"              = "TIRegional"
             "Dominio"                = "BusinessIntelligence"
             "Fecha de Creacion"      = "2025-09-16"
-          ~ "Generated"              = "2025-09-29T22:12:37.795519" -> "2025-09-29T23:37:38.212189"
+          ~ "Generated"              = "2025-09-29T22:12:37.795519" -> "2025-09-29T23:41:43.244152"
             "Gerencia"               = "MCI"
             "Layer"                  = "Devops"
             "ManagedBy"              = "terraform"
@@ -39,7 +39,7 @@ Terraform will perform the following actions:
             "Última Actualización"   = "2025-09-26"
         }
       ~ tags_all              = {
-          ~ "Generated"              = "2025-09-29T22:12:37.795519" -> "2025-09-29T23:37:38.212189"
+          ~ "Generated"              = "2025-09-29T22:12:37.795519" -> "2025-09-29T23:41:43.244152"
             # (24 unchanged elements hidden)
         }
         # (9 unchanged attributes hidden)
