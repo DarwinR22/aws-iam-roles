@@ -56,7 +56,7 @@ jobs:
       id-token: write  # Required for OIDC authentication
     
     steps:
-    - name: � Checkout Repository
+    - name: 📥 Checkout Repository
       uses: actions/checkout@v4
       with:
         token: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
@@ -300,8 +300,20 @@ jobs:
 
           echo "### 🔍 Atributos cambiados" >> $GITHUB_STEP_SUMMARY
           if [ "$only_generated" = true ]; then
-            echo "ℹ️ Solo cambió el timestamp generado automáticamente (tags[\"Generated\"])." >> $GITHUB_STEP_SUMMARY
-            echo "No hay impacto funcional. Puedes ignorarlo o aplicar lifecycle ignore_changes." >> $GITHUB_STEP_SUMMARY
+            echo "✅ **Solo cambió el timestamp automático 'Generated'** (sin impacto funcional)" >> $GITHUB_STEP_SUMMARY
+            echo "_Este cambio es normal - cada generación actualiza el timestamp_" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Cambio específico:**" >> $GITHUB_STEP_SUMMARY
+            grep 'Generated.*->' plan_attribute_changes.txt | head -1 | sed 's/^[[:space:]]*/- /' >> $GITHUB_STEP_SUMMARY || true
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "> 💡 **Sugerencia**: Añadir lifecycle ignore_changes para evitar este drift:" >> $GITHUB_STEP_SUMMARY
+            echo "> \`\`\`hcl" >> $GITHUB_STEP_SUMMARY
+            echo "> lifecycle {" >> $GITHUB_STEP_SUMMARY
+            echo ">   ignore_changes = [tags[\"Generated\"], tags_all[\"Generated\"]]" >> $GITHUB_STEP_SUMMARY
+            echo "> }" >> $GITHUB_STEP_SUMMARY
+            echo "> \`\`\`" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "🔍 **Cambios funcionales detectados** (revisar impacto)" >> $GITHUB_STEP_SUMMARY
           fi
           echo "" >> $GITHUB_STEP_SUMMARY
 
@@ -335,11 +347,8 @@ jobs:
             echo "" >> $GITHUB_STEP_SUMMARY
           fi
 
-          # Recomendación ignore_changes si solo Generated se modifica
-          if [ "$only_generated" = true ]; then
-            echo "> Sugerencia: añadir en el recurso terraform ->\n> lifecycle { ignore_changes = [ tags[\"Generated\"], tags_all[\"Generated\"] ] }" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-          fi
+          # Recomendación ignore_changes si solo Generated se modifica (ya se mostró arriba)
+          # No repetir aquí para evitar duplicación
         fi
 
         # Extracto del plan completo (truncado) para referencia
@@ -482,7 +491,7 @@ jobs:
         aws-region: us-east-1
         audience: sts.amazonaws.com
 
-    - name: � Import Existing Resources
+    - name: 📦 Import Existing Resources
       run: |
         cd generated
         
@@ -585,7 +594,7 @@ jobs:
         name: terraform-plan-and-state
         path: generated/
 
-    - name: � Import Existing Resources
+    - name: 📦 Import Existing Resources
       run: |
         cd generated
         
