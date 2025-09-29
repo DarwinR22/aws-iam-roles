@@ -160,17 +160,22 @@ jobs:
         # Sanear salida básica
         grep -v "::debug::" plan_raw.txt | grep -v "%0A" | grep -v "^data\." | grep -v "^module\." | sed 's/%0A/\n/g' > plan_output.txt || true
 
-        # Extraer totales
-        plan_totals=$(grep -E "^[0-9]+ to add, [0-9]+ to change, [0-9]+ to destroy\.$" plan_output.txt | tail -1 || true)
-        if [ -z "$plan_totals" ]; then
-          if grep -q "No changes" plan_output.txt; then
-            plan_totals="0 to add, 0 to change, 0 to destroy."
-          fi
+        # Extraer totales (soportar formatos con y sin prefijo 'Plan:')
+        plan_line=$(grep -E "^Plan: [0-9]+ to add, [0-9]+ to change, [0-9]+ to destroy\." plan_output.txt | tail -1 || true)
+        counts_line=$(grep -E "^[0-9]+ to add, [0-9]+ to change, [0-9]+ to destroy\.$" plan_output.txt | tail -1 || true)
+        if [ -n "$plan_line" ]; then
+          plan_display="${plan_line}"  # ya incluye 'Plan:'
+        elif [ -n "$counts_line" ]; then
+          plan_display="Plan: ${counts_line}"
+        elif grep -q "No changes" plan_output.txt; then
+          plan_display="Plan: 0 to add, 0 to change, 0 to destroy."
+        else
+          plan_display=""
         fi
 
         echo "### 📊 Totales" >> $GITHUB_STEP_SUMMARY
-        if [ -n "$plan_totals" ]; then
-          echo "**Plan:** $plan_totals" >> $GITHUB_STEP_SUMMARY
+        if [ -n "$plan_display" ]; then
+          echo "**$plan_display**" >> $GITHUB_STEP_SUMMARY
         else
           echo "No se detectaron totales (posible error de plan)." >> $GITHUB_STEP_SUMMARY
         fi
@@ -209,12 +214,20 @@ jobs:
 
         # Tabla resumen (máx 40 filas)
         echo "### 🧩 Tabla de cambios por recurso" >> $GITHUB_STEP_SUMMARY
+        echo "Leyenda: ➕ create | 🛠 update | ♻ replace | ❌ destroy" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "| Recurso | Acción |" >> $GITHUB_STEP_SUMMARY
         echo "|---|---|" >> $GITHUB_STEP_SUMMARY
         head -40 plan_change_types.txt | while IFS='->' read -r res act; do
-          r=$(echo "$res" | xargs); a=$(echo "$act" | xargs)
-          [ -n "$r" ] && [ -n "$a" ] && echo "| $r | $a |" >> $GITHUB_STEP_SUMMARY
+          r=$(echo "$res" | xargs); a=$(echo "$act" | xargs | sed 's/^>* *//')
+          case "$a" in
+            create) icon="➕" ;;
+            update) icon="🛠" ;;
+            replace) icon="♻" ;;
+            destroy) icon="❌" ;;
+            *) icon="" ;;
+          esac
+          [ -n "$r" ] && [ -n "$a" ] && echo "| $r | $icon $a |" >> $GITHUB_STEP_SUMMARY
         done
         total_lines=$(wc -l < plan_change_types.txt 2>/dev/null || echo 0)
         if [ "$total_lines" -gt 40 ]; then
@@ -243,16 +256,63 @@ jobs:
         fi
 
         if [ -s plan_attribute_changes.txt ]; then
+          # Detectar si únicamente cambió la etiqueta Generated
+          total_attr_lines=$(wc -l < plan_attribute_changes.txt || echo 0)
+          only_generated=false
+          if [ "$total_attr_lines" -gt 0 ]; then
+            non_generated_lines=$(grep -v '"Generated"' plan_attribute_changes.txt | wc -l | xargs || echo 0)
+            if [ "$non_generated_lines" = "0" ]; then
+              only_generated=true
+            fi
+          fi
+
+          if [ "$only_generated" = true ]; then
+            echo "> ℹ️ Únicamente cambió la etiqueta temporal 'Generated' (cambio no funcional)." >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+          fi
+
           echo "### 🔍 Atributos cambiados (extracto)" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo '\`\`\`diff' >> $GITHUB_STEP_SUMMARY
-          head -80 plan_attribute_changes.txt >> $GITHUB_STEP_SUMMARY
+          if [ "$only_generated" = true ]; then
+            head -5 plan_attribute_changes.txt >> $GITHUB_STEP_SUMMARY
+          else
+            # Filtrar 'Generated' si hay otros cambios para reducir ruido
+            if grep -q '"Generated"' plan_attribute_changes.txt; then
+              grep -v '"Generated"' plan_attribute_changes.txt | head -80 >> $GITHUB_STEP_SUMMARY || true
+            else
+              head -80 plan_attribute_changes.txt >> $GITHUB_STEP_SUMMARY
+            fi
+          fi
           lines_attr=$(wc -l < plan_attribute_changes.txt || echo 0)
             if [ "$lines_attr" -gt 80 ]; then
               echo "... ($lines_attr líneas en total, truncado a 80)" >> $GITHUB_STEP_SUMMARY
             fi
           echo '\`\`\`' >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Construir tabla key|antes|después (máx 25) para líneas con ->
+          grep '->' plan_attribute_changes.txt | grep -v '"Generated"' | head -25 > attr_changes_table.tmp || true
+          if [ -s attr_changes_table.tmp ]; then
+            echo "#### Tabla de atributos cambiados" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "| Atributo | Antes | Después |" >> $GITHUB_STEP_SUMMARY
+            echo "|---|---|---|" >> $GITHUB_STEP_SUMMARY
+            while IFS= read -r l; do
+              # Ejemplo línea: ~ "Generated" = "old" -> "new"
+              key=$(echo "$l" | sed -E 's/^[ ~+-]*"?([^" =]+)"?.*/\1/')
+              before=$(echo "$l" | sed -E 's/.*= "([^"]*)" -> ".*/\1/' )
+              after=$(echo "$l" | sed -E 's/.*-> "([^"]*)".*/\1/' )
+              # Evitar vacíos totales
+              if [ -n "$key" ] && [ -n "$after" ]; then
+                # Escapar pipes
+                b_esc=$(echo "$before" | sed 's/|/\\|/g')
+                a_esc=$(echo "$after" | sed 's/|/\\|/g')
+                echo "| $key | ${b_esc:--} | $a_esc |" >> $GITHUB_STEP_SUMMARY
+              fi
+            done < attr_changes_table.tmp
+            echo "" >> $GITHUB_STEP_SUMMARY
+          fi
         fi
 
         # Extracto del plan completo (truncado) para referencia
@@ -266,6 +326,17 @@ jobs:
             echo "... ($pl líneas en total, truncado a 100)" >> $GITHUB_STEP_SUMMARY
           fi
           echo '\`\`\`' >> $GITHUB_STEP_SUMMARY
+          # Bloque colapsable más extenso
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "<details><summary>📜 Ver más (hasta 400 líneas del plan completo)</summary>" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo '\n\n\`\`\`terraform' >> $GITHUB_STEP_SUMMARY
+          head -400 plan_actions_block.txt >> $GITHUB_STEP_SUMMARY || true
+          if [ "$pl" -gt 400 ]; then
+            echo "... ($pl líneas en total, truncado a 400)" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo '\`\`\`' >> $GITHUB_STEP_SUMMARY
+          echo "</details>" >> $GITHUB_STEP_SUMMARY
         fi
 
         # Mensaje si no hay cambios
