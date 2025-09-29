@@ -1,0 +1,66 @@
+[command]/home/runner/work/_temp/2354b3f4-0ecb-454b-9090-99217f07990d/terraform-bin plan -no-color -input=false
+module.githubactions_iammanagement.data.aws_caller_identity.current: Reading...
+data.aws_caller_identity.current: Reading...
+data.aws_caller_identity.current: Read complete after 0s [id=393209814297]
+data.aws_iam_policy_document.github_actions_iam_deployment_role_trust: Reading...
+data.aws_iam_policy_document.github_actions_iam_deployment_role_trust: Read complete after 0s [id=1058311888]
+aws_iam_role.github_actions_iam_deployment_role: Refreshing state... [id=github-actions-iam-deployment-role]
+module.githubactions_iammanagement.data.aws_caller_identity.current: Read complete after 0s [id=393209814297]
+module.githubactions_iammanagement.aws_iam_policy.main: Refreshing state... [id=arn:aws:iam::393209814297:policy/policies/mci-githubactions-iammanagement]
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  ~ update in-place
+
+Terraform will perform the following actions:
+
+  # aws_iam_role.github_actions_iam_deployment_role will be updated in-place
+  ~ resource "aws_iam_role" "github_actions_iam_deployment_role" {
+        id                    = "github-actions-iam-deployment-role"
+        name                  = "github-actions-iam-deployment-role"
+      ~ tags                  = {
+            "Alcance SOX"            = "No"
+            "Ambiente"               = "dev"
+            "Aplicacion"             = "CICD"
+            "Area"                   = "DevOps"
+            "Ciclo de Vida"          = "Creacion"
+            "Contacto"               = "darwin.lopez@claro.com.gt"
+            "Creado Por"             = "DarwinLopez"
+            "Direccion"              = "TIRegional"
+            "Dominio"                = "BusinessIntelligence"
+            "Fecha de Creacion"      = "2025-09-16"
+          ~ "Generated"              = "2025-09-26T21:43:04.870216" -> "2025-09-29T21:50:19.140701"
+            "Gerencia"               = "MCI"
+            "Layer"                  = "Devops"
+            "ManagedBy"              = "terraform"
+            "Modulo"                 = "IAM"
+            "Name"                   = "github-actions-iam-deployment-role"
+            "Pais"                   = "rg"
+            "Propietario"            = "DarwinLopez"
+            "Proveedor"              = "InHouse"
+            "Soporte"                = "darwin.lopez@claro.com.gt"
+            "Source"                 = "definitions/roles/github-deployment-role.yaml"
+            "Subdominio"             = "Analytics"
+            "Tipo de Recurso"        = "IAMRole"
+            "Versión"                = "v1.0.8"
+            "Última Actualización"   = "2025-09-26"
+        }
+      ~ tags_all              = {
+          ~ "Generated"              = "2025-09-26T21:43:04.870216" -> "2025-09-29T21:50:19.140701"
+            # (24 unchanged elements hidden)
+        }
+        # (9 unchanged attributes hidden)
+
+        # (1 unchanged block hidden)
+    }
+
+Plan: 0 to add, 1 to change, 0 to destroy.
+
+─────────────────────────────────────────────────────────────────────────────
+
+Note: You didn't use the -out option to save this plan, so Terraform can't
+guarantee to take exactly these actions if you run "terraform apply" now.
+::debug::Terraform exited with code 0.
+::debug::stdout: module.githubactions_iammanagement.data.aws_caller_identity.current: Reading...%0Adata.aws_caller_identity.current: Reading...%0Adata.aws_caller_identity.current: Read complete after 0s [id=393209814297]%0Adata.aws_iam_policy_document.github_actions_iam_deployment_role_trust: Reading...%0Adata.aws_iam_policy_document.github_actions_iam_deployment_role_trust: Read complete after 0s [id=1058311888]%0Aaws_iam_role.github_actions_iam_deployment_role: Refreshing state... [id=github-actions-iam-deployment-role]%0Amodule.githubactions_iammanagement.data.aws_caller_identity.current: Read complete after 0s [id=393209814297]%0Amodule.githubactions_iammanagement.aws_iam_policy.main: Refreshing state... [id=arn:aws:iam::393209814297:policy/policies/mci-githubactions-iammanagement]%0A%0ATerraform used the selected providers to generate the following execution%0Aplan. Resource actions are indicated with the following symbols:%0A  ~ update in-place%0A%0ATerraform will perform the following actions:%0A%0A  # aws_iam_role.github_actions_iam_deployment_role will be updated in-place%0A  ~ resource "aws_iam_role" "github_actions_iam_deployment_role" {%0A        id                    = "github-actions-iam-deployment-role"%0A        name                  = "github-actions-iam-deployment-role"%0A      ~ tags                  = {%0A            "Alcance SOX"            = "No"%0A            "Ambiente"               = "dev"%0A            "Aplicacion"             = "CICD"%0A            "Area"                   = "DevOps"%0A            "Ciclo de Vida"          = "Creacion"%0A            "Contacto"               = "darwin.lopez@claro.com.gt"%0A            "Creado Por"             = "DarwinLopez"%0A            "Direccion"              = "TIRegional"%0A            "Dominio"                = "BusinessIntelligence"%0A            "Fecha de Creacion"      = "2025-09-16"%0A          ~ "Generated"              = "2025-09-26T21:43:04.870216" -> "2025-09-29T21:50:19.140701"%0A            "Gerencia"               = "MCI"%0A            "Layer"                  = "Devops"%0A            "ManagedBy"              = "terraform"%0A            "Modulo"                 = "IAM"%0A            "Name"                   = "github-actions-iam-deployment-role"%0A            "Pais"                   = "rg"%0A            "Propietario"            = "DarwinLopez"%0A            "Proveedor"              = "InHouse"%0A            "Soporte"                = "darwin.lopez@claro.com.gt"%0A            "Source"                 = "definitions/roles/github-deployment-role.yaml"%0A            "Subdominio"             = "Analytics"%0A            "Tipo de Recurso"        = "IAMRole"%0A            "Versión"                = "v1.0.8"%0A            "Última Actualización"   = "2025-09-26"%0A        }%0A      ~ tags_all              = {%0A          ~ "Generated"              = "2025-09-26T21:43:04.870216" -> "2025-09-29T21:50:19.140701"%0A            # (24 unchanged elements hidden)%0A        }%0A        # (9 unchanged attributes hidden)%0A%0A        # (1 unchanged block hidden)%0A    }%0A%0APlan: 0 to add, 1 to change, 0 to destroy.%0A%0A─────────────────────────────────────────────────────────────────────────────%0A%0ANote: You didn't use the -out option to save this plan, so Terraform can't%0Aguarantee to take exactly these actions if you run "terraform apply" now.%0A
+::debug::stderr: 
+::debug::exitcode: 0
