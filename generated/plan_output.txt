@@ -1,4 +1,4 @@
-[command]/home/runner/work/_temp/b5afa401-196c-420b-88df-4436b05ca210/terraform-bin plan -no-color -input=false
+[command]/home/runner/work/_temp/76a087b5-a1c7-4fd2-bb73-22cb1f4c0d26/terraform-bin plan -no-color -input=false
 aws_iam_role.github_actions_iam_deployment_role: Refreshing state... [id=github-actions-iam-deployment-role]
 
 Terraform used the selected providers to generate the following execution
@@ -9,6 +9,7 @@ Terraform will perform the following actions:
 
   # aws_iam_role.github_actions_iam_deployment_role will be updated in-place
   ~ resource "aws_iam_role" "github_actions_iam_deployment_role" {
+      ~ description           = "Rol IAM para despliegues automaticos desde GitHub Actions (repositorio: ClaroCENAM/mci-aws-iam) utilizando OIDC. Permite unicamente la creacion y administracion de recursos IAM a traves de la canalizacion (pipeline) de Terraform" -> "Rol IAM para despliegues automaticos desde GitHub Actions (repositorio: ClaroCENAM/mci-aws-iam) utilizando OIDC. Permite unicamente la creacion y administracion de recursos IAM a traves de la canalizacion (pipeline) de Terraform. Versión mejorada con nuevas capacidades de monitoreo"
         id                    = "github-actions-iam-deployment-role"
         name                  = "github-actions-iam-deployment-role"
       ~ tags                  = {
@@ -22,7 +23,7 @@ Terraform will perform the following actions:
             "Direccion"              = "TIRegional"
             "Dominio"                = "BusinessIntelligence"
             "Fecha de Creacion"      = "2025-09-16"
-          ~ "Generated"              = "2025-09-29T22:12:37.795519" -> "2025-09-29T23:41:43.244152"
+          ~ "Generated"              = "2025-09-29T22:12:37.795519" -> "2025-09-29T23:53:53.319357"
             "Gerencia"               = "MCI"
             "Layer"                  = "Devops"
             "ManagedBy"              = "terraform"
@@ -33,16 +34,20 @@ Terraform will perform the following actions:
             "Proveedor"              = "InHouse"
             "Soporte"                = "darwin.lopez@claro.com.gt"
             "Source"                 = "definitions/roles/github-deployment-role.yaml"
+          + "Status Demo"            = "Testing plan preview functionality"
             "Subdominio"             = "Analytics"
             "Tipo de Recurso"        = "IAMRole"
-            "Versión"                = "v1.0.8"
-            "Última Actualización"   = "2025-09-26"
+          ~ "Versión"                = "v1.0.8" -> "v1.0.9"
+          ~ "Última Actualización"   = "2025-09-26" -> "2025-09-29"
         }
       ~ tags_all              = {
-          ~ "Generated"              = "2025-09-29T22:12:37.795519" -> "2025-09-29T23:41:43.244152"
-            # (24 unchanged elements hidden)
+          ~ "Generated"              = "2025-09-29T22:12:37.795519" -> "2025-09-29T23:53:53.319357"
+          + "Status Demo"            = "Testing plan preview functionality"
+          ~ "Versión"                = "v1.0.8" -> "v1.0.9"
+          ~ "Última Actualización"   = "2025-09-26" -> "2025-09-29"
+            # (22 unchanged elements hidden)
         }
-        # (9 unchanged attributes hidden)
+        # (8 unchanged attributes hidden)
 
         # (1 unchanged block hidden)
     }
