@@ -199,21 +199,21 @@ jobs:
         elif grep -q "Plan:" plan_output.txt; then
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "� Plan Summary:" >> $GITHUB_STEP_SUMMARY
-          grep "Plan:" plan_output.txt | tail -1 >> $GITHUB_STEP_SUMMARY
+          # Don't write plan_output.txt content to Step Summary (causes debug output)
+          # grep "Plan:" plan_output.txt | tail -1 >> $GITHUB_STEP_SUMMARY
+          echo "**Plan completed - see console output above for summary**" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "📋 Resource Changes Preview:" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           
-          # Extract and format plan details line by line (avoid single long line in preview)
-          temp_plan=$(mktemp)
-          grep -A 25 "Terraform will perform the following actions:" plan_output.txt | head -25 > "$temp_plan" 2>/dev/null || true
-          
-          # Add each line individually to preserve proper formatting
-          while IFS= read -r line || [ -n "$line" ]; do
-            echo "$line" >> $GITHUB_STEP_SUMMARY
-          done < "$temp_plan"
-          
-          rm -f "$temp_plan"
+          # DISABLED: Don't write plan details to Step Summary (causes encoded debug output)
+          # temp_plan=$(mktemp)
+          # grep -A 25 "Terraform will perform the following actions:" plan_output.txt | head -25 > "$temp_plan" 2>/dev/null || true
+          # while IFS= read -r line || [ -n "$line" ]; do
+          #   echo "$line" >> $GITHUB_STEP_SUMMARY
+          # done < "$temp_plan"
+          # rm -f "$temp_plan"
+          echo "📋 Plan details available in console output above and in artifacts" >> $GITHUB_STEP_SUMMARY
         else
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "📋 Plan Output Preview:" >> $GITHUB_STEP_SUMMARY
