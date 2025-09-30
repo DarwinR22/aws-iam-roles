@@ -1,12 +1,12 @@
   ~ resource "aws_iam_role" "github_actions_iam_deployment_role" {
       ~ description           = "Rol IAM para despliegues automaticos desde GitHub Actions (repositorio: ClaroCENAM/mci-aws-iam) utilizando OIDC. Permite unicamente la creacion y administracion de recursos IAM a traves de la canalizacion (pipeline) de Terraform" -> "Rol IAM para despliegues automaticos desde GitHub Actions (repositorio: ClaroCENAM/mci-aws-iam) utilizando OIDC. Permite unicamente la creacion y administracion de recursos IAM a traves de la canalizacion (pipeline) de Terraform. Versión mejorada con nuevas capacidades de monitoreo"
       ~ tags                  = {
-          ~ "Generated"              = "2025-09-29T22:12:37.795519" -> "2025-09-29T23:53:53.319357"
+          ~ "Generated"              = "2025-09-29T22:12:37.795519" -> "2025-09-30T00:00:53.605327"
           + "Status Demo"            = "Testing plan preview functionality"
           ~ "Versión"                = "v1.0.8" -> "v1.0.9"
           ~ "Última Actualización"   = "2025-09-26" -> "2025-09-29"
       ~ tags_all              = {
-          ~ "Generated"              = "2025-09-29T22:12:37.795519" -> "2025-09-29T23:53:53.319357"
+          ~ "Generated"              = "2025-09-29T22:12:37.795519" -> "2025-09-30T00:00:53.605327"
           + "Status Demo"            = "Testing plan preview functionality"
           ~ "Versión"                = "v1.0.8" -> "v1.0.9"
           ~ "Última Actualización"   = "2025-09-26" -> "2025-09-29"
