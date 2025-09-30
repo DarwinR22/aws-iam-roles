@@ -366,20 +366,58 @@ jobs:
             grep 'Generated.*->' plan_actions_block.txt | head -1 | sed 's/^[[:space:]]*~/  ~ /' >> $GITHUB_STEP_SUMMARY || true
             echo '\`\`\`' >> $GITHUB_STEP_SUMMARY
           else
-            # Para cambios funcionales, mostrar más detalle pero filtrado
-            echo '\`\`\`terraform' >> $GITHUB_STEP_SUMMARY
-            # Línea del recurso y acción
-            grep "will be" plan_actions_block.txt | head -3 >> $GITHUB_STEP_SUMMARY || true
+            # Para cambios funcionales, extraer info del recurso y mostrar tabla estructurada
+            resource_line=$(grep "will be" plan_actions_block.txt | head -1 || echo "")
+            resource_name=$(echo "$resource_line" | sed 's/ will be.*//' | xargs || echo "N/A")
+            action_desc=$(echo "$resource_line" | sed 's/.* will be //' | xargs || echo "N/A")
+            
+            echo "**📋 Resumen del cambio principal:**" >> $GITHUB_STEP_SUMMARY
+            echo "- **Recurso**: \`$resource_name\`" >> $GITHUB_STEP_SUMMARY
+            echo "- **Acción**: $action_desc" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
-            # Solo líneas con cambios reales (~ + -)
-            grep -E '^[[:space:]]*[~+-]' plan_actions_block.txt | grep -v 'Generated' | head -15 >> $GITHUB_STEP_SUMMARY || true
+            
+            # Extraer cambios específicos en formato tabla mejorado
+            echo "**🔧 Cambios detallados:**" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
-            echo "# Nota: Se omiten tags no modificados para claridad" >> $GITHUB_STEP_SUMMARY
-            pl=$(wc -l < plan_actions_block.txt || echo 0)
-            if [ "$pl" -gt 20 ]; then
-              echo "# Plan completo: $pl líneas (ver sección expandible abajo)" >> $GITHUB_STEP_SUMMARY
-            fi
-            echo '\`\`\`' >> $GITHUB_STEP_SUMMARY
+            echo "| Tipo | Atributo | Valor Anterior | Valor Nuevo |" >> $GITHUB_STEP_SUMMARY
+            echo "|------|----------|----------------|-------------|" >> $GITHUB_STEP_SUMMARY
+            
+            # Procesar cambios línea por línea para tabla estructurada
+            grep -E '^[[:space:]]*[~+-]' plan_actions_block.txt | grep -v 'Generated' | head -20 | while IFS= read -r line; do
+              # Detectar tipo de cambio
+              if echo "$line" | grep -q '^[[:space:]]*+'; then
+                tipo="➕ Add"
+              elif echo "$line" | grep -q '^[[:space:]]*-'; then
+                tipo="❌ Remove"
+              elif echo "$line" | grep -q '^[[:space:]]*~'; then
+                tipo="🛠 Update"
+              else
+                tipo="📝 Change"
+              fi
+              
+              # Limpiar línea y extraer datos
+              clean_line=$(echo "$line" | sed 's/^[[:space:]]*[~+-][[:space:]]*//')
+              
+              if echo "$clean_line" | grep -q ' = .* -> '; then
+                # Cambio de valor (antes -> después)
+                attr=$(echo "$clean_line" | sed 's/ = .*//')
+                valores=$(echo "$clean_line" | sed 's/.*= //')
+                antes=$(echo "$valores" | sed 's/ -> .*//' | sed 's/^"\|"$//g')
+                despues=$(echo "$valores" | sed 's/.* -> //' | sed 's/^"\|"$//g')
+                echo "| $tipo | \`$attr\` | $antes | $despues |" >> $GITHUB_STEP_SUMMARY
+              elif echo "$clean_line" | grep -q ' = '; then
+                # Adición simple
+                attr=$(echo "$clean_line" | sed 's/ = .*//')
+                valor=$(echo "$clean_line" | sed 's/.*= //' | sed 's/^"\|"$//g')
+                echo "| $tipo | \`$attr\` | - | $valor |" >> $GITHUB_STEP_SUMMARY
+              else
+                # Cambio general
+                echo "| $tipo | \`$clean_line\` | - | - |" >> $GITHUB_STEP_SUMMARY
+              fi
+            done
+            
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "_💡 Nota: Se muestran solo los atributos modificados para mayor claridad_" >> $GITHUB_STEP_SUMMARY
           fi
           
           # Bloque colapsable con plan completo original para referencia
