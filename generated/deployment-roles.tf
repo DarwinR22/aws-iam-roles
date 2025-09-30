@@ -6,7 +6,7 @@
 # This file is auto-generated from YAML definitions.
 # DO NOT EDIT MANUALLY - Changes will be overwritten.
 # 
-# Generated: 2025-09-30T00:00:53.605327
+# Generated: 2025-09-30T00:03:05.043997
 # Source: Multiple role definitions in definitions/roles/
 # ==============================================================================
 
@@ -52,7 +52,7 @@ data "aws_iam_policy_document" "github_actions_iam_deployment_role_trust" {
 # IAM Role
 resource "aws_iam_role" "github_actions_iam_deployment_role" {
   name               = "github-actions-iam-deployment-role"
-  description        = "Rol IAM para despliegues automaticos desde GitHub Actions (repositorio: ClaroCENAM/mci-aws-iam) utilizando OIDC. Permite unicamente la creacion y administracion de recursos IAM a traves de la canalizacion (pipeline) de Terraform. Versión mejorada con nuevas capacidades de monitoreo"
+  description        = "Rol IAM para despliegues automaticos desde GitHub Actions con capacidades avanzadas de monitoreo y gestión de infraestructura. Optimizado para CICD y operaciones DevOps"
   assume_role_policy = data.aws_iam_policy_document.github_actions_iam_deployment_role_trust.json
 
   max_session_duration = 3600
@@ -76,15 +76,17 @@ resource "aws_iam_role" "github_actions_iam_deployment_role" {
     "Soporte"              = "darwin.lopez@claro.com.gt"
     "Contacto"             = "darwin.lopez@claro.com.gt"
     "Creado Por"           = "DarwinLopez"
-    "Ciclo de Vida"        = "Creacion"
-    "Versión"              = "v1.0.9"
+    "Ciclo de Vida"        = "Produccion"
+    "Versión"              = "v2.0.0"
     "Fecha de Creacion"    = "2025-09-16"
     "Última Actualización" = "2025-09-29"
-    "Status Demo"          = "Testing plan preview functionality"
+    "Entorno"              = "Desarrollo"
+    "Criticidad"           = "Alta"
+    "Monitoreo"            = "Activo"
     # Auto-generated tags
     "ManagedBy" = "terraform"
     "Source"    = "definitions/roles/github-deployment-role.yaml"
-    "Generated" = "2025-09-30T00:00:53.605327"
+    "Generated" = "2025-09-30T00:03:05.043997"
   }
 }
 
