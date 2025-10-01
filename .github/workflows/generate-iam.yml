@@ -195,15 +195,21 @@ jobs:
         # Línea recurso -> acción normalizada
         # Mapear textos terraform a create/update/replace/destroy
         awk '/^ *# / && / will be / {print $0}' plan_output.txt | sed 's/^ *# //' > plan_changes_full.tmp || true
+        # También capturar líneas con "must be replaced"
+        awk '/^ *# / && / must be replaced/ {print $0}' plan_output.txt | sed 's/^ *# //' >> plan_changes_full.tmp || true
+        
         : > plan_change_types.txt
         while IFS= read -r line; do
-          recurso=$(echo "$line" | sed 's/ will be .*//')
+          recurso=$(echo "$line" | sed 's/ will be .*//' | sed 's/ must be replaced.*//')
           accion_raw=$(echo "$line" | sed 's/.* will be //')
           accion="$(echo "$accion_raw" | awk '{print $1$2$3$4$5}')" # fallback
+          
+          # Detectar tipo de acción
+          if echo "$line" | grep -q "must be replaced"; then accion="replace"; fi
           if echo "$accion_raw" | grep -q "created"; then accion="create"; fi
           if echo "$accion_raw" | grep -q "updated in-place"; then accion="update"; fi
           if echo "$accion_raw" | grep -q "destroyed"; then accion="destroy"; fi
-          if echo "$accion_raw" | grep -q "replaced"; then accion="replace"; fi
+          
           echo "$recurso -> $accion" >> plan_change_types.txt
         done < plan_changes_full.tmp
 
