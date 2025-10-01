@@ -1,0 +1,1 @@
+module.githubactions_iammanagement.aws_iam_policy.main
