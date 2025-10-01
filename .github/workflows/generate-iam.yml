@@ -88,6 +88,7 @@ jobs:
         role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
         aws-region: us-east-1
         audience: sts.amazonaws.com
+        role-session-name: mci-iam-repo-${{ github.run_id }}
 
     - name: 🏗️ Generate Terraform Files
       run: |
@@ -625,6 +626,7 @@ jobs:
         role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
         aws-region: us-east-1
         audience: sts.amazonaws.com
+        role-session-name: mci-iam-repo-${{ github.run_id }}
 
     - name: 📦 Import Existing Resources
       run: |
@@ -722,6 +724,7 @@ jobs:
         role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
         aws-region: us-east-1
         audience: sts.amazonaws.com
+        role-session-name: mci-iam-repo-${{ github.run_id }}
 
     - name: 📥 Download Plan and State
       uses: actions/download-artifact@v4
