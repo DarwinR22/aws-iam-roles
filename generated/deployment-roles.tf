@@ -6,7 +6,7 @@
 # This file is auto-generated from YAML definitions.
 # DO NOT EDIT MANUALLY - Changes will be overwritten.
 # 
-# Generated: 2025-10-01T20:55:50.237765
+# Generated: 2025-10-01T21:22:09.313076
 # Source: Multiple role definitions in definitions/roles/
 # ==============================================================================
 
@@ -83,37 +83,11 @@ resource "aws_iam_role" "github_actions_iam_deployment_role" {
     # Auto-generated tags
     "ManagedBy" = "terraform"
     "Source"    = "definitions/roles/github-deployment-role.yaml"
-    "Generated" = "2025-10-01T20:55:50.237765"
+    "Generated" = "2025-10-01T21:22:09.313076"
   }
 }
 
 # Create policies as independent modules (not attached to role)
-module "githubactions_iammanagement" {
-  source = "./modules/policies/mci_githubactions_iammanagement"
-
-  environment = "dev"
-
-  # ABAC conditions for policy restrictions
-  abac_conditions = {
-    "aws:PrincipalTag/Gerencia" = ["MCI"]
-    "aws:PrincipalTag/Area"     = ["DevOps"]
-    "aws:PrincipalTag/Ambiente" = ["dev"]
-  }
-
-  # AWS Configuration
-  aws_region          = "us-east-1"
-  role_prefix         = "MCI-"
-  policy_prefix       = "MCI-"
-  s3_bucket_name      = "mci-terraform-state"
-  dynamodb_table_name = "mci-terraform-locks"
-  kms_key_id          = "*"
-
-  common_tags = {
-    "Gerencia" = "MCI"
-    "Area"     = "DevOps"
-    "Ambiente" = "dev"
-  }
-}
 
 # To attach policies to role later, manually add:
 # resource "aws_iam_role_policy_attachment" "role_policy" {

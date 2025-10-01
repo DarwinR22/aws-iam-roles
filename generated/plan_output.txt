@@ -1,11 +1,10 @@
-[command]/home/runner/work/_temp/c7996ff8-230e-40e0-8c60-255d1adcc9fe/terraform-bin plan -no-color -input=false
+[command]/home/runner/work/_temp/d1065460-b356-4930-8610-45d7daf34b8c/terraform-bin plan -no-color -input=false
 aws_iam_role.github_actions_iam_deployment_role: Refreshing state... [id=github-actions-iam-deployment-role]
 
 Terraform used the selected providers to generate the following execution
 plan. Resource actions are indicated with the following symbols:
   ~ update in-place
   - destroy
--/+ destroy and then create replacement
 
 Terraform will perform the following actions:
 
@@ -26,7 +25,7 @@ Terraform will perform the following actions:
             "Dominio"                = "BusinessIntelligence"
           - "Entorno"                = "Desarrollo" -> null
             "Fecha de Creacion"      = "2025-09-16"
-          ~ "Generated"              = "2025-10-01T20:36:32.978319" -> "2025-10-01T20:55:50.237765"
+          ~ "Generated"              = "2025-10-01T20:36:32.978319" -> "2025-10-01T21:22:09.313076"
             "Gerencia"               = "MCI"
             "Layer"                  = "Devops"
             "ManagedBy"              = "terraform"
@@ -47,7 +46,7 @@ Terraform will perform the following actions:
           ~ "Ciclo de Vida"          = "Produccion" -> "Creacion"
           - "Criticidad"             = "Alta" -> null
           - "Entorno"                = "Desarrollo" -> null
-          ~ "Generated"              = "2025-10-01T20:36:32.978319" -> "2025-10-01T20:55:50.237765"
+          ~ "Generated"              = "2025-10-01T20:36:32.978319" -> "2025-10-01T21:22:09.313076"
           - "Monitoreo"              = "Activo" -> null
           ~ "Versión"                = "v2.0.0" -> "v1.0.8"
           ~ "Última Actualización"   = "2025-09-29" -> "2025-09-26"
@@ -121,26 +120,121 @@ Terraform will perform the following actions:
         } -> null
     }
 
-  # module.githubactions_iammanagement.aws_iam_policy.main must be replaced
--/+ resource "aws_iam_policy" "main" {
-      ~ arn              = "arn:aws:iam::393209814297:policy/policies/mci-githubactions-iammanagement" -> (known after apply)
-      ~ attachment_count = 0 -> (known after apply)
-      ~ description      = "Complete IAM management permissions for infrastructure deployment with enhanced security controls" -> "Complete IAM management permissions for infrastructure deployment" # forces replacement
-      ~ id               = "arn:aws:iam::393209814297:policy/policies/mci-githubactions-iammanagement" -> (known after apply)
-        name             = "mci-githubactions-iammanagement"
-      + name_prefix      = (known after apply)
-      ~ policy_id        = "ANPAVXDJBTUM7ZSLJC4HI" -> (known after apply)
-        tags             = {
-            "Ambiente" = "dev"
-            "Area"     = "DevOps"
-            "Gerencia" = "MCI"
-            "Name"     = "githubactions-iammanagement-dev"
-            "Type"     = "Policy"
-        }
-        # (3 unchanged attributes hidden)
+  # module.githubactions_iammanagement.aws_iam_policy.main will be destroyed
+  # (because aws_iam_policy.main is not in configuration)
+  - resource "aws_iam_policy" "main" {
+      - arn              = "arn:aws:iam::393209814297:policy/policies/mci-githubactions-iammanagement" -> null
+      - attachment_count = 0 -> null
+      - description      = "Complete IAM management permissions for infrastructure deployment with enhanced security controls" -> null
+      - id               = "arn:aws:iam::393209814297:policy/policies/mci-githubactions-iammanagement" -> null
+      - name             = "mci-githubactions-iammanagement" -> null
+      - path             = "/policies/" -> null
+      - policy           = jsonencode(
+            {
+              - Statement = [
+                  - {
+                      - Action   = [
+                          - "iam:GetRole",
+                          - "iam:GetRolePolicy",
+                          - "iam:GetPolicy",
+                          - "iam:GetPolicyVersion",
+                          - "iam:ListRoles",
+                          - "iam:ListPolicies",
+                          - "iam:ListPolicyVersions",
+                          - "iam:ListAttachedRolePolicies",
+                          - "iam:ListRolePolicies",
+                          - "iam:ListInstanceProfilesForRole",
+                          - "iam:ListRoleTags",
+                        ]
+                      - Effect   = "Allow"
+                      - Resource = [
+                          - "*",
+                        ]
+                      - Sid      = "IAMReadPermissions"
+                    },
+                  - {
+                      - Action   = [
+                          - "iam:GetPolicy",
+                          - "iam:GetPolicyVersion",
+                          - "iam:ListPolicyVersions",
+                          - "iam:ListPolicyTags",
+                        ]
+                      - Effect   = "Allow"
+                      - Resource = [
+                          - "arn:aws:iam::393209814297:policy/policies/*",
+                          - "arn:aws:iam::393209814297:policy/MCI-*",
+                        ]
+                      - Sid      = "IAMPolicyReadAccess"
+                    },
+                  - {
+                      - Action   = [
+                          - "iam:CreateRole",
+                          - "iam:DeleteRole",
+                          - "iam:UpdateRole",
+                          - "iam:TagRole",
+                          - "iam:UntagRole",
+                          - "iam:PutRolePolicy",
+                          - "iam:DeleteRolePolicy",
+                        ]
+                      - Effect   = "Allow"
+                      - Resource = [
+                          - "arn:aws:iam::393209814297:role/MCI-*",
+                        ]
+                      - Sid      = "IAMRoleManagement"
+                    },
+                  - {
+                      - Action   = [
+                          - "iam:CreatePolicy",
+                          - "iam:DeletePolicy",
+                          - "iam:CreatePolicyVersion",
+                          - "iam:DeletePolicyVersion",
+                          - "iam:SetDefaultPolicyVersion",
+                          - "iam:TagPolicy",
+                          - "iam:UntagPolicy",
+                          - "iam:ListPolicyTags",
+                        ]
+                      - Effect   = "Allow"
+                      - Resource = [
+                          - "arn:aws:iam::393209814297:policy/MCI-*",
+                        ]
+                      - Sid      = "IAMPolicyManagement"
+                    },
+                  - {
+                      - Action   = [
+                          - "iam:AttachRolePolicy",
+                          - "iam:DetachRolePolicy",
+                          - "iam:PassRole",
+                        ]
+                      - Effect   = "Allow"
+                      - Resource = [
+                          - "arn:aws:iam::393209814297:role/MCI-*",
+                          - "arn:aws:iam::393209814297:policy/MCI-*",
+                          - "arn:aws:iam::aws:policy/*",
+                        ]
+                      - Sid      = "IAMAttachmentManagement"
+                    },
+                ]
+              - Version   = "2012-10-17"
+            }
+        ) -> null
+      - policy_id        = "ANPAVXDJBTUM7ZSLJC4HI" -> null
+      - tags             = {
+          - "Ambiente" = "dev"
+          - "Area"     = "DevOps"
+          - "Gerencia" = "MCI"
+          - "Name"     = "githubactions-iammanagement-dev"
+          - "Type"     = "Policy"
+        } -> null
+      - tags_all         = {
+          - "Ambiente" = "dev"
+          - "Area"     = "DevOps"
+          - "Gerencia" = "MCI"
+          - "Name"     = "githubactions-iammanagement-dev"
+          - "Type"     = "Policy"
+        } -> null
     }
 
-Plan: 1 to add, 1 to change, 2 to destroy.
+Plan: 0 to add, 1 to change, 2 to destroy.
 
 ─────────────────────────────────────────────────────────────────────────────
 

@@ -1,8 +1,6 @@
-[command]/home/runner/work/_temp/c7996ff8-230e-40e0-8c60-255d1adcc9fe/terraform-bin plan -no-color -input=false
+[command]/home/runner/work/_temp/d1065460-b356-4930-8610-45d7daf34b8c/terraform-bin plan -no-color -input=false
 data.aws_caller_identity.current: Reading...
-module.githubactions_iammanagement.data.aws_caller_identity.current: Reading...
 module.cloudwatch_logs_readonly.aws_iam_policy.main: Refreshing state... [id=arn:aws:iam::393209814297:policy/policies/mci-cloudwatch-logs-readonly]
-module.githubactions_iammanagement.data.aws_caller_identity.current: Read complete after 0s [id=393209814297]
 module.githubactions_iammanagement.aws_iam_policy.main: Refreshing state... [id=arn:aws:iam::393209814297:policy/policies/mci-githubactions-iammanagement]
 data.aws_caller_identity.current: Read complete after 0s [id=393209814297]
 data.aws_iam_policy_document.github_actions_iam_deployment_role_trust: Reading...
@@ -13,7 +11,6 @@ Terraform used the selected providers to generate the following execution
 plan. Resource actions are indicated with the following symbols:
   ~ update in-place
   - destroy
--/+ destroy and then create replacement
 
 Terraform will perform the following actions:
 
@@ -34,7 +31,7 @@ Terraform will perform the following actions:
             "Dominio"                = "BusinessIntelligence"
           - "Entorno"                = "Desarrollo" -> null
             "Fecha de Creacion"      = "2025-09-16"
-          ~ "Generated"              = "2025-10-01T20:36:32.978319" -> "2025-10-01T20:55:50.237765"
+          ~ "Generated"              = "2025-10-01T20:36:32.978319" -> "2025-10-01T21:22:09.313076"
             "Gerencia"               = "MCI"
             "Layer"                  = "Devops"
             "ManagedBy"              = "terraform"
@@ -55,7 +52,7 @@ Terraform will perform the following actions:
           ~ "Ciclo de Vida"          = "Produccion" -> "Creacion"
           - "Criticidad"             = "Alta" -> null
           - "Entorno"                = "Desarrollo" -> null
-          ~ "Generated"              = "2025-10-01T20:36:32.978319" -> "2025-10-01T20:55:50.237765"
+          ~ "Generated"              = "2025-10-01T20:36:32.978319" -> "2025-10-01T21:22:09.313076"
           - "Monitoreo"              = "Activo" -> null
           ~ "Versión"                = "v2.0.0" -> "v1.0.8"
           ~ "Última Actualización"   = "2025-09-29" -> "2025-09-26"
@@ -129,32 +126,127 @@ Terraform will perform the following actions:
         } -> null
     }
 
-  # module.githubactions_iammanagement.aws_iam_policy.main must be replaced
--/+ resource "aws_iam_policy" "main" {
-      ~ arn              = "arn:aws:iam::393209814297:policy/policies/mci-githubactions-iammanagement" -> (known after apply)
-      ~ attachment_count = 0 -> (known after apply)
-      ~ description      = "Complete IAM management permissions for infrastructure deployment with enhanced security controls" -> "Complete IAM management permissions for infrastructure deployment" # forces replacement
-      ~ id               = "arn:aws:iam::393209814297:policy/policies/mci-githubactions-iammanagement" -> (known after apply)
-        name             = "mci-githubactions-iammanagement"
-      + name_prefix      = (known after apply)
-      ~ policy_id        = "ANPAVXDJBTUM7ZSLJC4HI" -> (known after apply)
-        tags             = {
-            "Ambiente" = "dev"
-            "Area"     = "DevOps"
-            "Gerencia" = "MCI"
-            "Name"     = "githubactions-iammanagement-dev"
-            "Type"     = "Policy"
-        }
-        # (3 unchanged attributes hidden)
+  # module.githubactions_iammanagement.aws_iam_policy.main will be destroyed
+  # (because aws_iam_policy.main is not in configuration)
+  - resource "aws_iam_policy" "main" {
+      - arn              = "arn:aws:iam::393209814297:policy/policies/mci-githubactions-iammanagement" -> null
+      - attachment_count = 0 -> null
+      - description      = "Complete IAM management permissions for infrastructure deployment with enhanced security controls" -> null
+      - id               = "arn:aws:iam::393209814297:policy/policies/mci-githubactions-iammanagement" -> null
+      - name             = "mci-githubactions-iammanagement" -> null
+      - path             = "/policies/" -> null
+      - policy           = jsonencode(
+            {
+              - Statement = [
+                  - {
+                      - Action   = [
+                          - "iam:GetRole",
+                          - "iam:GetRolePolicy",
+                          - "iam:GetPolicy",
+                          - "iam:GetPolicyVersion",
+                          - "iam:ListRoles",
+                          - "iam:ListPolicies",
+                          - "iam:ListPolicyVersions",
+                          - "iam:ListAttachedRolePolicies",
+                          - "iam:ListRolePolicies",
+                          - "iam:ListInstanceProfilesForRole",
+                          - "iam:ListRoleTags",
+                        ]
+                      - Effect   = "Allow"
+                      - Resource = [
+                          - "*",
+                        ]
+                      - Sid      = "IAMReadPermissions"
+                    },
+                  - {
+                      - Action   = [
+                          - "iam:GetPolicy",
+                          - "iam:GetPolicyVersion",
+                          - "iam:ListPolicyVersions",
+                          - "iam:ListPolicyTags",
+                        ]
+                      - Effect   = "Allow"
+                      - Resource = [
+                          - "arn:aws:iam::393209814297:policy/policies/*",
+                          - "arn:aws:iam::393209814297:policy/MCI-*",
+                        ]
+                      - Sid      = "IAMPolicyReadAccess"
+                    },
+                  - {
+                      - Action   = [
+                          - "iam:CreateRole",
+                          - "iam:DeleteRole",
+                          - "iam:UpdateRole",
+                          - "iam:TagRole",
+                          - "iam:UntagRole",
+                          - "iam:PutRolePolicy",
+                          - "iam:DeleteRolePolicy",
+                        ]
+                      - Effect   = "Allow"
+                      - Resource = [
+                          - "arn:aws:iam::393209814297:role/MCI-*",
+                        ]
+                      - Sid      = "IAMRoleManagement"
+                    },
+                  - {
+                      - Action   = [
+                          - "iam:CreatePolicy",
+                          - "iam:DeletePolicy",
+                          - "iam:CreatePolicyVersion",
+                          - "iam:DeletePolicyVersion",
+                          - "iam:SetDefaultPolicyVersion",
+                          - "iam:TagPolicy",
+                          - "iam:UntagPolicy",
+                          - "iam:ListPolicyTags",
+                        ]
+                      - Effect   = "Allow"
+                      - Resource = [
+                          - "arn:aws:iam::393209814297:policy/MCI-*",
+                        ]
+                      - Sid      = "IAMPolicyManagement"
+                    },
+                  - {
+                      - Action   = [
+                          - "iam:AttachRolePolicy",
+                          - "iam:DetachRolePolicy",
+                          - "iam:PassRole",
+                        ]
+                      - Effect   = "Allow"
+                      - Resource = [
+                          - "arn:aws:iam::393209814297:role/MCI-*",
+                          - "arn:aws:iam::393209814297:policy/MCI-*",
+                          - "arn:aws:iam::aws:policy/*",
+                        ]
+                      - Sid      = "IAMAttachmentManagement"
+                    },
+                ]
+              - Version   = "2012-10-17"
+            }
+        ) -> null
+      - policy_id        = "ANPAVXDJBTUM7ZSLJC4HI" -> null
+      - tags             = {
+          - "Ambiente" = "dev"
+          - "Area"     = "DevOps"
+          - "Gerencia" = "MCI"
+          - "Name"     = "githubactions-iammanagement-dev"
+          - "Type"     = "Policy"
+        } -> null
+      - tags_all         = {
+          - "Ambiente" = "dev"
+          - "Area"     = "DevOps"
+          - "Gerencia" = "MCI"
+          - "Name"     = "githubactions-iammanagement-dev"
+          - "Type"     = "Policy"
+        } -> null
     }
 
-Plan: 1 to add, 1 to change, 2 to destroy.
+Plan: 0 to add, 1 to change, 2 to destroy.
 
 ─────────────────────────────────────────────────────────────────────────────
 
 Note: You didn't use the -out option to save this plan, so Terraform can't
 guarantee to take exactly these actions if you run "terraform apply" now.
 ::debug::Terraform exited with code 0.
-::debug::stdout: data.aws_caller_identity.current: Reading...%0Amodule.githubactions_iammanagement.data.aws_caller_identity.current: Reading...%0Amodule.cloudwatch_logs_readonly.aws_iam_policy.main: Refreshing state... [id=arn:aws:iam::393209814297:policy/policies/mci-cloudwatch-logs-readonly]%0Amodule.githubactions_iammanagement.data.aws_caller_identity.current: Read complete after 0s [id=393209814297]%0Amodule.githubactions_iammanagement.aws_iam_policy.main: Refreshing state... [id=arn:aws:iam::393209814297:policy/policies/mci-githubactions-iammanagement]%0Adata.aws_caller_identity.current: Read complete after 0s [id=393209814297]%0Adata.aws_iam_policy_document.github_actions_iam_deployment_role_trust: Reading...%0Adata.aws_iam_policy_document.github_actions_iam_deployment_role_trust: Read complete after 0s [id=1058311888]%0Aaws_iam_role.github_actions_iam_deployment_role: Refreshing state... [id=github-actions-iam-deployment-role]%0A%0ATerraform used the selected providers to generate the following execution%0Aplan. Resource actions are indicated with the following symbols:%0A  ~ update in-place%0A  - destroy%0A-/+ destroy and then create replacement%0A%0ATerraform will perform the following actions:%0A%0A  # aws_iam_role.github_actions_iam_deployment_role will be updated in-place%0A  ~ resource "aws_iam_role" "github_actions_iam_deployment_role" {%0A        id                    = "github-actions-iam-deployment-role"%0A        name                  = "github-actions-iam-deployment-role"%0A      ~ tags                  = {%0A            "Alcance SOX"            = "No"%0A            "Ambiente"               = "dev"%0A            "Aplicacion"             = "CICD"%0A            "Area"                   = "DevOps"%0A          ~ "Ciclo de Vida"          = "Produccion" -> "Creacion"%0A            "Contacto"               = "darwin.lopez@claro.com.gt"%0A            "Creado Por"             = "DarwinLopez"%0A          - "Criticidad"             = "Alta" -> null%0A            "Direccion"              = "TIRegional"%0A            "Dominio"                = "BusinessIntelligence"%0A          - "Entorno"                = "Desarrollo" -> null%0A            "Fecha de Creacion"      = "2025-09-16"%0A          ~ "Generated"              = "2025-10-01T20:36:32.978319" -> "2025-10-01T20:55:50.237765"%0A            "Gerencia"               = "MCI"%0A            "Layer"                  = "Devops"%0A            "ManagedBy"              = "terraform"%0A            "Modulo"                 = "IAM"%0A          - "Monitoreo"              = "Activo" -> null%0A            "Name"                   = "github-actions-iam-deployment-role"%0A            "Pais"                   = "rg"%0A            "Propietario"            = "DarwinLopez"%0A            "Proveedor"              = "InHouse"%0A            "Soporte"                = "darwin.lopez@claro.com.gt"%0A            "Source"                 = "definitions/roles/github-deployment-role.yaml"%0A            "Subdominio"             = "Analytics"%0A            "Tipo de Recurso"        = "IAMRole"%0A          ~ "Versión"                = "v2.0.0" -> "v1.0.8"%0A          ~ "Última Actualización"   = "2025-09-29" -> "2025-09-26"%0A        }%0A      ~ tags_all              = {%0A          ~ "Ciclo de Vida"          = "Produccion" -> "Creacion"%0A          - "Criticidad"             = "Alta" -> null%0A          - "Entorno"                = "Desarrollo" -> null%0A          ~ "Generated"              = "2025-10-01T20:36:32.978319" -> "2025-10-01T20:55:50.237765"%0A          - "Monitoreo"              = "Activo" -> null%0A          ~ "Versión"                = "v2.0.0" -> "v1.0.8"%0A          ~ "Última Actualización"   = "2025-09-29" -> "2025-09-26"%0A            # (21 unchanged elements hidden)%0A        }%0A        # (9 unchanged attributes hidden)%0A%0A        # (1 unchanged block hidden)%0A    }%0A%0A  # module.cloudwatch_logs_readonly.aws_iam_policy.main will be destroyed%0A  # (because aws_iam_policy.main is not in configuration)%0A  - resource "aws_iam_policy" "main" {%0A      - arn              = "arn:aws:iam::393209814297:policy/policies/mci-cloudwatch-logs-readonly" -> null%0A      - attachment_count = 0 -> null%0A      - description      = "Permite lectura de logs de CloudWatch para monitoreo y debugging de deployments" -> null%0A      - id               = "arn:aws:iam::393209814297:policy/policies/mci-cloudwatch-logs-readonly" -> null%0A      - name             = "mci-cloudwatch-logs-readonly" -> null%0A      - path             = "/policies/" -> null%0A      - policy           = jsonencode(%0A            {%0A              - Statement = [%0A                  - {%0A                      - Action   = [%0A                          - "logs:DescribeLogGroups",%0A                          - "logs:DescribeLogStreams",%0A                          - "logs:GetLogEvents",%0A                          - "logs:FilterLogEvents",%0A                          - "logs:StartQuery",%0A                          - "logs:StopQuery",%0A                          - "logs:DescribeQueries",%0A                          - "logs:GetQueryResults",%0A                        ]%0A                      - Effect   = "Allow"%0A                      - Resource = [%0A                          - "arn:aws:logs:*:*:log-group:/aws/github-actions/*",%0A                          - "arn:aws:logs:*:*:log-group:/aws/lambda/*",%0A                        ]%0A                      - Sid      = "CloudWatchLogsReadAccess"%0A                    },%0A                  - {%0A                      - Action   = [%0A                          - "cloudwatch:GetMetricStatistics",%0A                          - "cloudwatch:ListMetrics",%0A                          - "cloudwatch:GetMetricData",%0A                        ]%0A                      - Effect   = "Allow"%0A                      - Resource = [%0A                          - "*",%0A                        ]%0A                      - Sid      = "CloudWatchMetricsReadAccess"%0A                    },%0A                ]%0A              - Version   = "2012-10-17"%0A            }%0A        ) -> null%0A      - policy_id        = "ANPAVXDJBTUM5TG3IIIPU" -> null%0A      - tags             = {%0A          - "Ambiente" = "dev"%0A          - "Area"     = "DevOps"%0A          - "Gerencia" = "MCI"%0A          - "Name"     = "cloudwatch-logs-readonly-dev"%0A          - "Type"     = "Policy"%0A        } -> null%0A      - tags_all         = {%0A          - "Ambiente" = "dev"%0A          - "Area"     = "DevOps"%0A          - "Gerencia" = "MCI"%0A          - "Name"     = "cloudwatch-logs-readonly-dev"%0A          - "Type"     = "Policy"%0A        } -> null%0A    }%0A%0A  # module.githubactions_iammanagement.aws_iam_policy.main must be replaced%0A-/+ resource "aws_iam_policy" "main" {%0A      ~ arn              = "arn:aws:iam::393209814297:policy/policies/mci-githubactions-iammanagement" -> (known after apply)%0A      ~ attachment_count = 0 -> (known after apply)%0A      ~ description      = "Complete IAM management permissions for infrastructure deployment with enhanced security controls" -> "Complete IAM management permissions for infrastructure deployment" # forces replacement%0A      ~ id               = "arn:aws:iam::393209814297:policy/policies/mci-githubactions-iammanagement" -> (known after apply)%0A        name             = "mci-githubactions-iammanagement"%0A      + name_prefix      = (known after apply)%0A      ~ policy_id        = "ANPAVXDJBTUM7ZSLJC4HI" -> (known after apply)%0A        tags             = {%0A            "Ambiente" = "dev"%0A            "Area"     = "DevOps"%0A            "Gerencia" = "MCI"%0A            "Name"     = "githubactions-iammanagement-dev"%0A            "Type"     = "Policy"%0A        }%0A        # (3 unchanged attributes hidden)%0A    }%0A%0APlan: 1 to add, 1 to change, 2 to destroy.%0A%0A─────────────────────────────────────────────────────────────────────────────%0A%0ANote: You didn't use the -out option to save this plan, so Terraform can't%0Aguarantee to take exactly these actions if you run "terraform apply" now.%0A
+::debug::stdout: data.aws_caller_identity.current: Reading...%0Amodule.cloudwatch_logs_readonly.aws_iam_policy.main: Refreshing state... [id=arn:aws:iam::393209814297:policy/policies/mci-cloudwatch-logs-readonly]%0Amodule.githubactions_iammanagement.aws_iam_policy.main: Refreshing state... [id=arn:aws:iam::393209814297:policy/policies/mci-githubactions-iammanagement]%0Adata.aws_caller_identity.current: Read complete after 0s [id=393209814297]%0Adata.aws_iam_policy_document.github_actions_iam_deployment_role_trust: Reading...%0Adata.aws_iam_policy_document.github_actions_iam_deployment_role_trust: Read complete after 0s [id=1058311888]%0Aaws_iam_role.github_actions_iam_deployment_role: Refreshing state... [id=github-actions-iam-deployment-role]%0A%0ATerraform used the selected providers to generate the following execution%0Aplan. Resource actions are indicated with the following symbols:%0A  ~ update in-place%0A  - destroy%0A%0ATerraform will perform the following actions:%0A%0A  # aws_iam_role.github_actions_iam_deployment_role will be updated in-place%0A  ~ resource "aws_iam_role" "github_actions_iam_deployment_role" {%0A        id                    = "github-actions-iam-deployment-role"%0A        name                  = "github-actions-iam-deployment-role"%0A      ~ tags                  = {%0A            "Alcance SOX"            = "No"%0A            "Ambiente"               = "dev"%0A            "Aplicacion"             = "CICD"%0A            "Area"                   = "DevOps"%0A          ~ "Ciclo de Vida"          = "Produccion" -> "Creacion"%0A            "Contacto"               = "darwin.lopez@claro.com.gt"%0A            "Creado Por"             = "DarwinLopez"%0A          - "Criticidad"             = "Alta" -> null%0A            "Direccion"              = "TIRegional"%0A            "Dominio"                = "BusinessIntelligence"%0A          - "Entorno"                = "Desarrollo" -> null%0A            "Fecha de Creacion"      = "2025-09-16"%0A          ~ "Generated"              = "2025-10-01T20:36:32.978319" -> "2025-10-01T21:22:09.313076"%0A            "Gerencia"               = "MCI"%0A            "Layer"                  = "Devops"%0A            "ManagedBy"              = "terraform"%0A            "Modulo"                 = "IAM"%0A          - "Monitoreo"              = "Activo" -> null%0A            "Name"                   = "github-actions-iam-deployment-role"%0A            "Pais"                   = "rg"%0A            "Propietario"            = "DarwinLopez"%0A            "Proveedor"              = "InHouse"%0A            "Soporte"                = "darwin.lopez@claro.com.gt"%0A            "Source"                 = "definitions/roles/github-deployment-role.yaml"%0A            "Subdominio"             = "Analytics"%0A            "Tipo de Recurso"        = "IAMRole"%0A          ~ "Versión"                = "v2.0.0" -> "v1.0.8"%0A          ~ "Última Actualización"   = "2025-09-29" -> "2025-09-26"%0A        }%0A      ~ tags_all              = {%0A          ~ "Ciclo de Vida"          = "Produccion" -> "Creacion"%0A          - "Criticidad"             = "Alta" -> null%0A          - "Entorno"                = "Desarrollo" -> null%0A          ~ "Generated"              = "2025-10-01T20:36:32.978319" -> "2025-10-01T21:22:09.313076"%0A          - "Monitoreo"              = "Activo" -> null%0A          ~ "Versión"                = "v2.0.0" -> "v1.0.8"%0A          ~ "Última Actualización"   = "2025-09-29" -> "2025-09-26"%0A            # (21 unchanged elements hidden)%0A        }%0A        # (9 unchanged attributes hidden)%0A%0A        # (1 unchanged block hidden)%0A    }%0A%0A  # module.cloudwatch_logs_readonly.aws_iam_policy.main will be destroyed%0A  # (because aws_iam_policy.main is not in configuration)%0A  - resource "aws_iam_policy" "main" {%0A      - arn              = "arn:aws:iam::393209814297:policy/policies/mci-cloudwatch-logs-readonly" -> null%0A      - attachment_count = 0 -> null%0A      - description      = "Permite lectura de logs de CloudWatch para monitoreo y debugging de deployments" -> null%0A      - id               = "arn:aws:iam::393209814297:policy/policies/mci-cloudwatch-logs-readonly" -> null%0A      - name             = "mci-cloudwatch-logs-readonly" -> null%0A      - path             = "/policies/" -> null%0A      - policy           = jsonencode(%0A            {%0A              - Statement = [%0A                  - {%0A                      - Action   = [%0A                          - "logs:DescribeLogGroups",%0A                          - "logs:DescribeLogStreams",%0A                          - "logs:GetLogEvents",%0A                          - "logs:FilterLogEvents",%0A                          - "logs:StartQuery",%0A                          - "logs:StopQuery",%0A                          - "logs:DescribeQueries",%0A                          - "logs:GetQueryResults",%0A                        ]%0A                      - Effect   = "Allow"%0A                      - Resource = [%0A                          - "arn:aws:logs:*:*:log-group:/aws/github-actions/*",%0A                          - "arn:aws:logs:*:*:log-group:/aws/lambda/*",%0A                        ]%0A                      - Sid      = "CloudWatchLogsReadAccess"%0A                    },%0A                  - {%0A                      - Action   = [%0A                          - "cloudwatch:GetMetricStatistics",%0A                          - "cloudwatch:ListMetrics",%0A                          - "cloudwatch:GetMetricData",%0A                        ]%0A                      - Effect   = "Allow"%0A                      - Resource = [%0A                          - "*",%0A                        ]%0A                      - Sid      = "CloudWatchMetricsReadAccess"%0A                    },%0A                ]%0A              - Version   = "2012-10-17"%0A            }%0A        ) -> null%0A      - policy_id        = "ANPAVXDJBTUM5TG3IIIPU" -> null%0A      - tags             = {%0A          - "Ambiente" = "dev"%0A          - "Area"     = "DevOps"%0A          - "Gerencia" = "MCI"%0A          - "Name"     = "cloudwatch-logs-readonly-dev"%0A          - "Type"     = "Policy"%0A        } -> null%0A      - tags_all         = {%0A          - "Ambiente" = "dev"%0A          - "Area"     = "DevOps"%0A          - "Gerencia" = "MCI"%0A          - "Name"     = "cloudwatch-logs-readonly-dev"%0A          - "Type"     = "Policy"%0A        } -> null%0A    }%0A%0A  # module.githubactions_iammanagement.aws_iam_policy.main will be destroyed%0A  # (because aws_iam_policy.main is not in configuration)%0A  - resource "aws_iam_policy" "main" {%0A      - arn              = "arn:aws:iam::393209814297:policy/policies/mci-githubactions-iammanagement" -> null%0A      - attachment_count = 0 -> null%0A      - description      = "Complete IAM management permissions for infrastructure deployment with enhanced security controls" -> null%0A      - id               = "arn:aws:iam::393209814297:policy/policies/mci-githubactions-iammanagement" -> null%0A      - name             = "mci-githubactions-iammanagement" -> null%0A      - path             = "/policies/" -> null%0A      - policy           = jsonencode(%0A            {%0A              - Statement = [%0A                  - {%0A                      - Action   = [%0A                          - "iam:GetRole",%0A                          - "iam:GetRolePolicy",%0A                          - "iam:GetPolicy",%0A                          - "iam:GetPolicyVersion",%0A                          - "iam:ListRoles",%0A                          - "iam:ListPolicies",%0A                          - "iam:ListPolicyVersions",%0A                          - "iam:ListAttachedRolePolicies",%0A                          - "iam:ListRolePolicies",%0A                          - "iam:ListInstanceProfilesForRole",%0A                          - "iam:ListRoleTags",%0A                        ]%0A                      - Effect   = "Allow"%0A                      - Resource = [%0A                          - "*",%0A                        ]%0A                      - Sid      = "IAMReadPermissions"%0A                    },%0A                  - {%0A                      - Action   = [%0A                          - "iam:GetPolicy",%0A                          - "iam:GetPolicyVersion",%0A                          - "iam:ListPolicyVersions",%0A                          - "iam:ListPolicyTags",%0A                        ]%0A                      - Effect   = "Allow"%0A                      - Resource = [%0A                          - "arn:aws:iam::393209814297:policy/policies/*",%0A                          - "arn:aws:iam::393209814297:policy/MCI-*",%0A                        ]%0A                      - Sid      = "IAMPolicyReadAccess"%0A                    },%0A                  - {%0A                      - Action   = [%0A                          - "iam:CreateRole",%0A                          - "iam:DeleteRole",%0A                          - "iam:UpdateRole",%0A                          - "iam:TagRole",%0A                          - "iam:UntagRole",%0A                          - "iam:PutRolePolicy",%0A                          - "iam:DeleteRolePolicy",%0A                        ]%0A                      - Effect   = "Allow"%0A                      - Resource = [%0A                          - "arn:aws:iam::393209814297:role/MCI-*",%0A                        ]%0A                      - Sid      = "IAMRoleManagement"%0A                    },%0A                  - {%0A                      - Action   = [%0A                          - "iam:CreatePolicy",%0A                          - "iam:DeletePolicy",%0A                          - "iam:CreatePolicyVersion",%0A                          - "iam:DeletePolicyVersion",%0A                          - "iam:SetDefaultPolicyVersion",%0A                          - "iam:TagPolicy",%0A                          - "iam:UntagPolicy",%0A                          - "iam:ListPolicyTags",%0A                        ]%0A                      - Effect   = "Allow"%0A                      - Resource = [%0A                          - "arn:aws:iam::393209814297:policy/MCI-*",%0A                        ]%0A                      - Sid      = "IAMPolicyManagement"%0A                    },%0A                  - {%0A                      - Action   = [%0A                          - "iam:AttachRolePolicy",%0A                          - "iam:DetachRolePolicy",%0A                          - "iam:PassRole",%0A                        ]%0A                      - Effect   = "Allow"%0A                      - Resource = [%0A                          - "arn:aws:iam::393209814297:role/MCI-*",%0A                          - "arn:aws:iam::393209814297:policy/MCI-*",%0A                          - "arn:aws:iam::aws:policy/*",%0A                        ]%0A                      - Sid      = "IAMAttachmentManagement"%0A                    },%0A                ]%0A              - Version   = "2012-10-17"%0A            }%0A        ) -> null%0A      - policy_id        = "ANPAVXDJBTUM7ZSLJC4HI" -> null%0A      - tags             = {%0A          - "Ambiente" = "dev"%0A          - "Area"     = "DevOps"%0A          - "Gerencia" = "MCI"%0A          - "Name"     = "githubactions-iammanagement-dev"%0A          - "Type"     = "Policy"%0A        } -> null%0A      - tags_all         = {%0A          - "Ambiente" = "dev"%0A          - "Area"     = "DevOps"%0A          - "Gerencia" = "MCI"%0A          - "Name"     = "githubactions-iammanagement-dev"%0A          - "Type"     = "Policy"%0A        } -> null%0A    }%0A%0APlan: 0 to add, 1 to change, 2 to destroy.%0A%0A─────────────────────────────────────────────────────────────────────────────%0A%0ANote: You didn't use the -out option to save this plan, so Terraform can't%0Aguarantee to take exactly these actions if you run "terraform apply" now.%0A
 ::debug::stderr: 
 ::debug::exitcode: 0

@@ -1,1 +1,2 @@
 module.cloudwatch_logs_readonly.aws_iam_policy.main
+module.githubactions_iammanagement.aws_iam_policy.main
