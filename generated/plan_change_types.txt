@@ -1,3 +1,1 @@
 aws_iam_role.github_actions_iam_deployment_role -> update
-module.cloudwatch_logs_readonly.aws_iam_policy.main -> destroy
-module.githubactions_iammanagement.aws_iam_policy.main -> destroy

@@ -8,20 +8,17 @@
             "Ambiente"               = "dev"
             "Aplicacion"             = "CICD"
             "Area"                   = "DevOps"
-          ~ "Ciclo de Vida"          = "Produccion" -> "Creacion"
+            "Ciclo de Vida"          = "Creacion"
             "Contacto"               = "darwin.lopez@claro.com.gt"
             "Creado Por"             = "DarwinLopez"
-          - "Criticidad"             = "Alta" -> null
             "Direccion"              = "TIRegional"
             "Dominio"                = "BusinessIntelligence"
-          - "Entorno"                = "Desarrollo" -> null
             "Fecha de Creacion"      = "2025-09-16"
-          ~ "Generated"              = "2025-10-01T20:36:32.978319" -> "2025-10-01T21:22:09.313076"
+          ~ "Generated"              = "2025-10-01T20:55:50.237765" -> "2025-10-01T23:36:58.012264"
             "Gerencia"               = "MCI"
             "Layer"                  = "Devops"
             "ManagedBy"              = "terraform"
             "Modulo"                 = "IAM"
-          - "Monitoreo"              = "Activo" -> null
             "Name"                   = "github-actions-iam-deployment-role"
             "Pais"                   = "rg"
             "Propietario"            = "DarwinLopez"
@@ -30,202 +27,19 @@
             "Source"                 = "definitions/roles/github-deployment-role.yaml"
             "Subdominio"             = "Analytics"
             "Tipo de Recurso"        = "IAMRole"
-          ~ "Versión"                = "v2.0.0" -> "v1.0.8"
-          ~ "Última Actualización"   = "2025-09-29" -> "2025-09-26"
+            "Versión"                = "v1.0.8"
+            "Última Actualización"   = "2025-09-26"
         }
       ~ tags_all              = {
-          ~ "Ciclo de Vida"          = "Produccion" -> "Creacion"
-          - "Criticidad"             = "Alta" -> null
-          - "Entorno"                = "Desarrollo" -> null
-          ~ "Generated"              = "2025-10-01T20:36:32.978319" -> "2025-10-01T21:22:09.313076"
-          - "Monitoreo"              = "Activo" -> null
-          ~ "Versión"                = "v2.0.0" -> "v1.0.8"
-          ~ "Última Actualización"   = "2025-09-29" -> "2025-09-26"
-            # (21 unchanged elements hidden)
+          ~ "Generated"              = "2025-10-01T20:55:50.237765" -> "2025-10-01T23:36:58.012264"
+            # (24 unchanged elements hidden)
         }
         # (9 unchanged attributes hidden)
 
         # (1 unchanged block hidden)
     }
 
-  # module.cloudwatch_logs_readonly.aws_iam_policy.main will be destroyed
-  # (because aws_iam_policy.main is not in configuration)
-  - resource "aws_iam_policy" "main" {
-      - arn              = "arn:aws:iam::393209814297:policy/policies/mci-cloudwatch-logs-readonly" -> null
-      - attachment_count = 0 -> null
-      - description      = "Permite lectura de logs de CloudWatch para monitoreo y debugging de deployments" -> null
-      - id               = "arn:aws:iam::393209814297:policy/policies/mci-cloudwatch-logs-readonly" -> null
-      - name             = "mci-cloudwatch-logs-readonly" -> null
-      - path             = "/policies/" -> null
-      - policy           = jsonencode(
-            {
-              - Statement = [
-                  - {
-                      - Action   = [
-                          - "logs:DescribeLogGroups",
-                          - "logs:DescribeLogStreams",
-                          - "logs:GetLogEvents",
-                          - "logs:FilterLogEvents",
-                          - "logs:StartQuery",
-                          - "logs:StopQuery",
-                          - "logs:DescribeQueries",
-                          - "logs:GetQueryResults",
-                        ]
-                      - Effect   = "Allow"
-                      - Resource = [
-                          - "arn:aws:logs:*:*:log-group:/aws/github-actions/*",
-                          - "arn:aws:logs:*:*:log-group:/aws/lambda/*",
-                        ]
-                      - Sid      = "CloudWatchLogsReadAccess"
-                    },
-                  - {
-                      - Action   = [
-                          - "cloudwatch:GetMetricStatistics",
-                          - "cloudwatch:ListMetrics",
-                          - "cloudwatch:GetMetricData",
-                        ]
-                      - Effect   = "Allow"
-                      - Resource = [
-                          - "*",
-                        ]
-                      - Sid      = "CloudWatchMetricsReadAccess"
-                    },
-                ]
-              - Version   = "2012-10-17"
-            }
-        ) -> null
-      - policy_id        = "ANPAVXDJBTUM5TG3IIIPU" -> null
-      - tags             = {
-          - "Ambiente" = "dev"
-          - "Area"     = "DevOps"
-          - "Gerencia" = "MCI"
-          - "Name"     = "cloudwatch-logs-readonly-dev"
-          - "Type"     = "Policy"
-        } -> null
-      - tags_all         = {
-          - "Ambiente" = "dev"
-          - "Area"     = "DevOps"
-          - "Gerencia" = "MCI"
-          - "Name"     = "cloudwatch-logs-readonly-dev"
-          - "Type"     = "Policy"
-        } -> null
-    }
-
-  # module.githubactions_iammanagement.aws_iam_policy.main will be destroyed
-  # (because aws_iam_policy.main is not in configuration)
-  - resource "aws_iam_policy" "main" {
-      - arn              = "arn:aws:iam::393209814297:policy/policies/mci-githubactions-iammanagement" -> null
-      - attachment_count = 0 -> null
-      - description      = "Complete IAM management permissions for infrastructure deployment with enhanced security controls" -> null
-      - id               = "arn:aws:iam::393209814297:policy/policies/mci-githubactions-iammanagement" -> null
-      - name             = "mci-githubactions-iammanagement" -> null
-      - path             = "/policies/" -> null
-      - policy           = jsonencode(
-            {
-              - Statement = [
-                  - {
-                      - Action   = [
-                          - "iam:GetRole",
-                          - "iam:GetRolePolicy",
-                          - "iam:GetPolicy",
-                          - "iam:GetPolicyVersion",
-                          - "iam:ListRoles",
-                          - "iam:ListPolicies",
-                          - "iam:ListPolicyVersions",
-                          - "iam:ListAttachedRolePolicies",
-                          - "iam:ListRolePolicies",
-                          - "iam:ListInstanceProfilesForRole",
-                          - "iam:ListRoleTags",
-                        ]
-                      - Effect   = "Allow"
-                      - Resource = [
-                          - "*",
-                        ]
-                      - Sid      = "IAMReadPermissions"
-                    },
-                  - {
-                      - Action   = [
-                          - "iam:GetPolicy",
-                          - "iam:GetPolicyVersion",
-                          - "iam:ListPolicyVersions",
-                          - "iam:ListPolicyTags",
-                        ]
-                      - Effect   = "Allow"
-                      - Resource = [
-                          - "arn:aws:iam::393209814297:policy/policies/*",
-                          - "arn:aws:iam::393209814297:policy/MCI-*",
-                        ]
-                      - Sid      = "IAMPolicyReadAccess"
-                    },
-                  - {
-                      - Action   = [
-                          - "iam:CreateRole",
-                          - "iam:DeleteRole",
-                          - "iam:UpdateRole",
-                          - "iam:TagRole",
-                          - "iam:UntagRole",
-                          - "iam:PutRolePolicy",
-                          - "iam:DeleteRolePolicy",
-                        ]
-                      - Effect   = "Allow"
-                      - Resource = [
-                          - "arn:aws:iam::393209814297:role/MCI-*",
-                        ]
-                      - Sid      = "IAMRoleManagement"
-                    },
-                  - {
-                      - Action   = [
-                          - "iam:CreatePolicy",
-                          - "iam:DeletePolicy",
-                          - "iam:CreatePolicyVersion",
-                          - "iam:DeletePolicyVersion",
-                          - "iam:SetDefaultPolicyVersion",
-                          - "iam:TagPolicy",
-                          - "iam:UntagPolicy",
-                          - "iam:ListPolicyTags",
-                        ]
-                      - Effect   = "Allow"
-                      - Resource = [
-                          - "arn:aws:iam::393209814297:policy/MCI-*",
-                        ]
-                      - Sid      = "IAMPolicyManagement"
-                    },
-                  - {
-                      - Action   = [
-                          - "iam:AttachRolePolicy",
-                          - "iam:DetachRolePolicy",
-                          - "iam:PassRole",
-                        ]
-                      - Effect   = "Allow"
-                      - Resource = [
-                          - "arn:aws:iam::393209814297:role/MCI-*",
-                          - "arn:aws:iam::393209814297:policy/MCI-*",
-                          - "arn:aws:iam::aws:policy/*",
-                        ]
-                      - Sid      = "IAMAttachmentManagement"
-                    },
-                ]
-              - Version   = "2012-10-17"
-            }
-        ) -> null
-      - policy_id        = "ANPAVXDJBTUM7ZSLJC4HI" -> null
-      - tags             = {
-          - "Ambiente" = "dev"
-          - "Area"     = "DevOps"
-          - "Gerencia" = "MCI"
-          - "Name"     = "githubactions-iammanagement-dev"
-          - "Type"     = "Policy"
-        } -> null
-      - tags_all         = {
-          - "Ambiente" = "dev"
-          - "Area"     = "DevOps"
-          - "Gerencia" = "MCI"
-          - "Name"     = "githubactions-iammanagement-dev"
-          - "Type"     = "Policy"
-        } -> null
-    }
-
-Plan: 0 to add, 1 to change, 2 to destroy.
+Plan: 0 to add, 1 to change, 0 to destroy.
 
 ─────────────────────────────────────────────────────────────────────────────
 
