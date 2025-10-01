@@ -1,0 +1,51 @@
+# CloudWatch Logs Policy for GitHub Actions
+# Allows reading CloudWatch logs for monitoring and debugging
+
+policy:
+  name: "cloudwatch-logs-readonly"
+  description: "Permite lectura de logs de CloudWatch para monitoreo y debugging de deployments"
+  path: "/"
+  
+  # Policy document with CloudWatch Logs permissions
+  policy_document:
+    Version: "2012-10-17"
+    Statement:
+      - Sid: "CloudWatchLogsReadAccess"
+        Effect: "Allow"
+        Action:
+          - "logs:DescribeLogGroups"
+          - "logs:DescribeLogStreams"
+          - "logs:GetLogEvents"
+          - "logs:FilterLogEvents"
+          - "logs:StartQuery"
+          - "logs:StopQuery"
+          - "logs:DescribeQueries"
+          - "logs:GetQueryResults"
+        Resource: 
+          - "arn:aws:logs:*:*:log-group:/aws/github-actions/*"
+          - "arn:aws:logs:*:*:log-group:/aws/lambda/*"
+      
+      - Sid: "CloudWatchMetricsReadAccess"
+        Effect: "Allow"
+        Action:
+          - "cloudwatch:GetMetricStatistics"
+          - "cloudwatch:ListMetrics"
+          - "cloudwatch:GetMetricData"
+        Resource: "*"
+        Condition:
+          StringLike:
+            "cloudwatch:namespace": 
+              - "AWS/Logs"
+              - "AWS/Lambda"
+
+  # Organizational tags
+  tags:
+    "Pais": "rg"
+    "Gerencia": "MCI"
+    "Area": "DevOps"
+    "Ambiente": "dev"
+    "Tipo de Recurso": "IAMPolicy"
+    "Propietario": "DarwinLopez"
+    "Creado Por": "DarwinLopez"
+    "Versión": "v1.0.0"
+    "Fecha de Creacion": "2025-09-29"

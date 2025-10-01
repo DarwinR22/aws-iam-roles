@@ -45,6 +45,14 @@ role:
     - name: "iam-management"
       file: "iam-management.yaml"
       description: "Complete IAM management permissions for deployment"
+    
+    - name: "cloudwatch-logs-readonly"
+      file: "cloudwatch-logs-readonly.yaml"
+      description: "CloudWatch logs read access for monitoring and debugging"
+      
+    - name: "temp-testing-policy"
+      file: "temp-testing-policy.yaml"
+      description: "Temporary policy for testing - will be removed"
 
   # Organizational tags for compliance and governance
   tags:
