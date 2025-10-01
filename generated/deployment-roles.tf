@@ -6,7 +6,7 @@
 # This file is auto-generated from YAML definitions.
 # DO NOT EDIT MANUALLY - Changes will be overwritten.
 # 
-# Generated: 2025-09-30T00:03:05.043997
+# Generated: 2025-10-01T20:31:55.782290
 # Source: Multiple role definitions in definitions/roles/
 # ==============================================================================
 
@@ -86,13 +86,39 @@ resource "aws_iam_role" "github_actions_iam_deployment_role" {
     # Auto-generated tags
     "ManagedBy" = "terraform"
     "Source"    = "definitions/roles/github-deployment-role.yaml"
-    "Generated" = "2025-09-30T00:03:05.043997"
+    "Generated" = "2025-10-01T20:31:55.782290"
   }
 }
 
 # Create policies as independent modules (not attached to role)
 module "githubactions_iammanagement" {
   source = "./modules/policies/mci_githubactions_iammanagement"
+
+  environment = "dev"
+
+  # ABAC conditions for policy restrictions
+  abac_conditions = {
+    "aws:PrincipalTag/Gerencia" = ["MCI"]
+    "aws:PrincipalTag/Area"     = ["DevOps"]
+    "aws:PrincipalTag/Ambiente" = ["dev"]
+  }
+
+  # AWS Configuration
+  aws_region          = "us-east-1"
+  role_prefix         = "MCI-"
+  policy_prefix       = "MCI-"
+  s3_bucket_name      = "mci-terraform-state"
+  dynamodb_table_name = "mci-terraform-locks"
+  kms_key_id          = "*"
+
+  common_tags = {
+    "Gerencia" = "MCI"
+    "Area"     = "DevOps"
+    "Ambiente" = "dev"
+  }
+}
+module "cloudwatch_logs_readonly" {
+  source = "./modules/policies/mci_cloudwatch_logs_readonly"
 
   environment = "dev"
 

@@ -1,9 +1,9 @@
-# Variables for GithubActions-IAMManagement Policy Module
+# Variables for cloudwatch-logs-readonly Policy Module
 
 variable "policy_description" {
-  description = "Description for the GithubActions-IAMManagement policy"
+  description = "Description for the cloudwatch-logs-readonly policy"
   type        = string
-  default     = "Complete IAM management permissions for infrastructure deployment with enhanced security controls"
+  default     = "Permite lectura de logs de CloudWatch para monitoreo y debugging de deployments"
 }
 
 variable "abac_conditions" {

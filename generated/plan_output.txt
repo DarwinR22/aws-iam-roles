@@ -1,9 +1,11 @@
-[command]/home/runner/work/_temp/249b820f-c0a1-4bd9-b58a-000a44b8cde9/terraform-bin plan -no-color -input=false
+[command]/home/runner/work/_temp/1d561f4d-6a23-4e8c-95c7-e01c39f5df80/terraform-bin plan -no-color -input=false
 aws_iam_role.github_actions_iam_deployment_role: Refreshing state... [id=github-actions-iam-deployment-role]
 
 Terraform used the selected providers to generate the following execution
 plan. Resource actions are indicated with the following symbols:
+  + create
   ~ update in-place
+-/+ destroy and then create replacement
 
 Terraform will perform the following actions:
 
@@ -25,7 +27,7 @@ Terraform will perform the following actions:
             "Dominio"                = "BusinessIntelligence"
           + "Entorno"                = "Desarrollo"
             "Fecha de Creacion"      = "2025-09-16"
-          ~ "Generated"              = "2025-09-29T22:12:37.795519" -> "2025-09-30T00:03:05.043997"
+          ~ "Generated"              = "2025-09-29T22:12:37.795519" -> "2025-10-01T20:31:55.782290"
             "Gerencia"               = "MCI"
             "Layer"                  = "Devops"
             "ManagedBy"              = "terraform"
@@ -46,7 +48,7 @@ Terraform will perform the following actions:
           ~ "Ciclo de Vida"          = "Creacion" -> "Produccion"
           + "Criticidad"             = "Alta"
           + "Entorno"                = "Desarrollo"
-          ~ "Generated"              = "2025-09-29T22:12:37.795519" -> "2025-09-30T00:03:05.043997"
+          ~ "Generated"              = "2025-09-29T22:12:37.795519" -> "2025-10-01T20:31:55.782290"
           + "Monitoreo"              = "Activo"
           ~ "Versión"                = "v1.0.8" -> "v2.0.0"
           ~ "Última Actualización"   = "2025-09-26" -> "2025-09-29"
@@ -57,7 +59,89 @@ Terraform will perform the following actions:
         # (1 unchanged block hidden)
     }
 
-Plan: 0 to add, 1 to change, 0 to destroy.
+  # module.cloudwatch_logs_readonly.aws_iam_policy.main will be created
+  + resource "aws_iam_policy" "main" {
+      + arn              = (known after apply)
+      + attachment_count = (known after apply)
+      + description      = "Permite lectura de logs de CloudWatch para monitoreo y debugging de deployments"
+      + id               = (known after apply)
+      + name             = "mci-cloudwatch-logs-readonly"
+      + name_prefix      = (known after apply)
+      + path             = "/policies/"
+      + policy           = jsonencode(
+            {
+              + Statement = [
+                  + {
+                      + Action   = [
+                          + "logs:DescribeLogGroups",
+                          + "logs:DescribeLogStreams",
+                          + "logs:GetLogEvents",
+                          + "logs:FilterLogEvents",
+                          + "logs:StartQuery",
+                          + "logs:StopQuery",
+                          + "logs:DescribeQueries",
+                          + "logs:GetQueryResults",
+                        ]
+                      + Effect   = "Allow"
+                      + Resource = [
+                          + "arn:aws:logs:*:*:log-group:/aws/github-actions/*",
+                          + "arn:aws:logs:*:*:log-group:/aws/lambda/*",
+                        ]
+                      + Sid      = "CloudWatchLogsReadAccess"
+                    },
+                  + {
+                      + Action   = [
+                          + "cloudwatch:GetMetricStatistics",
+                          + "cloudwatch:ListMetrics",
+                          + "cloudwatch:GetMetricData",
+                        ]
+                      + Effect   = "Allow"
+                      + Resource = [
+                          + "*",
+                        ]
+                      + Sid      = "CloudWatchMetricsReadAccess"
+                    },
+                ]
+              + Version   = "2012-10-17"
+            }
+        )
+      + policy_id        = (known after apply)
+      + tags             = {
+          + "Ambiente" = "dev"
+          + "Area"     = "DevOps"
+          + "Gerencia" = "MCI"
+          + "Name"     = "cloudwatch-logs-readonly-dev"
+          + "Type"     = "Policy"
+        }
+      + tags_all         = {
+          + "Ambiente" = "dev"
+          + "Area"     = "DevOps"
+          + "Gerencia" = "MCI"
+          + "Name"     = "cloudwatch-logs-readonly-dev"
+          + "Type"     = "Policy"
+        }
+    }
+
+  # module.githubactions_iammanagement.aws_iam_policy.main must be replaced
+-/+ resource "aws_iam_policy" "main" {
+      ~ arn              = "arn:aws:iam::393209814297:policy/policies/mci-githubactions-iammanagement" -> (known after apply)
+      ~ attachment_count = 0 -> (known after apply)
+      ~ description      = "Complete IAM management permissions for infrastructure deployment" -> "Complete IAM management permissions for infrastructure deployment with enhanced security controls" # forces replacement
+      ~ id               = "arn:aws:iam::393209814297:policy/policies/mci-githubactions-iammanagement" -> (known after apply)
+        name             = "mci-githubactions-iammanagement"
+      + name_prefix      = (known after apply)
+      ~ policy_id        = "ANPAVXDJBTUMXSQXBKMFR" -> (known after apply)
+        tags             = {
+            "Ambiente" = "dev"
+            "Area"     = "DevOps"
+            "Gerencia" = "MCI"
+            "Name"     = "githubactions-iammanagement-dev"
+            "Type"     = "Policy"
+        }
+        # (3 unchanged attributes hidden)
+    }
+
+Plan: 2 to add, 1 to change, 1 to destroy.
 
 ─────────────────────────────────────────────────────────────────────────────
 

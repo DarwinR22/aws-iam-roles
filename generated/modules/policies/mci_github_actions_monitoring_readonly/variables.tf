@@ -1,9 +1,9 @@
-# Variables for MCI-S3-AnalyticsRead Policy Module
+# Variables for github-actions-monitoring-readonly Policy Module
 
 variable "policy_description" {
-  description = "Description for the MCI-S3-AnalyticsRead policy"
+  description = "Description for the github-actions-monitoring-readonly policy"
   type        = string
-  default     = "Read-only access to analytics S3 buckets for BI team"
+  default     = "Read-only access to CloudWatch metrics and logs for CI/CD monitoring"
 }
 
 variable "abac_conditions" {
