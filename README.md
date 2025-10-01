@@ -1,23 +1,60 @@
-# MCI AWS IAM - Arquitectura Empresarial
+<div align="center">
 
-[![Terraform CI](https://github.com/ClaroCENAM/mci-aws-iam/workflows/Enterprise%20IAM%20Terraform%20CI/badge.svg)](https://github.com/ClaroCENAM/mci-aws-iam/actions)
-[![Security Scan](https://github.com/ClaroCENAM/mci-aws-iam/workflows/Security%20Validation/badge.svg)](https://github.com/ClaroCENAM/mci-aws-iam/actions)
-[![Drift Detection](https://github.com/ClaroCENAM/mci-aws-iam/workflows/Drift%20Detection/badge.svg)](https://github.com/ClaroCENAM/mci-aws-iam/actions)
+# 🚀 MCI AWS IAM - Arquitectura Empresarial
 
-**Gestión empresarial de IAM con Control de Acceso Basado en Atributos (ABAC), gobernanza automatizada y guardrails de seguridad integrales para Claro CENAM.**
+### *Gestión empresarial de IAM con Control de Acceso Basado en Atributos (ABAC)*
 
-> 🎯 **NUEVO**: ¡Preview de Plan Mejorado con Tablas HTML! Visualiza cambios de Terraform con formato profesional, badges visuales (➕🛠♻❌), truncamiento inteligente y tooltips. Detecta automáticamente cambios funcionales vs cosméticos.
+[![Terraform](https://img.shields.io/badge/Terraform-1.6+-623CE4?style=for-the-badge&logo=terraform&logoColor=white)](https://www.terraform.io/)
+[![AWS](https://img.shields.io/badge/AWS-IAM-FF9900?style=for-the-badge&logo=amazon-aws&logoColor=white)](https://aws.amazon.com/iam/)
+[![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-CI%2FCD-2088FF?style=for-the-badge&logo=github-actions&logoColor=white)](https://github.com/features/actions)
+[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
+[![Terraform CI](https://img.shields.io/github/actions/workflow/status/ClaroCENAM/mci-aws-iam/terraform.yml?branch=dev&label=Terraform%20CI&style=flat-square&logo=terraform)](https://github.com/ClaroCENAM/mci-aws-iam/actions)
+[![Security Scan](https://img.shields.io/github/actions/workflow/status/ClaroCENAM/mci-aws-iam/security.yml?branch=dev&label=Security&style=flat-square&logo=security)](https://github.com/ClaroCENAM/mci-aws-iam/actions)
+[![Drift Detection](https://img.shields.io/github/actions/workflow/status/ClaroCENAM/mci-aws-iam/drift-detection.yml?branch=dev&label=Drift%20Detection&style=flat-square&logo=aws)](https://github.com/ClaroCENAM/mci-aws-iam/actions)
 
-> 🔐 **NUEVO**: ¡Encriptación KMS empresarial implementada! Claves administradas por el cliente aseguran locks de DynamoDB y estado de Terraform en S3 con rotación automática y costos optimizados.
+---
 
-> 🎯 **ACTUALIZACIÓN**: Detección inteligente de drift diferencia entre recursos gestionados por CI/CD (auto-limpieza) vs recursos creados manualmente (solo reporte) para mayor seguridad.
+### 🎯 Gobernanza automatizada • 🔐 Seguridad empresarial • 🏷️ Control basado en tags • 🚀 CI/CD completo
+
+</div>
+
+---
+
+## ✨ Novedades Destacadas
+
+<table>
+<tr>
+<td width="33%" align="center">
+<h3>🎯 Preview Mejorado</h3>
+<p><strong>Tablas HTML Profesionales</strong></p>
+<p>Visualiza cambios de Terraform con formato profesional, badges visuales (➕🛠️♻️❌), truncamiento inteligente y tooltips</p>
+</td>
+<td width="33%" align="center">
+<h3>🔐 Encriptación KMS</h3>
+<p><strong>Seguridad Empresarial</strong></p>
+<p>Claves administradas por el cliente aseguran locks de DynamoDB y estado en S3 con rotación automática</p>
+</td>
+<td width="33%" align="center">
+<h3>🎯 Detección de Drift</h3>
+<p><strong>Inteligente y Segura</strong></p>
+<p>Diferencia entre recursos CI/CD (auto-limpieza) vs manuales (solo reporte) para máxima seguridad</p>
+</td>
+</tr>
+</table>
+---
 
 ## 🏗️ Visión General de la Arquitectura
 
-Este repositorio implementa una **arquitectura ABAC basada en tags con confianza cero** para gestión de IAM en AWS con capacidades empresariales de gobernanza y cumplimiento.
+<div align="center">
 
-### 📦 **Estructura Empresarial Limpia**
+**Arquitectura ABAC basada en tags con confianza cero para gestión empresarial de IAM**
+
+*Gobernanza automatizada • Cumplimiento integral • Seguridad por diseño*
+
+</div>
+
+### 📦 Estructura del Repositorio
 
 ```
 📦 mci-aws-iam/
@@ -32,105 +69,182 @@ Este repositorio implementa una **arquitectura ABAC basada en tags con confianza
 └── 🚀 scripts/             # Scripts de automatización y creación de roles
 ```
 
-### 🎯 **Características Clave**
-- ✅ **Políticas ABAC Basadas en Tags** → Control de acceso auto-escalable
-- ✅ **Detección de Estructura Organizacional** → Gestión dinámica de roles
-- ✅ **Gobernanza de 25+ Tags Obligatorios** → Cumplimiento completo
-- ✅ **Integración de Bloques de Construcción** → Políticas MCI reutilizables
-- ✅ **Soporte Multi-Ambiente** → Flujos de trabajo dev/qa/prod
-- ✅ **Preview Inteligente de Planes** → Visualización de cambios con tablas HTML profesionales
+### 🎯 Características Principales
 
-> 🎯 **ACTUALIZACIÓN**: Detección inteligente de drift diferencia entre recursos gestionados por CI/CD (auto-limpieza) vs recursos creados manualmente (solo reporte) para mayor seguridad.
+<table>
+<tr>
+<td width="50%">
 
-## 🏗️ Architecture Overview
+#### 🏷️ Políticas ABAC Basadas en Tags
+Control de acceso auto-escalable que se ajusta dinámicamente según los tags de recursos
 
-This repository implements a **zero-trust, tag-based ABAC architecture** for AWS IAM management with enterprise governance and compliance capabilities.
+#### 🔍 Detección Inteligente de Estructura
+Descubrimiento automático de roles y políticas en la organización
 
-### 📦 **Clean Enterprise Structure**
+#### 📊 Gobernanza de 25+ Tags Obligatorios
+Cumplimiento completo con trazabilidad total de recursos
 
-```
-📦 mci-aws-iam/
-├── 🧱 policy_lib/          # ABAC building blocks (S3, DynamoDB, Lambda)
-├── 📋 catalog/             # Single source of truth (roles.yaml, policies.yaml)
-├── 🏢 gerencias/           # Organizational structure with roles
-├── 🔧 modules/             # Terraform enterprise modules  
-├── 🌍 environments/        # Environment-specific configs (dev/qa/prod)
-├── 🛡️ guardrails/          # Security validation & compliance
-├── � ci/                  # GitHub Actions workflows
-├── 📝 docs/                # Enterprise documentation
-└── 🚀 scripts/create_role_dinamico_clean.py  # Role creation tool
-```
+</td>
+<td width="50%">
 
-### 🎯 **Key Features**
-- ✅ **Tag-Based ABAC Policies** → Auto-scaling access control
-- ✅ **Organizational Structure Detection** → Dynamic role management
-- ✅ **25+ Mandatory Tags Governance** → Complete compliance
-- ✅ **Building Blocks Integration** → Reusable MCI policies
-- ✅ **Multi-Environment Support** → dev/qa/prod workflows
+#### 🧩 Bloques de Construcción Reutilizables
+Políticas MCI pre-construidas listas para usar
+
+#### 🌍 Soporte Multi-Ambiente
+Flujos de trabajo separados para dev/qa/prod
+
+#### 🎯 Preview Visual Mejorado
+Tablas HTML profesionales con detección inteligente de cambios
+
+</td>
+</tr>
+</table>
+
+---
 
 ## ✅ Estado del Proyecto
 
-**Repositorio LISTO PARA PRODUCCIÓN** - Arquitectura empresarial basada en tags operativa:
+<div align="center">
 
-- ✅ **CI/CD Completo** - Validación → Plan → Deploy → Verificación automática
-- ✅ **Backend S3/DynamoDB** - Estado centralizado y locks de Terraform
-- ✅ **Políticas Basadas en Tags** - Políticas inteligentes que escalan automáticamente  
-- ✅ **Auto-descubrimiento** - Encuentra automáticamente archivos de roles/políticas
-- ✅ **Multi-ambiente** - dev/qa/prod con separación automática por tags
-- 🆕 **Detección de Drift** - Sistema empresarial de detección y limpieza automática
-- 📊 **Notificaciones GitHub** - Reportes automáticos como comentarios en PR/Issues
-- 🔄 **Integración CI/CD** - Deployment automático con verificaciones pre/post
-- 🛡️ **Seguridad Empresarial** - Protección de recursos críticos y límites inteligentes
-- 🎯 **Preview Mejorado** - Visualización profesional de cambios con tablas HTML, badges y detección inteligente
+### 🎉 Repositorio Listo para Producción
+
+**Arquitectura empresarial basada en tags 100% operativa**
+
+</div>
+
+<table>
+<tr>
+<td width="33%" align="center">
+<h4>⚙️ CI/CD Completo</h4>
+<p>Validación → Plan → Deploy → Verificación automática</p>
+</td>
+<td width="33%" align="center">
+<h4>💾 Backend S3/DynamoDB</h4>
+<p>Estado centralizado con locks distribuidos</p>
+</td>
+<td width="33%" align="center">
+<h4>🏷️ Políticas Tag-Based</h4>
+<p>Escalamiento automático inteligente</p>
+</td>
+</tr>
+<tr>
+<td width="33%" align="center">
+<h4>🔍 Auto-descubrimiento</h4>
+<p>Detección automática de roles/políticas</p>
+</td>
+<td width="33%" align="center">
+<h4>🌍 Multi-ambiente</h4>
+<p>Separación dev/qa/prod por tags</p>
+</td>
+<td width="33%" align="center">
+<h4>🆕 Detección de Drift</h4>
+<p>Sistema empresarial de limpieza</p>
+</td>
+</tr>
+<tr>
+<td width="33%" align="center">
+<h4>📊 Notificaciones GitHub</h4>
+<p>Reportes en PR/Issues automáticos</p>
+</td>
+<td width="33%" align="center">
+<h4>🛡️ Seguridad Empresarial</h4>
+<p>Protección de recursos críticos</p>
+</td>
+<td width="33%" align="center">
+<h4>🎯 Preview Mejorado</h4>
+<p>Tablas HTML con badges visuales</p>
+</td>
+</tr>
+</table>
 
 ---
 
 ## � Preview Inteligente de Planes Terraform
 
+<div align="center">
+
 ### 🌟 Sistema de Visualización Profesional
 
-El sistema de preview ahora incluye **visualización mejorada con tablas HTML** que muestra cambios de Terraform de forma clara y profesional:
+*Visualiza cambios de Terraform con formato empresarial y detección inteligente*
 
-#### ✨ Características del Preview Mejorado
+</div>
 
-- **📊 Tablas HTML Estructuradas** - Formato profesional con columnas organizadas (Tipo | Atributo | Valor Anterior | Valor Nuevo)
-- **🎨 Badges Visuales** - Indicadores claros para cada tipo de operación:
-  - ➕ **CREATE** - Recursos nuevos
-  - 🛠️ **UPDATE** - Modificaciones a recursos existentes
-  - ♻️ **REPLACE** - Recursos que deben ser reemplazados
-  - ❌ **DESTROY** - Recursos que serán eliminados
-- **📏 Truncamiento Inteligente** - Valores largos limitados a 80 caracteres con "..." para mejor legibilidad
-- **💡 Tooltips Descriptivos** - Información adicional al pasar el mouse sobre los íconos
-- **🔍 Detección Inteligente** - Distingue entre cambios funcionales vs cambios cosméticos (timestamps)
-- **📈 Contador de Recursos** - Resumen con cantidad de recursos por tipo de operación
-- **📖 Detalles Expandibles** - Sección técnica completa con el plan raw de Terraform
+### ✨ Características del Preview
 
-#### 📸 Ejemplo de Visualización
+<table>
+<tr>
+<td width="50%">
+
+#### 📊 Tablas HTML Estructuradas
+Formato profesional con columnas organizadas:
+- 🏷️ **Tipo** - Tipo de operación
+- 📋 **Atributo** - Propiedad modificada
+- ⬅️ **Valor Anterior** - Estado actual
+- ➡️ **Valor Nuevo** - Estado futuro
+
+#### 🎨 Badges Visuales
+Indicadores claros por operación:
+- ➕ `CREATE` - Recursos nuevos
+- 🛠️ `UPDATE` - Modificaciones
+- ♻️ `REPLACE` - Reemplazos
+- ❌ `DESTROY` - Eliminaciones
+
+</td>
+<td width="50%">
+
+#### � Detección Inteligente
+- Diferencia cambios funcionales vs cosméticos
+- Detecta automáticamente timestamps sin impacto
+- Resalta cambios críticos
+
+#### 📏 Formato Optimizado
+- Truncamiento a 80 caracteres
+- Tooltips descriptivos
+- Contador de recursos
+- Detalles expandibles con plan completo
+
+</td>
+</tr>
+</table>
+
+### 📸 Ejemplo Visual
+
+<div align="center">
 
 ```
-📊 Vista Previa de Cambios
+📊 Vista Previa de Cambios en aws_iam_role.github_deployment
 
-🏷️ Tipo          📋 Atributo       ⬅️ Valor Anterior    ➡️ Valor Nuevo
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-UPDATE 🛠️        description      "Rol v1.0"          "Rol v2.0 con mejoras"
-UPDATE 🛠️        tags.version     "1.0.0"             "2.0.0"
-CREATE ➕        tags.criticidad  (nuevo)             "Alta"
+🏷️ Tipo      📋 Atributo           ⬅️ Valor Anterior      ➡️ Valor Nuevo
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+UPDATE 🛠️    description          "Rol v1.0.8"          "Rol v2.0.0 mejorado"
+UPDATE 🛠️    tags.version         "1.0.8"               "2.0.0"
+CREATE ➕    tags.criticidad      (nuevo)               "Alta"
 
-💡 Mensaje: Cambios funcionales detectados - Requiere revisión
+💡 3 cambios detectados | Revisión recomendada antes de aplicar
 ```
 
-#### 🎯 Casos de Uso
+</div>
 
-1. **Sin Cambios**: Mensaje simple "✅ Sin cambios pendientes"
-2. **Solo Timestamps**: Mensaje ultra-simplificado "⚠️ Cambios detectados (sin impacto funcional)"
-3. **Cambios Funcionales**: Tabla HTML completa con todos los detalles
-4. **Múltiples Recursos**: Tabla agrupada con contador por tipo de operación
+### 🎯 Escenarios de Visualización
+
+| Escenario | Visualización | Ejemplo |
+|-----------|--------------|---------|
+| ✅ **Sin Cambios** | Mensaje simple | `✅ Sin cambios pendientes` |
+| ⚠️ **Solo Timestamps** | Ultra-simplificado | `⚠️ Cambios detectados (sin impacto funcional)` |
+| 🔍 **Cambios Funcionales** | Tabla HTML completa | Ver ejemplo arriba |
+| 📊 **Múltiples Recursos** | Tabla agrupada + contador | `📊 5 recursos | 2 CREATE, 3 UPDATE` |
 
 ---
 
-## �🏗️ Estructura Organizacional
+## 🏗️ Estructura Organizacional
 
-### Flexibilidad Total para Desarrolladores
+<div align="center">
+
+### 🎯 Flexibilidad Total para Desarrolladores
+
+*Crea tu propia estructura • Detección automática • Sin restricciones*
+
+</div>
 
 Los desarrolladores **crean su propia estructura** como prefieran. El sistema **automáticamente detecta** cualquier archivo JSON de rol:
 
