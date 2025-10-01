@@ -9,9 +9,11 @@
 [![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-CI%2FCD-2088FF?style=for-the-badge&logo=github-actions&logoColor=white)](https://github.com/features/actions)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
-[![Terraform CI](https://img.shields.io/github/actions/workflow/status/ClaroCENAM/mci-aws-iam/terraform.yml?branch=dev&label=Terraform%20CI&style=flat-square&logo=terraform)](https://github.com/ClaroCENAM/mci-aws-iam/actions)
-[![Security Scan](https://img.shields.io/github/actions/workflow/status/ClaroCENAM/mci-aws-iam/security.yml?branch=dev&label=Security&style=flat-square&logo=security)](https://github.com/ClaroCENAM/mci-aws-iam/actions)
-[![Drift Detection](https://img.shields.io/github/actions/workflow/status/ClaroCENAM/mci-aws-iam/drift-detection.yml?branch=dev&label=Drift%20Detection&style=flat-square&logo=aws)](https://github.com/ClaroCENAM/mci-aws-iam/actions)
+[![IAM CI/CD](https://img.shields.io/github/actions/workflow/status/ClaroCENAM/mci-aws-iam/generate-iam.yml?branch=dev&label=IAM%20CI%2FCD&style=flat-square&logo=terraform&logoColor=white)](https://github.com/ClaroCENAM/mci-aws-iam/actions/workflows/generate-iam.yml)
+[![Last Commit](https://img.shields.io/github/last-commit/ClaroCENAM/mci-aws-iam/dev?style=flat-square&logo=github)](https://github.com/ClaroCENAM/mci-aws-iam/commits/dev)
+[![Repo Size](https://img.shields.io/github/repo-size/ClaroCENAM/mci-aws-iam?style=flat-square&logo=github)](https://github.com/ClaroCENAM/mci-aws-iam)
+[![Code Quality](https://img.shields.io/badge/code%20quality-enterprise-brightgreen?style=flat-square&logo=codacy)](https://github.com/ClaroCENAM/mci-aws-iam)
+
 
 ---
 
