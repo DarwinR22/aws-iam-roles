@@ -1,14 +1,46 @@
-# MCI AWS IAM Enterprise Architecture
+# MCI AWS IAM - Arquitectura Empresarial
 
 [![Terraform CI](https://github.com/ClaroCENAM/mci-aws-iam/workflows/Enterprise%20IAM%20Terraform%20CI/badge.svg)](https://github.com/ClaroCENAM/mci-aws-iam/actions)
 [![Security Scan](https://github.com/ClaroCENAM/mci-aws-iam/workflows/Security%20Validation/badge.svg)](https://github.com/ClaroCENAM/mci-aws-iam/actions)
 [![Drift Detection](https://github.com/ClaroCENAM/mci-aws-iam/workflows/Drift%20Detection/badge.svg)](https://github.com/ClaroCENAM/mci-aws-iam/actions)
 
-**Enterprise-grade IAM management with Attribute-Based Access Control (ABAC), automated governance, and comprehensive security guardrails for Claro CENAM.**
+**Gestión empresarial de IAM con Control de Acceso Basado en Atributos (ABAC), gobernanza automatizada y guardrails de seguridad integrales para Claro CENAM.**
 
-> 🔐 **NEW**: Enterprise KMS encryption implemented! Customer-managed keys now secure DynamoDB state locks and S3 Terraform state with automatic key rotation and optimized costs.
+> 🎯 **NUEVO**: ¡Preview de Plan Mejorado con Tablas HTML! Visualiza cambios de Terraform con formato profesional, badges visuales (➕🛠♻❌), truncamiento inteligente y tooltips. Detecta automáticamente cambios funcionales vs cosméticos.
 
-> 🎯 **UPDATE**: Intelligent drift detection now differentiates between CI/CD managed resources (auto-cleanup) vs manually created resources (report-only) for enhanced safety.
+
+> 🔐 **NUEVO**: ¡Encriptación KMS empresarial implementada! Claves administradas por el cliente aseguran locks de DynamoDB y estado de Terraform en S3 con rotación automática y costos optimizados.
+
+> 🎯 **ACTUALIZACIÓN**: Detección inteligente de drift diferencia entre recursos gestionados por CI/CD (auto-limpieza) vs recursos creados manualmente (solo reporte) para mayor seguridad.
+
+## 🏗️ Visión General de la Arquitectura
+
+Este repositorio implementa una **arquitectura ABAC basada en tags con confianza cero** para gestión de IAM en AWS con capacidades empresariales de gobernanza y cumplimiento.
+
+### 📦 **Estructura Empresarial Limpia**
+
+```
+📦 mci-aws-iam/
+├── 🧱 policy_lib/          # Bloques de construcción ABAC (S3, DynamoDB, Lambda)
+├── 📋 catalog/             # Fuente única de verdad (roles.yaml, policies.yaml)
+├── 🏢 gerencias/           # Estructura organizacional con roles
+├── 🔧 modules/             # Módulos Terraform empresariales
+├── 🌍 environments/        # Configuraciones por ambiente (dev/qa/prod)
+├── 🛡️ guardrails/          # Validación de seguridad y cumplimiento
+├── ⚙️ ci/                  # Workflows de GitHub Actions
+├── 📝 docs/                # Documentación empresarial
+└── 🚀 scripts/             # Scripts de automatización y creación de roles
+```
+
+### 🎯 **Características Clave**
+- ✅ **Políticas ABAC Basadas en Tags** → Control de acceso auto-escalable
+- ✅ **Detección de Estructura Organizacional** → Gestión dinámica de roles
+- ✅ **Gobernanza de 25+ Tags Obligatorios** → Cumplimiento completo
+- ✅ **Integración de Bloques de Construcción** → Políticas MCI reutilizables
+- ✅ **Soporte Multi-Ambiente** → Flujos de trabajo dev/qa/prod
+- ✅ **Preview Inteligente de Planes** → Visualización de cambios con tablas HTML profesionales
+
+> 🎯 **ACTUALIZACIÓN**: Detección inteligente de drift diferencia entre recursos gestionados por CI/CD (auto-limpieza) vs recursos creados manualmente (solo reporte) para mayor seguridad.
 
 ## 🏗️ Architecture Overview
 
@@ -38,21 +70,65 @@ This repository implements a **zero-trust, tag-based ABAC architecture** for AWS
 
 ## ✅ Estado del Proyecto
 
-**Repositorio PRODUCTION-READY** - Arquitectura empresarial tag-based operativa:
+**Repositorio LISTO PARA PRODUCCIÓN** - Arquitectura empresarial basada en tags operativa:
 
 - ✅ **CI/CD Completo** - Validación → Plan → Deploy → Verificación automática
 - ✅ **Backend S3/DynamoDB** - Estado centralizado y locks de Terraform
-- ✅ **Tag-Based Policies** - 4 políticas inteligentes escalables automáticamente  
-- ✅ **Auto-discovery** - Encuentra automáticamente archivos de roles/políticas
+- ✅ **Políticas Basadas en Tags** - Políticas inteligentes que escalan automáticamente  
+- ✅ **Auto-descubrimiento** - Encuentra automáticamente archivos de roles/políticas
 - ✅ **Multi-ambiente** - dev/qa/prod con separación automática por tags
-- 🆕 **Drift Detection** - Sistema empresarial de detección y limpieza automática
-- � **GitHub Notifications** - Reportes automáticos como comentarios en PR/Issues
-- 🔄 **CI/CD Integration** - Deployment automático con verificaciones pre/post
-- 🛡️ **Enterprise Safety** - Protección de recursos críticos y thresholds inteligentes
+- 🆕 **Detección de Drift** - Sistema empresarial de detección y limpieza automática
+- 📊 **Notificaciones GitHub** - Reportes automáticos como comentarios en PR/Issues
+- 🔄 **Integración CI/CD** - Deployment automático con verificaciones pre/post
+- 🛡️ **Seguridad Empresarial** - Protección de recursos críticos y límites inteligentes
+- 🎯 **Preview Mejorado** - Visualización profesional de cambios con tablas HTML, badges y detección inteligente
 
 ---
 
-## 🏗️ Estructura Organizacional
+## � Preview Inteligente de Planes Terraform
+
+### 🌟 Sistema de Visualización Profesional
+
+El sistema de preview ahora incluye **visualización mejorada con tablas HTML** que muestra cambios de Terraform de forma clara y profesional:
+
+#### ✨ Características del Preview Mejorado
+
+- **📊 Tablas HTML Estructuradas** - Formato profesional con columnas organizadas (Tipo | Atributo | Valor Anterior | Valor Nuevo)
+- **🎨 Badges Visuales** - Indicadores claros para cada tipo de operación:
+  - ➕ **CREATE** - Recursos nuevos
+  - 🛠️ **UPDATE** - Modificaciones a recursos existentes
+  - ♻️ **REPLACE** - Recursos que deben ser reemplazados
+  - ❌ **DESTROY** - Recursos que serán eliminados
+- **📏 Truncamiento Inteligente** - Valores largos limitados a 80 caracteres con "..." para mejor legibilidad
+- **💡 Tooltips Descriptivos** - Información adicional al pasar el mouse sobre los íconos
+- **🔍 Detección Inteligente** - Distingue entre cambios funcionales vs cambios cosméticos (timestamps)
+- **📈 Contador de Recursos** - Resumen con cantidad de recursos por tipo de operación
+- **📖 Detalles Expandibles** - Sección técnica completa con el plan raw de Terraform
+
+#### 📸 Ejemplo de Visualización
+
+```
+📊 Vista Previa de Cambios
+
+🏷️ Tipo          📋 Atributo       ⬅️ Valor Anterior    ➡️ Valor Nuevo
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+UPDATE 🛠️        description      "Rol v1.0"          "Rol v2.0 con mejoras"
+UPDATE 🛠️        tags.version     "1.0.0"             "2.0.0"
+CREATE ➕        tags.criticidad  (nuevo)             "Alta"
+
+💡 Mensaje: Cambios funcionales detectados - Requiere revisión
+```
+
+#### 🎯 Casos de Uso
+
+1. **Sin Cambios**: Mensaje simple "✅ Sin cambios pendientes"
+2. **Solo Timestamps**: Mensaje ultra-simplificado "⚠️ Cambios detectados (sin impacto funcional)"
+3. **Cambios Funcionales**: Tabla HTML completa con todos los detalles
+4. **Múltiples Recursos**: Tabla agrupada con contador por tipo de operación
+
+---
+
+## �🏗️ Estructura Organizacional
 
 ### Flexibilidad Total para Desarrolladores
 
@@ -299,35 +375,36 @@ Los desarrolladores ya pueden crear roles sin necesidad de AWS CLI, Terraform, o
 
 ## 🏢 Arquitectura Empresarial
 
-### 🔍 Sistema de Drift Detection
+### 🔍 Sistema de Detección de Drift
 
 **Detección inteligente de recursos huérfanos y discrepancias**:
 
 ```
-Pre-Deployment     │ Deployment      │ Post-Deployment
+Pre-Despliegue     │ Despliegue      │ Post-Despliegue
                    │                 │
 ┌─────────────────┐ │ ┌─────────────┐ │ ┌─────────────────┐
-│ • Scan AWS      │ │ │ • Apply TF  │ │ │ • Verify State  │
-│ • Find Orphans  │─┼▶│ • Clean Up  │─┼▶│ • Send Report   │
-│ • Generate      │ │ │ • Deploy    │ │ │ • Email Alerts  │
-│   Cleanup       │ │ │             │ │ │                 │
+│ • Escanear AWS  │ │ │ • Aplicar TF│ │ │ • Verificar     │
+│ • Buscar        │ │ │ • Limpiar   │ │ │   Estado        │
+│   Huérfanos     │─┼▶│ • Desplegar │─┼▶│ • Enviar Reporte│
+│ • Generar       │ │ │             │ │ │ • Alertas       │
+│   Limpieza      │ │ │             │ │ │                 │
 └─────────────────┘ │ └─────────────┘ │ └─────────────────┘
 ```
 
-### � Sistema de Notificaciones
+### 📊 Sistema de Notificaciones
 
 **Reportes automáticos directamente en GitHub**:
 
 | Tipo | Ubicación | Notificación | Configuración |
 |------|-----------|--------------|---------------|
-| � **PR Comments** | Comentarios en Pull Request | ✅ Automática GitHub | ✅ Cero configuración |
+| 💬 **Comentarios en PR** | Comentarios en Pull Request | ✅ Automática GitHub | ✅ Cero configuración |
 | 📋 **Issues** | Nuevo Issue en repositorio | ✅ Automática GitHub | ✅ Cero configuración |
-| 🔍 **Artifacts** | Archivos descargables | ✅ En workflow | ✅ Siempre disponible |
+| 🔍 **Artefactos** | Archivos descargables | ✅ En workflow | ✅ Siempre disponible |
 
 ### 🛡️ Protecciones Empresariales
 
 - **Recursos protegidos**: Roles/políticas críticos nunca se eliminan
-- **Thresholds inteligentes**: Límites automáticos para prevenir errores masivos
+- **Límites inteligentes**: Límites automáticos para prevenir errores masivos
 - **Auditoría completa**: Logs detallados de todas las operaciones
 - **Rollback automático**: Reversión en caso de fallos críticos
 
@@ -407,23 +484,23 @@ El script te guía paso a paso:
 
 ### Estados del Workflow
 
-1. **🔍 Validate** - Validación de archivos JSON y convenciones
-2. **📋 Plan** - Terraform plan y previsualización de cambios  
-3. **🚀 Deploy** - Creación/actualización de recursos en AWS
-4. **✅ Verify** - Verificación de deployment exitoso
+1. **🔍 Validar** - Validación de archivos y convenciones
+2. **📋 Planificar** - Terraform plan y previsualización de cambios con tablas HTML
+3. **🚀 Desplegar** - Creación/actualización de recursos en AWS
+4. **✅ Verificar** - Verificación de deployment exitoso
 
-### Triggers Automáticos
+### Activadores Automáticos
 
 - **Push a `dev`** → Deploy a ambiente dev
 - **Push a `qa`** → Deploy a ambiente qa  
 - **Push a `main`** → Deploy a ambiente prod
-- **Manual trigger** → Deploy a ambiente seleccionado
+- **Trigger manual** → Deploy a ambiente seleccionado
 
 ### Duración Esperada
 - **Validación**: ~30 segundos
-- **Plan**: ~2-3 minutos
-- **Deploy**: ~3-4 minutos
-- **Verify**: ~1-2 minutos
+- **Planificación**: ~2-3 minutos (incluye generación de preview con tabla HTML)
+- **Despliegue**: ~3-4 minutos
+- **Verificación**: ~1-2 minutos
 - **Total**: ~6-9 minutos
 
 ---
@@ -530,21 +607,24 @@ ls politicas/policy-s3-read.json
 
 ### ✅ Para Desarrolladores
 - **Sin dependencias locales** - Todo funciona vía GitHub Actions
-- **Generación automática** - Solo editar JSON y hacer commit
+- **Generación automática** - Solo editar archivos y hacer commit
 - **Validación continua** - Detecta errores antes del deploy
 - **Templates reutilizables** - Copiar y adaptar roles existentes
+- **Preview visual mejorado** - Tablas HTML profesionales muestran exactamente qué cambiará
 
 ### ✅ Para DevOps
 - **CI/CD completo** - Deploy automático en 3 ambientes
 - **Estado centralizado** - Backend S3 con locks DynamoDB
 - **Rollback seguro** - Historial completo en Git + Terraform
 - **Monitoreo** - Logs detallados de cada deployment
+- **Visualización clara** - Preview con badges y tooltips para revisión rápida
 
 ### ✅ Para Seguridad  
 - **Tags obligatorios** - Trazabilidad completa de recursos
-- **Naming convention** - Identificación clara y consistente
+- **Convención de nombres** - Identificación clara y consistente
 - **Principio de menor privilegio** - Validaciones automáticas
 - **Auditabilidad** - Cada cambio documentado y versionado
+- **Detección de drift** - Identificación automática de cambios no autorizados
 
 ---
 
@@ -575,11 +655,15 @@ Este proyecto está bajo la Licencia MIT - ver [LICENSE](LICENSE) para detalles.
 
 ## 🏷️ Versión
 
-**v2.2.0** - Catálogo V2 modular ABAC + limpieza de legacy
+**v2.3.0** - Preview mejorado con visualización profesional + Catálogo V2 modular ABAC
 
-**Última actualización**: Septiembre 2025
+**Última actualización**: Octubre 2025
 
-### 🆕 Novedades v2.2.0
+### 🆕 Novedades v2.3.0
+- 🎯 **Preview Mejorado**: Tablas HTML profesionales con badges visuales (➕🛠️♻️❌)
+- 📊 **Visualización Inteligente**: Detecta cambios funcionales vs cosméticos (timestamps)
+- 🎨 **Truncamiento y Tooltips**: Valores largos truncados a 80 caracteres con información adicional
+- 📈 **Contador de Recursos**: Resumen automático por tipo de operación
 - ✅ **Catálogo V2 Modular**: Políticas organizadas por servicio en YAML
 - ✅ **Políticas ABAC Reales**: Tag-based access control funcional
 - ✅ **Limpieza Legacy**: Eliminadas referencias a policies.yaml V1
