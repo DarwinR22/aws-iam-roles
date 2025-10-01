@@ -1,7 +1,6 @@
 
   # aws_iam_role.github_actions_iam_deployment_role will be updated in-place
   ~ resource "aws_iam_role" "github_actions_iam_deployment_role" {
-      ~ description           = "Rol IAM para despliegues automaticos desde GitHub Actions (repositorio: ClaroCENAM/mci-aws-iam) utilizando OIDC. Permite unicamente la creacion y administracion de recursos IAM a traves de la canalizacion (pipeline) de Terraform" -> "Rol IAM para despliegues automaticos desde GitHub Actions con capacidades avanzadas de monitoreo y gestión de infraestructura. Optimizado para CICD y operaciones DevOps"
         id                    = "github-actions-iam-deployment-role"
         name                  = "github-actions-iam-deployment-role"
       ~ tags                  = {
@@ -9,20 +8,20 @@
             "Ambiente"               = "dev"
             "Aplicacion"             = "CICD"
             "Area"                   = "DevOps"
-          ~ "Ciclo de Vida"          = "Creacion" -> "Produccion"
+          ~ "Ciclo de Vida"          = "Produccion" -> "Creacion"
             "Contacto"               = "darwin.lopez@claro.com.gt"
             "Creado Por"             = "DarwinLopez"
-          + "Criticidad"             = "Alta"
+          - "Criticidad"             = "Alta" -> null
             "Direccion"              = "TIRegional"
             "Dominio"                = "BusinessIntelligence"
-          + "Entorno"                = "Desarrollo"
+          - "Entorno"                = "Desarrollo" -> null
             "Fecha de Creacion"      = "2025-09-16"
-          ~ "Generated"              = "2025-09-29T22:12:37.795519" -> "2025-10-01T20:39:54.624056"
+          ~ "Generated"              = "2025-10-01T20:36:32.978319" -> "2025-10-01T20:55:50.237765"
             "Gerencia"               = "MCI"
             "Layer"                  = "Devops"
             "ManagedBy"              = "terraform"
             "Modulo"                 = "IAM"
-          + "Monitoreo"              = "Activo"
+          - "Monitoreo"              = "Activo" -> null
             "Name"                   = "github-actions-iam-deployment-role"
             "Pais"                   = "rg"
             "Propietario"            = "DarwinLopez"
@@ -31,96 +30,96 @@
             "Source"                 = "definitions/roles/github-deployment-role.yaml"
             "Subdominio"             = "Analytics"
             "Tipo de Recurso"        = "IAMRole"
-          ~ "Versión"                = "v1.0.8" -> "v2.0.0"
-          ~ "Última Actualización"   = "2025-09-26" -> "2025-09-29"
+          ~ "Versión"                = "v2.0.0" -> "v1.0.8"
+          ~ "Última Actualización"   = "2025-09-29" -> "2025-09-26"
         }
       ~ tags_all              = {
-          ~ "Ciclo de Vida"          = "Creacion" -> "Produccion"
-          + "Criticidad"             = "Alta"
-          + "Entorno"                = "Desarrollo"
-          ~ "Generated"              = "2025-09-29T22:12:37.795519" -> "2025-10-01T20:39:54.624056"
-          + "Monitoreo"              = "Activo"
-          ~ "Versión"                = "v1.0.8" -> "v2.0.0"
-          ~ "Última Actualización"   = "2025-09-26" -> "2025-09-29"
+          ~ "Ciclo de Vida"          = "Produccion" -> "Creacion"
+          - "Criticidad"             = "Alta" -> null
+          - "Entorno"                = "Desarrollo" -> null
+          ~ "Generated"              = "2025-10-01T20:36:32.978319" -> "2025-10-01T20:55:50.237765"
+          - "Monitoreo"              = "Activo" -> null
+          ~ "Versión"                = "v2.0.0" -> "v1.0.8"
+          ~ "Última Actualización"   = "2025-09-29" -> "2025-09-26"
             # (21 unchanged elements hidden)
         }
-        # (8 unchanged attributes hidden)
+        # (9 unchanged attributes hidden)
 
         # (1 unchanged block hidden)
     }
 
-  # module.cloudwatch_logs_readonly.aws_iam_policy.main will be created
-  + resource "aws_iam_policy" "main" {
-      + arn              = (known after apply)
-      + attachment_count = (known after apply)
-      + description      = "Permite lectura de logs de CloudWatch para monitoreo y debugging de deployments"
-      + id               = (known after apply)
-      + name             = "mci-cloudwatch-logs-readonly"
-      + name_prefix      = (known after apply)
-      + path             = "/policies/"
-      + policy           = jsonencode(
+  # module.cloudwatch_logs_readonly.aws_iam_policy.main will be destroyed
+  # (because aws_iam_policy.main is not in configuration)
+  - resource "aws_iam_policy" "main" {
+      - arn              = "arn:aws:iam::393209814297:policy/policies/mci-cloudwatch-logs-readonly" -> null
+      - attachment_count = 0 -> null
+      - description      = "Permite lectura de logs de CloudWatch para monitoreo y debugging de deployments" -> null
+      - id               = "arn:aws:iam::393209814297:policy/policies/mci-cloudwatch-logs-readonly" -> null
+      - name             = "mci-cloudwatch-logs-readonly" -> null
+      - path             = "/policies/" -> null
+      - policy           = jsonencode(
             {
-              + Statement = [
-                  + {
-                      + Action   = [
-                          + "logs:DescribeLogGroups",
-                          + "logs:DescribeLogStreams",
-                          + "logs:GetLogEvents",
-                          + "logs:FilterLogEvents",
-                          + "logs:StartQuery",
-                          + "logs:StopQuery",
-                          + "logs:DescribeQueries",
-                          + "logs:GetQueryResults",
+              - Statement = [
+                  - {
+                      - Action   = [
+                          - "logs:DescribeLogGroups",
+                          - "logs:DescribeLogStreams",
+                          - "logs:GetLogEvents",
+                          - "logs:FilterLogEvents",
+                          - "logs:StartQuery",
+                          - "logs:StopQuery",
+                          - "logs:DescribeQueries",
+                          - "logs:GetQueryResults",
                         ]
-                      + Effect   = "Allow"
-                      + Resource = [
-                          + "arn:aws:logs:*:*:log-group:/aws/github-actions/*",
-                          + "arn:aws:logs:*:*:log-group:/aws/lambda/*",
+                      - Effect   = "Allow"
+                      - Resource = [
+                          - "arn:aws:logs:*:*:log-group:/aws/github-actions/*",
+                          - "arn:aws:logs:*:*:log-group:/aws/lambda/*",
                         ]
-                      + Sid      = "CloudWatchLogsReadAccess"
+                      - Sid      = "CloudWatchLogsReadAccess"
                     },
-                  + {
-                      + Action   = [
-                          + "cloudwatch:GetMetricStatistics",
-                          + "cloudwatch:ListMetrics",
-                          + "cloudwatch:GetMetricData",
+                  - {
+                      - Action   = [
+                          - "cloudwatch:GetMetricStatistics",
+                          - "cloudwatch:ListMetrics",
+                          - "cloudwatch:GetMetricData",
                         ]
-                      + Effect   = "Allow"
-                      + Resource = [
-                          + "*",
+                      - Effect   = "Allow"
+                      - Resource = [
+                          - "*",
                         ]
-                      + Sid      = "CloudWatchMetricsReadAccess"
+                      - Sid      = "CloudWatchMetricsReadAccess"
                     },
                 ]
-              + Version   = "2012-10-17"
+              - Version   = "2012-10-17"
             }
-        )
-      + policy_id        = (known after apply)
-      + tags             = {
-          + "Ambiente" = "dev"
-          + "Area"     = "DevOps"
-          + "Gerencia" = "MCI"
-          + "Name"     = "cloudwatch-logs-readonly-dev"
-          + "Type"     = "Policy"
-        }
-      + tags_all         = {
-          + "Ambiente" = "dev"
-          + "Area"     = "DevOps"
-          + "Gerencia" = "MCI"
-          + "Name"     = "cloudwatch-logs-readonly-dev"
-          + "Type"     = "Policy"
-        }
+        ) -> null
+      - policy_id        = "ANPAVXDJBTUM5TG3IIIPU" -> null
+      - tags             = {
+          - "Ambiente" = "dev"
+          - "Area"     = "DevOps"
+          - "Gerencia" = "MCI"
+          - "Name"     = "cloudwatch-logs-readonly-dev"
+          - "Type"     = "Policy"
+        } -> null
+      - tags_all         = {
+          - "Ambiente" = "dev"
+          - "Area"     = "DevOps"
+          - "Gerencia" = "MCI"
+          - "Name"     = "cloudwatch-logs-readonly-dev"
+          - "Type"     = "Policy"
+        } -> null
     }
 
   # module.githubactions_iammanagement.aws_iam_policy.main must be replaced
 -/+ resource "aws_iam_policy" "main" {
       ~ arn              = "arn:aws:iam::393209814297:policy/policies/mci-githubactions-iammanagement" -> (known after apply)
       ~ attachment_count = 0 -> (known after apply)
-      ~ description      = "Complete IAM management permissions for infrastructure deployment" -> "Complete IAM management permissions for infrastructure deployment with enhanced security controls" # forces replacement
+      ~ description      = "Complete IAM management permissions for infrastructure deployment with enhanced security controls" -> "Complete IAM management permissions for infrastructure deployment" # forces replacement
       ~ id               = "arn:aws:iam::393209814297:policy/policies/mci-githubactions-iammanagement" -> (known after apply)
         name             = "mci-githubactions-iammanagement"
       + name_prefix      = (known after apply)
-      ~ policy_id        = "ANPAVXDJBTUMXSQXBKMFR" -> (known after apply)
+      ~ policy_id        = "ANPAVXDJBTUM7ZSLJC4HI" -> (known after apply)
         tags             = {
             "Ambiente" = "dev"
             "Area"     = "DevOps"
@@ -131,7 +130,7 @@
         # (3 unchanged attributes hidden)
     }
 
-Plan: 2 to add, 1 to change, 1 to destroy.
+Plan: 1 to add, 1 to change, 2 to destroy.
 
 ─────────────────────────────────────────────────────────────────────────────
 

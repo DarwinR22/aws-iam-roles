@@ -1,3 +1,3 @@
 aws_iam_role.github_actions_iam_deployment_role will be updated in-place
-module.cloudwatch_logs_readonly.aws_iam_policy.main will be created
+module.cloudwatch_logs_readonly.aws_iam_policy.main will be destroyed
 module.githubactions_iammanagement.aws_iam_policy.main must be replaced

@@ -1,1 +1,0 @@
-module.cloudwatch_logs_readonly.aws_iam_policy.main

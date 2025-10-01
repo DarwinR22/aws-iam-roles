@@ -3,7 +3,7 @@
 variable "policy_description" {
   description = "Description for the GithubActions-IAMManagement policy"
   type        = string
-  default     = "Complete IAM management permissions for infrastructure deployment with enhanced security controls"
+  default     = "Complete IAM management permissions for infrastructure deployment"
 }
 
 variable "abac_conditions" {
