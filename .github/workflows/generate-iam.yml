@@ -366,37 +366,91 @@ jobs:
             grep 'Generated.*->' plan_actions_block.txt | head -1 | sed 's/^[[:space:]]*~/  ~ /' >> $GITHUB_STEP_SUMMARY || true
             echo '\`\`\`' >> $GITHUB_STEP_SUMMARY
           else
-            # Para cambios funcionales, extraer info del recurso y mostrar tabla estructurada
-            resource_line=$(grep "will be" plan_actions_block.txt | head -1 || echo "")
-            resource_name=$(echo "$resource_line" | sed 's/ will be.*//' | xargs || echo "N/A")
-            action_desc=$(echo "$resource_line" | sed 's/.* will be //' | xargs || echo "N/A")
-            
-            echo "**📋 Resumen del cambio principal:**" >> $GITHUB_STEP_SUMMARY
-            echo "- **Recurso**: \`$resource_name\`" >> $GITHUB_STEP_SUMMARY
-            echo "- **Acción**: $action_desc" >> $GITHUB_STEP_SUMMARY
+            # Para cambios funcionales, mostrar resumen mejorado con diseño visual
+            echo "---" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             
-            # Extraer cambios específicos en formato tabla mejorado
-            echo "**🔧 Cambios detallados:**" >> $GITHUB_STEP_SUMMARY
+            # Procesar todos los recursos afectados
+            resource_count=$(grep "will be" plan_actions_block.txt | wc -l)
+            echo "### 🎯 **Resumen de cambios ($resource_count recursos afectados)**" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
-            echo "| Tipo | Atributo | Valor Anterior | Valor Nuevo |" >> $GITHUB_STEP_SUMMARY
-            echo "|------|----------|----------------|-------------|" >> $GITHUB_STEP_SUMMARY
             
-            # Procesar cambios línea por línea para tabla estructurada
-            grep -E '^[[:space:]]*[~+-]' plan_actions_block.txt | grep -v 'Generated' | head -20 | while IFS= read -r line; do
+            # Listar todos los recursos con su acción
+            grep "will be" plan_actions_block.txt | head -10 | while IFS= read -r res_line; do
+              res_name=$(echo "$res_line" | sed 's/ will be.*//' | sed 's/^[[:space:]]*# //' | xargs)
+              action=$(echo "$res_line" | sed 's/.* will be //' | xargs)
+              
+              # Asignar icono según acción
+              if echo "$action" | grep -qi "created"; then
+                icon="➕"
+                badge="<sub>**CREATE**</sub>"
+              elif echo "$action" | grep -qi "updated"; then
+                icon="🛠"
+                badge="<sub>**UPDATE**</sub>"
+              elif echo "$action" | grep -qi "destroyed"; then
+                icon="❌"
+                badge="<sub>**DESTROY**</sub>"
+              elif echo "$action" | grep -qi "replaced"; then
+                icon="♻"
+                badge="<sub>**REPLACE**</sub>"
+              else
+                icon="📝"
+                badge="<sub>**CHANGE**</sub>"
+              fi
+              
+              echo "- $icon **\`$res_name\`** $badge" >> $GITHUB_STEP_SUMMARY
+            done
+            echo "" >> $GITHUB_STEP_SUMMARY
+            
+            # Tabla de cambios detallados con diseño mejorado
+            echo "---" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### 🔍 **Cambios por atributo**" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo '<table>' >> $GITHUB_STEP_SUMMARY
+            echo '<thead>' >> $GITHUB_STEP_SUMMARY
+            echo '<tr>' >> $GITHUB_STEP_SUMMARY
+            echo '<th align="center">🏷️ Tipo</th>' >> $GITHUB_STEP_SUMMARY
+            echo '<th>📋 Atributo</th>' >> $GITHUB_STEP_SUMMARY
+            echo '<th>⬅️ Valor Anterior</th>' >> $GITHUB_STEP_SUMMARY
+            echo '<th>➡️ Valor Nuevo</th>' >> $GITHUB_STEP_SUMMARY
+            echo '</tr>' >> $GITHUB_STEP_SUMMARY
+            echo '</thead>' >> $GITHUB_STEP_SUMMARY
+            echo '<tbody>' >> $GITHUB_STEP_SUMMARY
+            
+            # Procesar cambios línea por línea
+            change_count=0
+            grep -E '^[[:space:]]*[~+-]' plan_actions_block.txt | grep -v 'Generated' | head -30 | while IFS= read -r line; do
+              change_count=$((change_count + 1))
+              
               # Detectar tipo de cambio
               if echo "$line" | grep -q '^[[:space:]]*+'; then
-                tipo="➕ Add"
-              elif echo "$line" | grep -q '^[[:space:]]*-'; then
-                tipo="❌ Remove"
+                tipo='<span title="Añadido">➕</span>'
+                tipo_text="Add"
+              elif echo "$line" | grep -q '^[[:space:]]*-[^>]'; then
+                tipo='<span title="Eliminado">❌</span>'
+                tipo_text="Remove"
               elif echo "$line" | grep -q '^[[:space:]]*~'; then
-                tipo="🛠 Update"
+                tipo='<span title="Modificado">🛠</span>'
+                tipo_text="Update"
               else
-                tipo="📝 Change"
+                tipo='<span title="Cambio">📝</span>'
+                tipo_text="Change"
               fi
               
               # Limpiar línea y extraer datos
               clean_line=$(echo "$line" | sed 's/^[[:space:]]*[~+-][[:space:]]*//')
+              
+              # Función para truncar valores largos
+              truncate_value() {
+                val="$1"
+                max_len=80
+                if [ ${#val} -gt $max_len ]; then
+                  echo "${val:0:$max_len}..." | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g'
+                else
+                  echo "$val" | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g'
+                fi
+              }
               
               if echo "$clean_line" | grep -q ' = .* -> '; then
                 # Cambio de valor (antes -> después)
@@ -404,20 +458,36 @@ jobs:
                 valores=$(echo "$clean_line" | sed 's/.*= //')
                 antes=$(echo "$valores" | sed 's/ -> .*//' | sed 's/^"\|"$//g')
                 despues=$(echo "$valores" | sed 's/.* -> //' | sed 's/^"\|"$//g')
-                echo "| $tipo | \`$attr\` | $antes | $despues |" >> $GITHUB_STEP_SUMMARY
+                
+                antes_trunc=$(truncate_value "$antes")
+                despues_trunc=$(truncate_value "$despues")
+                
+                echo "<tr>" >> $GITHUB_STEP_SUMMARY
+                echo "<td align=\"center\">$tipo</td>" >> $GITHUB_STEP_SUMMARY
+                echo "<td><code>$attr</code></td>" >> $GITHUB_STEP_SUMMARY
+                echo "<td><sub>$antes_trunc</sub></td>" >> $GITHUB_STEP_SUMMARY
+                echo "<td><sub>$despues_trunc</sub></td>" >> $GITHUB_STEP_SUMMARY
+                echo "</tr>" >> $GITHUB_STEP_SUMMARY
               elif echo "$clean_line" | grep -q ' = '; then
                 # Adición simple
                 attr=$(echo "$clean_line" | sed 's/ = .*//')
                 valor=$(echo "$clean_line" | sed 's/.*= //' | sed 's/^"\|"$//g')
-                echo "| $tipo | \`$attr\` | - | $valor |" >> $GITHUB_STEP_SUMMARY
-              else
-                # Cambio general
-                echo "| $tipo | \`$clean_line\` | - | - |" >> $GITHUB_STEP_SUMMARY
+                valor_trunc=$(truncate_value "$valor")
+                
+                echo "<tr>" >> $GITHUB_STEP_SUMMARY
+                echo "<td align=\"center\">$tipo</td>" >> $GITHUB_STEP_SUMMARY
+                echo "<td><code>$attr</code></td>" >> $GITHUB_STEP_SUMMARY
+                echo "<td><sub><em>-</em></sub></td>" >> $GITHUB_STEP_SUMMARY
+                echo "<td><sub>$valor_trunc</sub></td>" >> $GITHUB_STEP_SUMMARY
+                echo "</tr>" >> $GITHUB_STEP_SUMMARY
               fi
             done
             
+            echo '</tbody>' >> $GITHUB_STEP_SUMMARY
+            echo '</table>' >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
-            echo "_💡 Nota: Se muestran solo los atributos modificados para mayor claridad_" >> $GITHUB_STEP_SUMMARY
+            echo '<sup>💡 <strong>Nota:</strong> Los valores largos están truncados a 80 caracteres. Ver plan completo abajo para detalles.</sup>' >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
           fi
           
           # Bloque colapsable con plan completo original para referencia
