@@ -6,7 +6,7 @@
 # This file is auto-generated from YAML definitions.
 # DO NOT EDIT MANUALLY - Changes will be overwritten.
 # 
-# Generated: 2025-10-09T14:02:35.002216
+# Generated: 2025-10-09T14:08:35.962445
 # Source: Multiple role definitions in definitions/roles/
 # ==============================================================================
 
@@ -83,13 +83,13 @@ resource "aws_iam_role" "github_actions_iam_deployment_role" {
     # Auto-generated tags
     "ManagedBy" = "terraform"
     "Source"    = "definitions/roles/github-deployment-role.yaml"
-    "Generated" = "2025-10-09T14:02:35.002216"
+    "Generated" = "2025-10-09T14:08:35.962445"
   }
 }
 
 # Create policies as independent modules (not attached to role)
 module "mci_terraform_statemanagement" {
-  source = "./modules/policies/mci_mci_terraform_statemanagement"
+  source = "./modules/policies/mci_terraform_statemanagement"
   
   environment = "dev"
   
@@ -115,7 +115,7 @@ module "mci_terraform_statemanagement" {
   }
 }
 module "mci_lambda_deploymentabac" {
-  source = "./modules/policies/mci_mci_lambda_deploymentabac"
+  source = "./modules/policies/mci_lambda_deploymentabac"
   
   environment = "dev"
   
@@ -141,7 +141,7 @@ module "mci_lambda_deploymentabac" {
   }
 }
 module "mci_s3_deploymentabac" {
-  source = "./modules/policies/mci_mci_s3_deploymentabac"
+  source = "./modules/policies/mci_s3_deploymentabac"
   
   environment = "dev"
   
@@ -167,7 +167,7 @@ module "mci_s3_deploymentabac" {
   }
 }
 module "mci_dynamodb_deploymentabac" {
-  source = "./modules/policies/mci_mci_dynamodb_deploymentabac"
+  source = "./modules/policies/mci_dynamodb_deploymentabac"
   
   environment = "dev"
   
@@ -193,7 +193,7 @@ module "mci_dynamodb_deploymentabac" {
   }
 }
 module "mci_eventbridge_deploymentabac" {
-  source = "./modules/policies/mci_mci_eventbridge_deploymentabac"
+  source = "./modules/policies/mci_eventbridge_deploymentabac"
   
   environment = "dev"
   
@@ -219,7 +219,7 @@ module "mci_eventbridge_deploymentabac" {
   }
 }
 module "mci_cloudwatch_deploymentabac" {
-  source = "./modules/policies/mci_mci_cloudwatch_deploymentabac"
+  source = "./modules/policies/mci_cloudwatch_deploymentabac"
   
   environment = "dev"
   
@@ -245,7 +245,7 @@ module "mci_cloudwatch_deploymentabac" {
   }
 }
 module "mci_glue_deploymentabac" {
-  source = "./modules/policies/mci_mci_glue_deploymentabac"
+  source = "./modules/policies/mci_glue_deploymentabac"
   
   environment = "dev"
   
