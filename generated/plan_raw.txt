@@ -1,52 +1,49 @@
-[command]/home/runner/work/_temp/aaa74936-f2b6-4185-9f3c-ebb5729f84ef/terraform-bin plan -no-color -input=false
-data.aws_caller_identity.current: Reading...
-module.mci_iam_fullmanagement.aws_iam_policy.main: Refreshing state... [id=arn:aws:iam::393209814297:policy/mci-iam-fullmanagement]
-module.mci_dynamodb_deploymentabac.aws_iam_policy.main: Refreshing state... [id=arn:aws:iam::393209814297:policy/mci-dynamodb-deploymentabac]
-module.mci_dynamodb_deploymentabac.data.aws_caller_identity.current: Reading...
-aws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_iam_fullmanagement: Refreshing state... [id=github-actions-iam-deployment-role/arn:aws:iam::393209814297:policy/mci-iam-fullmanagement]
+[command]/home/runner/work/_temp/4cdad715-00e9-4c9e-a6ec-76daf34b2204/terraform-bin plan -no-color -input=false
+module.mci_s3_deploymentabac.aws_iam_policy.main: Refreshing state... [id=arn:aws:iam::393209814297:policy/mci-s3-deploymentabac]
+module.mci_eventbridge_deploymentabac.data.aws_caller_identity.current: Reading...
 module.mci_s3_deploymentabac.data.aws_caller_identity.current: Reading...
-module.mci_cloudwatch_deploymentabac.aws_iam_policy.main: Refreshing state... [id=arn:aws:iam::393209814297:policy/mci-cloudwatch-deploymentabac]
+module.mci_terraform_statemanagement.aws_iam_policy.main: Refreshing state... [id=arn:aws:iam::393209814297:policy/mci-terraform-statemanagement]
+module.mci_dynamodb_deploymentabac.aws_iam_policy.main: Refreshing state... [id=arn:aws:iam::393209814297:policy/mci-dynamodb-deploymentabac]
 module.mci_lambda_deploymentabac.data.aws_caller_identity.current: Reading...
+module.mci_terraform_statemanagement.data.aws_caller_identity.current: Reading...
 module.mci_lambda_deploymentabac.aws_iam_policy.main: Refreshing state... [id=arn:aws:iam::393209814297:policy/mci-lambda-deploymentabac]
 module.mci_glue_deploymentabac.aws_iam_policy.main: Refreshing state... [id=arn:aws:iam::393209814297:policy/mci-glue-deploymentabac]
-data.aws_caller_identity.current: Read complete after 0s [id=393209814297]
-module.mci_glue_deploymentabac.data.aws_caller_identity.current: Reading...
-module.mci_dynamodb_deploymentabac.data.aws_caller_identity.current: Read complete after 0s [id=393209814297]
-module.mci_s3_deploymentabac.aws_iam_policy.main: Refreshing state... [id=arn:aws:iam::393209814297:policy/mci-s3-deploymentabac]
-module.mci_s3_deploymentabac.data.aws_caller_identity.current: Read complete after 0s [id=393209814297]
-module.mci_eventbridge_deploymentabac.aws_iam_policy.main: Refreshing state... [id=arn:aws:iam::393209814297:policy/mci-eventbridge-deploymentabac]
-module.mci_lambda_deploymentabac.data.aws_caller_identity.current: Read complete after 0s [id=393209814297]
-module.mci_glue_deploymentabac.data.aws_caller_identity.current: Read complete after 0s [id=393209814297]
-module.mci_terraform_statemanagement.data.aws_caller_identity.current: Reading...
-module.mci_eventbridge_deploymentabac.data.aws_caller_identity.current: Reading...
+module.mci_iam_deployment.aws_iam_policy.main: Refreshing state... [id=arn:aws:iam::393209814297:policy/mci-iam-deployment]
 module.mci_eventbridge_deploymentabac.data.aws_caller_identity.current: Read complete after 0s [id=393209814297]
+module.mci_glue_deploymentabac.data.aws_caller_identity.current: Reading...
+module.mci_s3_deploymentabac.data.aws_caller_identity.current: Read complete after 1s [id=393209814297]
 module.mci_iam_deployment.data.aws_caller_identity.current: Reading...
-module.mci_terraform_statemanagement.data.aws_caller_identity.current: Read complete after 0s [id=393209814297]
-module.mci_cloudformation_deployment.data.aws_caller_identity.current: Reading...
-module.mci_iam_deployment.data.aws_caller_identity.current: Read complete after 0s [id=393209814297]
-module.mci_terraform_statemanagement.aws_iam_policy.main: Refreshing state... [id=arn:aws:iam::393209814297:policy/mci-terraform-statemanagement]
-module.mci_cloudwatch_deploymentabac.data.aws_caller_identity.current: Reading...
-module.mci_cloudwatch_deploymentabac.data.aws_caller_identity.current: Read complete after 0s [id=393209814297]
-module.mci_cloudformation_deployment.data.aws_caller_identity.current: Read complete after 0s [id=393209814297]
+module.mci_lambda_deploymentabac.data.aws_caller_identity.current: Read complete after 1s [id=393209814297]
 module.mci_cloudformation_deployment.aws_iam_policy.main: Refreshing state... [id=arn:aws:iam::393209814297:policy/mci-cloudformation-deployment]
+module.mci_iam_deployment.data.aws_caller_identity.current: Read complete after 0s [id=393209814297]
+module.mci_cloudformation_deployment.data.aws_caller_identity.current: Reading...
+module.mci_terraform_statemanagement.data.aws_caller_identity.current: Read complete after 1s [id=393209814297]
+module.mci_glue_deploymentabac.data.aws_caller_identity.current: Read complete after 1s [id=393209814297]
+module.mci_cloudwatch_deploymentabac.data.aws_caller_identity.current: Reading...
+module.mci_eventbridge_deploymentabac.aws_iam_policy.main: Refreshing state... [id=arn:aws:iam::393209814297:policy/mci-eventbridge-deploymentabac]
+module.mci_cloudformation_deployment.data.aws_caller_identity.current: Read complete after 0s [id=393209814297]
+data.aws_caller_identity.current: Reading...
+data.aws_caller_identity.current: Read complete after 0s [id=393209814297]
+module.mci_cloudwatch_deploymentabac.data.aws_caller_identity.current: Read complete after 0s [id=393209814297]
+module.mci_dynamodb_deploymentabac.data.aws_caller_identity.current: Reading...
+module.mci_cloudwatch_deploymentabac.aws_iam_policy.main: Refreshing state... [id=arn:aws:iam::393209814297:policy/mci-cloudwatch-deploymentabac]
+module.mci_dynamodb_deploymentabac.data.aws_caller_identity.current: Read complete after 0s [id=393209814297]
 data.aws_iam_policy_document.github_actions_iam_deployment_role_trust: Reading...
 data.aws_iam_policy_document.github_actions_iam_deployment_role_trust: Read complete after 0s [id=1058311888]
 aws_iam_role.github_actions_iam_deployment_role: Refreshing state... [id=github-actions-iam-deployment-role]
-aws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_glue_deploymentabac: Refreshing state... [id=github-actions-iam-deployment-role/arn:aws:iam::393209814297:policy/mci-glue-deploymentabac]
-aws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_lambda_deploymentabac: Refreshing state... [id=github-actions-iam-deployment-role/arn:aws:iam::393209814297:policy/mci-lambda-deploymentabac]
-aws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_cloudformation_deployment: Refreshing state... [id=github-actions-iam-deployment-role/arn:aws:iam::393209814297:policy/mci-cloudformation-deployment]
-aws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_dynamodb_deploymentabac: Refreshing state... [id=github-actions-iam-deployment-role/arn:aws:iam::393209814297:policy/mci-dynamodb-deploymentabac]
-aws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_s3_deploymentabac: Refreshing state... [id=github-actions-iam-deployment-role/arn:aws:iam::393209814297:policy/mci-s3-deploymentabac]
-aws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_cloudwatch_deploymentabac: Refreshing state... [id=github-actions-iam-deployment-role/arn:aws:iam::393209814297:policy/mci-cloudwatch-deploymentabac]
 aws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_eventbridge_deploymentabac: Refreshing state... [id=github-actions-iam-deployment-role/arn:aws:iam::393209814297:policy/mci-eventbridge-deploymentabac]
+aws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_dynamodb_deploymentabac: Refreshing state... [id=github-actions-iam-deployment-role/arn:aws:iam::393209814297:policy/mci-dynamodb-deploymentabac]
+aws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_glue_deploymentabac: Refreshing state... [id=github-actions-iam-deployment-role/arn:aws:iam::393209814297:policy/mci-glue-deploymentabac]
 aws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_terraform_statemanagement: Refreshing state... [id=github-actions-iam-deployment-role/arn:aws:iam::393209814297:policy/mci-terraform-statemanagement]
+aws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_iam_deployment: Refreshing state... [id=github-actions-iam-deployment-role/arn:aws:iam::393209814297:policy/mci-iam-deployment]
+aws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_cloudwatch_deploymentabac: Refreshing state... [id=github-actions-iam-deployment-role/arn:aws:iam::393209814297:policy/mci-cloudwatch-deploymentabac]
+aws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_cloudformation_deployment: Refreshing state... [id=github-actions-iam-deployment-role/arn:aws:iam::393209814297:policy/mci-cloudformation-deployment]
+aws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_lambda_deploymentabac: Refreshing state... [id=github-actions-iam-deployment-role/arn:aws:iam::393209814297:policy/mci-lambda-deploymentabac]
+aws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_s3_deploymentabac: Refreshing state... [id=github-actions-iam-deployment-role/arn:aws:iam::393209814297:policy/mci-s3-deploymentabac]
 
 Terraform used the selected providers to generate the following execution
 plan. Resource actions are indicated with the following symbols:
-  + create
   ~ update in-place
-  - destroy
--/+ destroy and then create replacement
 
 Terraform will perform the following actions:
 
@@ -65,7 +62,7 @@ Terraform will perform the following actions:
             "Direccion"              = "TIRegional"
             "Dominio"                = "BusinessIntelligence"
             "Fecha de Creacion"      = "2025-09-16"
-          ~ "Generated"              = "2025-10-09T15:26:14.735941" -> "2025-10-09T22:43:17.534725"
+          ~ "Generated"              = "2025-10-09T16:39:01.756820" -> "2025-10-09T23:41:00.756605"
             "Gerencia"               = "MCI"
             "Layer"                  = "Devops"
             "ManagedBy"              = "terraform"
@@ -82,503 +79,25 @@ Terraform will perform the following actions:
             "Última Actualización"   = "2025-10-09"
         }
       ~ tags_all              = {
-          ~ "Generated"              = "2025-10-09T15:26:14.735941" -> "2025-10-09T22:43:17.534725"
+          ~ "Generated"              = "2025-10-09T16:39:01.756820" -> "2025-10-09T23:41:00.756605"
             # (24 unchanged elements hidden)
         }
         # (9 unchanged attributes hidden)
     }
 
-  # aws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_dynamodb_deploymentabac must be replaced
--/+ resource "aws_iam_role_policy_attachment" "github_actions_iam_deployment_role_mci_dynamodb_deploymentabac" {
-      ~ id         = "github-actions-iam-deployment-role/arn:aws:iam::393209814297:policy/mci-dynamodb-deploymentabac" -> (known after apply)
-      ~ policy_arn = "arn:aws:iam::393209814297:policy/mci-dynamodb-deploymentabac" # forces replacement -> (known after apply) # forces replacement
-        # (1 unchanged attribute hidden)
-    }
-
-  # aws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_iam_deployment will be created
-  + resource "aws_iam_role_policy_attachment" "github_actions_iam_deployment_role_mci_iam_deployment" {
-      + id         = (known after apply)
-      + policy_arn = (known after apply)
-      + role       = "github-actions-iam-deployment-role"
-    }
-
-  # aws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_iam_fullmanagement will be destroyed
-  # (because aws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_iam_fullmanagement is not in configuration)
-  - resource "aws_iam_role_policy_attachment" "github_actions_iam_deployment_role_mci_iam_fullmanagement" {
-      - id         = "github-actions-iam-deployment-role/arn:aws:iam::393209814297:policy/mci-iam-fullmanagement" -> null
-      - policy_arn = "arn:aws:iam::393209814297:policy/mci-iam-fullmanagement" -> null
-      - role       = "github-actions-iam-deployment-role" -> null
-    }
-
-  # aws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_lambda_deploymentabac must be replaced
--/+ resource "aws_iam_role_policy_attachment" "github_actions_iam_deployment_role_mci_lambda_deploymentabac" {
-      ~ id         = "github-actions-iam-deployment-role/arn:aws:iam::393209814297:policy/mci-lambda-deploymentabac" -> (known after apply)
-      ~ policy_arn = "arn:aws:iam::393209814297:policy/mci-lambda-deploymentabac" # forces replacement -> (known after apply) # forces replacement
-        # (1 unchanged attribute hidden)
-    }
-
-  # aws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_s3_deploymentabac must be replaced
--/+ resource "aws_iam_role_policy_attachment" "github_actions_iam_deployment_role_mci_s3_deploymentabac" {
-      ~ id         = "github-actions-iam-deployment-role/arn:aws:iam::393209814297:policy/mci-s3-deploymentabac" -> (known after apply)
-      ~ policy_arn = "arn:aws:iam::393209814297:policy/mci-s3-deploymentabac" # forces replacement -> (known after apply) # forces replacement
-        # (1 unchanged attribute hidden)
-    }
-
-  # module.mci_dynamodb_deploymentabac.aws_iam_policy.main must be replaced
--/+ resource "aws_iam_policy" "main" {
-      ~ arn              = "arn:aws:iam::393209814297:policy/mci-dynamodb-deploymentabac" -> (known after apply)
-      ~ attachment_count = 1 -> (known after apply)
-      ~ description      = "Gestión completa de tablas DynamoDB con control ABAC basado en tags" -> "Gestión completa de tablas DynamoDB sin restricciones ABAC para CI/CD deployment" # forces replacement
-      ~ id               = "arn:aws:iam::393209814297:policy/mci-dynamodb-deploymentabac" -> (known after apply)
-        name             = "mci-dynamodb-deploymentabac"
-      + name_prefix      = (known after apply)
+  # module.mci_cloudwatch_deploymentabac.aws_iam_policy.main will be updated in-place
+  ~ resource "aws_iam_policy" "main" {
+        id               = "arn:aws:iam::393209814297:policy/mci-cloudwatch-deploymentabac"
+        name             = "mci-cloudwatch-deploymentabac"
       ~ policy           = jsonencode(
           ~ {
               ~ Statement = [
                   ~ {
-                      - Condition = {
-                          - StringEquals = {
-                              - "aws:RequestTag/gerencia"  = [
-                                  - "${aws:PrincipalTag/gerencia}",
+                      ~ Condition = {
+                          ~ StringEquals = {
+                              + "aws:RequestTag/Gerencia" = [
+                                  + "${aws:PrincipalTag/Gerencia}",
                                 ]
-                              - "aws:ResourceTag/gerencia" = [
-                                  - "${aws:PrincipalTag/gerencia}",
-                                ]
-                            }
-                        }
-                        # (4 unchanged attributes hidden)
-                    },
-                  ~ {
-                      - Condition = {
-                          - StringEquals = {
-                              - "dynamodb:LeadingKeys" = [
-                                  - "${aws:PrincipalTag/gerencia}",
-                                ]
-                            }
-                        }
-                        # (4 unchanged attributes hidden)
-                    },
-                    {
-                        Action   = [
-                            "dynamodb:CreateBackup",
-                            "dynamodb:DeleteBackup",
-                            "dynamodb:DescribeBackup",
-                            "dynamodb:ListBackups",
-                            "dynamodb:RestoreTableFromBackup",
-                            "dynamodb:RestoreTableToPointInTime",
-                        ]
-                        Effect   = "Allow"
-                        Resource = [
-                            "arn:aws:dynamodb:*:*:table/*/backup/*",
-                        ]
-                        Sid      = "DynamoDBBackupManagement"
-                    },
-                    # (1 unchanged element hidden)
-                ]
-                # (1 unchanged attribute hidden)
-            }
-        )
-      ~ policy_id        = "ANPAVXDJBTUM5PSO53NGL" -> (known after apply)
-        tags             = {
-            "Alcance SOX"     = "No"
-            "Ambiente"        = "DEV"
-            "Aplicacion"      = "CICD"
-            "Area"            = "DevOps"
-            "Ciclo de Vida"   = "Creacion"
-            "Contacto"        = "darwin.lopez@claro.com.gt"
-            "Creado Por"      = "DarwinLopez"
-            "Direccion"       = "TIRegional"
-            "Dominio"         = "BusinessIntelligence"
-            "Gerencia"        = "MCI"
-            "Layer"           = "Devops"
-            "ManagedBy"       = "terraform"
-            "Modulo"          = "IAM"
-            "Name"            = "mci-dynamodb-deploymentabac-DEV"
-            "Pais"            = "RG"
-            "Propietario"     = "DarwinLopez"
-            "Proveedor"       = "InHouse"
-            "Soporte"         = "darwin.lopez@claro.com.gt"
-            "Subdominio"      = "Analytics"
-            "Tipo de Recurso" = "IAMPolicy"
-            "Type"            = "Policy"
-        }
-        # (2 unchanged attributes hidden)
-    }
-
-  # module.mci_iam_deployment.aws_iam_policy.main will be created
-  + resource "aws_iam_policy" "main" {
-      + arn              = (known after apply)
-      + attachment_count = (known after apply)
-      + description      = "Gestión completa de roles y políticas IAM para despliegues de infraestructura con Terraform (sin restricciones ABAC para CI/CD)"
-      + id               = (known after apply)
-      + name             = "mci-iam-deployment"
-      + name_prefix      = (known after apply)
-      + path             = "/"
-      + policy           = jsonencode(
-            {
-              + Statement = [
-                  + {
-                      + Action   = [
-                          + "iam:CreateRole",
-                          + "iam:DeleteRole",
-                          + "iam:UpdateRole",
-                          + "iam:GetRole",
-                          + "iam:ListRoles",
-                          + "iam:ListRoleTags",
-                          + "iam:TagRole",
-                          + "iam:UntagRole",
-                          + "iam:UpdateAssumeRolePolicy",
-                        ]
-                      + Effect   = "Allow"
-                      + Resource = [
-                          + "arn:aws:iam::*:role/*",
-                        ]
-                      + Sid      = "IAMRoleFullManagement"
-                    },
-                  + {
-                      + Action   = [
-                          + "iam:CreatePolicy",
-                          + "iam:DeletePolicy",
-                          + "iam:GetPolicy",
-                          + "iam:GetPolicyVersion",
-                          + "iam:ListPolicies",
-                          + "iam:ListPolicyVersions",
-                          + "iam:CreatePolicyVersion",
-                          + "iam:DeletePolicyVersion",
-                          + "iam:SetDefaultPolicyVersion",
-                          + "iam:TagPolicy",
-                          + "iam:UntagPolicy",
-                          + "iam:ListPolicyTags",
-                        ]
-                      + Effect   = "Allow"
-                      + Resource = [
-                          + "arn:aws:iam::*:policy/*",
-                        ]
-                      + Sid      = "IAMPolicyFullManagement"
-                    },
-                  + {
-                      + Action   = [
-                          + "iam:AttachRolePolicy",
-                          + "iam:DetachRolePolicy",
-                          + "iam:ListAttachedRolePolicies",
-                          + "iam:PutRolePolicy",
-                          + "iam:DeleteRolePolicy",
-                          + "iam:GetRolePolicy",
-                          + "iam:ListRolePolicies",
-                        ]
-                      + Effect   = "Allow"
-                      + Resource = [
-                          + "arn:aws:iam::*:role/*",
-                        ]
-                      + Sid      = "IAMRolePolicyAttachment"
-                    },
-                  + {
-                      + Action   = [
-                          + "iam:PassRole",
-                        ]
-                      + Effect   = "Allow"
-                      + Resource = [
-                          + "arn:aws:iam::*:role/*",
-                        ]
-                      + Sid      = "IAMPassRoleForServices"
-                    },
-                  + {
-                      + Action   = [
-                          + "iam:ListInstanceProfiles",
-                          + "iam:GetAccountSummary",
-                          + "iam:GetAccountPasswordPolicy",
-                          + "iam:ListUsers",
-                          + "iam:ListGroups",
-                          + "iam:ListAccountAliases",
-                        ]
-                      + Effect   = "Allow"
-                      + Resource = [
-                          + "*",
-                        ]
-                      + Sid      = "IAMReadOnlyAccess"
-                    },
-                ]
-              + Version   = "2012-10-17"
-            }
-        )
-      + policy_id        = (known after apply)
-      + tags             = {
-          + "Alcance SOX"     = "No"
-          + "Ambiente"        = "DEV"
-          + "Aplicacion"      = "CICD"
-          + "Area"            = "DevOps"
-          + "Ciclo de Vida"   = "Creacion"
-          + "Contacto"        = "darwin.lopez@claro.com.gt"
-          + "Creado Por"      = "DarwinLopez"
-          + "Direccion"       = "TIRegional"
-          + "Dominio"         = "BusinessIntelligence"
-          + "Gerencia"        = "MCI"
-          + "Layer"           = "Devops"
-          + "ManagedBy"       = "terraform"
-          + "Modulo"          = "IAM"
-          + "Name"            = "mci-iam-deployment-DEV"
-          + "Pais"            = "RG"
-          + "Propietario"     = "DarwinLopez"
-          + "Proveedor"       = "InHouse"
-          + "Soporte"         = "darwin.lopez@claro.com.gt"
-          + "Subdominio"      = "Analytics"
-          + "Tipo de Recurso" = "IAMPolicy"
-          + "Type"            = "Policy"
-        }
-      + tags_all         = {
-          + "Alcance SOX"     = "No"
-          + "Ambiente"        = "DEV"
-          + "Aplicacion"      = "CICD"
-          + "Area"            = "DevOps"
-          + "Ciclo de Vida"   = "Creacion"
-          + "Contacto"        = "darwin.lopez@claro.com.gt"
-          + "Creado Por"      = "DarwinLopez"
-          + "Direccion"       = "TIRegional"
-          + "Dominio"         = "BusinessIntelligence"
-          + "Gerencia"        = "MCI"
-          + "Layer"           = "Devops"
-          + "ManagedBy"       = "terraform"
-          + "Modulo"          = "IAM"
-          + "Name"            = "mci-iam-deployment-DEV"
-          + "Pais"            = "RG"
-          + "Propietario"     = "DarwinLopez"
-          + "Proveedor"       = "InHouse"
-          + "Soporte"         = "darwin.lopez@claro.com.gt"
-          + "Subdominio"      = "Analytics"
-          + "Tipo de Recurso" = "IAMPolicy"
-          + "Type"            = "Policy"
-        }
-    }
-
-  # module.mci_iam_fullmanagement.aws_iam_policy.main will be destroyed
-  # (because aws_iam_policy.main is not in configuration)
-  - resource "aws_iam_policy" "main" {
-      - arn              = "arn:aws:iam::393209814297:policy/mci-iam-fullmanagement" -> null
-      - attachment_count = 1 -> null
-      - description      = "Gestión completa de roles y políticas IAM para despliegues de infraestructura con Terraform" -> null
-      - id               = "arn:aws:iam::393209814297:policy/mci-iam-fullmanagement" -> null
-      - name             = "mci-iam-fullmanagement" -> null
-      - path             = "/" -> null
-      - policy           = jsonencode(
-            {
-              - Statement = [
-                  - {
-                      - Action   = [
-                          - "iam:CreateRole",
-                          - "iam:DeleteRole",
-                          - "iam:UpdateRole",
-                          - "iam:GetRole",
-                          - "iam:ListRoles",
-                          - "iam:ListRoleTags",
-                          - "iam:TagRole",
-                          - "iam:UntagRole",
-                          - "iam:UpdateAssumeRolePolicy",
-                        ]
-                      - Effect   = "Allow"
-                      - Resource = [
-                          - "arn:aws:iam::*:role/*",
-                        ]
-                      - Sid      = "IAMRoleFullManagement"
-                    },
-                  - {
-                      - Action   = [
-                          - "iam:CreatePolicy",
-                          - "iam:DeletePolicy",
-                          - "iam:GetPolicy",
-                          - "iam:GetPolicyVersion",
-                          - "iam:ListPolicies",
-                          - "iam:ListPolicyVersions",
-                          - "iam:CreatePolicyVersion",
-                          - "iam:DeletePolicyVersion",
-                          - "iam:SetDefaultPolicyVersion",
-                          - "iam:TagPolicy",
-                          - "iam:UntagPolicy",
-                          - "iam:ListPolicyTags",
-                        ]
-                      - Effect   = "Allow"
-                      - Resource = [
-                          - "arn:aws:iam::*:policy/*",
-                        ]
-                      - Sid      = "IAMPolicyFullManagement"
-                    },
-                  - {
-                      - Action   = [
-                          - "iam:AttachRolePolicy",
-                          - "iam:DetachRolePolicy",
-                          - "iam:ListAttachedRolePolicies",
-                          - "iam:PutRolePolicy",
-                          - "iam:DeleteRolePolicy",
-                          - "iam:GetRolePolicy",
-                          - "iam:ListRolePolicies",
-                        ]
-                      - Effect   = "Allow"
-                      - Resource = [
-                          - "arn:aws:iam::*:role/*",
-                        ]
-                      - Sid      = "IAMRolePolicyAttachment"
-                    },
-                  - {
-                      - Action   = [
-                          - "iam:PassRole",
-                        ]
-                      - Effect   = "Allow"
-                      - Resource = [
-                          - "arn:aws:iam::*:role/*",
-                        ]
-                      - Sid      = "IAMPassRoleForServices"
-                    },
-                  - {
-                      - Action   = [
-                          - "iam:ListInstanceProfiles",
-                          - "iam:GetAccountSummary",
-                          - "iam:GetAccountPasswordPolicy",
-                          - "iam:ListUsers",
-                          - "iam:ListGroups",
-                          - "iam:ListAccountAliases",
-                        ]
-                      - Effect   = "Allow"
-                      - Resource = [
-                          - "*",
-                        ]
-                      - Sid      = "IAMReadOnlyAccess"
-                    },
-                ]
-              - Version   = "2012-10-17"
-            }
-        ) -> null
-      - policy_id        = "ANPAVXDJBTUM43S54VAI2" -> null
-      - tags             = {
-          - "Alcance SOX"     = "No"
-          - "Ambiente"        = "DEV"
-          - "Aplicacion"      = "CICD"
-          - "Area"            = "DevOps"
-          - "Ciclo de Vida"   = "Creacion"
-          - "Contacto"        = "darwin.lopez@claro.com.gt"
-          - "Creado Por"      = "DarwinLopez"
-          - "Direccion"       = "TIRegional"
-          - "Dominio"         = "BusinessIntelligence"
-          - "Gerencia"        = "MCI"
-          - "Layer"           = "Devops"
-          - "ManagedBy"       = "terraform"
-          - "Modulo"          = "IAM"
-          - "Name"            = "mci-iam-fullmanagement-DEV"
-          - "Pais"            = "RG"
-          - "Propietario"     = "DarwinLopez"
-          - "Proveedor"       = "InHouse"
-          - "Soporte"         = "darwin.lopez@claro.com.gt"
-          - "Subdominio"      = "Analytics"
-          - "Tipo de Recurso" = "IAMPolicy"
-          - "Type"            = "Policy"
-        } -> null
-      - tags_all         = {
-          - "Alcance SOX"     = "No"
-          - "Ambiente"        = "DEV"
-          - "Aplicacion"      = "CICD"
-          - "Area"            = "DevOps"
-          - "Ciclo de Vida"   = "Creacion"
-          - "Contacto"        = "darwin.lopez@claro.com.gt"
-          - "Creado Por"      = "DarwinLopez"
-          - "Direccion"       = "TIRegional"
-          - "Dominio"         = "BusinessIntelligence"
-          - "Gerencia"        = "MCI"
-          - "Layer"           = "Devops"
-          - "ManagedBy"       = "terraform"
-          - "Modulo"          = "IAM"
-          - "Name"            = "mci-iam-fullmanagement-DEV"
-          - "Pais"            = "RG"
-          - "Propietario"     = "DarwinLopez"
-          - "Proveedor"       = "InHouse"
-          - "Soporte"         = "darwin.lopez@claro.com.gt"
-          - "Subdominio"      = "Analytics"
-          - "Tipo de Recurso" = "IAMPolicy"
-          - "Type"            = "Policy"
-        } -> null
-    }
-
-  # module.mci_lambda_deploymentabac.aws_iam_policy.main must be replaced
--/+ resource "aws_iam_policy" "main" {
-      ~ arn              = "arn:aws:iam::393209814297:policy/mci-lambda-deploymentabac" -> (known after apply)
-      ~ attachment_count = 1 -> (known after apply)
-      ~ description      = "Despliegue completo de funciones Lambda con control ABAC basado en tags de gerencia y ambiente" -> "Despliegue completo de funciones Lambda sin restricciones ABAC para CI/CD" # forces replacement
-      ~ id               = "arn:aws:iam::393209814297:policy/mci-lambda-deploymentabac" -> (known after apply)
-        name             = "mci-lambda-deploymentabac"
-      + name_prefix      = (known after apply)
-      ~ policy           = jsonencode(
-          ~ {
-              ~ Statement = [
-                  ~ {
-                      - Condition = {
-                          - StringEquals = {
-                              - "aws:RequestTag/gerencia"  = [
-                                  - "${aws:PrincipalTag/gerencia}",
-                                ]
-                              - "aws:ResourceTag/gerencia" = [
-                                  - "${aws:PrincipalTag/gerencia}",
-                                ]
-                            }
-                        }
-                        # (4 unchanged attributes hidden)
-                    },
-                    {
-                        Action   = [
-                            "lambda:PublishLayerVersion",
-                            "lambda:DeleteLayerVersion",
-                            "lambda:GetLayerVersion",
-                            "lambda:ListLayers",
-                            "lambda:ListLayerVersions",
-                        ]
-                        Effect   = "Allow"
-                        Resource = [
-                            "arn:aws:lambda:*:*:layer:*",
-                        ]
-                        Sid      = "LambdaLayersManagement"
-                    },
-                    # (1 unchanged element hidden)
-                ]
-                # (1 unchanged attribute hidden)
-            }
-        )
-      ~ policy_id        = "ANPAVXDJBTUMSCYKGFF5L" -> (known after apply)
-        tags             = {
-            "Alcance SOX"     = "No"
-            "Ambiente"        = "DEV"
-            "Aplicacion"      = "CICD"
-            "Area"            = "DevOps"
-            "Ciclo de Vida"   = "Creacion"
-            "Contacto"        = "darwin.lopez@claro.com.gt"
-            "Creado Por"      = "DarwinLopez"
-            "Direccion"       = "TIRegional"
-            "Dominio"         = "BusinessIntelligence"
-            "Gerencia"        = "MCI"
-            "Layer"           = "Devops"
-            "ManagedBy"       = "terraform"
-            "Modulo"          = "IAM"
-            "Name"            = "mci-lambda-deploymentabac-DEV"
-            "Pais"            = "RG"
-            "Propietario"     = "DarwinLopez"
-            "Proveedor"       = "InHouse"
-            "Soporte"         = "darwin.lopez@claro.com.gt"
-            "Subdominio"      = "Analytics"
-            "Tipo de Recurso" = "IAMPolicy"
-            "Type"            = "Policy"
-        }
-        # (2 unchanged attributes hidden)
-    }
-
-  # module.mci_s3_deploymentabac.aws_iam_policy.main must be replaced
--/+ resource "aws_iam_policy" "main" {
-      ~ arn              = "arn:aws:iam::393209814297:policy/mci-s3-deploymentabac" -> (known after apply)
-      ~ attachment_count = 1 -> (known after apply)
-      ~ description      = "Gestión completa de buckets S3 con control ABAC basado en tags de gerencia" -> "Gestión completa de buckets S3 sin restricciones ABAC para CI/CD deployment" # forces replacement
-      ~ id               = "arn:aws:iam::393209814297:policy/mci-s3-deploymentabac" -> (known after apply)
-        name             = "mci-s3-deploymentabac"
-      + name_prefix      = (known after apply)
-      ~ policy           = jsonencode(
-          ~ {
-              ~ Statement = [
-                  ~ {
-                      - Condition = {
-                          - StringEquals = {
                               - "aws:RequestTag/gerencia" = [
                                   - "${aws:PrincipalTag/gerencia}",
                                 ]
@@ -586,10 +105,49 @@ Terraform will perform the following actions:
                         }
                         # (4 unchanged attributes hidden)
                     },
+                    {
+                        Action   = [
+                            "cloudwatch:PutMetricData",
+                            "cloudwatch:GetMetricData",
+                            "cloudwatch:GetMetricStatistics",
+                            "cloudwatch:ListMetrics",
+                            "cloudwatch:PutMetricAlarm",
+                            "cloudwatch:DeleteAlarms",
+                            "cloudwatch:DescribeAlarms",
+                            "cloudwatch:DescribeAlarmsForMetric",
+                            "cloudwatch:DescribeAlarmHistory",
+                            "cloudwatch:SetAlarmState",
+                            "cloudwatch:TagResource",
+                            "cloudwatch:UntagResource",
+                            "cloudwatch:ListTagsForResource",
+                        ]
+                        Effect   = "Allow"
+                        Resource = [
+                            "arn:aws:cloudwatch:*:*:alarm:*",
+                            "*",
+                        ]
+                        Sid      = "CloudWatchMetricsAndAlarms"
+                    },
+                    {
+                        Action   = [
+                            "cloudwatch:PutDashboard",
+                            "cloudwatch:GetDashboard",
+                            "cloudwatch:DeleteDashboards",
+                            "cloudwatch:ListDashboards",
+                        ]
+                        Effect   = "Allow"
+                        Resource = [
+                            "*",
+                        ]
+                        Sid      = "CloudWatchDashboards"
+                    },
                   ~ {
-                      - Condition = {
-                          - StringEquals = {
-                              - "s3:ExistingObjectTag/gerencia" = [
+                      ~ Condition = {
+                          ~ StringEquals = {
+                              + "aws:RequestTag/Gerencia" = [
+                                  + "${aws:PrincipalTag/Gerencia}",
+                                ]
+                              - "aws:RequestTag/gerencia" = [
                                   - "${aws:PrincipalTag/gerencia}",
                                 ]
                             }
@@ -598,20 +156,27 @@ Terraform will perform the following actions:
                     },
                     {
                         Action   = [
-                            "s3:ListAllMyBuckets",
-                            "s3:GetBucketLocation",
+                            "sns:CreatePlatformApplication",
+                            "sns:DeletePlatformApplication",
+                            "sns:GetPlatformApplicationAttributes",
+                            "sns:SetPlatformApplicationAttributes",
+                            "sns:ListPlatformApplications",
+                            "sns:CreatePlatformEndpoint",
+                            "sns:DeleteEndpoint",
+                            "sns:GetEndpointAttributes",
+                            "sns:SetEndpointAttributes",
                         ]
                         Effect   = "Allow"
                         Resource = [
-                            "*",
+                            "arn:aws:sns:*:*:app/*",
+                            "arn:aws:sns:*:*:endpoint/*",
                         ]
-                        Sid      = "S3ListAllBuckets"
+                        Sid      = "SNSPlatformEndpoints"
                     },
                 ]
                 # (1 unchanged attribute hidden)
             }
         )
-      ~ policy_id        = "ANPAVXDJBTUMXACE6AYYM" -> (known after apply)
         tags             = {
             "Alcance SOX"     = "No"
             "Ambiente"        = "DEV"
@@ -626,7 +191,7 @@ Terraform will perform the following actions:
             "Layer"           = "Devops"
             "ManagedBy"       = "terraform"
             "Modulo"          = "IAM"
-            "Name"            = "mci-s3-deploymentabac-DEV"
+            "Name"            = "mci-cloudwatch-deploymentabac-DEV"
             "Pais"            = "RG"
             "Propietario"     = "DarwinLopez"
             "Proveedor"       = "InHouse"
@@ -635,16 +200,178 @@ Terraform will perform the following actions:
             "Tipo de Recurso" = "IAMPolicy"
             "Type"            = "Policy"
         }
-        # (2 unchanged attributes hidden)
+        # (6 unchanged attributes hidden)
     }
 
-Plan: 8 to add, 1 to change, 8 to destroy.
+  # module.mci_eventbridge_deploymentabac.aws_iam_policy.main will be updated in-place
+  ~ resource "aws_iam_policy" "main" {
+        id               = "arn:aws:iam::393209814297:policy/mci-eventbridge-deploymentabac"
+        name             = "mci-eventbridge-deploymentabac"
+      ~ policy           = jsonencode(
+          ~ {
+              ~ Statement = [
+                  ~ {
+                      ~ Condition = {
+                          ~ StringEquals = {
+                              + "aws:RequestTag/Gerencia" = [
+                                  + "${aws:PrincipalTag/Gerencia}",
+                                ]
+                              - "aws:RequestTag/gerencia" = [
+                                  - "${aws:PrincipalTag/gerencia}",
+                                ]
+                            }
+                        }
+                        # (4 unchanged attributes hidden)
+                    },
+                    {
+                        Action   = [
+                            "scheduler:CreateSchedule",
+                            "scheduler:DeleteSchedule",
+                            "scheduler:GetSchedule",
+                            "scheduler:UpdateSchedule",
+                            "scheduler:ListSchedules",
+                            "scheduler:CreateScheduleGroup",
+                            "scheduler:DeleteScheduleGroup",
+                            "scheduler:GetScheduleGroup",
+                            "scheduler:ListScheduleGroups",
+                            "scheduler:TagResource",
+                            "scheduler:UntagResource",
+                        ]
+                        Effect   = "Allow"
+                        Resource = [
+                            "arn:aws:scheduler:*:*:schedule/*",
+                            "arn:aws:scheduler:*:*:schedule-group/*",
+                        ]
+                        Sid      = "EventBridgeSchedulerManagement"
+                    },
+                  ~ {
+                      ~ Condition = {
+                          ~ StringEquals = {
+                              + "aws:RequestTag/Gerencia" = [
+                                  + "${aws:PrincipalTag/Gerencia}",
+                                ]
+                              - "aws:RequestTag/gerencia" = [
+                                  - "${aws:PrincipalTag/gerencia}",
+                                ]
+                            }
+                        }
+                        # (4 unchanged attributes hidden)
+                    },
+                    {
+                        Action   = [
+                            "states:CreateActivity",
+                            "states:DeleteActivity",
+                            "states:DescribeActivity",
+                            "states:GetActivityTask",
+                            "states:ListActivities",
+                            "states:SendTaskSuccess",
+                            "states:SendTaskFailure",
+                            "states:SendTaskHeartbeat",
+                        ]
+                        Effect   = "Allow"
+                        Resource = [
+                            "arn:aws:states:*:*:activity:*",
+                        ]
+                        Sid      = "StepFunctionsActivityManagement"
+                    },
+                ]
+                # (1 unchanged attribute hidden)
+            }
+        )
+        tags             = {
+            "Alcance SOX"     = "No"
+            "Ambiente"        = "DEV"
+            "Aplicacion"      = "CICD"
+            "Area"            = "DevOps"
+            "Ciclo de Vida"   = "Creacion"
+            "Contacto"        = "darwin.lopez@claro.com.gt"
+            "Creado Por"      = "DarwinLopez"
+            "Direccion"       = "TIRegional"
+            "Dominio"         = "BusinessIntelligence"
+            "Gerencia"        = "MCI"
+            "Layer"           = "Devops"
+            "ManagedBy"       = "terraform"
+            "Modulo"          = "IAM"
+            "Name"            = "mci-eventbridge-deploymentabac-DEV"
+            "Pais"            = "RG"
+            "Propietario"     = "DarwinLopez"
+            "Proveedor"       = "InHouse"
+            "Soporte"         = "darwin.lopez@claro.com.gt"
+            "Subdominio"      = "Analytics"
+            "Tipo de Recurso" = "IAMPolicy"
+            "Type"            = "Policy"
+        }
+        # (6 unchanged attributes hidden)
+    }
+
+  # module.mci_glue_deploymentabac.aws_iam_policy.main will be updated in-place
+  ~ resource "aws_iam_policy" "main" {
+        id               = "arn:aws:iam::393209814297:policy/mci-glue-deploymentabac"
+        name             = "mci-glue-deploymentabac"
+      ~ policy           = jsonencode(
+          ~ {
+              ~ Statement = [
+                  ~ {
+                      ~ Condition = {
+                          ~ StringEquals = {
+                              + "aws:RequestTag/Gerencia" = [
+                                  + "${aws:PrincipalTag/Gerencia}",
+                                ]
+                              - "aws:RequestTag/gerencia" = [
+                                  - "${aws:PrincipalTag/gerencia}",
+                                ]
+                            }
+                        }
+                        # (4 unchanged attributes hidden)
+                    },
+                    {
+                        Action   = [
+                            "iam:PassRole",
+                        ]
+                        Effect   = "Allow"
+                        Resource = [
+                            "arn:aws:iam::*:role/*",
+                        ]
+                        Sid      = "IAMPassRoleForServices"
+                    },
+                    # (3 unchanged elements hidden)
+                ]
+                # (1 unchanged attribute hidden)
+            }
+        )
+        tags             = {
+            "Alcance SOX"     = "No"
+            "Ambiente"        = "DEV"
+            "Aplicacion"      = "CICD"
+            "Area"            = "DevOps"
+            "Ciclo de Vida"   = "Creacion"
+            "Contacto"        = "darwin.lopez@claro.com.gt"
+            "Creado Por"      = "DarwinLopez"
+            "Direccion"       = "TIRegional"
+            "Dominio"         = "BusinessIntelligence"
+            "Gerencia"        = "MCI"
+            "Layer"           = "Devops"
+            "ManagedBy"       = "terraform"
+            "Modulo"          = "IAM"
+            "Name"            = "mci-glue-deploymentabac-DEV"
+            "Pais"            = "RG"
+            "Propietario"     = "DarwinLopez"
+            "Proveedor"       = "InHouse"
+            "Soporte"         = "darwin.lopez@claro.com.gt"
+            "Subdominio"      = "Analytics"
+            "Tipo de Recurso" = "IAMPolicy"
+            "Type"            = "Policy"
+        }
+        # (6 unchanged attributes hidden)
+    }
+
+Plan: 0 to add, 4 to change, 0 to destroy.
 
 ─────────────────────────────────────────────────────────────────────────────
 
 Note: You didn't use the -out option to save this plan, so Terraform can't
 guarantee to take exactly these actions if you run "terraform apply" now.
 ::debug::Terraform exited with code 0.
-::debug::stdout: data.aws_caller_identity.current: Reading...%0Amodule.mci_iam_fullmanagement.aws_iam_policy.main: Refreshing state... [id=arn:aws:iam::393209814297:policy/mci-iam-fullmanagement]%0Amodule.mci_dynamodb_deploymentabac.aws_iam_policy.main: Refreshing state... [id=arn:aws:iam::393209814297:policy/mci-dynamodb-deploymentabac]%0Amodule.mci_dynamodb_deploymentabac.data.aws_caller_identity.current: Reading...%0Aaws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_iam_fullmanagement: Refreshing state... [id=github-actions-iam-deployment-role/arn:aws:iam::393209814297:policy/mci-iam-fullmanagement]%0Amodule.mci_s3_deploymentabac.data.aws_caller_identity.current: Reading...%0Amodule.mci_cloudwatch_deploymentabac.aws_iam_policy.main: Refreshing state... [id=arn:aws:iam::393209814297:policy/mci-cloudwatch-deploymentabac]%0Amodule.mci_lambda_deploymentabac.data.aws_caller_identity.current: Reading...%0Amodule.mci_lambda_deploymentabac.aws_iam_policy.main: Refreshing state... [id=arn:aws:iam::393209814297:policy/mci-lambda-deploymentabac]%0Amodule.mci_glue_deploymentabac.aws_iam_policy.main: Refreshing state... [id=arn:aws:iam::393209814297:policy/mci-glue-deploymentabac]%0Adata.aws_caller_identity.current: Read complete after 0s [id=393209814297]%0Amodule.mci_glue_deploymentabac.data.aws_caller_identity.current: Reading...%0Amodule.mci_dynamodb_deploymentabac.data.aws_caller_identity.current: Read complete after 0s [id=393209814297]%0Amodule.mci_s3_deploymentabac.aws_iam_policy.main: Refreshing state... [id=arn:aws:iam::393209814297:policy/mci-s3-deploymentabac]%0Amodule.mci_s3_deploymentabac.data.aws_caller_identity.current: Read complete after 0s [id=393209814297]%0Amodule.mci_eventbridge_deploymentabac.aws_iam_policy.main: Refreshing state... [id=arn:aws:iam::393209814297:policy/mci-eventbridge-deploymentabac]%0Amodule.mci_lambda_deploymentabac.data.aws_caller_identity.current: Read complete after 0s [id=393209814297]%0Amodule.mci_glue_deploymentabac.data.aws_caller_identity.current: Read complete after 0s [id=393209814297]%0Amodule.mci_terraform_statemanagement.data.aws_caller_identity.current: Reading...%0Amodule.mci_eventbridge_deploymentabac.data.aws_caller_identity.current: Reading...%0Amodule.mci_eventbridge_deploymentabac.data.aws_caller_identity.current: Read complete after 0s [id=393209814297]%0Amodule.mci_iam_deployment.data.aws_caller_identity.current: Reading...%0Amodule.mci_terraform_statemanagement.data.aws_caller_identity.current: Read complete after 0s [id=393209814297]%0Amodule.mci_cloudformation_deployment.data.aws_caller_identity.current: Reading...%0Amodule.mci_iam_deployment.data.aws_caller_identity.current: Read complete after 0s [id=393209814297]%0Amodule.mci_terraform_statemanagement.aws_iam_policy.main: Refreshing state... [id=arn:aws:iam::393209814297:policy/mci-terraform-statemanagement]%0Amodule.mci_cloudwatch_deploymentabac.data.aws_caller_identity.current: Reading...%0Amodule.mci_cloudwatch_deploymentabac.data.aws_caller_identity.current: Read complete after 0s [id=393209814297]%0Amodule.mci_cloudformation_deployment.data.aws_caller_identity.current: Read complete after 0s [id=393209814297]%0Amodule.mci_cloudformation_deployment.aws_iam_policy.main: Refreshing state... [id=arn:aws:iam::393209814297:policy/mci-cloudformation-deployment]%0Adata.aws_iam_policy_document.github_actions_iam_deployment_role_trust: Reading...%0Adata.aws_iam_policy_document.github_actions_iam_deployment_role_trust: Read complete after 0s [id=1058311888]%0Aaws_iam_role.github_actions_iam_deployment_role: Refreshing state... [id=github-actions-iam-deployment-role]%0Aaws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_glue_deploymentabac: Refreshing state... [id=github-actions-iam-deployment-role/arn:aws:iam::393209814297:policy/mci-glue-deploymentabac]%0Aaws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_lambda_deploymentabac: Refreshing state... [id=github-actions-iam-deployment-role/arn:aws:iam::393209814297:policy/mci-lambda-deploymentabac]%0Aaws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_cloudformation_deployment: Refreshing state... [id=github-actions-iam-deployment-role/arn:aws:iam::393209814297:policy/mci-cloudformation-deployment]%0Aaws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_dynamodb_deploymentabac: Refreshing state... [id=github-actions-iam-deployment-role/arn:aws:iam::393209814297:policy/mci-dynamodb-deploymentabac]%0Aaws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_s3_deploymentabac: Refreshing state... [id=github-actions-iam-deployment-role/arn:aws:iam::393209814297:policy/mci-s3-deploymentabac]%0Aaws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_cloudwatch_deploymentabac: Refreshing state... [id=github-actions-iam-deployment-role/arn:aws:iam::393209814297:policy/mci-cloudwatch-deploymentabac]%0Aaws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_eventbridge_deploymentabac: Refreshing state... [id=github-actions-iam-deployment-role/arn:aws:iam::393209814297:policy/mci-eventbridge-deploymentabac]%0Aaws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_terraform_statemanagement: Refreshing state... [id=github-actions-iam-deployment-role/arn:aws:iam::393209814297:policy/mci-terraform-statemanagement]%0A%0ATerraform used the selected providers to generate the following execution%0Aplan. Resource actions are indicated with the following symbols:%0A  + create%0A  ~ update in-place%0A  - destroy%0A-/+ destroy and then create replacement%0A%0ATerraform will perform the following actions:%0A%0A  # aws_iam_role.github_actions_iam_deployment_role will be updated in-place%0A  ~ resource "aws_iam_role" "github_actions_iam_deployment_role" {%0A        id                    = "github-actions-iam-deployment-role"%0A        name                  = "github-actions-iam-deployment-role"%0A      ~ tags                  = {%0A            "Alcance SOX"            = "No"%0A            "Ambiente"               = "DEV"%0A            "Aplicacion"             = "CICD"%0A            "Area"                   = "DevOps"%0A            "Ciclo de Vida"          = "Actualizacion"%0A            "Contacto"               = "darwin.lopez@claro.com.gt"%0A            "Creado Por"             = "DarwinLopez"%0A            "Direccion"              = "TIRegional"%0A            "Dominio"                = "BusinessIntelligence"%0A            "Fecha de Creacion"      = "2025-09-16"%0A          ~ "Generated"              = "2025-10-09T15:26:14.735941" -> "2025-10-09T22:43:17.534725"%0A            "Gerencia"               = "MCI"%0A            "Layer"                  = "Devops"%0A            "ManagedBy"              = "terraform"%0A            "Modulo"                 = "IAM"%0A            "Name"                   = "github-actions-iam-deployment-role"%0A            "Pais"                   = "RG"%0A            "Propietario"            = "DarwinLopez"%0A            "Proveedor"              = "InHouse"%0A            "Soporte"                = "darwin.lopez@claro.com.gt"%0A            "Source"                 = "definitions/roles/github-deployment-role.yaml"%0A            "Subdominio"             = "Analytics"%0A            "Tipo de Recurso"        = "IAMRole"%0A            "Versión"                = "v2.0.0"%0A            "Última Actualización"   = "2025-10-09"%0A        }%0A      ~ tags_all              = {%0A          ~ "Generated"              = "2025-10-09T15:26:14.735941" -> "2025-10-09T22:43:17.534725"%0A            # (24 unchanged elements hidden)%0A        }%0A        # (9 unchanged attributes hidden)%0A    }%0A%0A  # aws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_dynamodb_deploymentabac must be replaced%0A-/+ resource "aws_iam_role_policy_attachment" "github_actions_iam_deployment_role_mci_dynamodb_deploymentabac" {%0A      ~ id         = "github-actions-iam-deployment-role/arn:aws:iam::393209814297:policy/mci-dynamodb-deploymentabac" -> (known after apply)%0A      ~ policy_arn = "arn:aws:iam::393209814297:policy/mci-dynamodb-deploymentabac" # forces replacement -> (known after apply) # forces replacement%0A        # (1 unchanged attribute hidden)%0A    }%0A%0A  # aws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_iam_deployment will be created%0A  + resource "aws_iam_role_policy_attachment" "github_actions_iam_deployment_role_mci_iam_deployment" {%0A      + id         = (known after apply)%0A      + policy_arn = (known after apply)%0A      + role       = "github-actions-iam-deployment-role"%0A    }%0A%0A  # aws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_iam_fullmanagement will be destroyed%0A  # (because aws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_iam_fullmanagement is not in configuration)%0A  - resource "aws_iam_role_policy_attachment" "github_actions_iam_deployment_role_mci_iam_fullmanagement" {%0A      - id         = "github-actions-iam-deployment-role/arn:aws:iam::393209814297:policy/mci-iam-fullmanagement" -> null%0A      - policy_arn = "arn:aws:iam::393209814297:policy/mci-iam-fullmanagement" -> null%0A      - role       = "github-actions-iam-deployment-role" -> null%0A    }%0A%0A  # aws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_lambda_deploymentabac must be replaced%0A-/+ resource "aws_iam_role_policy_attachment" "github_actions_iam_deployment_role_mci_lambda_deploymentabac" {%0A      ~ id         = "github-actions-iam-deployment-role/arn:aws:iam::393209814297:policy/mci-lambda-deploymentabac" -> (known after apply)%0A      ~ policy_arn = "arn:aws:iam::393209814297:policy/mci-lambda-deploymentabac" # forces replacement -> (known after apply) # forces replacement%0A        # (1 unchanged attribute hidden)%0A    }%0A%0A  # aws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_s3_deploymentabac must be replaced%0A-/+ resource "aws_iam_role_policy_attachment" "github_actions_iam_deployment_role_mci_s3_deploymentabac" {%0A      ~ id         = "github-actions-iam-deployment-role/arn:aws:iam::393209814297:policy/mci-s3-deploymentabac" -> (known after apply)%0A      ~ policy_arn = "arn:aws:iam::393209814297:policy/mci-s3-deploymentabac" # forces replacement -> (known after apply) # forces replacement%0A        # (1 unchanged attribute hidden)%0A    }%0A%0A  # module.mci_dynamodb_deploymentabac.aws_iam_policy.main must be replaced%0A-/+ resource "aws_iam_policy" "main" {%0A      ~ arn              = "arn:aws:iam::393209814297:policy/mci-dynamodb-deploymentabac" -> (known after apply)%0A      ~ attachment_count = 1 -> (known after apply)%0A      ~ description      = "Gestión completa de tablas DynamoDB con control ABAC basado en tags" -> "Gestión completa de tablas DynamoDB sin restricciones ABAC para CI/CD deployment" # forces replacement%0A      ~ id               = "arn:aws:iam::393209814297:policy/mci-dynamodb-deploymentabac" -> (known after apply)%0A        name             = "mci-dynamodb-deploymentabac"%0A      + name_prefix      = (known after apply)%0A      ~ policy           = jsonencode(%0A          ~ {%0A              ~ Statement = [%0A                  ~ {%0A                      - Condition = {%0A                          - StringEquals = {%0A                              - "aws:RequestTag/gerencia"  = [%0A                                  - "${aws:PrincipalTag/gerencia}",%0A                                ]%0A                              - "aws:ResourceTag/gerencia" = [%0A                                  - "${aws:PrincipalTag/gerencia}",%0A                                ]%0A                            }%0A                        }%0A                        # (4 unchanged attributes hidden)%0A                    },%0A                  ~ {%0A                      - Condition = {%0A                          - StringEquals = {%0A                              - "dynamodb:LeadingKeys" = [%0A                                  - "${aws:PrincipalTag/gerencia}",%0A                                ]%0A                            }%0A                        }%0A                        # (4 unchanged attributes hidden)%0A                    },%0A                    {%0A                        Action   = [%0A                            "dynamodb:CreateBackup",%0A                            "dynamodb:DeleteBackup",%0A                            "dynamodb:DescribeBackup",%0A                            "dynamodb:ListBackups",%0A                            "dynamodb:RestoreTableFromBackup",%0A                            "dynamodb:RestoreTableToPointInTime",%0A                        ]%0A                        Effect   = "Allow"%0A                        Resource = [%0A                            "arn:aws:dynamodb:*:*:table/*/backup/*",%0A                        ]%0A                        Sid      = "DynamoDBBackupManagement"%0A                    },%0A                    # (1 unchanged element hidden)%0A                ]%0A                # (1 unchanged attribute hidden)%0A            }%0A        )%0A      ~ policy_id        = "ANPAVXDJBTUM5PSO53NGL" -> (known after apply)%0A        tags             = {%0A            "Alcance SOX"     = "No"%0A            "Ambiente"        = "DEV"%0A            "Aplicacion"      = "CICD"%0A            "Area"            = "DevOps"%0A            "Ciclo de Vida"   = "Creacion"%0A            "Contacto"        = "darwin.lopez@claro.com.gt"%0A            "Creado Por"      = "DarwinLopez"%0A            "Direccion"       = "TIRegional"%0A            "Dominio"         = "BusinessIntelligence"%0A            "Gerencia"        = "MCI"%0A            "Layer"           = "Devops"%0A            "ManagedBy"       = "terraform"%0A            "Modulo"          = "IAM"%0A            "Name"            = "mci-dynamodb-deploymentabac-DEV"%0A            "Pais"            = "RG"%0A            "Propietario"     = "DarwinLopez"%0A            "Proveedor"       = "InHouse"%0A            "Soporte"         = "darwin.lopez@claro.com.gt"%0A            "Subdominio"      = "Analytics"%0A            "Tipo de Recurso" = "IAMPolicy"%0A            "Type"            = "Policy"%0A        }%0A        # (2 unchanged attributes hidden)%0A    }%0A%0A  # module.mci_iam_deployment.aws_iam_policy.main will be created%0A  + resource "aws_iam_policy" "main" {%0A      + arn              = (known after apply)%0A      + attachment_count = (known after apply)%0A      + description      = "Gestión completa de roles y políticas IAM para despliegues de infraestructura con Terraform (sin restricciones ABAC para CI/CD)"%0A      + id               = (known after apply)%0A      + name             = "mci-iam-deployment"%0A      + name_prefix      = (known after apply)%0A      + path             = "/"%0A      + policy           = jsonencode(%0A            {%0A              + Statement = [%0A                  + {%0A                      + Action   = [%0A                          + "iam:CreateRole",%0A                          + "iam:DeleteRole",%0A                          + "iam:UpdateRole",%0A                          + "iam:GetRole",%0A                          + "iam:ListRoles",%0A                          + "iam:ListRoleTags",%0A                          + "iam:TagRole",%0A                          + "iam:UntagRole",%0A                          + "iam:UpdateAssumeRolePolicy",%0A                        ]%0A                      + Effect   = "Allow"%0A                      + Resource = [%0A                          + "arn:aws:iam::*:role/*",%0A                        ]%0A                      + Sid      = "IAMRoleFullManagement"%0A                    },%0A                  + {%0A                      + Action   = [%0A                          + "iam:CreatePolicy",%0A                          + "iam:DeletePolicy",%0A                          + "iam:GetPolicy",%0A                          + "iam:GetPolicyVersion",%0A                          + "iam:ListPolicies",%0A                          + "iam:ListPolicyVersions",%0A                          + "iam:CreatePolicyVersion",%0A                          + "iam:DeletePolicyVersion",%0A                          + "iam:SetDefaultPolicyVersion",%0A                          + "iam:TagPolicy",%0A                          + "iam:UntagPolicy",%0A                          + "iam:ListPolicyTags",%0A                        ]%0A                      + Effect   = "Allow"%0A                      + Resource = [%0A                          + "arn:aws:iam::*:policy/*",%0A                        ]%0A                      + Sid      = "IAMPolicyFullManagement"%0A                    },%0A                  + {%0A                      + Action   = [%0A                          + "iam:AttachRolePolicy",%0A                          + "iam:DetachRolePolicy",%0A                          + "iam:ListAttachedRolePolicies",%0A                          + "iam:PutRolePolicy",%0A                          + "iam:DeleteRolePolicy",%0A                          + "iam:GetRolePolicy",%0A                          + "iam:ListRolePolicies",%0A                        ]%0A                      + Effect   = "Allow"%0A                      + Resource = [%0A                          + "arn:aws:iam::*:role/*",%0A                        ]%0A                      + Sid      = "IAMRolePolicyAttachment"%0A                    },%0A                  + {%0A                      + Action   = [%0A                          + "iam:PassRole",%0A                        ]%0A                      + Effect   = "Allow"%0A                      + Resource = [%0A                          + "arn:aws:iam::*:role/*",%0A                        ]%0A                      + Sid      = "IAMPassRoleForServices"%0A                    },%0A                  + {%0A                      + Action   = [%0A                          + "iam:ListInstanceProfiles",%0A                          + "iam:GetAccountSummary",%0A                          + "iam:GetAccountPasswordPolicy",%0A                          + "iam:ListUsers",%0A                          + "iam:ListGroups",%0A                          + "iam:ListAccountAliases",%0A                        ]%0A                      + Effect   = "Allow"%0A                      + Resource = [%0A                          + "*",%0A                        ]%0A                      + Sid      = "IAMReadOnlyAccess"%0A                    },%0A                ]%0A              + Version   = "2012-10-17"%0A            }%0A        )%0A      + policy_id        = (known after apply)%0A      + tags             = {%0A          + "Alcance SOX"     = "No"%0A          + "Ambiente"        = "DEV"%0A          + "Aplicacion"      = "CICD"%0A          + "Area"            = "DevOps"%0A          + "Ciclo de Vida"   = "Creacion"%0A          + "Contacto"        = "darwin.lopez@claro.com.gt"%0A          + "Creado Por"      = "DarwinLopez"%0A          + "Direccion"       = "TIRegional"%0A          + "Dominio"         = "BusinessIntelligence"%0A          + "Gerencia"        = "MCI"%0A          + "Layer"           = "Devops"%0A          + "ManagedBy"       = "terraform"%0A          + "Modulo"          = "IAM"%0A          + "Name"            = "mci-iam-deployment-DEV"%0A          + "Pais"            = "RG"%0A          + "Propietario"     = "DarwinLopez"%0A          + "Proveedor"       = "InHouse"%0A          + "Soporte"         = "darwin.lopez@claro.com.gt"%0A          + "Subdominio"      = "Analytics"%0A          + "Tipo de Recurso" = "IAMPolicy"%0A          + "Type"            = "Policy"%0A        }%0A      + tags_all         = {%0A          + "Alcance SOX"     = "No"%0A          + "Ambiente"        = "DEV"%0A          + "Aplicacion"      = "CICD"%0A          + "Area"            = "DevOps"%0A          + "Ciclo de Vida"   = "Creacion"%0A          + "Contacto"        = "darwin.lopez@claro.com.gt"%0A          + "Creado Por"      = "DarwinLopez"%0A          + "Direccion"       = "TIRegional"%0A          + "Dominio"         = "BusinessIntelligence"%0A          + "Gerencia"        = "MCI"%0A          + "Layer"           = "Devops"%0A          + "ManagedBy"       = "terraform"%0A          + "Modulo"          = "IAM"%0A          + "Name"            = "mci-iam-deployment-DEV"%0A          + "Pais"            = "RG"%0A          + "Propietario"     = "DarwinLopez"%0A          + "Proveedor"       = "InHouse"%0A          + "Soporte"         = "darwin.lopez@claro.com.gt"%0A          + "Subdominio"      = "Analytics"%0A          + "Tipo de Recurso" = "IAMPolicy"%0A          + "Type"            = "Policy"%0A        }%0A    }%0A%0A  # module.mci_iam_fullmanagement.aws_iam_policy.main will be destroyed%0A  # (because aws_iam_policy.main is not in configuration)%0A  - resource "aws_iam_policy" "main" {%0A      - arn              = "arn:aws:iam::393209814297:policy/mci-iam-fullmanagement" -> null%0A      - attachment_count = 1 -> null%0A      - description      = "Gestión completa de roles y políticas IAM para despliegues de infraestructura con Terraform" -> null%0A      - id               = "arn:aws:iam::393209814297:policy/mci-iam-fullmanagement" -> null%0A      - name             = "mci-iam-fullmanagement" -> null%0A      - path             = "/" -> null%0A      - policy           = jsonencode(%0A            {%0A              - Statement = [%0A                  - {%0A                      - Action   = [%0A                          - "iam:CreateRole",%0A                          - "iam:DeleteRole",%0A                          - "iam:UpdateRole",%0A                          - "iam:GetRole",%0A                          - "iam:ListRoles",%0A                          - "iam:ListRoleTags",%0A                          - "iam:TagRole",%0A                          - "iam:UntagRole",%0A                          - "iam:UpdateAssumeRolePolicy",%0A                        ]%0A                      - Effect   = "Allow"%0A                      - Resource = [%0A                          - "arn:aws:iam::*:role/*",%0A                        ]%0A                      - Sid      = "IAMRoleFullManagement"%0A                    },%0A                  - {%0A                      - Action   = [%0A                          - "iam:CreatePolicy",%0A                          - "iam:DeletePolicy",%0A                          - "iam:GetPolicy",%0A                          - "iam:GetPolicyVersion",%0A                          - "iam:ListPolicies",%0A                          - "iam:ListPolicyVersions",%0A                          - "iam:CreatePolicyVersion",%0A                          - "iam:DeletePolicyVersion",%0A                          - "iam:SetDefaultPolicyVersion",%0A                          - "iam:TagPolicy",%0A                          - "iam:UntagPolicy",%0A                          - "iam:ListPolicyTags",%0A                        ]%0A                      - Effect   = "Allow"%0A                      - Resource = [%0A                          - "arn:aws:iam::*:policy/*",%0A                        ]%0A                      - Sid      = "IAMPolicyFullManagement"%0A                    },%0A                  - {%0A                      - Action   = [%0A                          - "iam:AttachRolePolicy",%0A                          - "iam:DetachRolePolicy",%0A                          - "iam:ListAttachedRolePolicies",%0A                          - "iam:PutRolePolicy",%0A                          - "iam:DeleteRolePolicy",%0A                          - "iam:GetRolePolicy",%0A                          - "iam:ListRolePolicies",%0A                        ]%0A                      - Effect   = "Allow"%0A                      - Resource = [%0A                          - "arn:aws:iam::*:role/*",%0A                        ]%0A                      - Sid      = "IAMRolePolicyAttachment"%0A                    },%0A                  - {%0A                      - Action   = [%0A                          - "iam:PassRole",%0A                        ]%0A                      - Effect   = "Allow"%0A                      - Resource = [%0A                          - "arn:aws:iam::*:role/*",%0A                        ]%0A                      - Sid      = "IAMPassRoleForServices"%0A                    },%0A                  - {%0A                      - Action   = [%0A                          - "iam:ListInstanceProfiles",%0A                          - "iam:GetAccountSummary",%0A                          - "iam:GetAccountPasswordPolicy",%0A                          - "iam:ListUsers",%0A                          - "iam:ListGroups",%0A                          - "iam:ListAccountAliases",%0A                        ]%0A                      - Effect   = "Allow"%0A                      - Resource = [%0A                          - "*",%0A                        ]%0A                      - Sid      = "IAMReadOnlyAccess"%0A                    },%0A                ]%0A              - Version   = "2012-10-17"%0A            }%0A        ) -> null%0A      - policy_id        = "ANPAVXDJBTUM43S54VAI2" -> null%0A      - tags             = {%0A          - "Alcance SOX"     = "No"%0A          - "Ambiente"        = "DEV"%0A          - "Aplicacion"      = "CICD"%0A          - "Area"            = "DevOps"%0A          - "Ciclo de Vida"   = "Creacion"%0A          - "Contacto"        = "darwin.lopez@claro.com.gt"%0A          - "Creado Por"      = "DarwinLopez"%0A          - "Direccion"       = "TIRegional"%0A          - "Dominio"         = "BusinessIntelligence"%0A          - "Gerencia"        = "MCI"%0A          - "Layer"           = "Devops"%0A          - "ManagedBy"       = "terraform"%0A          - "Modulo"          = "IAM"%0A          - "Name"            = "mci-iam-fullmanagement-DEV"%0A          - "Pais"            = "RG"%0A          - "Propietario"     = "DarwinLopez"%0A          - "Proveedor"       = "InHouse"%0A          - "Soporte"         = "darwin.lopez@claro.com.gt"%0A          - "Subdominio"      = "Analytics"%0A          - "Tipo de Recurso" = "IAMPolicy"%0A          - "Type"            = "Policy"%0A        } -> null%0A      - tags_all         = {%0A          - "Alcance SOX"     = "No"%0A          - "Ambiente"        = "DEV"%0A          - "Aplicacion"      = "CICD"%0A          - "Area"            = "DevOps"%0A          - "Ciclo de Vida"   = "Creacion"%0A          - "Contacto"        = "darwin.lopez@claro.com.gt"%0A          - "Creado Por"      = "DarwinLopez"%0A          - "Direccion"       = "TIRegional"%0A          - "Dominio"         = "BusinessIntelligence"%0A          - "Gerencia"        = "MCI"%0A          - "Layer"           = "Devops"%0A          - "ManagedBy"       = "terraform"%0A          - "Modulo"          = "IAM"%0A          - "Name"            = "mci-iam-fullmanagement-DEV"%0A          - "Pais"            = "RG"%0A          - "Propietario"     = "DarwinLopez"%0A          - "Proveedor"       = "InHouse"%0A          - "Soporte"         = "darwin.lopez@claro.com.gt"%0A          - "Subdominio"      = "Analytics"%0A          - "Tipo de Recurso" = "IAMPolicy"%0A          - "Type"            = "Policy"%0A        } -> null%0A    }%0A%0A  # module.mci_lambda_deploymentabac.aws_iam_policy.main must be replaced%0A-/+ resource "aws_iam_policy" "main" {%0A      ~ arn              = "arn:aws:iam::393209814297:policy/mci-lambda-deploymentabac" -> (known after apply)%0A      ~ attachment_count = 1 -> (known after apply)%0A      ~ description      = "Despliegue completo de funciones Lambda con control ABAC basado en tags de gerencia y ambiente" -> "Despliegue completo de funciones Lambda sin restricciones ABAC para CI/CD" # forces replacement%0A      ~ id               = "arn:aws:iam::393209814297:policy/mci-lambda-deploymentabac" -> (known after apply)%0A        name             = "mci-lambda-deploymentabac"%0A      + name_prefix      = (known after apply)%0A      ~ policy           = jsonencode(%0A          ~ {%0A              ~ Statement = [%0A                  ~ {%0A                      - Condition = {%0A                          - StringEquals = {%0A                              - "aws:RequestTag/gerencia"  = [%0A                                  - "${aws:PrincipalTag/gerencia}",%0A                                ]%0A                              - "aws:ResourceTag/gerencia" = [%0A                                  - "${aws:PrincipalTag/gerencia}",%0A                                ]%0A                            }%0A                        }%0A                        # (4 unchanged attributes hidden)%0A                    },%0A                    {%0A                        Action   = [%0A                            "lambda:PublishLayerVersion",%0A                            "lambda:DeleteLayerVersion",%0A                            "lambda:GetLayerVersion",%0A                            "lambda:ListLayers",%0A                            "lambda:ListLayerVersions",%0A                        ]%0A                        Effect   = "Allow"%0A                        Resource = [%0A                            "arn:aws:lambda:*:*:layer:*",%0A                        ]%0A                        Sid      = "LambdaLayersManagement"%0A                    },%0A                    # (1 unchanged element hidden)%0A                ]%0A                # (1 unchanged attribute hidden)%0A            }%0A        )%0A      ~ policy_id        = "ANPAVXDJBTUMSCYKGFF5L" -> (known after apply)%0A        tags             = {%0A            "Alcance SOX"     = "No"%0A            "Ambiente"        = "DEV"%0A            "Aplicacion"      = "CICD"%0A            "Area"            = "DevOps"%0A            "Ciclo de Vida"   = "Creacion"%0A            "Contacto"        = "darwin.lopez@claro.com.gt"%0A            "Creado Por"      = "DarwinLopez"%0A            "Direccion"       = "TIRegional"%0A            "Dominio"         = "BusinessIntelligence"%0A            "Gerencia"        = "MCI"%0A            "Layer"           = "Devops"%0A            "ManagedBy"       = "terraform"%0A            "Modulo"          = "IAM"%0A            "Name"            = "mci-lambda-deploymentabac-DEV"%0A            "Pais"            = "RG"%0A            "Propietario"     = "DarwinLopez"%0A            "Proveedor"       = "InHouse"%0A            "Soporte"         = "darwin.lopez@claro.com.gt"%0A            "Subdominio"      = "Analytics"%0A            "Tipo de Recurso" = "IAMPolicy"%0A            "Type"            = "Policy"%0A        }%0A        # (2 unchanged attributes hidden)%0A    }%0A%0A  # module.mci_s3_deploymentabac.aws_iam_policy.main must be replaced%0A-/+ resource "aws_iam_policy" "main" {%0A      ~ arn              = "arn:aws:iam::393209814297:policy/mci-s3-deploymentabac" -> (known after apply)%0A      ~ attachment_count = 1 -> (known after apply)%0A      ~ description      = "Gestión completa de buckets S3 con control ABAC basado en tags de gerencia" -> "Gestión completa de buckets S3 sin restricciones ABAC para CI/CD deployment" # forces replacement%0A      ~ id               = "arn:aws:iam::393209814297:policy/mci-s3-deploymentabac" -> (known after apply)%0A        name             = "mci-s3-deploymentabac"%0A      + name_prefix      = (known after apply)%0A      ~ policy           = jsonencode(%0A          ~ {%0A              ~ Statement = [%0A                  ~ {%0A                      - Condition = {%0A                          - StringEquals = {%0A                              - "aws:RequestTag/gerencia" = [%0A                                  - "${aws:PrincipalTag/gerencia}",%0A                                ]%0A                            }%0A                        }%0A                        # (4 unchanged attributes hidden)%0A                    },%0A                  ~ {%0A                      - Condition = {%0A                          - StringEquals = {%0A                              - "s3:ExistingObjectTag/gerencia" = [%0A                                  - "${aws:PrincipalTag/gerencia}",%0A                                ]%0A                            }%0A                        }%0A                        # (4 unchanged attributes hidden)%0A                    },%0A                    {%0A                        Action   = [%0A                            "s3:ListAllMyBuckets",%0A                            "s3:GetBucketLocation",%0A                        ]%0A                        Effect   = "Allow"%0A                        Resource = [%0A                            "*",%0A                        ]%0A                        Sid      = "S3ListAllBuckets"%0A                    },%0A                ]%0A                # (1 unchanged attribute hidden)%0A            }%0A        )%0A      ~ policy_id        = "ANPAVXDJBTUMXACE6AYYM" -> (known after apply)%0A        tags             = {%0A            "Alcance SOX"     = "No"%0A            "Ambiente"        = "DEV"%0A            "Aplicacion"      = "CICD"%0A            "Area"            = "DevOps"%0A            "Ciclo de Vida"   = "Creacion"%0A            "Contacto"        = "darwin.lopez@claro.com.gt"%0A            "Creado Por"      = "DarwinLopez"%0A            "Direccion"       = "TIRegional"%0A            "Dominio"         = "BusinessIntelligence"%0A            "Gerencia"        = "MCI"%0A            "Layer"           = "Devops"%0A            "ManagedBy"       = "terraform"%0A            "Modulo"          = "IAM"%0A            "Name"            = "mci-s3-deploymentabac-DEV"%0A            "Pais"            = "RG"%0A            "Propietario"     = "DarwinLopez"%0A            "Proveedor"       = "InHouse"%0A            "Soporte"         = "darwin.lopez@claro.com.gt"%0A            "Subdominio"      = "Analytics"%0A            "Tipo de Recurso" = "IAMPolicy"%0A            "Type"            = "Policy"%0A        }%0A        # (2 unchanged attributes hidden)%0A    }%0A%0APlan: 8 to add, 1 to change, 8 to destroy.%0A%0A─────────────────────────────────────────────────────────────────────────────%0A%0ANote: You didn't use the -out option to save this plan, so Terraform can't%0Aguarantee to take exactly these actions if you run "terraform apply" now.%0A
+::debug::stdout: module.mci_s3_deploymentabac.aws_iam_policy.main: Refreshing state... [id=arn:aws:iam::393209814297:policy/mci-s3-deploymentabac]%0Amodule.mci_eventbridge_deploymentabac.data.aws_caller_identity.current: Reading...%0Amodule.mci_s3_deploymentabac.data.aws_caller_identity.current: Reading...%0Amodule.mci_terraform_statemanagement.aws_iam_policy.main: Refreshing state... [id=arn:aws:iam::393209814297:policy/mci-terraform-statemanagement]%0Amodule.mci_dynamodb_deploymentabac.aws_iam_policy.main: Refreshing state... [id=arn:aws:iam::393209814297:policy/mci-dynamodb-deploymentabac]%0Amodule.mci_lambda_deploymentabac.data.aws_caller_identity.current: Reading...%0Amodule.mci_terraform_statemanagement.data.aws_caller_identity.current: Reading...%0Amodule.mci_lambda_deploymentabac.aws_iam_policy.main: Refreshing state... [id=arn:aws:iam::393209814297:policy/mci-lambda-deploymentabac]%0Amodule.mci_glue_deploymentabac.aws_iam_policy.main: Refreshing state... [id=arn:aws:iam::393209814297:policy/mci-glue-deploymentabac]%0Amodule.mci_iam_deployment.aws_iam_policy.main: Refreshing state... [id=arn:aws:iam::393209814297:policy/mci-iam-deployment]%0Amodule.mci_eventbridge_deploymentabac.data.aws_caller_identity.current: Read complete after 0s [id=393209814297]%0Amodule.mci_glue_deploymentabac.data.aws_caller_identity.current: Reading...%0Amodule.mci_s3_deploymentabac.data.aws_caller_identity.current: Read complete after 1s [id=393209814297]%0Amodule.mci_iam_deployment.data.aws_caller_identity.current: Reading...%0Amodule.mci_lambda_deploymentabac.data.aws_caller_identity.current: Read complete after 1s [id=393209814297]%0Amodule.mci_cloudformation_deployment.aws_iam_policy.main: Refreshing state... [id=arn:aws:iam::393209814297:policy/mci-cloudformation-deployment]%0Amodule.mci_iam_deployment.data.aws_caller_identity.current: Read complete after 0s [id=393209814297]%0Amodule.mci_cloudformation_deployment.data.aws_caller_identity.current: Reading...%0Amodule.mci_terraform_statemanagement.data.aws_caller_identity.current: Read complete after 1s [id=393209814297]%0Amodule.mci_glue_deploymentabac.data.aws_caller_identity.current: Read complete after 1s [id=393209814297]%0Amodule.mci_cloudwatch_deploymentabac.data.aws_caller_identity.current: Reading...%0Amodule.mci_eventbridge_deploymentabac.aws_iam_policy.main: Refreshing state... [id=arn:aws:iam::393209814297:policy/mci-eventbridge-deploymentabac]%0Amodule.mci_cloudformation_deployment.data.aws_caller_identity.current: Read complete after 0s [id=393209814297]%0Adata.aws_caller_identity.current: Reading...%0Adata.aws_caller_identity.current: Read complete after 0s [id=393209814297]%0Amodule.mci_cloudwatch_deploymentabac.data.aws_caller_identity.current: Read complete after 0s [id=393209814297]%0Amodule.mci_dynamodb_deploymentabac.data.aws_caller_identity.current: Reading...%0Amodule.mci_cloudwatch_deploymentabac.aws_iam_policy.main: Refreshing state... [id=arn:aws:iam::393209814297:policy/mci-cloudwatch-deploymentabac]%0Amodule.mci_dynamodb_deploymentabac.data.aws_caller_identity.current: Read complete after 0s [id=393209814297]%0Adata.aws_iam_policy_document.github_actions_iam_deployment_role_trust: Reading...%0Adata.aws_iam_policy_document.github_actions_iam_deployment_role_trust: Read complete after 0s [id=1058311888]%0Aaws_iam_role.github_actions_iam_deployment_role: Refreshing state... [id=github-actions-iam-deployment-role]%0Aaws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_eventbridge_deploymentabac: Refreshing state... [id=github-actions-iam-deployment-role/arn:aws:iam::393209814297:policy/mci-eventbridge-deploymentabac]%0Aaws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_dynamodb_deploymentabac: Refreshing state... [id=github-actions-iam-deployment-role/arn:aws:iam::393209814297:policy/mci-dynamodb-deploymentabac]%0Aaws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_glue_deploymentabac: Refreshing state... [id=github-actions-iam-deployment-role/arn:aws:iam::393209814297:policy/mci-glue-deploymentabac]%0Aaws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_terraform_statemanagement: Refreshing state... [id=github-actions-iam-deployment-role/arn:aws:iam::393209814297:policy/mci-terraform-statemanagement]%0Aaws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_iam_deployment: Refreshing state... [id=github-actions-iam-deployment-role/arn:aws:iam::393209814297:policy/mci-iam-deployment]%0Aaws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_cloudwatch_deploymentabac: Refreshing state... [id=github-actions-iam-deployment-role/arn:aws:iam::393209814297:policy/mci-cloudwatch-deploymentabac]%0Aaws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_cloudformation_deployment: Refreshing state... [id=github-actions-iam-deployment-role/arn:aws:iam::393209814297:policy/mci-cloudformation-deployment]%0Aaws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_lambda_deploymentabac: Refreshing state... [id=github-actions-iam-deployment-role/arn:aws:iam::393209814297:policy/mci-lambda-deploymentabac]%0Aaws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_s3_deploymentabac: Refreshing state... [id=github-actions-iam-deployment-role/arn:aws:iam::393209814297:policy/mci-s3-deploymentabac]%0A%0ATerraform used the selected providers to generate the following execution%0Aplan. Resource actions are indicated with the following symbols:%0A  ~ update in-place%0A%0ATerraform will perform the following actions:%0A%0A  # aws_iam_role.github_actions_iam_deployment_role will be updated in-place%0A  ~ resource "aws_iam_role" "github_actions_iam_deployment_role" {%0A        id                    = "github-actions-iam-deployment-role"%0A        name                  = "github-actions-iam-deployment-role"%0A      ~ tags                  = {%0A            "Alcance SOX"            = "No"%0A            "Ambiente"               = "DEV"%0A            "Aplicacion"             = "CICD"%0A            "Area"                   = "DevOps"%0A            "Ciclo de Vida"          = "Actualizacion"%0A            "Contacto"               = "darwin.lopez@claro.com.gt"%0A            "Creado Por"             = "DarwinLopez"%0A            "Direccion"              = "TIRegional"%0A            "Dominio"                = "BusinessIntelligence"%0A            "Fecha de Creacion"      = "2025-09-16"%0A          ~ "Generated"              = "2025-10-09T16:39:01.756820" -> "2025-10-09T23:41:00.756605"%0A            "Gerencia"               = "MCI"%0A            "Layer"                  = "Devops"%0A            "ManagedBy"              = "terraform"%0A            "Modulo"                 = "IAM"%0A            "Name"                   = "github-actions-iam-deployment-role"%0A            "Pais"                   = "RG"%0A            "Propietario"            = "DarwinLopez"%0A            "Proveedor"              = "InHouse"%0A            "Soporte"                = "darwin.lopez@claro.com.gt"%0A            "Source"                 = "definitions/roles/github-deployment-role.yaml"%0A            "Subdominio"             = "Analytics"%0A            "Tipo de Recurso"        = "IAMRole"%0A            "Versión"                = "v2.0.0"%0A            "Última Actualización"   = "2025-10-09"%0A        }%0A      ~ tags_all              = {%0A          ~ "Generated"              = "2025-10-09T16:39:01.756820" -> "2025-10-09T23:41:00.756605"%0A            # (24 unchanged elements hidden)%0A        }%0A        # (9 unchanged attributes hidden)%0A    }%0A%0A  # module.mci_cloudwatch_deploymentabac.aws_iam_policy.main will be updated in-place%0A  ~ resource "aws_iam_policy" "main" {%0A        id               = "arn:aws:iam::393209814297:policy/mci-cloudwatch-deploymentabac"%0A        name             = "mci-cloudwatch-deploymentabac"%0A      ~ policy           = jsonencode(%0A          ~ {%0A              ~ Statement = [%0A                  ~ {%0A                      ~ Condition = {%0A                          ~ StringEquals = {%0A                              + "aws:RequestTag/Gerencia" = [%0A                                  + "${aws:PrincipalTag/Gerencia}",%0A                                ]%0A                              - "aws:RequestTag/gerencia" = [%0A                                  - "${aws:PrincipalTag/gerencia}",%0A                                ]%0A                            }%0A                        }%0A                        # (4 unchanged attributes hidden)%0A                    },%0A                    {%0A                        Action   = [%0A                            "cloudwatch:PutMetricData",%0A                            "cloudwatch:GetMetricData",%0A                            "cloudwatch:GetMetricStatistics",%0A                            "cloudwatch:ListMetrics",%0A                            "cloudwatch:PutMetricAlarm",%0A                            "cloudwatch:DeleteAlarms",%0A                            "cloudwatch:DescribeAlarms",%0A                            "cloudwatch:DescribeAlarmsForMetric",%0A                            "cloudwatch:DescribeAlarmHistory",%0A                            "cloudwatch:SetAlarmState",%0A                            "cloudwatch:TagResource",%0A                            "cloudwatch:UntagResource",%0A                            "cloudwatch:ListTagsForResource",%0A                        ]%0A                        Effect   = "Allow"%0A                        Resource = [%0A                            "arn:aws:cloudwatch:*:*:alarm:*",%0A                            "*",%0A                        ]%0A                        Sid      = "CloudWatchMetricsAndAlarms"%0A                    },%0A                    {%0A                        Action   = [%0A                            "cloudwatch:PutDashboard",%0A                            "cloudwatch:GetDashboard",%0A                            "cloudwatch:DeleteDashboards",%0A                            "cloudwatch:ListDashboards",%0A                        ]%0A                        Effect   = "Allow"%0A                        Resource = [%0A                            "*",%0A                        ]%0A                        Sid      = "CloudWatchDashboards"%0A                    },%0A                  ~ {%0A                      ~ Condition = {%0A                          ~ StringEquals = {%0A                              + "aws:RequestTag/Gerencia" = [%0A                                  + "${aws:PrincipalTag/Gerencia}",%0A                                ]%0A                              - "aws:RequestTag/gerencia" = [%0A                                  - "${aws:PrincipalTag/gerencia}",%0A                                ]%0A                            }%0A                        }%0A                        # (4 unchanged attributes hidden)%0A                    },%0A                    {%0A                        Action   = [%0A                            "sns:CreatePlatformApplication",%0A                            "sns:DeletePlatformApplication",%0A                            "sns:GetPlatformApplicationAttributes",%0A                            "sns:SetPlatformApplicationAttributes",%0A                            "sns:ListPlatformApplications",%0A                            "sns:CreatePlatformEndpoint",%0A                            "sns:DeleteEndpoint",%0A                            "sns:GetEndpointAttributes",%0A                            "sns:SetEndpointAttributes",%0A                        ]%0A                        Effect   = "Allow"%0A                        Resource = [%0A                            "arn:aws:sns:*:*:app/*",%0A                            "arn:aws:sns:*:*:endpoint/*",%0A                        ]%0A                        Sid      = "SNSPlatformEndpoints"%0A                    },%0A                ]%0A                # (1 unchanged attribute hidden)%0A            }%0A        )%0A        tags             = {%0A            "Alcance SOX"     = "No"%0A            "Ambiente"        = "DEV"%0A            "Aplicacion"      = "CICD"%0A            "Area"            = "DevOps"%0A            "Ciclo de Vida"   = "Creacion"%0A            "Contacto"        = "darwin.lopez@claro.com.gt"%0A            "Creado Por"      = "DarwinLopez"%0A            "Direccion"       = "TIRegional"%0A            "Dominio"         = "BusinessIntelligence"%0A            "Gerencia"        = "MCI"%0A            "Layer"           = "Devops"%0A            "ManagedBy"       = "terraform"%0A            "Modulo"          = "IAM"%0A            "Name"            = "mci-cloudwatch-deploymentabac-DEV"%0A            "Pais"            = "RG"%0A            "Propietario"     = "DarwinLopez"%0A            "Proveedor"       = "InHouse"%0A            "Soporte"         = "darwin.lopez@claro.com.gt"%0A            "Subdominio"      = "Analytics"%0A            "Tipo de Recurso" = "IAMPolicy"%0A            "Type"            = "Policy"%0A        }%0A        # (6 unchanged attributes hidden)%0A    }%0A%0A  # module.mci_eventbridge_deploymentabac.aws_iam_policy.main will be updated in-place%0A  ~ resource "aws_iam_policy" "main" {%0A        id               = "arn:aws:iam::393209814297:policy/mci-eventbridge-deploymentabac"%0A        name             = "mci-eventbridge-deploymentabac"%0A      ~ policy           = jsonencode(%0A          ~ {%0A              ~ Statement = [%0A                  ~ {%0A                      ~ Condition = {%0A                          ~ StringEquals = {%0A                              + "aws:RequestTag/Gerencia" = [%0A                                  + "${aws:PrincipalTag/Gerencia}",%0A                                ]%0A                              - "aws:RequestTag/gerencia" = [%0A                                  - "${aws:PrincipalTag/gerencia}",%0A                                ]%0A                            }%0A                        }%0A                        # (4 unchanged attributes hidden)%0A                    },%0A                    {%0A                        Action   = [%0A                            "scheduler:CreateSchedule",%0A                            "scheduler:DeleteSchedule",%0A                            "scheduler:GetSchedule",%0A                            "scheduler:UpdateSchedule",%0A                            "scheduler:ListSchedules",%0A                            "scheduler:CreateScheduleGroup",%0A                            "scheduler:DeleteScheduleGroup",%0A                            "scheduler:GetScheduleGroup",%0A                            "scheduler:ListScheduleGroups",%0A                            "scheduler:TagResource",%0A                            "scheduler:UntagResource",%0A                        ]%0A                        Effect   = "Allow"%0A                        Resource = [%0A                            "arn:aws:scheduler:*:*:schedule/*",%0A                            "arn:aws:scheduler:*:*:schedule-group/*",%0A                        ]%0A                        Sid      = "EventBridgeSchedulerManagement"%0A                    },%0A                  ~ {%0A                      ~ Condition = {%0A                          ~ StringEquals = {%0A                              + "aws:RequestTag/Gerencia" = [%0A                                  + "${aws:PrincipalTag/Gerencia}",%0A                                ]%0A                              - "aws:RequestTag/gerencia" = [%0A                                  - "${aws:PrincipalTag/gerencia}",%0A                                ]%0A                            }%0A                        }%0A                        # (4 unchanged attributes hidden)%0A                    },%0A                    {%0A                        Action   = [%0A                            "states:CreateActivity",%0A                            "states:DeleteActivity",%0A                            "states:DescribeActivity",%0A                            "states:GetActivityTask",%0A                            "states:ListActivities",%0A                            "states:SendTaskSuccess",%0A                            "states:SendTaskFailure",%0A                            "states:SendTaskHeartbeat",%0A                        ]%0A                        Effect   = "Allow"%0A                        Resource = [%0A                            "arn:aws:states:*:*:activity:*",%0A                        ]%0A                        Sid      = "StepFunctionsActivityManagement"%0A                    },%0A                ]%0A                # (1 unchanged attribute hidden)%0A            }%0A        )%0A        tags             = {%0A            "Alcance SOX"     = "No"%0A            "Ambiente"        = "DEV"%0A            "Aplicacion"      = "CICD"%0A            "Area"            = "DevOps"%0A            "Ciclo de Vida"   = "Creacion"%0A            "Contacto"        = "darwin.lopez@claro.com.gt"%0A            "Creado Por"      = "DarwinLopez"%0A            "Direccion"       = "TIRegional"%0A            "Dominio"         = "BusinessIntelligence"%0A            "Gerencia"        = "MCI"%0A            "Layer"           = "Devops"%0A            "ManagedBy"       = "terraform"%0A            "Modulo"          = "IAM"%0A            "Name"            = "mci-eventbridge-deploymentabac-DEV"%0A            "Pais"            = "RG"%0A            "Propietario"     = "DarwinLopez"%0A            "Proveedor"       = "InHouse"%0A            "Soporte"         = "darwin.lopez@claro.com.gt"%0A            "Subdominio"      = "Analytics"%0A            "Tipo de Recurso" = "IAMPolicy"%0A            "Type"            = "Policy"%0A        }%0A        # (6 unchanged attributes hidden)%0A    }%0A%0A  # module.mci_glue_deploymentabac.aws_iam_policy.main will be updated in-place%0A  ~ resource "aws_iam_policy" "main" {%0A        id               = "arn:aws:iam::393209814297:policy/mci-glue-deploymentabac"%0A        name             = "mci-glue-deploymentabac"%0A      ~ policy           = jsonencode(%0A          ~ {%0A              ~ Statement = [%0A                  ~ {%0A                      ~ Condition = {%0A                          ~ StringEquals = {%0A                              + "aws:RequestTag/Gerencia" = [%0A                                  + "${aws:PrincipalTag/Gerencia}",%0A                                ]%0A                              - "aws:RequestTag/gerencia" = [%0A                                  - "${aws:PrincipalTag/gerencia}",%0A                                ]%0A                            }%0A                        }%0A                        # (4 unchanged attributes hidden)%0A                    },%0A                    {%0A                        Action   = [%0A                            "iam:PassRole",%0A                        ]%0A                        Effect   = "Allow"%0A                        Resource = [%0A                            "arn:aws:iam::*:role/*",%0A                        ]%0A                        Sid      = "IAMPassRoleForServices"%0A                    },%0A                    # (3 unchanged elements hidden)%0A                ]%0A                # (1 unchanged attribute hidden)%0A            }%0A        )%0A        tags             = {%0A            "Alcance SOX"     = "No"%0A            "Ambiente"        = "DEV"%0A            "Aplicacion"      = "CICD"%0A            "Area"            = "DevOps"%0A            "Ciclo de Vida"   = "Creacion"%0A            "Contacto"        = "darwin.lopez@claro.com.gt"%0A            "Creado Por"      = "DarwinLopez"%0A            "Direccion"       = "TIRegional"%0A            "Dominio"         = "BusinessIntelligence"%0A            "Gerencia"        = "MCI"%0A            "Layer"           = "Devops"%0A            "ManagedBy"       = "terraform"%0A            "Modulo"          = "IAM"%0A            "Name"            = "mci-glue-deploymentabac-DEV"%0A            "Pais"            = "RG"%0A            "Propietario"     = "DarwinLopez"%0A            "Proveedor"       = "InHouse"%0A            "Soporte"         = "darwin.lopez@claro.com.gt"%0A            "Subdominio"      = "Analytics"%0A            "Tipo de Recurso" = "IAMPolicy"%0A            "Type"            = "Policy"%0A        }%0A        # (6 unchanged attributes hidden)%0A    }%0A%0APlan: 0 to add, 4 to change, 0 to destroy.%0A%0A─────────────────────────────────────────────────────────────────────────────%0A%0ANote: You didn't use the -out option to save this plan, so Terraform can't%0Aguarantee to take exactly these actions if you run "terraform apply" now.%0A
 ::debug::stderr: 
 ::debug::exitcode: 0

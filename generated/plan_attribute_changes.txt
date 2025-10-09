@@ -1,322 +1,52 @@
   ~ resource "aws_iam_role" "github_actions_iam_deployment_role" {
       ~ tags                  = {
-          ~ "Generated"              = "2025-10-09T15:26:14.735941" -> "2025-10-09T22:43:17.534725"
+          ~ "Generated"              = "2025-10-09T16:39:01.756820" -> "2025-10-09T23:41:00.756605"
       ~ tags_all              = {
-          ~ "Generated"              = "2025-10-09T15:26:14.735941" -> "2025-10-09T22:43:17.534725"
--/+ resource "aws_iam_role_policy_attachment" "github_actions_iam_deployment_role_mci_dynamodb_deploymentabac" {
-      ~ id         = "github-actions-iam-deployment-role/arn:aws:iam::393209814297:policy/mci-dynamodb-deploymentabac" -> (known after apply)
-      ~ policy_arn = "arn:aws:iam::393209814297:policy/mci-dynamodb-deploymentabac" # forces replacement -> (known after apply) # forces replacement
-  + resource "aws_iam_role_policy_attachment" "github_actions_iam_deployment_role_mci_iam_deployment" {
-      + id         = (known after apply)
-      + policy_arn = (known after apply)
-      + role       = "github-actions-iam-deployment-role"
-  - resource "aws_iam_role_policy_attachment" "github_actions_iam_deployment_role_mci_iam_fullmanagement" {
-      - id         = "github-actions-iam-deployment-role/arn:aws:iam::393209814297:policy/mci-iam-fullmanagement" -> null
-      - policy_arn = "arn:aws:iam::393209814297:policy/mci-iam-fullmanagement" -> null
-      - role       = "github-actions-iam-deployment-role" -> null
--/+ resource "aws_iam_role_policy_attachment" "github_actions_iam_deployment_role_mci_lambda_deploymentabac" {
-      ~ id         = "github-actions-iam-deployment-role/arn:aws:iam::393209814297:policy/mci-lambda-deploymentabac" -> (known after apply)
-      ~ policy_arn = "arn:aws:iam::393209814297:policy/mci-lambda-deploymentabac" # forces replacement -> (known after apply) # forces replacement
--/+ resource "aws_iam_role_policy_attachment" "github_actions_iam_deployment_role_mci_s3_deploymentabac" {
-      ~ id         = "github-actions-iam-deployment-role/arn:aws:iam::393209814297:policy/mci-s3-deploymentabac" -> (known after apply)
-      ~ policy_arn = "arn:aws:iam::393209814297:policy/mci-s3-deploymentabac" # forces replacement -> (known after apply) # forces replacement
--/+ resource "aws_iam_policy" "main" {
-      ~ arn              = "arn:aws:iam::393209814297:policy/mci-dynamodb-deploymentabac" -> (known after apply)
-      ~ attachment_count = 1 -> (known after apply)
-      ~ description      = "Gestión completa de tablas DynamoDB con control ABAC basado en tags" -> "Gestión completa de tablas DynamoDB sin restricciones ABAC para CI/CD deployment" # forces replacement
-      ~ id               = "arn:aws:iam::393209814297:policy/mci-dynamodb-deploymentabac" -> (known after apply)
-      + name_prefix      = (known after apply)
+          ~ "Generated"              = "2025-10-09T16:39:01.756820" -> "2025-10-09T23:41:00.756605"
+  ~ resource "aws_iam_policy" "main" {
       ~ policy           = jsonencode(
           ~ {
               ~ Statement = [
                   ~ {
-                      - Condition = {
-                          - StringEquals = {
-                              - "aws:RequestTag/gerencia"  = [
-                                  - "${aws:PrincipalTag/gerencia}",
-                              - "aws:ResourceTag/gerencia" = [
-                                  - "${aws:PrincipalTag/gerencia}",
-                  ~ {
-                      - Condition = {
-                          - StringEquals = {
-                              - "dynamodb:LeadingKeys" = [
-                                  - "${aws:PrincipalTag/gerencia}",
-      ~ policy_id        = "ANPAVXDJBTUM5PSO53NGL" -> (known after apply)
-  + resource "aws_iam_policy" "main" {
-      + arn              = (known after apply)
-      + attachment_count = (known after apply)
-      + description      = "Gestión completa de roles y políticas IAM para despliegues de infraestructura con Terraform (sin restricciones ABAC para CI/CD)"
-      + id               = (known after apply)
-      + name             = "mci-iam-deployment"
-      + name_prefix      = (known after apply)
-      + path             = "/"
-      + policy           = jsonencode(
-              + Statement = [
-                  + {
-                      + Action   = [
-                          + "iam:CreateRole",
-                          + "iam:DeleteRole",
-                          + "iam:UpdateRole",
-                          + "iam:GetRole",
-                          + "iam:ListRoles",
-                          + "iam:ListRoleTags",
-                          + "iam:TagRole",
-                          + "iam:UntagRole",
-                          + "iam:UpdateAssumeRolePolicy",
-                      + Effect   = "Allow"
-                      + Resource = [
-                          + "arn:aws:iam::*:role/*",
-                      + Sid      = "IAMRoleFullManagement"
-                  + {
-                      + Action   = [
-                          + "iam:CreatePolicy",
-                          + "iam:DeletePolicy",
-                          + "iam:GetPolicy",
-                          + "iam:GetPolicyVersion",
-                          + "iam:ListPolicies",
-                          + "iam:ListPolicyVersions",
-                          + "iam:CreatePolicyVersion",
-                          + "iam:DeletePolicyVersion",
-                          + "iam:SetDefaultPolicyVersion",
-                          + "iam:TagPolicy",
-                          + "iam:UntagPolicy",
-                          + "iam:ListPolicyTags",
-                      + Effect   = "Allow"
-                      + Resource = [
-                          + "arn:aws:iam::*:policy/*",
-                      + Sid      = "IAMPolicyFullManagement"
-                  + {
-                      + Action   = [
-                          + "iam:AttachRolePolicy",
-                          + "iam:DetachRolePolicy",
-                          + "iam:ListAttachedRolePolicies",
-                          + "iam:PutRolePolicy",
-                          + "iam:DeleteRolePolicy",
-                          + "iam:GetRolePolicy",
-                          + "iam:ListRolePolicies",
-                      + Effect   = "Allow"
-                      + Resource = [
-                          + "arn:aws:iam::*:role/*",
-                      + Sid      = "IAMRolePolicyAttachment"
-                  + {
-                      + Action   = [
-                          + "iam:PassRole",
-                      + Effect   = "Allow"
-                      + Resource = [
-                          + "arn:aws:iam::*:role/*",
-                      + Sid      = "IAMPassRoleForServices"
-                  + {
-                      + Action   = [
-                          + "iam:ListInstanceProfiles",
-                          + "iam:GetAccountSummary",
-                          + "iam:GetAccountPasswordPolicy",
-                          + "iam:ListUsers",
-                          + "iam:ListGroups",
-                          + "iam:ListAccountAliases",
-                      + Effect   = "Allow"
-                      + Resource = [
-                          + "*",
-                      + Sid      = "IAMReadOnlyAccess"
-              + Version   = "2012-10-17"
-      + policy_id        = (known after apply)
-      + tags             = {
-          + "Alcance SOX"     = "No"
-          + "Ambiente"        = "DEV"
-          + "Aplicacion"      = "CICD"
-          + "Area"            = "DevOps"
-          + "Ciclo de Vida"   = "Creacion"
-          + "Contacto"        = "darwin.lopez@claro.com.gt"
-          + "Creado Por"      = "DarwinLopez"
-          + "Direccion"       = "TIRegional"
-          + "Dominio"         = "BusinessIntelligence"
-          + "Gerencia"        = "MCI"
-          + "Layer"           = "Devops"
-          + "ManagedBy"       = "terraform"
-          + "Modulo"          = "IAM"
-          + "Name"            = "mci-iam-deployment-DEV"
-          + "Pais"            = "RG"
-          + "Propietario"     = "DarwinLopez"
-          + "Proveedor"       = "InHouse"
-          + "Soporte"         = "darwin.lopez@claro.com.gt"
-          + "Subdominio"      = "Analytics"
-          + "Tipo de Recurso" = "IAMPolicy"
-          + "Type"            = "Policy"
-      + tags_all         = {
-          + "Alcance SOX"     = "No"
-          + "Ambiente"        = "DEV"
-          + "Aplicacion"      = "CICD"
-          + "Area"            = "DevOps"
-          + "Ciclo de Vida"   = "Creacion"
-          + "Contacto"        = "darwin.lopez@claro.com.gt"
-          + "Creado Por"      = "DarwinLopez"
-          + "Direccion"       = "TIRegional"
-          + "Dominio"         = "BusinessIntelligence"
-          + "Gerencia"        = "MCI"
-          + "Layer"           = "Devops"
-          + "ManagedBy"       = "terraform"
-          + "Modulo"          = "IAM"
-          + "Name"            = "mci-iam-deployment-DEV"
-          + "Pais"            = "RG"
-          + "Propietario"     = "DarwinLopez"
-          + "Proveedor"       = "InHouse"
-          + "Soporte"         = "darwin.lopez@claro.com.gt"
-          + "Subdominio"      = "Analytics"
-          + "Tipo de Recurso" = "IAMPolicy"
-          + "Type"            = "Policy"
-  - resource "aws_iam_policy" "main" {
-      - arn              = "arn:aws:iam::393209814297:policy/mci-iam-fullmanagement" -> null
-      - attachment_count = 1 -> null
-      - description      = "Gestión completa de roles y políticas IAM para despliegues de infraestructura con Terraform" -> null
-      - id               = "arn:aws:iam::393209814297:policy/mci-iam-fullmanagement" -> null
-      - name             = "mci-iam-fullmanagement" -> null
-      - path             = "/" -> null
-      - policy           = jsonencode(
-              - Statement = [
-                  - {
-                      - Action   = [
-                          - "iam:CreateRole",
-                          - "iam:DeleteRole",
-                          - "iam:UpdateRole",
-                          - "iam:GetRole",
-                          - "iam:ListRoles",
-                          - "iam:ListRoleTags",
-                          - "iam:TagRole",
-                          - "iam:UntagRole",
-                          - "iam:UpdateAssumeRolePolicy",
-                      - Effect   = "Allow"
-                      - Resource = [
-                          - "arn:aws:iam::*:role/*",
-                      - Sid      = "IAMRoleFullManagement"
-                  - {
-                      - Action   = [
-                          - "iam:CreatePolicy",
-                          - "iam:DeletePolicy",
-                          - "iam:GetPolicy",
-                          - "iam:GetPolicyVersion",
-                          - "iam:ListPolicies",
-                          - "iam:ListPolicyVersions",
-                          - "iam:CreatePolicyVersion",
-                          - "iam:DeletePolicyVersion",
-                          - "iam:SetDefaultPolicyVersion",
-                          - "iam:TagPolicy",
-                          - "iam:UntagPolicy",
-                          - "iam:ListPolicyTags",
-                      - Effect   = "Allow"
-                      - Resource = [
-                          - "arn:aws:iam::*:policy/*",
-                      - Sid      = "IAMPolicyFullManagement"
-                  - {
-                      - Action   = [
-                          - "iam:AttachRolePolicy",
-                          - "iam:DetachRolePolicy",
-                          - "iam:ListAttachedRolePolicies",
-                          - "iam:PutRolePolicy",
-                          - "iam:DeleteRolePolicy",
-                          - "iam:GetRolePolicy",
-                          - "iam:ListRolePolicies",
-                      - Effect   = "Allow"
-                      - Resource = [
-                          - "arn:aws:iam::*:role/*",
-                      - Sid      = "IAMRolePolicyAttachment"
-                  - {
-                      - Action   = [
-                          - "iam:PassRole",
-                      - Effect   = "Allow"
-                      - Resource = [
-                          - "arn:aws:iam::*:role/*",
-                      - Sid      = "IAMPassRoleForServices"
-                  - {
-                      - Action   = [
-                          - "iam:ListInstanceProfiles",
-                          - "iam:GetAccountSummary",
-                          - "iam:GetAccountPasswordPolicy",
-                          - "iam:ListUsers",
-                          - "iam:ListGroups",
-                          - "iam:ListAccountAliases",
-                      - Effect   = "Allow"
-                      - Resource = [
-                          - "*",
-                      - Sid      = "IAMReadOnlyAccess"
-              - Version   = "2012-10-17"
-      - policy_id        = "ANPAVXDJBTUM43S54VAI2" -> null
-      - tags             = {
-          - "Alcance SOX"     = "No"
-          - "Ambiente"        = "DEV"
-          - "Aplicacion"      = "CICD"
-          - "Area"            = "DevOps"
-          - "Ciclo de Vida"   = "Creacion"
-          - "Contacto"        = "darwin.lopez@claro.com.gt"
-          - "Creado Por"      = "DarwinLopez"
-          - "Direccion"       = "TIRegional"
-          - "Dominio"         = "BusinessIntelligence"
-          - "Gerencia"        = "MCI"
-          - "Layer"           = "Devops"
-          - "ManagedBy"       = "terraform"
-          - "Modulo"          = "IAM"
-          - "Name"            = "mci-iam-fullmanagement-DEV"
-          - "Pais"            = "RG"
-          - "Propietario"     = "DarwinLopez"
-          - "Proveedor"       = "InHouse"
-          - "Soporte"         = "darwin.lopez@claro.com.gt"
-          - "Subdominio"      = "Analytics"
-          - "Tipo de Recurso" = "IAMPolicy"
-          - "Type"            = "Policy"
-      - tags_all         = {
-          - "Alcance SOX"     = "No"
-          - "Ambiente"        = "DEV"
-          - "Aplicacion"      = "CICD"
-          - "Area"            = "DevOps"
-          - "Ciclo de Vida"   = "Creacion"
-          - "Contacto"        = "darwin.lopez@claro.com.gt"
-          - "Creado Por"      = "DarwinLopez"
-          - "Direccion"       = "TIRegional"
-          - "Dominio"         = "BusinessIntelligence"
-          - "Gerencia"        = "MCI"
-          - "Layer"           = "Devops"
-          - "ManagedBy"       = "terraform"
-          - "Modulo"          = "IAM"
-          - "Name"            = "mci-iam-fullmanagement-DEV"
-          - "Pais"            = "RG"
-          - "Propietario"     = "DarwinLopez"
-          - "Proveedor"       = "InHouse"
-          - "Soporte"         = "darwin.lopez@claro.com.gt"
-          - "Subdominio"      = "Analytics"
-          - "Tipo de Recurso" = "IAMPolicy"
-          - "Type"            = "Policy"
--/+ resource "aws_iam_policy" "main" {
-      ~ arn              = "arn:aws:iam::393209814297:policy/mci-lambda-deploymentabac" -> (known after apply)
-      ~ attachment_count = 1 -> (known after apply)
-      ~ description      = "Despliegue completo de funciones Lambda con control ABAC basado en tags de gerencia y ambiente" -> "Despliegue completo de funciones Lambda sin restricciones ABAC para CI/CD" # forces replacement
-      ~ id               = "arn:aws:iam::393209814297:policy/mci-lambda-deploymentabac" -> (known after apply)
-      + name_prefix      = (known after apply)
-      ~ policy           = jsonencode(
-          ~ {
-              ~ Statement = [
-                  ~ {
-                      - Condition = {
-                          - StringEquals = {
-                              - "aws:RequestTag/gerencia"  = [
-                                  - "${aws:PrincipalTag/gerencia}",
-                              - "aws:ResourceTag/gerencia" = [
-                                  - "${aws:PrincipalTag/gerencia}",
-      ~ policy_id        = "ANPAVXDJBTUMSCYKGFF5L" -> (known after apply)
--/+ resource "aws_iam_policy" "main" {
-      ~ arn              = "arn:aws:iam::393209814297:policy/mci-s3-deploymentabac" -> (known after apply)
-      ~ attachment_count = 1 -> (known after apply)
-      ~ description      = "Gestión completa de buckets S3 con control ABAC basado en tags de gerencia" -> "Gestión completa de buckets S3 sin restricciones ABAC para CI/CD deployment" # forces replacement
-      ~ id               = "arn:aws:iam::393209814297:policy/mci-s3-deploymentabac" -> (known after apply)
-      + name_prefix      = (known after apply)
-      ~ policy           = jsonencode(
-          ~ {
-              ~ Statement = [
-                  ~ {
-                      - Condition = {
-                          - StringEquals = {
+                      ~ Condition = {
+                          ~ StringEquals = {
+                              + "aws:RequestTag/Gerencia" = [
+                                  + "${aws:PrincipalTag/Gerencia}",
                               - "aws:RequestTag/gerencia" = [
                                   - "${aws:PrincipalTag/gerencia}",
                   ~ {
-                      - Condition = {
-                          - StringEquals = {
-                              - "s3:ExistingObjectTag/gerencia" = [
+                      ~ Condition = {
+                          ~ StringEquals = {
+                              + "aws:RequestTag/Gerencia" = [
+                                  + "${aws:PrincipalTag/Gerencia}",
+                              - "aws:RequestTag/gerencia" = [
                                   - "${aws:PrincipalTag/gerencia}",
-      ~ policy_id        = "ANPAVXDJBTUMXACE6AYYM" -> (known after apply)
+  ~ resource "aws_iam_policy" "main" {
+      ~ policy           = jsonencode(
+          ~ {
+              ~ Statement = [
+                  ~ {
+                      ~ Condition = {
+                          ~ StringEquals = {
+                              + "aws:RequestTag/Gerencia" = [
+                                  + "${aws:PrincipalTag/Gerencia}",
+                              - "aws:RequestTag/gerencia" = [
+                                  - "${aws:PrincipalTag/gerencia}",
+                  ~ {
+                      ~ Condition = {
+                          ~ StringEquals = {
+                              + "aws:RequestTag/Gerencia" = [
+                                  + "${aws:PrincipalTag/Gerencia}",
+                              - "aws:RequestTag/gerencia" = [
+                                  - "${aws:PrincipalTag/gerencia}",
+  ~ resource "aws_iam_policy" "main" {
+      ~ policy           = jsonencode(
+          ~ {
+              ~ Statement = [
+                  ~ {
+                      ~ Condition = {
+                          ~ StringEquals = {
+                              + "aws:RequestTag/Gerencia" = [
+                                  + "${aws:PrincipalTag/Gerencia}",
+                              - "aws:RequestTag/gerencia" = [
+                                  - "${aws:PrincipalTag/gerencia}",

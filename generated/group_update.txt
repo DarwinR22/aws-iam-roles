@@ -1,1 +1,4 @@
 aws_iam_role.github_actions_iam_deployment_role
+module.mci_cloudwatch_deploymentabac.aws_iam_policy.main
+module.mci_eventbridge_deploymentabac.aws_iam_policy.main
+module.mci_glue_deploymentabac.aws_iam_policy.main

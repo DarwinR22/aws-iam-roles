@@ -1,2 +1,0 @@
-aws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_iam_deployment
-module.mci_iam_deployment.aws_iam_policy.main
