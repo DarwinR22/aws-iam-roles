@@ -119,6 +119,21 @@ module "{{ terraform_name }}" {
     "Gerencia" = "{{ role.tags.Gerencia }}"
     "Area" = "{{ role.tags.Area }}"  
     "Ambiente" = "{{ role.tags.Ambiente }}"
+    "Direccion" = "{{ role.tags.Direccion | default('TIRegional') }}"
+    "Modulo" = "{{ role.tags.Modulo | default('IAM') }}"
+    "Alcance SOX" = "{{ role.tags['Alcance SOX'] | default('No') }}"
+    "Propietario" = "{{ role.tags.Propietario | default('') }}"
+    "Proveedor" = "{{ role.tags.Proveedor | default('InHouse') }}"
+    "Layer" = "{{ role.tags.Layer | default('') }}"
+    "Dominio" = "{{ role.tags.Dominio | default('') }}"
+    "Subdominio" = "{{ role.tags.Subdominio | default('') }}"
+    "Aplicacion" = "{{ role.tags.Aplicacion | default('') }}"
+    "Tipo de Recurso" = "IAMPolicy"
+    "Soporte" = "{{ role.tags.Soporte | default('') }}"
+    "Contacto" = "{{ role.tags.Contacto | default('') }}"
+    "Creado Por" = "{{ role.tags['Creado Por'] | default('') }}"
+    "Ciclo de Vida" = "Creacion"
+    "ManagedBy" = "terraform"
   }
 }
 {% endfor %}

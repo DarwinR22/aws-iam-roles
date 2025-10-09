@@ -6,7 +6,7 @@
 # This file is auto-generated from YAML definitions.
 # DO NOT EDIT MANUALLY - Changes will be overwritten.
 # 
-# Generated: 2025-10-09T14:30:58.445175
+# Generated: 2025-10-09T14:32:14.870770
 # Source: Multiple role definitions in definitions/roles/
 # ==============================================================================
 
@@ -84,7 +84,7 @@ resource "aws_iam_role" "github_actions_iam_deployment_role" {
     # Auto-generated tags
     "ManagedBy" = "terraform"
     "Source"    = "definitions/roles/github-deployment-role.yaml"
-    "Generated" = "2025-10-09T14:30:58.445175"
+    "Generated" = "2025-10-09T14:32:14.870770"
   }
 }
 
@@ -113,6 +113,21 @@ module "mci_terraform_statemanagement" {
     "Gerencia" = "MCI"
     "Area" = "DevOps"  
     "Ambiente" = "dev"
+    "Direccion" = "TIRegional"
+    "Modulo" = "IAM"
+    "Alcance SOX" = "No"
+    "Propietario" = "DarwinLopez"
+    "Proveedor" = "InHouse"
+    "Layer" = "Devops"
+    "Dominio" = "BusinessIntelligence"
+    "Subdominio" = "Analytics"
+    "Aplicacion" = "CICD"
+    "Tipo de Recurso" = "IAMPolicy"
+    "Soporte" = "darwin.lopez@claro.com.gt"
+    "Contacto" = "darwin.lopez@claro.com.gt"
+    "Creado Por" = "DarwinLopez"
+    "Ciclo de Vida" = "Creacion"
+    "ManagedBy" = "terraform"
   }
 }
 module "mci_lambda_deploymentabac" {
@@ -139,6 +154,21 @@ module "mci_lambda_deploymentabac" {
     "Gerencia" = "MCI"
     "Area" = "DevOps"  
     "Ambiente" = "dev"
+    "Direccion" = "TIRegional"
+    "Modulo" = "IAM"
+    "Alcance SOX" = "No"
+    "Propietario" = "DarwinLopez"
+    "Proveedor" = "InHouse"
+    "Layer" = "Devops"
+    "Dominio" = "BusinessIntelligence"
+    "Subdominio" = "Analytics"
+    "Aplicacion" = "CICD"
+    "Tipo de Recurso" = "IAMPolicy"
+    "Soporte" = "darwin.lopez@claro.com.gt"
+    "Contacto" = "darwin.lopez@claro.com.gt"
+    "Creado Por" = "DarwinLopez"
+    "Ciclo de Vida" = "Creacion"
+    "ManagedBy" = "terraform"
   }
 }
 module "mci_s3_deploymentabac" {
@@ -165,6 +195,21 @@ module "mci_s3_deploymentabac" {
     "Gerencia" = "MCI"
     "Area" = "DevOps"  
     "Ambiente" = "dev"
+    "Direccion" = "TIRegional"
+    "Modulo" = "IAM"
+    "Alcance SOX" = "No"
+    "Propietario" = "DarwinLopez"
+    "Proveedor" = "InHouse"
+    "Layer" = "Devops"
+    "Dominio" = "BusinessIntelligence"
+    "Subdominio" = "Analytics"
+    "Aplicacion" = "CICD"
+    "Tipo de Recurso" = "IAMPolicy"
+    "Soporte" = "darwin.lopez@claro.com.gt"
+    "Contacto" = "darwin.lopez@claro.com.gt"
+    "Creado Por" = "DarwinLopez"
+    "Ciclo de Vida" = "Creacion"
+    "ManagedBy" = "terraform"
   }
 }
 module "mci_dynamodb_deploymentabac" {
@@ -191,6 +236,21 @@ module "mci_dynamodb_deploymentabac" {
     "Gerencia" = "MCI"
     "Area" = "DevOps"  
     "Ambiente" = "dev"
+    "Direccion" = "TIRegional"
+    "Modulo" = "IAM"
+    "Alcance SOX" = "No"
+    "Propietario" = "DarwinLopez"
+    "Proveedor" = "InHouse"
+    "Layer" = "Devops"
+    "Dominio" = "BusinessIntelligence"
+    "Subdominio" = "Analytics"
+    "Aplicacion" = "CICD"
+    "Tipo de Recurso" = "IAMPolicy"
+    "Soporte" = "darwin.lopez@claro.com.gt"
+    "Contacto" = "darwin.lopez@claro.com.gt"
+    "Creado Por" = "DarwinLopez"
+    "Ciclo de Vida" = "Creacion"
+    "ManagedBy" = "terraform"
   }
 }
 module "mci_eventbridge_deploymentabac" {
@@ -217,6 +277,21 @@ module "mci_eventbridge_deploymentabac" {
     "Gerencia" = "MCI"
     "Area" = "DevOps"  
     "Ambiente" = "dev"
+    "Direccion" = "TIRegional"
+    "Modulo" = "IAM"
+    "Alcance SOX" = "No"
+    "Propietario" = "DarwinLopez"
+    "Proveedor" = "InHouse"
+    "Layer" = "Devops"
+    "Dominio" = "BusinessIntelligence"
+    "Subdominio" = "Analytics"
+    "Aplicacion" = "CICD"
+    "Tipo de Recurso" = "IAMPolicy"
+    "Soporte" = "darwin.lopez@claro.com.gt"
+    "Contacto" = "darwin.lopez@claro.com.gt"
+    "Creado Por" = "DarwinLopez"
+    "Ciclo de Vida" = "Creacion"
+    "ManagedBy" = "terraform"
   }
 }
 module "mci_cloudwatch_deploymentabac" {
@@ -243,6 +318,21 @@ module "mci_cloudwatch_deploymentabac" {
     "Gerencia" = "MCI"
     "Area" = "DevOps"  
     "Ambiente" = "dev"
+    "Direccion" = "TIRegional"
+    "Modulo" = "IAM"
+    "Alcance SOX" = "No"
+    "Propietario" = "DarwinLopez"
+    "Proveedor" = "InHouse"
+    "Layer" = "Devops"
+    "Dominio" = "BusinessIntelligence"
+    "Subdominio" = "Analytics"
+    "Aplicacion" = "CICD"
+    "Tipo de Recurso" = "IAMPolicy"
+    "Soporte" = "darwin.lopez@claro.com.gt"
+    "Contacto" = "darwin.lopez@claro.com.gt"
+    "Creado Por" = "DarwinLopez"
+    "Ciclo de Vida" = "Creacion"
+    "ManagedBy" = "terraform"
   }
 }
 module "mci_glue_deploymentabac" {
@@ -269,6 +359,21 @@ module "mci_glue_deploymentabac" {
     "Gerencia" = "MCI"
     "Area" = "DevOps"  
     "Ambiente" = "dev"
+    "Direccion" = "TIRegional"
+    "Modulo" = "IAM"
+    "Alcance SOX" = "No"
+    "Propietario" = "DarwinLopez"
+    "Proveedor" = "InHouse"
+    "Layer" = "Devops"
+    "Dominio" = "BusinessIntelligence"
+    "Subdominio" = "Analytics"
+    "Aplicacion" = "CICD"
+    "Tipo de Recurso" = "IAMPolicy"
+    "Soporte" = "darwin.lopez@claro.com.gt"
+    "Contacto" = "darwin.lopez@claro.com.gt"
+    "Creado Por" = "DarwinLopez"
+    "Ciclo de Vida" = "Creacion"
+    "ManagedBy" = "terraform"
   }
 }
 
