@@ -1,0 +1,102 @@
+policy:
+  name: "mci-eventbridge-stepfunctions-abac"
+  description: "Gestión de EventBridge, Scheduler y StepFunctions con control ABAC"
+  service: "events"
+  version: "1.0.0"
+  
+  statements:
+    - sid: "EventBridgeFullManagement"
+      effect: "Allow"
+      actions:
+        - "events:PutRule"
+        - "events:DeleteRule"
+        - "events:DescribeRule"
+        - "events:EnableRule"
+        - "events:DisableRule"
+        - "events:ListRules"
+        - "events:PutTargets"
+        - "events:RemoveTargets"
+        - "events:ListTargetsByRule"
+        - "events:PutEvents"
+        - "events:TagResource"
+        - "events:UntagResource"
+        - "events:ListTagsForResource"
+        
+      resources:
+        - "arn:aws:events:*:*:rule/*"
+        
+      # ✅ ABAC: Solo reglas con tags coincidentes
+      abac_conditions:
+        - test: "StringEquals"
+          variable: "aws:RequestTag/gerencia"
+          values: ["${aws:PrincipalTag/gerencia}"]
+
+    - sid: "EventBridgeSchedulerManagement"
+      effect: "Allow"
+      actions:
+        - "scheduler:CreateSchedule"
+        - "scheduler:DeleteSchedule"
+        - "scheduler:GetSchedule"
+        - "scheduler:UpdateSchedule"
+        - "scheduler:ListSchedules"
+        - "scheduler:CreateScheduleGroup"
+        - "scheduler:DeleteScheduleGroup"
+        - "scheduler:GetScheduleGroup"
+        - "scheduler:ListScheduleGroups"
+        - "scheduler:TagResource"
+        - "scheduler:UntagResource"
+        
+      resources:
+        - "arn:aws:scheduler:*:*:schedule/*"
+        - "arn:aws:scheduler:*:*:schedule-group/*"
+
+    - sid: "StepFunctionsFullManagement"
+      effect: "Allow"
+      actions:
+        - "states:CreateStateMachine"
+        - "states:DeleteStateMachine"
+        - "states:UpdateStateMachine"
+        - "states:DescribeStateMachine"
+        - "states:ListStateMachines"
+        - "states:StartExecution"
+        - "states:StopExecution"
+        - "states:DescribeExecution"
+        - "states:GetExecutionHistory"
+        - "states:ListExecutions"
+        - "states:TagResource"
+        - "states:UntagResource"
+        - "states:ListTagsForResource"
+        
+      resources:
+        - "arn:aws:states:*:*:stateMachine:*"
+        - "arn:aws:states:*:*:execution:*:*"
+        
+      # ✅ ABAC: Solo state machines con tags coincidentes
+      abac_conditions:
+        - test: "StringEquals"
+          variable: "aws:RequestTag/gerencia"
+          values: ["${aws:PrincipalTag/gerencia}"]
+
+    - sid: "StepFunctionsActivityManagement"
+      effect: "Allow"
+      actions:
+        - "states:CreateActivity"
+        - "states:DeleteActivity"
+        - "states:DescribeActivity"
+        - "states:GetActivityTask"
+        - "states:ListActivities"
+        - "states:SendTaskSuccess"
+        - "states:SendTaskFailure"
+        - "states:SendTaskHeartbeat"
+      resources:
+        - "arn:aws:states:*:*:activity:*"
+
+# Metadata
+environments: ["dev", "qa", "prod"]
+owner: "Infrastructure Team"
+
+tags:
+  Service: "EventBridge-StepFunctions"
+  AccessLevel: "FullManagement"
+  PolicyType: "ABAC"
+  ManagedBy: "mci-aws-iam"
