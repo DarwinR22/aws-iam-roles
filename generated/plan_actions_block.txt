@@ -5,7 +5,7 @@
         name                  = "github-actions-iam-deployment-role"
       ~ tags                  = {
             "Alcance SOX"            = "No"
-            "Ambiente"               = "dev"
+          ~ "Ambiente"               = "dev" -> "DEV"
             "Aplicacion"             = "CICD"
             "Area"                   = "DevOps"
             "Ciclo de Vida"          = "Actualizacion"
@@ -14,13 +14,13 @@
             "Direccion"              = "TIRegional"
             "Dominio"                = "BusinessIntelligence"
             "Fecha de Creacion"      = "2025-09-16"
-          ~ "Generated"              = "2025-10-09T14:23:44.099520" -> "2025-10-09T20:33:15.054745"
+          ~ "Generated"              = "2025-10-09T14:32:14.870770" -> "2025-10-09T20:50:17.242492"
             "Gerencia"               = "MCI"
             "Layer"                  = "Devops"
             "ManagedBy"              = "terraform"
             "Modulo"                 = "IAM"
             "Name"                   = "github-actions-iam-deployment-role"
-            "Pais"                   = "rg"
+          ~ "Pais"                   = "rg" -> "RG"
             "Propietario"            = "DarwinLopez"
             "Proveedor"              = "InHouse"
             "Soporte"                = "darwin.lopez@claro.com.gt"
@@ -31,8 +31,10 @@
             "Última Actualización"   = "2025-10-09"
         }
       ~ tags_all              = {
-          ~ "Generated"              = "2025-10-09T14:23:44.099520" -> "2025-10-09T20:33:15.054745"
-            # (24 unchanged elements hidden)
+          ~ "Ambiente"               = "dev" -> "DEV"
+          ~ "Generated"              = "2025-10-09T14:32:14.870770" -> "2025-10-09T20:50:17.242492"
+          ~ "Pais"                   = "rg" -> "RG"
+            # (22 unchanged elements hidden)
         }
         # (9 unchanged attributes hidden)
 
@@ -178,7 +180,7 @@
       + policy_id        = (known after apply)
       + tags             = {
           + "Alcance SOX"     = "No"
-          + "Ambiente"        = "dev"
+          + "Ambiente"        = "DEV"
           + "Aplicacion"      = "CICD"
           + "Area"            = "DevOps"
           + "Ciclo de Vida"   = "Creacion"
@@ -190,7 +192,7 @@
           + "Layer"           = "Devops"
           + "ManagedBy"       = "terraform"
           + "Modulo"          = "IAM"
-          + "Name"            = "mci-cloudwatch-deploymentabac-dev"
+          + "Name"            = "mci-cloudwatch-deploymentabac-DEV"
           + "Propietario"     = "DarwinLopez"
           + "Proveedor"       = "InHouse"
           + "Soporte"         = "darwin.lopez@claro.com.gt"
@@ -200,7 +202,7 @@
         }
       + tags_all         = {
           + "Alcance SOX"     = "No"
-          + "Ambiente"        = "dev"
+          + "Ambiente"        = "DEV"
           + "Aplicacion"      = "CICD"
           + "Area"            = "DevOps"
           + "Ciclo de Vida"   = "Creacion"
@@ -212,7 +214,7 @@
           + "Layer"           = "Devops"
           + "ManagedBy"       = "terraform"
           + "Modulo"          = "IAM"
-          + "Name"            = "mci-cloudwatch-deploymentabac-dev"
+          + "Name"            = "mci-cloudwatch-deploymentabac-DEV"
           + "Propietario"     = "DarwinLopez"
           + "Proveedor"       = "InHouse"
           + "Soporte"         = "darwin.lopez@claro.com.gt"
@@ -324,7 +326,7 @@
       + policy_id        = (known after apply)
       + tags             = {
           + "Alcance SOX"     = "No"
-          + "Ambiente"        = "dev"
+          + "Ambiente"        = "DEV"
           + "Aplicacion"      = "CICD"
           + "Area"            = "DevOps"
           + "Ciclo de Vida"   = "Creacion"
@@ -336,7 +338,7 @@
           + "Layer"           = "Devops"
           + "ManagedBy"       = "terraform"
           + "Modulo"          = "IAM"
-          + "Name"            = "mci-dynamodb-deploymentabac-dev"
+          + "Name"            = "mci-dynamodb-deploymentabac-DEV"
           + "Propietario"     = "DarwinLopez"
           + "Proveedor"       = "InHouse"
           + "Soporte"         = "darwin.lopez@claro.com.gt"
@@ -346,7 +348,7 @@
         }
       + tags_all         = {
           + "Alcance SOX"     = "No"
-          + "Ambiente"        = "dev"
+          + "Ambiente"        = "DEV"
           + "Aplicacion"      = "CICD"
           + "Area"            = "DevOps"
           + "Ciclo de Vida"   = "Creacion"
@@ -358,7 +360,7 @@
           + "Layer"           = "Devops"
           + "ManagedBy"       = "terraform"
           + "Modulo"          = "IAM"
-          + "Name"            = "mci-dynamodb-deploymentabac-dev"
+          + "Name"            = "mci-dynamodb-deploymentabac-DEV"
           + "Propietario"     = "DarwinLopez"
           + "Proveedor"       = "InHouse"
           + "Soporte"         = "darwin.lopez@claro.com.gt"
@@ -484,7 +486,7 @@
       + policy_id        = (known after apply)
       + tags             = {
           + "Alcance SOX"     = "No"
-          + "Ambiente"        = "dev"
+          + "Ambiente"        = "DEV"
           + "Aplicacion"      = "CICD"
           + "Area"            = "DevOps"
           + "Ciclo de Vida"   = "Creacion"
@@ -496,7 +498,7 @@
           + "Layer"           = "Devops"
           + "ManagedBy"       = "terraform"
           + "Modulo"          = "IAM"
-          + "Name"            = "mci-eventbridge-deploymentabac-dev"
+          + "Name"            = "mci-eventbridge-deploymentabac-DEV"
           + "Propietario"     = "DarwinLopez"
           + "Proveedor"       = "InHouse"
           + "Soporte"         = "darwin.lopez@claro.com.gt"
@@ -506,7 +508,7 @@
         }
       + tags_all         = {
           + "Alcance SOX"     = "No"
-          + "Ambiente"        = "dev"
+          + "Ambiente"        = "DEV"
           + "Aplicacion"      = "CICD"
           + "Area"            = "DevOps"
           + "Ciclo de Vida"   = "Creacion"
@@ -518,7 +520,7 @@
           + "Layer"           = "Devops"
           + "ManagedBy"       = "terraform"
           + "Modulo"          = "IAM"
-          + "Name"            = "mci-eventbridge-deploymentabac-dev"
+          + "Name"            = "mci-eventbridge-deploymentabac-DEV"
           + "Propietario"     = "DarwinLopez"
           + "Proveedor"       = "InHouse"
           + "Soporte"         = "darwin.lopez@claro.com.gt"
@@ -678,7 +680,7 @@
       + policy_id        = (known after apply)
       + tags             = {
           + "Alcance SOX"     = "No"
-          + "Ambiente"        = "dev"
+          + "Ambiente"        = "DEV"
           + "Aplicacion"      = "CICD"
           + "Area"            = "DevOps"
           + "Ciclo de Vida"   = "Creacion"
@@ -690,7 +692,7 @@
           + "Layer"           = "Devops"
           + "ManagedBy"       = "terraform"
           + "Modulo"          = "IAM"
-          + "Name"            = "mci-glue-deploymentabac-dev"
+          + "Name"            = "mci-glue-deploymentabac-DEV"
           + "Propietario"     = "DarwinLopez"
           + "Proveedor"       = "InHouse"
           + "Soporte"         = "darwin.lopez@claro.com.gt"
@@ -700,7 +702,7 @@
         }
       + tags_all         = {
           + "Alcance SOX"     = "No"
-          + "Ambiente"        = "dev"
+          + "Ambiente"        = "DEV"
           + "Aplicacion"      = "CICD"
           + "Area"            = "DevOps"
           + "Ciclo de Vida"   = "Creacion"
@@ -712,7 +714,7 @@
           + "Layer"           = "Devops"
           + "ManagedBy"       = "terraform"
           + "Modulo"          = "IAM"
-          + "Name"            = "mci-glue-deploymentabac-dev"
+          + "Name"            = "mci-glue-deploymentabac-DEV"
           + "Propietario"     = "DarwinLopez"
           + "Proveedor"       = "InHouse"
           + "Soporte"         = "darwin.lopez@claro.com.gt"
@@ -808,7 +810,7 @@
       + policy_id        = (known after apply)
       + tags             = {
           + "Alcance SOX"     = "No"
-          + "Ambiente"        = "dev"
+          + "Ambiente"        = "DEV"
           + "Aplicacion"      = "CICD"
           + "Area"            = "DevOps"
           + "Ciclo de Vida"   = "Creacion"
@@ -820,7 +822,7 @@
           + "Layer"           = "Devops"
           + "ManagedBy"       = "terraform"
           + "Modulo"          = "IAM"
-          + "Name"            = "mci-lambda-deploymentabac-dev"
+          + "Name"            = "mci-lambda-deploymentabac-DEV"
           + "Propietario"     = "DarwinLopez"
           + "Proveedor"       = "InHouse"
           + "Soporte"         = "darwin.lopez@claro.com.gt"
@@ -830,7 +832,7 @@
         }
       + tags_all         = {
           + "Alcance SOX"     = "No"
-          + "Ambiente"        = "dev"
+          + "Ambiente"        = "DEV"
           + "Aplicacion"      = "CICD"
           + "Area"            = "DevOps"
           + "Ciclo de Vida"   = "Creacion"
@@ -842,7 +844,7 @@
           + "Layer"           = "Devops"
           + "ManagedBy"       = "terraform"
           + "Modulo"          = "IAM"
-          + "Name"            = "mci-lambda-deploymentabac-dev"
+          + "Name"            = "mci-lambda-deploymentabac-DEV"
           + "Propietario"     = "DarwinLopez"
           + "Proveedor"       = "InHouse"
           + "Soporte"         = "darwin.lopez@claro.com.gt"
@@ -945,7 +947,7 @@
       + policy_id        = (known after apply)
       + tags             = {
           + "Alcance SOX"     = "No"
-          + "Ambiente"        = "dev"
+          + "Ambiente"        = "DEV"
           + "Aplicacion"      = "CICD"
           + "Area"            = "DevOps"
           + "Ciclo de Vida"   = "Creacion"
@@ -957,7 +959,7 @@
           + "Layer"           = "Devops"
           + "ManagedBy"       = "terraform"
           + "Modulo"          = "IAM"
-          + "Name"            = "mci-s3-deploymentabac-dev"
+          + "Name"            = "mci-s3-deploymentabac-DEV"
           + "Propietario"     = "DarwinLopez"
           + "Proveedor"       = "InHouse"
           + "Soporte"         = "darwin.lopez@claro.com.gt"
@@ -967,7 +969,7 @@
         }
       + tags_all         = {
           + "Alcance SOX"     = "No"
-          + "Ambiente"        = "dev"
+          + "Ambiente"        = "DEV"
           + "Aplicacion"      = "CICD"
           + "Area"            = "DevOps"
           + "Ciclo de Vida"   = "Creacion"
@@ -979,7 +981,7 @@
           + "Layer"           = "Devops"
           + "ManagedBy"       = "terraform"
           + "Modulo"          = "IAM"
-          + "Name"            = "mci-s3-deploymentabac-dev"
+          + "Name"            = "mci-s3-deploymentabac-DEV"
           + "Propietario"     = "DarwinLopez"
           + "Proveedor"       = "InHouse"
           + "Soporte"         = "darwin.lopez@claro.com.gt"
@@ -1040,7 +1042,7 @@
       + policy_id        = (known after apply)
       + tags             = {
           + "Alcance SOX"     = "No"
-          + "Ambiente"        = "dev"
+          + "Ambiente"        = "DEV"
           + "Aplicacion"      = "CICD"
           + "Area"            = "DevOps"
           + "Ciclo de Vida"   = "Creacion"
@@ -1052,7 +1054,7 @@
           + "Layer"           = "Devops"
           + "ManagedBy"       = "terraform"
           + "Modulo"          = "IAM"
-          + "Name"            = "mci-terraform-statemanagement-dev"
+          + "Name"            = "mci-terraform-statemanagement-DEV"
           + "Propietario"     = "DarwinLopez"
           + "Proveedor"       = "InHouse"
           + "Soporte"         = "darwin.lopez@claro.com.gt"
@@ -1062,7 +1064,7 @@
         }
       + tags_all         = {
           + "Alcance SOX"     = "No"
-          + "Ambiente"        = "dev"
+          + "Ambiente"        = "DEV"
           + "Aplicacion"      = "CICD"
           + "Area"            = "DevOps"
           + "Ciclo de Vida"   = "Creacion"
@@ -1074,7 +1076,7 @@
           + "Layer"           = "Devops"
           + "ManagedBy"       = "terraform"
           + "Modulo"          = "IAM"
-          + "Name"            = "mci-terraform-statemanagement-dev"
+          + "Name"            = "mci-terraform-statemanagement-DEV"
           + "Propietario"     = "DarwinLopez"
           + "Proveedor"       = "InHouse"
           + "Soporte"         = "darwin.lopez@claro.com.gt"
