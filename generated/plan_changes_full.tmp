@@ -1,1 +1,8 @@
 aws_iam_role.github_actions_iam_deployment_role will be updated in-place
+module.mci_cloudwatch_deploymentabac.aws_iam_policy.main will be created
+module.mci_dynamodb_deploymentabac.aws_iam_policy.main will be created
+module.mci_eventbridge_deploymentabac.aws_iam_policy.main will be created
+module.mci_glue_deploymentabac.aws_iam_policy.main will be created
+module.mci_lambda_deploymentabac.aws_iam_policy.main will be created
+module.mci_s3_deploymentabac.aws_iam_policy.main will be created
+module.mci_terraform_statemanagement.aws_iam_policy.main will be created

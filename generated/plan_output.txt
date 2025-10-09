@@ -1,8 +1,9 @@
-[command]/home/runner/work/_temp/ddde5f39-210d-43a5-b9f4-2c3fa0f7defb/terraform-bin plan -no-color -input=false
+[command]/home/runner/work/_temp/b418257d-3b51-4c14-bd28-9fe4eadd09d0/terraform-bin plan -no-color -input=false
 aws_iam_role.github_actions_iam_deployment_role: Refreshing state... [id=github-actions-iam-deployment-role]
 
 Terraform used the selected providers to generate the following execution
 plan. Resource actions are indicated with the following symbols:
+  + create
   ~ update in-place
 
 Terraform will perform the following actions:
@@ -16,13 +17,13 @@ Terraform will perform the following actions:
             "Ambiente"               = "dev"
             "Aplicacion"             = "CICD"
             "Area"                   = "DevOps"
-            "Ciclo de Vida"          = "Creacion"
+          ~ "Ciclo de Vida"          = "Creacion" -> "Actualizacion"
             "Contacto"               = "darwin.lopez@claro.com.gt"
             "Creado Por"             = "DarwinLopez"
             "Direccion"              = "TIRegional"
             "Dominio"                = "BusinessIntelligence"
             "Fecha de Creacion"      = "2025-09-16"
-          ~ "Generated"              = "2025-10-01T21:22:09.313076" -> "2025-10-02T21:29:38.566488"
+          ~ "Generated"              = "2025-10-01T21:22:09.313076" -> "2025-10-09T20:13:09.825466"
             "Gerencia"               = "MCI"
             "Layer"                  = "Devops"
             "ManagedBy"              = "terraform"
@@ -35,19 +36,857 @@ Terraform will perform the following actions:
             "Source"                 = "definitions/roles/github-deployment-role.yaml"
             "Subdominio"             = "Analytics"
             "Tipo de Recurso"        = "IAMRole"
-            "Versión"                = "v1.0.8"
-            "Última Actualización"   = "2025-09-26"
+          ~ "Versión"                = "v1.0.8" -> "v2.0.0"
+          ~ "Última Actualización"   = "2025-09-26" -> "2025-10-09"
         }
       ~ tags_all              = {
-          ~ "Generated"              = "2025-10-01T21:22:09.313076" -> "2025-10-02T21:29:38.566488"
-            # (24 unchanged elements hidden)
+          ~ "Ciclo de Vida"          = "Creacion" -> "Actualizacion"
+          ~ "Generated"              = "2025-10-01T21:22:09.313076" -> "2025-10-09T20:13:09.825466"
+          ~ "Versión"                = "v1.0.8" -> "v2.0.0"
+          ~ "Última Actualización"   = "2025-09-26" -> "2025-10-09"
+            # (21 unchanged elements hidden)
         }
         # (9 unchanged attributes hidden)
 
         # (1 unchanged block hidden)
     }
 
-Plan: 0 to add, 1 to change, 0 to destroy.
+  # module.mci_cloudwatch_deploymentabac.aws_iam_policy.main will be created
+  + resource "aws_iam_policy" "main" {
+      + arn              = (known after apply)
+      + attachment_count = (known after apply)
+      + description      = "Gestión completa de CloudWatch Logs, Métricas, Alarmas y SNS con ABAC"
+      + id               = (known after apply)
+      + name             = "mci-mci-cloudwatch-deploymentabac"
+      + name_prefix      = (known after apply)
+      + path             = "/policies/"
+      + policy           = jsonencode(
+            {
+              + Statement = [
+                  + {
+                      + Action    = [
+                          + "logs:CreateLogGroup",
+                          + "logs:DeleteLogGroup",
+                          + "logs:DescribeLogGroups",
+                          + "logs:PutRetentionPolicy",
+                          + "logs:DeleteRetentionPolicy",
+                          + "logs:CreateLogStream",
+                          + "logs:DeleteLogStream",
+                          + "logs:DescribeLogStreams",
+                          + "logs:PutLogEvents",
+                          + "logs:GetLogEvents",
+                          + "logs:FilterLogEvents",
+                          + "logs:PutMetricFilter",
+                          + "logs:DeleteMetricFilter",
+                          + "logs:DescribeMetricFilters",
+                          + "logs:TagLogGroup",
+                          + "logs:UntagLogGroup",
+                          + "logs:ListTagsLogGroup",
+                        ]
+                      + Condition = {
+                          + StringEquals = {
+                              + "aws:RequestTag/gerencia" = [
+                                  + "${aws:PrincipalTag/gerencia}",
+                                ]
+                            }
+                        }
+                      + Effect    = "Allow"
+                      + Resource  = [
+                          + "arn:aws:logs:*:*:log-group:*",
+                          + "arn:aws:logs:*:*:log-group:*:log-stream:*",
+                        ]
+                      + Sid       = "CloudWatchLogsManagement"
+                    },
+                  + {
+                      + Action   = [
+                          + "cloudwatch:PutMetricData",
+                          + "cloudwatch:GetMetricData",
+                          + "cloudwatch:GetMetricStatistics",
+                          + "cloudwatch:ListMetrics",
+                          + "cloudwatch:PutMetricAlarm",
+                          + "cloudwatch:DeleteAlarms",
+                          + "cloudwatch:DescribeAlarms",
+                          + "cloudwatch:DescribeAlarmsForMetric",
+                          + "cloudwatch:DescribeAlarmHistory",
+                          + "cloudwatch:SetAlarmState",
+                          + "cloudwatch:TagResource",
+                          + "cloudwatch:UntagResource",
+                          + "cloudwatch:ListTagsForResource",
+                        ]
+                      + Effect   = "Allow"
+                      + Resource = [
+                          + "arn:aws:cloudwatch:*:*:alarm:*",
+                          + "*",
+                        ]
+                      + Sid      = "CloudWatchMetricsAndAlarms"
+                    },
+                  + {
+                      + Action   = [
+                          + "cloudwatch:PutDashboard",
+                          + "cloudwatch:GetDashboard",
+                          + "cloudwatch:DeleteDashboards",
+                          + "cloudwatch:ListDashboards",
+                        ]
+                      + Effect   = "Allow"
+                      + Resource = [
+                          + "*",
+                        ]
+                      + Sid      = "CloudWatchDashboards"
+                    },
+                  + {
+                      + Action    = [
+                          + "sns:CreateTopic",
+                          + "sns:DeleteTopic",
+                          + "sns:GetTopicAttributes",
+                          + "sns:SetTopicAttributes",
+                          + "sns:ListTopics",
+                          + "sns:Subscribe",
+                          + "sns:Unsubscribe",
+                          + "sns:ListSubscriptions",
+                          + "sns:ListSubscriptionsByTopic",
+                          + "sns:Publish",
+                          + "sns:AddPermission",
+                          + "sns:RemovePermission",
+                          + "sns:TagResource",
+                          + "sns:UntagResource",
+                          + "sns:ListTagsForResource",
+                        ]
+                      + Condition = {
+                          + StringEquals = {
+                              + "aws:RequestTag/gerencia" = [
+                                  + "${aws:PrincipalTag/gerencia}",
+                                ]
+                            }
+                        }
+                      + Effect    = "Allow"
+                      + Resource  = [
+                          + "arn:aws:sns:*:*:*",
+                        ]
+                      + Sid       = "SNSFullManagement"
+                    },
+                  + {
+                      + Action   = [
+                          + "sns:CreatePlatformApplication",
+                          + "sns:DeletePlatformApplication",
+                          + "sns:GetPlatformApplicationAttributes",
+                          + "sns:SetPlatformApplicationAttributes",
+                          + "sns:ListPlatformApplications",
+                          + "sns:CreatePlatformEndpoint",
+                          + "sns:DeleteEndpoint",
+                          + "sns:GetEndpointAttributes",
+                          + "sns:SetEndpointAttributes",
+                        ]
+                      + Effect   = "Allow"
+                      + Resource = [
+                          + "arn:aws:sns:*:*:app/*",
+                          + "arn:aws:sns:*:*:endpoint/*",
+                        ]
+                      + Sid      = "SNSPlatformEndpoints"
+                    },
+                ]
+              + Version   = "2012-10-17"
+            }
+        )
+      + policy_id        = (known after apply)
+      + tags             = {
+          + "Ambiente" = "dev"
+          + "Area"     = "DevOps"
+          + "Gerencia" = "MCI"
+          + "Name"     = "mci-cloudwatch-deploymentabac-dev"
+          + "Type"     = "Policy"
+        }
+      + tags_all         = {
+          + "Ambiente" = "dev"
+          + "Area"     = "DevOps"
+          + "Gerencia" = "MCI"
+          + "Name"     = "mci-cloudwatch-deploymentabac-dev"
+          + "Type"     = "Policy"
+        }
+    }
+
+  # module.mci_dynamodb_deploymentabac.aws_iam_policy.main will be created
+  + resource "aws_iam_policy" "main" {
+      + arn              = (known after apply)
+      + attachment_count = (known after apply)
+      + description      = "Gestión completa de tablas DynamoDB con control ABAC basado en tags"
+      + id               = (known after apply)
+      + name             = "mci-mci-dynamodb-deploymentabac"
+      + name_prefix      = (known after apply)
+      + path             = "/policies/"
+      + policy           = jsonencode(
+            {
+              + Statement = [
+                  + {
+                      + Action    = [
+                          + "dynamodb:CreateTable",
+                          + "dynamodb:DeleteTable",
+                          + "dynamodb:DescribeTable",
+                          + "dynamodb:UpdateTable",
+                          + "dynamodb:ListTables",
+                          + "dynamodb:DescribeTimeToLive",
+                          + "dynamodb:UpdateTimeToLive",
+                          + "dynamodb:ListTagsOfResource",
+                          + "dynamodb:TagResource",
+                          + "dynamodb:UntagResource",
+                          + "dynamodb:DescribeContinuousBackups",
+                          + "dynamodb:UpdateContinuousBackups",
+                        ]
+                      + Condition = {
+                          + StringEquals = {
+                              + "aws:RequestTag/gerencia"  = [
+                                  + "${aws:PrincipalTag/gerencia}",
+                                ]
+                              + "aws:ResourceTag/gerencia" = [
+                                  + "${aws:PrincipalTag/gerencia}",
+                                ]
+                            }
+                        }
+                      + Effect    = "Allow"
+                      + Resource  = [
+                          + "arn:aws:dynamodb:*:*:table/*",
+                        ]
+                      + Sid       = "DynamoDBTableManagement"
+                    },
+                  + {
+                      + Action    = [
+                          + "dynamodb:GetItem",
+                          + "dynamodb:PutItem",
+                          + "dynamodb:DeleteItem",
+                          + "dynamodb:UpdateItem",
+                          + "dynamodb:Query",
+                          + "dynamodb:Scan",
+                          + "dynamodb:BatchGetItem",
+                          + "dynamodb:BatchWriteItem",
+                        ]
+                      + Condition = {
+                          + StringEquals = {
+                              + "dynamodb:LeadingKeys" = [
+                                  + "${aws:PrincipalTag/gerencia}",
+                                ]
+                            }
+                        }
+                      + Effect    = "Allow"
+                      + Resource  = [
+                          + "arn:aws:dynamodb:*:*:table/*",
+                        ]
+                      + Sid       = "DynamoDBDataAccess"
+                    },
+                  + {
+                      + Action   = [
+                          + "dynamodb:CreateBackup",
+                          + "dynamodb:DeleteBackup",
+                          + "dynamodb:DescribeBackup",
+                          + "dynamodb:ListBackups",
+                          + "dynamodb:RestoreTableFromBackup",
+                          + "dynamodb:RestoreTableToPointInTime",
+                        ]
+                      + Effect   = "Allow"
+                      + Resource = [
+                          + "arn:aws:dynamodb:*:*:table/*/backup/*",
+                        ]
+                      + Sid      = "DynamoDBBackupManagement"
+                    },
+                  + {
+                      + Action   = [
+                          + "dynamodb:DescribeStream",
+                          + "dynamodb:GetRecords",
+                          + "dynamodb:GetShardIterator",
+                          + "dynamodb:ListStreams",
+                        ]
+                      + Effect   = "Allow"
+                      + Resource = [
+                          + "arn:aws:dynamodb:*:*:table/*/stream/*",
+                        ]
+                      + Sid      = "DynamoDBStreamAccess"
+                    },
+                ]
+              + Version   = "2012-10-17"
+            }
+        )
+      + policy_id        = (known after apply)
+      + tags             = {
+          + "Ambiente" = "dev"
+          + "Area"     = "DevOps"
+          + "Gerencia" = "MCI"
+          + "Name"     = "mci-dynamodb-deploymentabac-dev"
+          + "Type"     = "Policy"
+        }
+      + tags_all         = {
+          + "Ambiente" = "dev"
+          + "Area"     = "DevOps"
+          + "Gerencia" = "MCI"
+          + "Name"     = "mci-dynamodb-deploymentabac-dev"
+          + "Type"     = "Policy"
+        }
+    }
+
+  # module.mci_eventbridge_deploymentabac.aws_iam_policy.main will be created
+  + resource "aws_iam_policy" "main" {
+      + arn              = (known after apply)
+      + attachment_count = (known after apply)
+      + description      = "Gestión de EventBridge, Scheduler y StepFunctions con control ABAC"
+      + id               = (known after apply)
+      + name             = "mci-mci-eventbridge-deploymentabac"
+      + name_prefix      = (known after apply)
+      + path             = "/policies/"
+      + policy           = jsonencode(
+            {
+              + Statement = [
+                  + {
+                      + Action    = [
+                          + "events:PutRule",
+                          + "events:DeleteRule",
+                          + "events:DescribeRule",
+                          + "events:EnableRule",
+                          + "events:DisableRule",
+                          + "events:ListRules",
+                          + "events:PutTargets",
+                          + "events:RemoveTargets",
+                          + "events:ListTargetsByRule",
+                          + "events:PutEvents",
+                          + "events:TagResource",
+                          + "events:UntagResource",
+                          + "events:ListTagsForResource",
+                        ]
+                      + Condition = {
+                          + StringEquals = {
+                              + "aws:RequestTag/gerencia" = [
+                                  + "${aws:PrincipalTag/gerencia}",
+                                ]
+                            }
+                        }
+                      + Effect    = "Allow"
+                      + Resource  = [
+                          + "arn:aws:events:*:*:rule/*",
+                        ]
+                      + Sid       = "EventBridgeFullManagement"
+                    },
+                  + {
+                      + Action   = [
+                          + "scheduler:CreateSchedule",
+                          + "scheduler:DeleteSchedule",
+                          + "scheduler:GetSchedule",
+                          + "scheduler:UpdateSchedule",
+                          + "scheduler:ListSchedules",
+                          + "scheduler:CreateScheduleGroup",
+                          + "scheduler:DeleteScheduleGroup",
+                          + "scheduler:GetScheduleGroup",
+                          + "scheduler:ListScheduleGroups",
+                          + "scheduler:TagResource",
+                          + "scheduler:UntagResource",
+                        ]
+                      + Effect   = "Allow"
+                      + Resource = [
+                          + "arn:aws:scheduler:*:*:schedule/*",
+                          + "arn:aws:scheduler:*:*:schedule-group/*",
+                        ]
+                      + Sid      = "EventBridgeSchedulerManagement"
+                    },
+                  + {
+                      + Action    = [
+                          + "states:CreateStateMachine",
+                          + "states:DeleteStateMachine",
+                          + "states:UpdateStateMachine",
+                          + "states:DescribeStateMachine",
+                          + "states:ListStateMachines",
+                          + "states:StartExecution",
+                          + "states:StopExecution",
+                          + "states:DescribeExecution",
+                          + "states:GetExecutionHistory",
+                          + "states:ListExecutions",
+                          + "states:TagResource",
+                          + "states:UntagResource",
+                          + "states:ListTagsForResource",
+                        ]
+                      + Condition = {
+                          + StringEquals = {
+                              + "aws:RequestTag/gerencia" = [
+                                  + "${aws:PrincipalTag/gerencia}",
+                                ]
+                            }
+                        }
+                      + Effect    = "Allow"
+                      + Resource  = [
+                          + "arn:aws:states:*:*:stateMachine:*",
+                          + "arn:aws:states:*:*:execution:*:*",
+                        ]
+                      + Sid       = "StepFunctionsFullManagement"
+                    },
+                  + {
+                      + Action   = [
+                          + "states:CreateActivity",
+                          + "states:DeleteActivity",
+                          + "states:DescribeActivity",
+                          + "states:GetActivityTask",
+                          + "states:ListActivities",
+                          + "states:SendTaskSuccess",
+                          + "states:SendTaskFailure",
+                          + "states:SendTaskHeartbeat",
+                        ]
+                      + Effect   = "Allow"
+                      + Resource = [
+                          + "arn:aws:states:*:*:activity:*",
+                        ]
+                      + Sid      = "StepFunctionsActivityManagement"
+                    },
+                ]
+              + Version   = "2012-10-17"
+            }
+        )
+      + policy_id        = (known after apply)
+      + tags             = {
+          + "Ambiente" = "dev"
+          + "Area"     = "DevOps"
+          + "Gerencia" = "MCI"
+          + "Name"     = "mci-eventbridge-deploymentabac-dev"
+          + "Type"     = "Policy"
+        }
+      + tags_all         = {
+          + "Ambiente" = "dev"
+          + "Area"     = "DevOps"
+          + "Gerencia" = "MCI"
+          + "Name"     = "mci-eventbridge-deploymentabac-dev"
+          + "Type"     = "Policy"
+        }
+    }
+
+  # module.mci_glue_deploymentabac.aws_iam_policy.main will be created
+  + resource "aws_iam_policy" "main" {
+      + arn              = (known after apply)
+      + attachment_count = (known after apply)
+      + description      = "Gestión de Glue, IAM PassRole y KMS para despliegue de infraestructura con ABAC"
+      + id               = (known after apply)
+      + name             = "mci-mci-glue-deploymentabac"
+      + name_prefix      = (known after apply)
+      + path             = "/policies/"
+      + policy           = jsonencode(
+            {
+              + Statement = [
+                  + {
+                      + Action    = [
+                          + "glue:CreateDatabase",
+                          + "glue:DeleteDatabase",
+                          + "glue:GetDatabase",
+                          + "glue:GetDatabases",
+                          + "glue:UpdateDatabase",
+                          + "glue:CreateTable",
+                          + "glue:DeleteTable",
+                          + "glue:GetTable",
+                          + "glue:GetTables",
+                          + "glue:UpdateTable",
+                          + "glue:CreatePartition",
+                          + "glue:DeletePartition",
+                          + "glue:GetPartition",
+                          + "glue:GetPartitions",
+                          + "glue:UpdatePartition",
+                          + "glue:BatchCreatePartition",
+                          + "glue:BatchDeletePartition",
+                          + "glue:BatchGetPartition",
+                          + "glue:BatchUpdatePartition",
+                          + "glue:CreateJob",
+                          + "glue:DeleteJob",
+                          + "glue:GetJob",
+                          + "glue:GetJobs",
+                          + "glue:UpdateJob",
+                          + "glue:StartJobRun",
+                          + "glue:StopJobRun",
+                          + "glue:GetJobRun",
+                          + "glue:GetJobRuns",
+                          + "glue:GetJobBookmark",
+                          + "glue:ResetJobBookmark",
+                          + "glue:CreateCrawler",
+                          + "glue:DeleteCrawler",
+                          + "glue:GetCrawler",
+                          + "glue:GetCrawlers",
+                          + "glue:UpdateCrawler",
+                          + "glue:StartCrawler",
+                          + "glue:StopCrawler",
+                          + "glue:GetCrawlerMetrics",
+                          + "glue:CreateTrigger",
+                          + "glue:DeleteTrigger",
+                          + "glue:GetTrigger",
+                          + "glue:GetTriggers",
+                          + "glue:UpdateTrigger",
+                          + "glue:StartTrigger",
+                          + "glue:StopTrigger",
+                          + "glue:CreateWorkflow",
+                          + "glue:DeleteWorkflow",
+                          + "glue:GetWorkflow",
+                          + "glue:UpdateWorkflow",
+                          + "glue:TagResource",
+                          + "glue:UntagResource",
+                          + "glue:GetTags",
+                        ]
+                      + Condition = {
+                          + StringEquals = {
+                              + "aws:RequestTag/gerencia" = [
+                                  + "${aws:PrincipalTag/gerencia}",
+                                ]
+                            }
+                        }
+                      + Effect    = "Allow"
+                      + Resource  = [
+                          + "arn:aws:glue:*:*:catalog",
+                          + "arn:aws:glue:*:*:database/*",
+                          + "arn:aws:glue:*:*:table/*",
+                          + "arn:aws:glue:*:*:job/*",
+                          + "arn:aws:glue:*:*:crawler/*",
+                          + "arn:aws:glue:*:*:trigger/*",
+                          + "arn:aws:glue:*:*:workflow/*",
+                        ]
+                      + Sid       = "GlueFullManagement"
+                    },
+                  + {
+                      + Action   = [
+                          + "iam:PassRole",
+                        ]
+                      + Effect   = "Allow"
+                      + Resource = [
+                          + "arn:aws:iam::*:role/*",
+                        ]
+                      + Sid      = "IAMPassRoleForServices"
+                    },
+                  + {
+                      + Action   = [
+                          + "iam:GetRole",
+                          + "iam:GetRolePolicy",
+                          + "iam:GetPolicy",
+                          + "iam:GetPolicyVersion",
+                          + "iam:ListAttachedRolePolicies",
+                          + "iam:ListRolePolicies",
+                          + "iam:ListPolicyVersions",
+                        ]
+                      + Effect   = "Allow"
+                      + Resource = [
+                          + "arn:aws:iam::*:role/*",
+                          + "arn:aws:iam::*:policy/*",
+                        ]
+                      + Sid      = "IAMReadOnlyForInfra"
+                    },
+                  + {
+                      + Action   = [
+                          + "kms:Decrypt",
+                          + "kms:Encrypt",
+                          + "kms:DescribeKey",
+                          + "kms:GenerateDataKey",
+                          + "kms:GenerateDataKeyWithoutPlaintext",
+                          + "kms:CreateGrant",
+                          + "kms:ListGrants",
+                          + "kms:ListKeys",
+                          + "kms:ListAliases",
+                          + "kms:ReEncrypt",
+                        ]
+                      + Effect   = "Allow"
+                      + Resource = [
+                          + "*",
+                        ]
+                      + Sid      = "KMSFullAccess"
+                    },
+                  + {
+                      + Action   = [
+                          + "sts:AssumeRole",
+                          + "sts:GetCallerIdentity",
+                        ]
+                      + Effect   = "Allow"
+                      + Resource = [
+                          + "*",
+                        ]
+                      + Sid      = "STSAssumeRole"
+                    },
+                ]
+              + Version   = "2012-10-17"
+            }
+        )
+      + policy_id        = (known after apply)
+      + tags             = {
+          + "Ambiente" = "dev"
+          + "Area"     = "DevOps"
+          + "Gerencia" = "MCI"
+          + "Name"     = "mci-glue-deploymentabac-dev"
+          + "Type"     = "Policy"
+        }
+      + tags_all         = {
+          + "Ambiente" = "dev"
+          + "Area"     = "DevOps"
+          + "Gerencia" = "MCI"
+          + "Name"     = "mci-glue-deploymentabac-dev"
+          + "Type"     = "Policy"
+        }
+    }
+
+  # module.mci_lambda_deploymentabac.aws_iam_policy.main will be created
+  + resource "aws_iam_policy" "main" {
+      + arn              = (known after apply)
+      + attachment_count = (known after apply)
+      + description      = "Despliegue completo de funciones Lambda con control ABAC basado en tags de gerencia y ambiente"
+      + id               = (known after apply)
+      + name             = "mci-mci-lambda-deploymentabac"
+      + name_prefix      = (known after apply)
+      + path             = "/policies/"
+      + policy           = jsonencode(
+            {
+              + Statement = [
+                  + {
+                      + Action    = [
+                          + "lambda:CreateFunction",
+                          + "lambda:UpdateFunctionCode",
+                          + "lambda:UpdateFunctionConfiguration",
+                          + "lambda:DeleteFunction",
+                          + "lambda:GetFunction",
+                          + "lambda:GetFunctionConfiguration",
+                          + "lambda:ListFunctions",
+                          + "lambda:PublishVersion",
+                          + "lambda:CreateAlias",
+                          + "lambda:UpdateAlias",
+                          + "lambda:DeleteAlias",
+                          + "lambda:GetAlias",
+                          + "lambda:ListAliases",
+                          + "lambda:AddPermission",
+                          + "lambda:RemovePermission",
+                          + "lambda:GetPolicy",
+                          + "lambda:TagResource",
+                          + "lambda:UntagResource",
+                          + "lambda:ListTags",
+                          + "lambda:InvokeFunction",
+                        ]
+                      + Condition = {
+                          + StringEquals = {
+                              + "aws:RequestTag/gerencia"  = [
+                                  + "${aws:PrincipalTag/gerencia}",
+                                ]
+                              + "aws:ResourceTag/gerencia" = [
+                                  + "${aws:PrincipalTag/gerencia}",
+                                ]
+                            }
+                        }
+                      + Effect    = "Allow"
+                      + Resource  = [
+                          + "arn:aws:lambda:*:*:function:*",
+                        ]
+                      + Sid       = "LambdaFullDeployment"
+                    },
+                  + {
+                      + Action   = [
+                          + "lambda:PublishLayerVersion",
+                          + "lambda:DeleteLayerVersion",
+                          + "lambda:GetLayerVersion",
+                          + "lambda:ListLayers",
+                          + "lambda:ListLayerVersions",
+                        ]
+                      + Effect   = "Allow"
+                      + Resource = [
+                          + "arn:aws:lambda:*:*:layer:*",
+                        ]
+                      + Sid      = "LambdaLayersManagement"
+                    },
+                  + {
+                      + Action   = [
+                          + "lambda:CreateEventSourceMapping",
+                          + "lambda:DeleteEventSourceMapping",
+                          + "lambda:UpdateEventSourceMapping",
+                          + "lambda:GetEventSourceMapping",
+                          + "lambda:ListEventSourceMappings",
+                        ]
+                      + Effect   = "Allow"
+                      + Resource = [
+                          + "*",
+                        ]
+                      + Sid      = "LambdaEventSourceMapping"
+                    },
+                ]
+              + Version   = "2012-10-17"
+            }
+        )
+      + policy_id        = (known after apply)
+      + tags             = {
+          + "Ambiente" = "dev"
+          + "Area"     = "DevOps"
+          + "Gerencia" = "MCI"
+          + "Name"     = "mci-lambda-deploymentabac-dev"
+          + "Type"     = "Policy"
+        }
+      + tags_all         = {
+          + "Ambiente" = "dev"
+          + "Area"     = "DevOps"
+          + "Gerencia" = "MCI"
+          + "Name"     = "mci-lambda-deploymentabac-dev"
+          + "Type"     = "Policy"
+        }
+    }
+
+  # module.mci_s3_deploymentabac.aws_iam_policy.main will be created
+  + resource "aws_iam_policy" "main" {
+      + arn              = (known after apply)
+      + attachment_count = (known after apply)
+      + description      = "Gestión completa de buckets S3 con control ABAC basado en tags de gerencia"
+      + id               = (known after apply)
+      + name             = "mci-mci-s3-deploymentabac"
+      + name_prefix      = (known after apply)
+      + path             = "/policies/"
+      + policy           = jsonencode(
+            {
+              + Statement = [
+                  + {
+                      + Action    = [
+                          + "s3:CreateBucket",
+                          + "s3:DeleteBucket",
+                          + "s3:ListBucket",
+                          + "s3:GetBucketLocation",
+                          + "s3:GetBucketVersioning",
+                          + "s3:PutBucketVersioning",
+                          + "s3:GetBucketPolicy",
+                          + "s3:PutBucketPolicy",
+                          + "s3:DeleteBucketPolicy",
+                          + "s3:GetBucketTagging",
+                          + "s3:PutBucketTagging",
+                          + "s3:GetBucketEncryption",
+                          + "s3:PutBucketEncryption",
+                          + "s3:GetBucketPublicAccessBlock",
+                          + "s3:PutBucketPublicAccessBlock",
+                          + "s3:GetBucketLifecycleConfiguration",
+                          + "s3:PutBucketLifecycleConfiguration",
+                          + "s3:GetBucketCors",
+                          + "s3:PutBucketCors",
+                          + "s3:DeleteBucketCors",
+                        ]
+                      + Condition = {
+                          + StringEquals = {
+                              + "aws:RequestTag/gerencia" = [
+                                  + "${aws:PrincipalTag/gerencia}",
+                                ]
+                            }
+                        }
+                      + Effect    = "Allow"
+                      + Resource  = [
+                          + "arn:aws:s3:::*",
+                        ]
+                      + Sid       = "S3BucketManagement"
+                    },
+                  + {
+                      + Action    = [
+                          + "s3:GetObject",
+                          + "s3:PutObject",
+                          + "s3:DeleteObject",
+                          + "s3:GetObjectVersion",
+                          + "s3:DeleteObjectVersion",
+                          + "s3:GetObjectTagging",
+                          + "s3:PutObjectTagging",
+                          + "s3:GetObjectAcl",
+                          + "s3:PutObjectAcl",
+                          + "s3:ListMultipartUploadParts",
+                          + "s3:AbortMultipartUpload",
+                        ]
+                      + Condition = {
+                          + StringEquals = {
+                              + "s3:ExistingObjectTag/gerencia" = [
+                                  + "${aws:PrincipalTag/gerencia}",
+                                ]
+                            }
+                        }
+                      + Effect    = "Allow"
+                      + Resource  = [
+                          + "arn:aws:s3:::*/*",
+                        ]
+                      + Sid       = "S3ObjectManagement"
+                    },
+                  + {
+                      + Action   = [
+                          + "s3:ListAllMyBuckets",
+                          + "s3:GetBucketLocation",
+                        ]
+                      + Effect   = "Allow"
+                      + Resource = [
+                          + "*",
+                        ]
+                      + Sid      = "S3ListAllBuckets"
+                    },
+                ]
+              + Version   = "2012-10-17"
+            }
+        )
+      + policy_id        = (known after apply)
+      + tags             = {
+          + "Ambiente" = "dev"
+          + "Area"     = "DevOps"
+          + "Gerencia" = "MCI"
+          + "Name"     = "mci-s3-deploymentabac-dev"
+          + "Type"     = "Policy"
+        }
+      + tags_all         = {
+          + "Ambiente" = "dev"
+          + "Area"     = "DevOps"
+          + "Gerencia" = "MCI"
+          + "Name"     = "mci-s3-deploymentabac-dev"
+          + "Type"     = "Policy"
+        }
+    }
+
+  # module.mci_terraform_statemanagement.aws_iam_policy.main will be created
+  + resource "aws_iam_policy" "main" {
+      + arn              = (known after apply)
+      + attachment_count = (known after apply)
+      + description      = "Gestión de estado de Terraform en S3 y locks en DynamoDB (sin ABAC - requerido para CI/CD)"
+      + id               = (known after apply)
+      + name             = "mci-mci-terraform-statemanagement"
+      + name_prefix      = (known after apply)
+      + path             = "/policies/"
+      + policy           = jsonencode(
+            {
+              + Statement = [
+                  + {
+                      + Action   = [
+                          + "s3:GetObject",
+                          + "s3:PutObject",
+                          + "s3:DeleteObject",
+                          + "s3:ListBucket",
+                          + "s3:GetBucketVersioning",
+                          + "s3:GetBucketLocation",
+                          + "s3:ListBucketVersions",
+                        ]
+                      + Effect   = "Allow"
+                      + Resource = [
+                          + "arn:aws:s3:::*-tfstate-*",
+                          + "arn:aws:s3:::*-tfstate-*/*",
+                        ]
+                      + Sid      = "TerraformS3StateAccess"
+                    },
+                  + {
+                      + Action   = [
+                          + "dynamodb:GetItem",
+                          + "dynamodb:PutItem",
+                          + "dynamodb:DeleteItem",
+                          + "dynamodb:DescribeTable",
+                          + "dynamodb:DescribeContinuousBackups",
+                        ]
+                      + Effect   = "Allow"
+                      + Resource = [
+                          + "arn:aws:dynamodb:*:*:table/*-terraform-lock*",
+                          + "arn:aws:dynamodb:*:*:table/*-tfstate-lock*",
+                        ]
+                      + Sid      = "TerraformDynamoDBLockAccess"
+                    },
+                ]
+              + Version   = "2012-10-17"
+            }
+        )
+      + policy_id        = (known after apply)
+      + tags             = {
+          + "Ambiente" = "dev"
+          + "Area"     = "DevOps"
+          + "Gerencia" = "MCI"
+          + "Name"     = "mci-terraform-statemanagement-dev"
+          + "Type"     = "Policy"
+        }
+      + tags_all         = {
+          + "Ambiente" = "dev"
+          + "Area"     = "DevOps"
+          + "Gerencia" = "MCI"
+          + "Name"     = "mci-terraform-statemanagement-dev"
+          + "Type"     = "Policy"
+        }
+    }
+
+Plan: 7 to add, 1 to change, 0 to destroy.
 
 ─────────────────────────────────────────────────────────────────────────────
 
