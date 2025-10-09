@@ -1,9 +1,9 @@
-# Variables for MCI-IAM-FullManagement Policy Module
+# Variables for MCI-IAM-Deployment Policy Module
 
 variable "policy_description" {
-  description = "Description for the MCI-IAM-FullManagement policy"
+  description = "Description for the MCI-IAM-Deployment policy"
   type        = string
-  default     = "Gestión completa de roles y políticas IAM para despliegues de infraestructura con Terraform"
+  default     = "Gestión completa de roles y políticas IAM para despliegues de infraestructura con Terraform (sin restricciones ABAC para CI/CD)"
 }
 
 variable "abac_conditions" {

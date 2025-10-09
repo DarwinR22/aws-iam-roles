@@ -3,7 +3,7 @@
 variable "policy_description" {
   description = "Description for the MCI-Lambda-DeploymentABAC policy"
   type        = string
-  default     = "Despliegue completo de funciones Lambda con control ABAC basado en tags de gerencia y ambiente"
+  default     = "Despliegue completo de funciones Lambda sin restricciones ABAC para CI/CD"
 }
 
 variable "abac_conditions" {

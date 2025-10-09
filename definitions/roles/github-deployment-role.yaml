@@ -70,8 +70,8 @@ role:
       file: "MCI-Glue-DeploymentABAC.yaml"
       description: "Glue, IAM PassRole y KMS con control ABAC (solo deployment)"
       
-    - name: "MCI-IAM-FullManagement"
-      file: "MCI-IAM-FullManagement.yaml"
+    - name: "MCI-IAM-Deployment"
+      file: "MCI-IAM-Deployment.yaml"
       description: "Gestión completa de IAM (CreateRole, CreatePolicy, AttachRolePolicy, PassRole)"
       
     - name: "MCI-CloudFormation-Deployment"

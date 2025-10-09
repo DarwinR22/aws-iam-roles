@@ -1,6 +1,6 @@
 policy:
   name: "MCI-S3-DeploymentABAC"
-  description: "Gestión completa de buckets S3 con control ABAC basado en tags de gerencia"
+  description: "Gestión completa de buckets S3 sin restricciones ABAC para CI/CD deployment"
   service: "s3"
   version: "1.0.0"
   
@@ -69,12 +69,6 @@ policy:
         
       resources:
         - "arn:aws:s3:::*"
-        
-      # ✅ ABAC: Solo buckets con tags coincidentes
-      abac_conditions:
-        - test: "StringEquals"
-          variable: "aws:RequestTag/gerencia"
-          values: ["${aws:PrincipalTag/gerencia}"]
 
     - sid: "S3ObjectManagement"
       effect: "Allow"
@@ -93,12 +87,6 @@ policy:
         
       resources:
         - "arn:aws:s3:::*/*"
-        
-      # ✅ ABAC: Solo objetos en buckets con tags coincidentes
-      abac_conditions:
-        - test: "StringEquals"
-          variable: "s3:ExistingObjectTag/gerencia"
-          values: ["${aws:PrincipalTag/gerencia}"]
 
     - sid: "S3ListAllBuckets"
       effect: "Allow"

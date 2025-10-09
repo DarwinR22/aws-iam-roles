@@ -3,7 +3,7 @@
 variable "policy_description" {
   description = "Description for the MCI-S3-DeploymentABAC policy"
   type        = string
-  default     = "Gestión completa de buckets S3 con control ABAC basado en tags de gerencia"
+  default     = "Gestión completa de buckets S3 sin restricciones ABAC para CI/CD deployment"
 }
 
 variable "abac_conditions" {

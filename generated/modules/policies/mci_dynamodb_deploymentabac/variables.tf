@@ -3,7 +3,7 @@
 variable "policy_description" {
   description = "Description for the MCI-DynamoDB-DeploymentABAC policy"
   type        = string
-  default     = "Gestión completa de tablas DynamoDB con control ABAC basado en tags"
+  default     = "Gestión completa de tablas DynamoDB sin restricciones ABAC para CI/CD deployment"
 }
 
 variable "abac_conditions" {
