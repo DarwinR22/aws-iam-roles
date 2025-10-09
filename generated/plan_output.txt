@@ -1,4 +1,4 @@
-[command]/home/runner/work/_temp/c7e8bb8a-80f2-4f7c-94ea-76a2dde97329/terraform-bin plan -no-color -input=false
+[command]/home/runner/work/_temp/218f5373-ed24-45c5-a875-1f70f2cbf553/terraform-bin plan -no-color -input=false
 aws_iam_role.github_actions_iam_deployment_role: Refreshing state... [id=github-actions-iam-deployment-role]
 
 Terraform used the selected providers to generate the following execution
@@ -14,7 +14,7 @@ Terraform will perform the following actions:
         name                  = "github-actions-iam-deployment-role"
       ~ tags                  = {
             "Alcance SOX"            = "No"
-          ~ "Ambiente"               = "dev" -> "DEV"
+            "Ambiente"               = "DEV"
             "Aplicacion"             = "CICD"
             "Area"                   = "DevOps"
             "Ciclo de Vida"          = "Actualizacion"
@@ -23,13 +23,13 @@ Terraform will perform the following actions:
             "Direccion"              = "TIRegional"
             "Dominio"                = "BusinessIntelligence"
             "Fecha de Creacion"      = "2025-09-16"
-          ~ "Generated"              = "2025-10-09T14:32:14.870770" -> "2025-10-09T20:50:17.242492"
+          ~ "Generated"              = "2025-10-09T14:46:37.381369" -> "2025-10-09T21:03:00.020662"
             "Gerencia"               = "MCI"
             "Layer"                  = "Devops"
             "ManagedBy"              = "terraform"
             "Modulo"                 = "IAM"
             "Name"                   = "github-actions-iam-deployment-role"
-          ~ "Pais"                   = "rg" -> "RG"
+            "Pais"                   = "RG"
             "Propietario"            = "DarwinLopez"
             "Proveedor"              = "InHouse"
             "Soporte"                = "darwin.lopez@claro.com.gt"
@@ -40,10 +40,8 @@ Terraform will perform the following actions:
             "Última Actualización"   = "2025-10-09"
         }
       ~ tags_all              = {
-          ~ "Ambiente"               = "dev" -> "DEV"
-          ~ "Generated"              = "2025-10-09T14:32:14.870770" -> "2025-10-09T20:50:17.242492"
-          ~ "Pais"                   = "rg" -> "RG"
-            # (22 unchanged elements hidden)
+          ~ "Generated"              = "2025-10-09T14:46:37.381369" -> "2025-10-09T21:03:00.020662"
+            # (24 unchanged elements hidden)
         }
         # (9 unchanged attributes hidden)
 
@@ -202,6 +200,7 @@ Terraform will perform the following actions:
           + "ManagedBy"       = "terraform"
           + "Modulo"          = "IAM"
           + "Name"            = "mci-cloudwatch-deploymentabac-DEV"
+          + "Pais"            = "RG"
           + "Propietario"     = "DarwinLopez"
           + "Proveedor"       = "InHouse"
           + "Soporte"         = "darwin.lopez@claro.com.gt"
@@ -224,6 +223,7 @@ Terraform will perform the following actions:
           + "ManagedBy"       = "terraform"
           + "Modulo"          = "IAM"
           + "Name"            = "mci-cloudwatch-deploymentabac-DEV"
+          + "Pais"            = "RG"
           + "Propietario"     = "DarwinLopez"
           + "Proveedor"       = "InHouse"
           + "Soporte"         = "darwin.lopez@claro.com.gt"
@@ -348,6 +348,7 @@ Terraform will perform the following actions:
           + "ManagedBy"       = "terraform"
           + "Modulo"          = "IAM"
           + "Name"            = "mci-dynamodb-deploymentabac-DEV"
+          + "Pais"            = "RG"
           + "Propietario"     = "DarwinLopez"
           + "Proveedor"       = "InHouse"
           + "Soporte"         = "darwin.lopez@claro.com.gt"
@@ -370,6 +371,7 @@ Terraform will perform the following actions:
           + "ManagedBy"       = "terraform"
           + "Modulo"          = "IAM"
           + "Name"            = "mci-dynamodb-deploymentabac-DEV"
+          + "Pais"            = "RG"
           + "Propietario"     = "DarwinLopez"
           + "Proveedor"       = "InHouse"
           + "Soporte"         = "darwin.lopez@claro.com.gt"
@@ -508,6 +510,7 @@ Terraform will perform the following actions:
           + "ManagedBy"       = "terraform"
           + "Modulo"          = "IAM"
           + "Name"            = "mci-eventbridge-deploymentabac-DEV"
+          + "Pais"            = "RG"
           + "Propietario"     = "DarwinLopez"
           + "Proveedor"       = "InHouse"
           + "Soporte"         = "darwin.lopez@claro.com.gt"
@@ -530,6 +533,7 @@ Terraform will perform the following actions:
           + "ManagedBy"       = "terraform"
           + "Modulo"          = "IAM"
           + "Name"            = "mci-eventbridge-deploymentabac-DEV"
+          + "Pais"            = "RG"
           + "Propietario"     = "DarwinLopez"
           + "Proveedor"       = "InHouse"
           + "Soporte"         = "darwin.lopez@claro.com.gt"
@@ -702,6 +706,7 @@ Terraform will perform the following actions:
           + "ManagedBy"       = "terraform"
           + "Modulo"          = "IAM"
           + "Name"            = "mci-glue-deploymentabac-DEV"
+          + "Pais"            = "RG"
           + "Propietario"     = "DarwinLopez"
           + "Proveedor"       = "InHouse"
           + "Soporte"         = "darwin.lopez@claro.com.gt"
@@ -724,6 +729,7 @@ Terraform will perform the following actions:
           + "ManagedBy"       = "terraform"
           + "Modulo"          = "IAM"
           + "Name"            = "mci-glue-deploymentabac-DEV"
+          + "Pais"            = "RG"
           + "Propietario"     = "DarwinLopez"
           + "Proveedor"       = "InHouse"
           + "Soporte"         = "darwin.lopez@claro.com.gt"
@@ -832,6 +838,7 @@ Terraform will perform the following actions:
           + "ManagedBy"       = "terraform"
           + "Modulo"          = "IAM"
           + "Name"            = "mci-lambda-deploymentabac-DEV"
+          + "Pais"            = "RG"
           + "Propietario"     = "DarwinLopez"
           + "Proveedor"       = "InHouse"
           + "Soporte"         = "darwin.lopez@claro.com.gt"
@@ -854,6 +861,7 @@ Terraform will perform the following actions:
           + "ManagedBy"       = "terraform"
           + "Modulo"          = "IAM"
           + "Name"            = "mci-lambda-deploymentabac-DEV"
+          + "Pais"            = "RG"
           + "Propietario"     = "DarwinLopez"
           + "Proveedor"       = "InHouse"
           + "Soporte"         = "darwin.lopez@claro.com.gt"
@@ -969,6 +977,7 @@ Terraform will perform the following actions:
           + "ManagedBy"       = "terraform"
           + "Modulo"          = "IAM"
           + "Name"            = "mci-s3-deploymentabac-DEV"
+          + "Pais"            = "RG"
           + "Propietario"     = "DarwinLopez"
           + "Proveedor"       = "InHouse"
           + "Soporte"         = "darwin.lopez@claro.com.gt"
@@ -991,6 +1000,7 @@ Terraform will perform the following actions:
           + "ManagedBy"       = "terraform"
           + "Modulo"          = "IAM"
           + "Name"            = "mci-s3-deploymentabac-DEV"
+          + "Pais"            = "RG"
           + "Propietario"     = "DarwinLopez"
           + "Proveedor"       = "InHouse"
           + "Soporte"         = "darwin.lopez@claro.com.gt"
@@ -1064,6 +1074,7 @@ Terraform will perform the following actions:
           + "ManagedBy"       = "terraform"
           + "Modulo"          = "IAM"
           + "Name"            = "mci-terraform-statemanagement-DEV"
+          + "Pais"            = "RG"
           + "Propietario"     = "DarwinLopez"
           + "Proveedor"       = "InHouse"
           + "Soporte"         = "darwin.lopez@claro.com.gt"
@@ -1086,6 +1097,7 @@ Terraform will perform the following actions:
           + "ManagedBy"       = "terraform"
           + "Modulo"          = "IAM"
           + "Name"            = "mci-terraform-statemanagement-DEV"
+          + "Pais"            = "RG"
           + "Propietario"     = "DarwinLopez"
           + "Proveedor"       = "InHouse"
           + "Soporte"         = "darwin.lopez@claro.com.gt"
