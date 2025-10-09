@@ -2,7 +2,7 @@
 data "aws_caller_identity" "current" {}
 
 # mci-eventbridge-stepfunctions-abac Policy Module - Following ABAC Pattern
-# Converted from definitions/policies/deployment\eventbridge-stepfunctions-abac.yaml
+# Converted from definitions/policies/deployment\github-deployment-eventbridge-stepfunctions.yaml
 resource "aws_iam_policy" "main" {
   name        = "mci-mci-eventbridge-stepfunctions-abac"
   path        = "/policies/"

@@ -2,7 +2,7 @@
 data "aws_caller_identity" "current" {}
 
 # mci-s3-deployment-abac Policy Module - Following ABAC Pattern
-# Converted from definitions/policies/deployment\s3-deployment-abac.yaml
+# Converted from definitions/policies/deployment\github-deployment-s3-abac.yaml
 resource "aws_iam_policy" "main" {
   name        = "mci-mci-s3-deployment-abac"
   path        = "/policies/"

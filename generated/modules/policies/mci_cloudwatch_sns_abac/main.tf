@@ -2,7 +2,7 @@
 data "aws_caller_identity" "current" {}
 
 # mci-cloudwatch-sns-abac Policy Module - Following ABAC Pattern
-# Converted from definitions/policies/deployment\cloudwatch-sns-abac.yaml
+# Converted from definitions/policies/deployment\github-deployment-cloudwatch-sns.yaml
 resource "aws_iam_policy" "main" {
   name        = "mci-mci-cloudwatch-sns-abac"
   path        = "/policies/"

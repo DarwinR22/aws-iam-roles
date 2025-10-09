@@ -2,7 +2,7 @@
 data "aws_caller_identity" "current" {}
 
 # mci-lambda-deployment-abac Policy Module - Following ABAC Pattern
-# Converted from definitions/policies/deployment\lambda-deployment-abac.yaml
+# Converted from definitions/policies/deployment\github-deployment-lambda-abac.yaml
 resource "aws_iam_policy" "main" {
   name        = "mci-mci-lambda-deployment-abac"
   path        = "/policies/"

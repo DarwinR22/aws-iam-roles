@@ -2,7 +2,7 @@
 data "aws_caller_identity" "current" {}
 
 # mci-glue-iam-kms-abac Policy Module - Following ABAC Pattern
-# Converted from definitions/policies/deployment\glue-iam-kms-abac.yaml
+# Converted from definitions/policies/deployment\github-deployment-glue-iam-kms.yaml
 resource "aws_iam_policy" "main" {
   name        = "mci-mci-glue-iam-kms-abac"
   path        = "/policies/"

@@ -2,7 +2,7 @@
 data "aws_caller_identity" "current" {}
 
 # mci-dynamodb-deployment-abac Policy Module - Following ABAC Pattern
-# Converted from definitions/policies/deployment\dynamodb-deployment-abac.yaml
+# Converted from definitions/policies/deployment\github-deployment-dynamodb-abac.yaml
 resource "aws_iam_policy" "main" {
   name        = "mci-mci-dynamodb-deployment-abac"
   path        = "/policies/"

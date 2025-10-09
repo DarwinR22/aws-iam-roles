@@ -42,33 +42,33 @@ role:
 
   # Referenced policy modules - these will be combined into the role
   policy_modules:
-    - name: "terraform-state-management"
-      file: "terraform-state-management.yaml"
-      description: "S3 y DynamoDB para gestión de estado de Terraform"
+    - name: "github-deployment-terraform-state"
+      file: "github-deployment-terraform-state.yaml"
+      description: "S3 y DynamoDB para gestión de estado de Terraform (solo GitHub Actions)"
     
-    - name: "lambda-deployment-abac"
-      file: "lambda-deployment-abac.yaml"
-      description: "Lambda con control ABAC basado en tags"
+    - name: "github-deployment-lambda-abac"
+      file: "github-deployment-lambda-abac.yaml"
+      description: "Lambda con control ABAC basado en tags (solo deployment)"
       
-    - name: "s3-deployment-abac"
-      file: "s3-deployment-abac.yaml"
-      description: "S3 con control ABAC basado en tags"
+    - name: "github-deployment-s3-abac"
+      file: "github-deployment-s3-abac.yaml"
+      description: "S3 con control ABAC basado en tags (solo deployment)"
       
-    - name: "dynamodb-deployment-abac"
-      file: "dynamodb-deployment-abac.yaml"
-      description: "DynamoDB con control ABAC basado en tags"
+    - name: "github-deployment-dynamodb-abac"
+      file: "github-deployment-dynamodb-abac.yaml"
+      description: "DynamoDB con control ABAC basado en tags (solo deployment)"
       
-    - name: "eventbridge-stepfunctions-abac"
-      file: "eventbridge-stepfunctions-abac.yaml"
-      description: "EventBridge y Step Functions con control ABAC"
+    - name: "github-deployment-eventbridge-stepfunctions"
+      file: "github-deployment-eventbridge-stepfunctions.yaml"
+      description: "EventBridge y Step Functions con control ABAC (solo deployment)"
       
-    - name: "cloudwatch-sns-abac"
-      file: "cloudwatch-sns-abac.yaml"
-      description: "CloudWatch y SNS con control ABAC"
+    - name: "github-deployment-cloudwatch-sns"
+      file: "github-deployment-cloudwatch-sns.yaml"
+      description: "CloudWatch y SNS con control ABAC (solo deployment)"
       
-    - name: "glue-iam-kms-abac"
-      file: "glue-iam-kms-abac.yaml"
-      description: "Glue, IAM PassRole y KMS con control ABAC"
+    - name: "github-deployment-glue-iam-kms"
+      file: "github-deployment-glue-iam-kms.yaml"
+      description: "Glue, IAM PassRole y KMS con control ABAC (solo deployment)"
 
   # Organizational tags for compliance and governance
   tags:

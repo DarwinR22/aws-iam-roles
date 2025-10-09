@@ -2,7 +2,7 @@
 data "aws_caller_identity" "current" {}
 
 # mci-terraform-state-management Policy Module - Following ABAC Pattern
-# Converted from definitions/policies/deployment\terraform-state-management.yaml
+# Converted from definitions/policies/deployment\github-deployment-terraform-state.yaml
 resource "aws_iam_policy" "main" {
   name        = "mci-mci-terraform-state-management"
   path        = "/policies/"
