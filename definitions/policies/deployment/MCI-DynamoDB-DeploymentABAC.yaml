@@ -20,6 +20,7 @@ policy:
         - "dynamodb:UntagResource"
         - "dynamodb:DescribeContinuousBackups"
         - "dynamodb:UpdateContinuousBackups"
+        - "dynamodb:DescribeKinesisStreamingDestination"
         
       resources:
         - "arn:aws:dynamodb:*:*:table/*"

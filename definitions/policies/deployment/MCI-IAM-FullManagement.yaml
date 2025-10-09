@@ -1,0 +1,83 @@
+policy:
+  name: "MCI-IAM-FullManagement"
+  description: "Gestión completa de roles y políticas IAM para despliegues de infraestructura con Terraform"
+  service: "iam"
+  version: "1.0.0"
+  
+  statements:
+    - sid: "IAMRoleFullManagement"
+      effect: "Allow"
+      actions:
+        - "iam:CreateRole"
+        - "iam:DeleteRole"
+        - "iam:UpdateRole"
+        - "iam:GetRole"
+        - "iam:ListRoles"
+        - "iam:ListRoleTags"
+        - "iam:TagRole"
+        - "iam:UntagRole"
+        - "iam:UpdateAssumeRolePolicy"
+      resources:
+        - "arn:aws:iam::*:role/*"
+
+    - sid: "IAMPolicyFullManagement"
+      effect: "Allow"
+      actions:
+        - "iam:CreatePolicy"
+        - "iam:DeletePolicy"
+        - "iam:GetPolicy"
+        - "iam:GetPolicyVersion"
+        - "iam:ListPolicies"
+        - "iam:ListPolicyVersions"
+        - "iam:CreatePolicyVersion"
+        - "iam:DeletePolicyVersion"
+        - "iam:SetDefaultPolicyVersion"
+        - "iam:TagPolicy"
+        - "iam:UntagPolicy"
+        - "iam:ListPolicyTags"
+      resources:
+        - "arn:aws:iam::*:policy/*"
+
+    - sid: "IAMRolePolicyAttachment"
+      effect: "Allow"
+      actions:
+        - "iam:AttachRolePolicy"
+        - "iam:DetachRolePolicy"
+        - "iam:ListAttachedRolePolicies"
+        - "iam:PutRolePolicy"
+        - "iam:DeleteRolePolicy"
+        - "iam:GetRolePolicy"
+        - "iam:ListRolePolicies"
+      resources:
+        - "arn:aws:iam::*:role/*"
+
+    - sid: "IAMPassRoleForServices"
+      effect: "Allow"
+      actions:
+        - "iam:PassRole"
+      resources:
+        - "arn:aws:iam::*:role/*"
+
+    - sid: "IAMReadOnlyAccess"
+      effect: "Allow"
+      actions:
+        - "iam:ListInstanceProfiles"
+        - "iam:GetAccountSummary"
+        - "iam:GetAccountPasswordPolicy"
+        - "iam:ListUsers"
+        - "iam:ListGroups"
+        - "iam:ListAccountAliases"
+      resources:
+        - "*"
+
+# Metadata
+environments: ["dev", "qa", "prod"]
+owner: "Infrastructure Team"
+critical: true  # Esta política es crítica para despliegues de infraestructura
+
+tags:
+  Service: "IAM"
+  AccessLevel: "FullManagement"
+  PolicyType: "Standard"
+  ManagedBy: "mci-aws-iam"
+  Critical: "true"

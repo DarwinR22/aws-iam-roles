@@ -19,15 +19,53 @@ policy:
         - "s3:DeleteBucketPolicy"
         - "s3:GetBucketTagging"
         - "s3:PutBucketTagging"
+        - "s3:DeleteBucketTagging"
         - "s3:GetBucketEncryption"
         - "s3:PutBucketEncryption"
+        - "s3:GetEncryptionConfiguration"
         - "s3:GetBucketPublicAccessBlock"
         - "s3:PutBucketPublicAccessBlock"
         - "s3:GetBucketLifecycleConfiguration"
         - "s3:PutBucketLifecycleConfiguration"
+        - "s3:DeleteBucketLifecycleConfiguration"
         - "s3:GetBucketCors"
         - "s3:PutBucketCors"
         - "s3:DeleteBucketCors"
+        # Logging configuration
+        - "s3:GetBucketLogging"
+        - "s3:PutBucketLogging"
+        # Website configuration
+        - "s3:GetBucketWebsite"
+        - "s3:PutBucketWebsite"
+        - "s3:DeleteBucketWebsite"
+        # Acceleration & Request Payment
+        - "s3:GetAccelerateConfiguration"
+        - "s3:PutAccelerateConfiguration"
+        - "s3:GetBucketRequestPayment"
+        - "s3:PutBucketRequestPayment"
+        # Ownership Controls
+        - "s3:GetBucketOwnershipControls"
+        - "s3:PutBucketOwnershipControls"
+        - "s3:DeleteBucketOwnershipControls"
+        # Replication
+        - "s3:GetReplicationConfiguration"
+        - "s3:PutReplicationConfiguration"
+        - "s3:DeleteReplicationConfiguration"
+        - "s3:GetBucketReplication"
+        # Notifications
+        - "s3:GetBucketNotification"
+        - "s3:PutBucketNotification"
+        # Object Lock
+        - "s3:GetBucketObjectLockConfiguration"
+        - "s3:PutBucketObjectLockConfiguration"
+        # Intelligent Tiering
+        - "s3:GetBucketIntelligentTieringConfiguration"
+        - "s3:PutBucketIntelligentTieringConfiguration"
+        - "s3:DeleteBucketIntelligentTieringConfiguration"
+        - "s3:ListBucketIntelligentTieringConfigurations"
+        # Additional bucket operations
+        - "s3:GetBucketAcl"
+        - "s3:PutBucketAcl"
         
       resources:
         - "arn:aws:s3:::*"

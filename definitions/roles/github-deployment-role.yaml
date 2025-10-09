@@ -69,6 +69,14 @@ role:
     - name: "MCI-Glue-DeploymentABAC"
       file: "MCI-Glue-DeploymentABAC.yaml"
       description: "Glue, IAM PassRole y KMS con control ABAC (solo deployment)"
+      
+    - name: "MCI-IAM-FullManagement"
+      file: "MCI-IAM-FullManagement.yaml"
+      description: "Gestión completa de IAM (CreateRole, CreatePolicy, AttachRolePolicy, PassRole)"
+      
+    - name: "MCI-CloudFormation-Deployment"
+      file: "MCI-CloudFormation-Deployment.yaml"
+      description: "CloudFormation stacks y KMS encryption con ViaService conditions"
 
   # Organizational tags for compliance and governance
   tags:
