@@ -1,4 +1,4 @@
-[command]/home/runner/work/_temp/6f7a000a-2415-47e3-854a-42acdd01af25/terraform-bin plan -no-color -input=false
+[command]/home/runner/work/_temp/843af8fb-704a-4a81-8477-13ec615ad55c/terraform-bin plan -no-color -input=false
 aws_iam_role.github_actions_iam_deployment_role: Refreshing state... [id=github-actions-iam-deployment-role]
 
 Terraform used the selected providers to generate the following execution
@@ -23,7 +23,7 @@ Terraform will perform the following actions:
             "Direccion"              = "TIRegional"
             "Dominio"                = "BusinessIntelligence"
             "Fecha de Creacion"      = "2025-09-16"
-          ~ "Generated"              = "2025-10-09T14:11:32.716169" -> "2025-10-09T20:27:23.235122"
+          ~ "Generated"              = "2025-10-09T14:23:44.099520" -> "2025-10-09T20:33:15.054745"
             "Gerencia"               = "MCI"
             "Layer"                  = "Devops"
             "ManagedBy"              = "terraform"
@@ -40,7 +40,7 @@ Terraform will perform the following actions:
             "Última Actualización"   = "2025-10-09"
         }
       ~ tags_all              = {
-          ~ "Generated"              = "2025-10-09T14:11:32.716169" -> "2025-10-09T20:27:23.235122"
+          ~ "Generated"              = "2025-10-09T14:23:44.099520" -> "2025-10-09T20:33:15.054745"
             # (24 unchanged elements hidden)
         }
         # (9 unchanged attributes hidden)
@@ -54,9 +54,9 @@ Terraform will perform the following actions:
       + attachment_count = (known after apply)
       + description      = "Gestión completa de CloudWatch Logs, Métricas, Alarmas y SNS con ABAC"
       + id               = (known after apply)
-      + name             = "mci-mci-cloudwatch-deploymentabac"
+      + name             = "mci-cloudwatch-deploymentabac"
       + name_prefix      = (known after apply)
-      + path             = "/policies/"
+      + path             = "/"
       + policy           = jsonencode(
             {
               + Statement = [
@@ -186,18 +186,48 @@ Terraform will perform the following actions:
         )
       + policy_id        = (known after apply)
       + tags             = {
-          + "Ambiente" = "dev"
-          + "Area"     = "DevOps"
-          + "Gerencia" = "MCI"
-          + "Name"     = "mci-cloudwatch-deploymentabac-dev"
-          + "Type"     = "Policy"
+          + "Alcance SOX"     = "No"
+          + "Ambiente"        = "dev"
+          + "Aplicacion"      = "CICD"
+          + "Area"            = "DevOps"
+          + "Ciclo de Vida"   = "Creacion"
+          + "Contacto"        = "darwin.lopez@claro.com.gt"
+          + "Creado Por"      = "DarwinLopez"
+          + "Direccion"       = "TIRegional"
+          + "Dominio"         = "BusinessIntelligence"
+          + "Gerencia"        = "MCI"
+          + "Layer"           = "Devops"
+          + "ManagedBy"       = "terraform"
+          + "Modulo"          = "IAM"
+          + "Name"            = "mci-cloudwatch-deploymentabac-dev"
+          + "Propietario"     = "DarwinLopez"
+          + "Proveedor"       = "InHouse"
+          + "Soporte"         = "darwin.lopez@claro.com.gt"
+          + "Subdominio"      = "Analytics"
+          + "Tipo de Recurso" = "IAMPolicy"
+          + "Type"            = "Policy"
         }
       + tags_all         = {
-          + "Ambiente" = "dev"
-          + "Area"     = "DevOps"
-          + "Gerencia" = "MCI"
-          + "Name"     = "mci-cloudwatch-deploymentabac-dev"
-          + "Type"     = "Policy"
+          + "Alcance SOX"     = "No"
+          + "Ambiente"        = "dev"
+          + "Aplicacion"      = "CICD"
+          + "Area"            = "DevOps"
+          + "Ciclo de Vida"   = "Creacion"
+          + "Contacto"        = "darwin.lopez@claro.com.gt"
+          + "Creado Por"      = "DarwinLopez"
+          + "Direccion"       = "TIRegional"
+          + "Dominio"         = "BusinessIntelligence"
+          + "Gerencia"        = "MCI"
+          + "Layer"           = "Devops"
+          + "ManagedBy"       = "terraform"
+          + "Modulo"          = "IAM"
+          + "Name"            = "mci-cloudwatch-deploymentabac-dev"
+          + "Propietario"     = "DarwinLopez"
+          + "Proveedor"       = "InHouse"
+          + "Soporte"         = "darwin.lopez@claro.com.gt"
+          + "Subdominio"      = "Analytics"
+          + "Tipo de Recurso" = "IAMPolicy"
+          + "Type"            = "Policy"
         }
     }
 
@@ -207,9 +237,9 @@ Terraform will perform the following actions:
       + attachment_count = (known after apply)
       + description      = "Gestión completa de tablas DynamoDB con control ABAC basado en tags"
       + id               = (known after apply)
-      + name             = "mci-mci-dynamodb-deploymentabac"
+      + name             = "mci-dynamodb-deploymentabac"
       + name_prefix      = (known after apply)
-      + path             = "/policies/"
+      + path             = "/"
       + policy           = jsonencode(
             {
               + Statement = [
@@ -302,18 +332,48 @@ Terraform will perform the following actions:
         )
       + policy_id        = (known after apply)
       + tags             = {
-          + "Ambiente" = "dev"
-          + "Area"     = "DevOps"
-          + "Gerencia" = "MCI"
-          + "Name"     = "mci-dynamodb-deploymentabac-dev"
-          + "Type"     = "Policy"
+          + "Alcance SOX"     = "No"
+          + "Ambiente"        = "dev"
+          + "Aplicacion"      = "CICD"
+          + "Area"            = "DevOps"
+          + "Ciclo de Vida"   = "Creacion"
+          + "Contacto"        = "darwin.lopez@claro.com.gt"
+          + "Creado Por"      = "DarwinLopez"
+          + "Direccion"       = "TIRegional"
+          + "Dominio"         = "BusinessIntelligence"
+          + "Gerencia"        = "MCI"
+          + "Layer"           = "Devops"
+          + "ManagedBy"       = "terraform"
+          + "Modulo"          = "IAM"
+          + "Name"            = "mci-dynamodb-deploymentabac-dev"
+          + "Propietario"     = "DarwinLopez"
+          + "Proveedor"       = "InHouse"
+          + "Soporte"         = "darwin.lopez@claro.com.gt"
+          + "Subdominio"      = "Analytics"
+          + "Tipo de Recurso" = "IAMPolicy"
+          + "Type"            = "Policy"
         }
       + tags_all         = {
-          + "Ambiente" = "dev"
-          + "Area"     = "DevOps"
-          + "Gerencia" = "MCI"
-          + "Name"     = "mci-dynamodb-deploymentabac-dev"
-          + "Type"     = "Policy"
+          + "Alcance SOX"     = "No"
+          + "Ambiente"        = "dev"
+          + "Aplicacion"      = "CICD"
+          + "Area"            = "DevOps"
+          + "Ciclo de Vida"   = "Creacion"
+          + "Contacto"        = "darwin.lopez@claro.com.gt"
+          + "Creado Por"      = "DarwinLopez"
+          + "Direccion"       = "TIRegional"
+          + "Dominio"         = "BusinessIntelligence"
+          + "Gerencia"        = "MCI"
+          + "Layer"           = "Devops"
+          + "ManagedBy"       = "terraform"
+          + "Modulo"          = "IAM"
+          + "Name"            = "mci-dynamodb-deploymentabac-dev"
+          + "Propietario"     = "DarwinLopez"
+          + "Proveedor"       = "InHouse"
+          + "Soporte"         = "darwin.lopez@claro.com.gt"
+          + "Subdominio"      = "Analytics"
+          + "Tipo de Recurso" = "IAMPolicy"
+          + "Type"            = "Policy"
         }
     }
 
@@ -323,9 +383,9 @@ Terraform will perform the following actions:
       + attachment_count = (known after apply)
       + description      = "Gestión de EventBridge, Scheduler y StepFunctions con control ABAC"
       + id               = (known after apply)
-      + name             = "mci-mci-eventbridge-deploymentabac"
+      + name             = "mci-eventbridge-deploymentabac"
       + name_prefix      = (known after apply)
-      + path             = "/policies/"
+      + path             = "/"
       + policy           = jsonencode(
             {
               + Statement = [
@@ -432,18 +492,48 @@ Terraform will perform the following actions:
         )
       + policy_id        = (known after apply)
       + tags             = {
-          + "Ambiente" = "dev"
-          + "Area"     = "DevOps"
-          + "Gerencia" = "MCI"
-          + "Name"     = "mci-eventbridge-deploymentabac-dev"
-          + "Type"     = "Policy"
+          + "Alcance SOX"     = "No"
+          + "Ambiente"        = "dev"
+          + "Aplicacion"      = "CICD"
+          + "Area"            = "DevOps"
+          + "Ciclo de Vida"   = "Creacion"
+          + "Contacto"        = "darwin.lopez@claro.com.gt"
+          + "Creado Por"      = "DarwinLopez"
+          + "Direccion"       = "TIRegional"
+          + "Dominio"         = "BusinessIntelligence"
+          + "Gerencia"        = "MCI"
+          + "Layer"           = "Devops"
+          + "ManagedBy"       = "terraform"
+          + "Modulo"          = "IAM"
+          + "Name"            = "mci-eventbridge-deploymentabac-dev"
+          + "Propietario"     = "DarwinLopez"
+          + "Proveedor"       = "InHouse"
+          + "Soporte"         = "darwin.lopez@claro.com.gt"
+          + "Subdominio"      = "Analytics"
+          + "Tipo de Recurso" = "IAMPolicy"
+          + "Type"            = "Policy"
         }
       + tags_all         = {
-          + "Ambiente" = "dev"
-          + "Area"     = "DevOps"
-          + "Gerencia" = "MCI"
-          + "Name"     = "mci-eventbridge-deploymentabac-dev"
-          + "Type"     = "Policy"
+          + "Alcance SOX"     = "No"
+          + "Ambiente"        = "dev"
+          + "Aplicacion"      = "CICD"
+          + "Area"            = "DevOps"
+          + "Ciclo de Vida"   = "Creacion"
+          + "Contacto"        = "darwin.lopez@claro.com.gt"
+          + "Creado Por"      = "DarwinLopez"
+          + "Direccion"       = "TIRegional"
+          + "Dominio"         = "BusinessIntelligence"
+          + "Gerencia"        = "MCI"
+          + "Layer"           = "Devops"
+          + "ManagedBy"       = "terraform"
+          + "Modulo"          = "IAM"
+          + "Name"            = "mci-eventbridge-deploymentabac-dev"
+          + "Propietario"     = "DarwinLopez"
+          + "Proveedor"       = "InHouse"
+          + "Soporte"         = "darwin.lopez@claro.com.gt"
+          + "Subdominio"      = "Analytics"
+          + "Tipo de Recurso" = "IAMPolicy"
+          + "Type"            = "Policy"
         }
     }
 
@@ -453,9 +543,9 @@ Terraform will perform the following actions:
       + attachment_count = (known after apply)
       + description      = "Gestión de Glue, IAM PassRole y KMS para despliegue de infraestructura con ABAC"
       + id               = (known after apply)
-      + name             = "mci-mci-glue-deploymentabac"
+      + name             = "mci-glue-deploymentabac"
       + name_prefix      = (known after apply)
-      + path             = "/policies/"
+      + path             = "/"
       + policy           = jsonencode(
             {
               + Statement = [
@@ -596,18 +686,48 @@ Terraform will perform the following actions:
         )
       + policy_id        = (known after apply)
       + tags             = {
-          + "Ambiente" = "dev"
-          + "Area"     = "DevOps"
-          + "Gerencia" = "MCI"
-          + "Name"     = "mci-glue-deploymentabac-dev"
-          + "Type"     = "Policy"
+          + "Alcance SOX"     = "No"
+          + "Ambiente"        = "dev"
+          + "Aplicacion"      = "CICD"
+          + "Area"            = "DevOps"
+          + "Ciclo de Vida"   = "Creacion"
+          + "Contacto"        = "darwin.lopez@claro.com.gt"
+          + "Creado Por"      = "DarwinLopez"
+          + "Direccion"       = "TIRegional"
+          + "Dominio"         = "BusinessIntelligence"
+          + "Gerencia"        = "MCI"
+          + "Layer"           = "Devops"
+          + "ManagedBy"       = "terraform"
+          + "Modulo"          = "IAM"
+          + "Name"            = "mci-glue-deploymentabac-dev"
+          + "Propietario"     = "DarwinLopez"
+          + "Proveedor"       = "InHouse"
+          + "Soporte"         = "darwin.lopez@claro.com.gt"
+          + "Subdominio"      = "Analytics"
+          + "Tipo de Recurso" = "IAMPolicy"
+          + "Type"            = "Policy"
         }
       + tags_all         = {
-          + "Ambiente" = "dev"
-          + "Area"     = "DevOps"
-          + "Gerencia" = "MCI"
-          + "Name"     = "mci-glue-deploymentabac-dev"
-          + "Type"     = "Policy"
+          + "Alcance SOX"     = "No"
+          + "Ambiente"        = "dev"
+          + "Aplicacion"      = "CICD"
+          + "Area"            = "DevOps"
+          + "Ciclo de Vida"   = "Creacion"
+          + "Contacto"        = "darwin.lopez@claro.com.gt"
+          + "Creado Por"      = "DarwinLopez"
+          + "Direccion"       = "TIRegional"
+          + "Dominio"         = "BusinessIntelligence"
+          + "Gerencia"        = "MCI"
+          + "Layer"           = "Devops"
+          + "ManagedBy"       = "terraform"
+          + "Modulo"          = "IAM"
+          + "Name"            = "mci-glue-deploymentabac-dev"
+          + "Propietario"     = "DarwinLopez"
+          + "Proveedor"       = "InHouse"
+          + "Soporte"         = "darwin.lopez@claro.com.gt"
+          + "Subdominio"      = "Analytics"
+          + "Tipo de Recurso" = "IAMPolicy"
+          + "Type"            = "Policy"
         }
     }
 
@@ -617,9 +737,9 @@ Terraform will perform the following actions:
       + attachment_count = (known after apply)
       + description      = "Despliegue completo de funciones Lambda con control ABAC basado en tags de gerencia y ambiente"
       + id               = (known after apply)
-      + name             = "mci-mci-lambda-deploymentabac"
+      + name             = "mci-lambda-deploymentabac"
       + name_prefix      = (known after apply)
-      + path             = "/policies/"
+      + path             = "/"
       + policy           = jsonencode(
             {
               + Statement = [
@@ -696,18 +816,48 @@ Terraform will perform the following actions:
         )
       + policy_id        = (known after apply)
       + tags             = {
-          + "Ambiente" = "dev"
-          + "Area"     = "DevOps"
-          + "Gerencia" = "MCI"
-          + "Name"     = "mci-lambda-deploymentabac-dev"
-          + "Type"     = "Policy"
+          + "Alcance SOX"     = "No"
+          + "Ambiente"        = "dev"
+          + "Aplicacion"      = "CICD"
+          + "Area"            = "DevOps"
+          + "Ciclo de Vida"   = "Creacion"
+          + "Contacto"        = "darwin.lopez@claro.com.gt"
+          + "Creado Por"      = "DarwinLopez"
+          + "Direccion"       = "TIRegional"
+          + "Dominio"         = "BusinessIntelligence"
+          + "Gerencia"        = "MCI"
+          + "Layer"           = "Devops"
+          + "ManagedBy"       = "terraform"
+          + "Modulo"          = "IAM"
+          + "Name"            = "mci-lambda-deploymentabac-dev"
+          + "Propietario"     = "DarwinLopez"
+          + "Proveedor"       = "InHouse"
+          + "Soporte"         = "darwin.lopez@claro.com.gt"
+          + "Subdominio"      = "Analytics"
+          + "Tipo de Recurso" = "IAMPolicy"
+          + "Type"            = "Policy"
         }
       + tags_all         = {
-          + "Ambiente" = "dev"
-          + "Area"     = "DevOps"
-          + "Gerencia" = "MCI"
-          + "Name"     = "mci-lambda-deploymentabac-dev"
-          + "Type"     = "Policy"
+          + "Alcance SOX"     = "No"
+          + "Ambiente"        = "dev"
+          + "Aplicacion"      = "CICD"
+          + "Area"            = "DevOps"
+          + "Ciclo de Vida"   = "Creacion"
+          + "Contacto"        = "darwin.lopez@claro.com.gt"
+          + "Creado Por"      = "DarwinLopez"
+          + "Direccion"       = "TIRegional"
+          + "Dominio"         = "BusinessIntelligence"
+          + "Gerencia"        = "MCI"
+          + "Layer"           = "Devops"
+          + "ManagedBy"       = "terraform"
+          + "Modulo"          = "IAM"
+          + "Name"            = "mci-lambda-deploymentabac-dev"
+          + "Propietario"     = "DarwinLopez"
+          + "Proveedor"       = "InHouse"
+          + "Soporte"         = "darwin.lopez@claro.com.gt"
+          + "Subdominio"      = "Analytics"
+          + "Tipo de Recurso" = "IAMPolicy"
+          + "Type"            = "Policy"
         }
     }
 
@@ -717,9 +867,9 @@ Terraform will perform the following actions:
       + attachment_count = (known after apply)
       + description      = "Gestión completa de buckets S3 con control ABAC basado en tags de gerencia"
       + id               = (known after apply)
-      + name             = "mci-mci-s3-deploymentabac"
+      + name             = "mci-s3-deploymentabac"
       + name_prefix      = (known after apply)
-      + path             = "/policies/"
+      + path             = "/"
       + policy           = jsonencode(
             {
               + Statement = [
@@ -803,18 +953,48 @@ Terraform will perform the following actions:
         )
       + policy_id        = (known after apply)
       + tags             = {
-          + "Ambiente" = "dev"
-          + "Area"     = "DevOps"
-          + "Gerencia" = "MCI"
-          + "Name"     = "mci-s3-deploymentabac-dev"
-          + "Type"     = "Policy"
+          + "Alcance SOX"     = "No"
+          + "Ambiente"        = "dev"
+          + "Aplicacion"      = "CICD"
+          + "Area"            = "DevOps"
+          + "Ciclo de Vida"   = "Creacion"
+          + "Contacto"        = "darwin.lopez@claro.com.gt"
+          + "Creado Por"      = "DarwinLopez"
+          + "Direccion"       = "TIRegional"
+          + "Dominio"         = "BusinessIntelligence"
+          + "Gerencia"        = "MCI"
+          + "Layer"           = "Devops"
+          + "ManagedBy"       = "terraform"
+          + "Modulo"          = "IAM"
+          + "Name"            = "mci-s3-deploymentabac-dev"
+          + "Propietario"     = "DarwinLopez"
+          + "Proveedor"       = "InHouse"
+          + "Soporte"         = "darwin.lopez@claro.com.gt"
+          + "Subdominio"      = "Analytics"
+          + "Tipo de Recurso" = "IAMPolicy"
+          + "Type"            = "Policy"
         }
       + tags_all         = {
-          + "Ambiente" = "dev"
-          + "Area"     = "DevOps"
-          + "Gerencia" = "MCI"
-          + "Name"     = "mci-s3-deploymentabac-dev"
-          + "Type"     = "Policy"
+          + "Alcance SOX"     = "No"
+          + "Ambiente"        = "dev"
+          + "Aplicacion"      = "CICD"
+          + "Area"            = "DevOps"
+          + "Ciclo de Vida"   = "Creacion"
+          + "Contacto"        = "darwin.lopez@claro.com.gt"
+          + "Creado Por"      = "DarwinLopez"
+          + "Direccion"       = "TIRegional"
+          + "Dominio"         = "BusinessIntelligence"
+          + "Gerencia"        = "MCI"
+          + "Layer"           = "Devops"
+          + "ManagedBy"       = "terraform"
+          + "Modulo"          = "IAM"
+          + "Name"            = "mci-s3-deploymentabac-dev"
+          + "Propietario"     = "DarwinLopez"
+          + "Proveedor"       = "InHouse"
+          + "Soporte"         = "darwin.lopez@claro.com.gt"
+          + "Subdominio"      = "Analytics"
+          + "Tipo de Recurso" = "IAMPolicy"
+          + "Type"            = "Policy"
         }
     }
 
@@ -824,9 +1004,9 @@ Terraform will perform the following actions:
       + attachment_count = (known after apply)
       + description      = "Gestión de estado de Terraform en S3 y locks en DynamoDB (sin ABAC - requerido para CI/CD)"
       + id               = (known after apply)
-      + name             = "mci-mci-terraform-statemanagement"
+      + name             = "mci-terraform-statemanagement"
       + name_prefix      = (known after apply)
-      + path             = "/policies/"
+      + path             = "/"
       + policy           = jsonencode(
             {
               + Statement = [
@@ -868,18 +1048,48 @@ Terraform will perform the following actions:
         )
       + policy_id        = (known after apply)
       + tags             = {
-          + "Ambiente" = "dev"
-          + "Area"     = "DevOps"
-          + "Gerencia" = "MCI"
-          + "Name"     = "mci-terraform-statemanagement-dev"
-          + "Type"     = "Policy"
+          + "Alcance SOX"     = "No"
+          + "Ambiente"        = "dev"
+          + "Aplicacion"      = "CICD"
+          + "Area"            = "DevOps"
+          + "Ciclo de Vida"   = "Creacion"
+          + "Contacto"        = "darwin.lopez@claro.com.gt"
+          + "Creado Por"      = "DarwinLopez"
+          + "Direccion"       = "TIRegional"
+          + "Dominio"         = "BusinessIntelligence"
+          + "Gerencia"        = "MCI"
+          + "Layer"           = "Devops"
+          + "ManagedBy"       = "terraform"
+          + "Modulo"          = "IAM"
+          + "Name"            = "mci-terraform-statemanagement-dev"
+          + "Propietario"     = "DarwinLopez"
+          + "Proveedor"       = "InHouse"
+          + "Soporte"         = "darwin.lopez@claro.com.gt"
+          + "Subdominio"      = "Analytics"
+          + "Tipo de Recurso" = "IAMPolicy"
+          + "Type"            = "Policy"
         }
       + tags_all         = {
-          + "Ambiente" = "dev"
-          + "Area"     = "DevOps"
-          + "Gerencia" = "MCI"
-          + "Name"     = "mci-terraform-statemanagement-dev"
-          + "Type"     = "Policy"
+          + "Alcance SOX"     = "No"
+          + "Ambiente"        = "dev"
+          + "Aplicacion"      = "CICD"
+          + "Area"            = "DevOps"
+          + "Ciclo de Vida"   = "Creacion"
+          + "Contacto"        = "darwin.lopez@claro.com.gt"
+          + "Creado Por"      = "DarwinLopez"
+          + "Direccion"       = "TIRegional"
+          + "Dominio"         = "BusinessIntelligence"
+          + "Gerencia"        = "MCI"
+          + "Layer"           = "Devops"
+          + "ManagedBy"       = "terraform"
+          + "Modulo"          = "IAM"
+          + "Name"            = "mci-terraform-statemanagement-dev"
+          + "Propietario"     = "DarwinLopez"
+          + "Proveedor"       = "InHouse"
+          + "Soporte"         = "darwin.lopez@claro.com.gt"
+          + "Subdominio"      = "Analytics"
+          + "Tipo de Recurso" = "IAMPolicy"
+          + "Type"            = "Policy"
         }
     }
 
