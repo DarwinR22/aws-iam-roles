@@ -73,10 +73,10 @@ role:
   # Organizational tags for compliance and governance
   tags:
     # Core organizational tags
-    "Pais": "rg"
+    "Pais": "RG"
     "Gerencia": "MCI"
     "Area": "DevOps"
-    "Ambiente": "dev"
+    "Ambiente": "DEV"
     "Direccion": "TIRegional"
     "Modulo": "IAM"
     
