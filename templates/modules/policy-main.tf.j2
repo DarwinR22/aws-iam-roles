@@ -4,8 +4,8 @@ data "aws_caller_identity" "current" {}
 # {{ policy_name }} Policy Module - Following ABAC Pattern
 # Converted from {{ source_yaml_path }}
 resource "aws_iam_policy" "main" {
-  name        = "mci-{{ policy_name | lower | replace('_', '-') }}"
-  path        = "/policies/"
+  name        = "{{ policy_name | lower | replace('_', '-') }}"
+  path        = "/"
   description = var.policy_description
 
   policy = jsonencode({
