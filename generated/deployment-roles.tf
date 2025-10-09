@@ -6,7 +6,7 @@
 # This file is auto-generated from YAML definitions.
 # DO NOT EDIT MANUALLY - Changes will be overwritten.
 # 
-# Generated: 2025-10-09T12:04:09.188556
+# Generated: 2025-10-09T14:02:35.002216
 # Source: Multiple role definitions in definitions/roles/
 # ==============================================================================
 
@@ -83,13 +83,13 @@ resource "aws_iam_role" "github_actions_iam_deployment_role" {
     # Auto-generated tags
     "ManagedBy" = "terraform"
     "Source"    = "definitions/roles/github-deployment-role.yaml"
-    "Generated" = "2025-10-09T12:04:09.188556"
+    "Generated" = "2025-10-09T14:02:35.002216"
   }
 }
 
 # Create policies as independent modules (not attached to role)
-module "mci_terraform_state_management" {
-  source = "./modules/policies/mci_mci_terraform_state_management"
+module "mci_terraform_statemanagement" {
+  source = "./modules/policies/mci_mci_terraform_statemanagement"
   
   environment = "dev"
   
@@ -114,8 +114,8 @@ module "mci_terraform_state_management" {
     "Ambiente" = "dev"
   }
 }
-module "mci_lambda_deployment_abac" {
-  source = "./modules/policies/mci_mci_lambda_deployment_abac"
+module "mci_lambda_deploymentabac" {
+  source = "./modules/policies/mci_mci_lambda_deploymentabac"
   
   environment = "dev"
   
@@ -140,8 +140,8 @@ module "mci_lambda_deployment_abac" {
     "Ambiente" = "dev"
   }
 }
-module "mci_s3_deployment_abac" {
-  source = "./modules/policies/mci_mci_s3_deployment_abac"
+module "mci_s3_deploymentabac" {
+  source = "./modules/policies/mci_mci_s3_deploymentabac"
   
   environment = "dev"
   
@@ -166,8 +166,8 @@ module "mci_s3_deployment_abac" {
     "Ambiente" = "dev"
   }
 }
-module "mci_dynamodb_deployment_abac" {
-  source = "./modules/policies/mci_mci_dynamodb_deployment_abac"
+module "mci_dynamodb_deploymentabac" {
+  source = "./modules/policies/mci_mci_dynamodb_deploymentabac"
   
   environment = "dev"
   
@@ -192,8 +192,8 @@ module "mci_dynamodb_deployment_abac" {
     "Ambiente" = "dev"
   }
 }
-module "mci_eventbridge_stepfunctions_abac" {
-  source = "./modules/policies/mci_mci_eventbridge_stepfunctions_abac"
+module "mci_eventbridge_deploymentabac" {
+  source = "./modules/policies/mci_mci_eventbridge_deploymentabac"
   
   environment = "dev"
   
@@ -218,8 +218,8 @@ module "mci_eventbridge_stepfunctions_abac" {
     "Ambiente" = "dev"
   }
 }
-module "mci_cloudwatch_sns_abac" {
-  source = "./modules/policies/mci_mci_cloudwatch_sns_abac"
+module "mci_cloudwatch_deploymentabac" {
+  source = "./modules/policies/mci_mci_cloudwatch_deploymentabac"
   
   environment = "dev"
   
@@ -244,8 +244,8 @@ module "mci_cloudwatch_sns_abac" {
     "Ambiente" = "dev"
   }
 }
-module "mci_glue_iam_kms_abac" {
-  source = "./modules/policies/mci_mci_glue_iam_kms_abac"
+module "mci_glue_deploymentabac" {
+  source = "./modules/policies/mci_mci_glue_deploymentabac"
   
   environment = "dev"
   

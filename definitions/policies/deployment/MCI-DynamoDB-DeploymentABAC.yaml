@@ -1,0 +1,88 @@
+policy:
+  name: "MCI-DynamoDB-DeploymentABAC"
+  description: "Gestión completa de tablas DynamoDB con control ABAC basado en tags"
+  service: "dynamodb"
+  version: "1.0.0"
+  
+  statements:
+    - sid: "DynamoDBTableManagement"
+      effect: "Allow"
+      actions:
+        - "dynamodb:CreateTable"
+        - "dynamodb:DeleteTable"
+        - "dynamodb:DescribeTable"
+        - "dynamodb:UpdateTable"
+        - "dynamodb:ListTables"
+        - "dynamodb:DescribeTimeToLive"
+        - "dynamodb:UpdateTimeToLive"
+        - "dynamodb:ListTagsOfResource"
+        - "dynamodb:TagResource"
+        - "dynamodb:UntagResource"
+        - "dynamodb:DescribeContinuousBackups"
+        - "dynamodb:UpdateContinuousBackups"
+        
+      resources:
+        - "arn:aws:dynamodb:*:*:table/*"
+        
+      # ✅ ABAC: Solo tablas con tags coincidentes
+      abac_conditions:
+        - test: "StringEquals"
+          variable: "aws:RequestTag/gerencia"
+          values: ["${aws:PrincipalTag/gerencia}"]
+          
+        - test: "StringEquals"
+          variable: "aws:ResourceTag/gerencia"
+          values: ["${aws:PrincipalTag/gerencia}"]
+
+    - sid: "DynamoDBDataAccess"
+      effect: "Allow"
+      actions:
+        - "dynamodb:GetItem"
+        - "dynamodb:PutItem"
+        - "dynamodb:DeleteItem"
+        - "dynamodb:UpdateItem"
+        - "dynamodb:Query"
+        - "dynamodb:Scan"
+        - "dynamodb:BatchGetItem"
+        - "dynamodb:BatchWriteItem"
+        
+      resources:
+        - "arn:aws:dynamodb:*:*:table/*"
+        
+      # ✅ ABAC: Solo datos en tablas con tags coincidentes
+      abac_conditions:
+        - test: "StringEquals"
+          variable: "dynamodb:LeadingKeys"
+          values: ["${aws:PrincipalTag/gerencia}"]
+
+    - sid: "DynamoDBBackupManagement"
+      effect: "Allow"
+      actions:
+        - "dynamodb:CreateBackup"
+        - "dynamodb:DeleteBackup"
+        - "dynamodb:DescribeBackup"
+        - "dynamodb:ListBackups"
+        - "dynamodb:RestoreTableFromBackup"
+        - "dynamodb:RestoreTableToPointInTime"
+      resources:
+        - "arn:aws:dynamodb:*:*:table/*/backup/*"
+
+    - sid: "DynamoDBStreamAccess"
+      effect: "Allow"
+      actions:
+        - "dynamodb:DescribeStream"
+        - "dynamodb:GetRecords"
+        - "dynamodb:GetShardIterator"
+        - "dynamodb:ListStreams"
+      resources:
+        - "arn:aws:dynamodb:*:*:table/*/stream/*"
+
+# Metadata
+environments: ["dev", "qa", "prod"]
+owner: "Infrastructure Team"
+
+tags:
+  Service: "DynamoDB"
+  AccessLevel: "FullManagement"
+  PolicyType: "ABAC"
+  ManagedBy: "mci-aws-iam"

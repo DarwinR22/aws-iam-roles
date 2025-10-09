@@ -42,32 +42,32 @@ role:
 
   # Referenced policy modules - these will be combined into the role
   policy_modules:
-    - name: "github-deployment-terraform-state"
-      file: "github-deployment-terraform-state.yaml"
+    - name: "MCI-Terraform-StateManagement"
+      file: "MCI-Terraform-StateManagement.yaml"
       description: "S3 y DynamoDB para gestión de estado de Terraform (solo GitHub Actions)"
     
-    - name: "github-deployment-lambda-abac"
-      file: "github-deployment-lambda-abac.yaml"
+    - name: "MCI-Lambda-DeploymentABAC"
+      file: "MCI-Lambda-DeploymentABAC.yaml"
       description: "Lambda con control ABAC basado en tags (solo deployment)"
       
-    - name: "github-deployment-s3-abac"
-      file: "github-deployment-s3-abac.yaml"
+    - name: "MCI-S3-DeploymentABAC"
+      file: "MCI-S3-DeploymentABAC.yaml"
       description: "S3 con control ABAC basado en tags (solo deployment)"
       
-    - name: "github-deployment-dynamodb-abac"
-      file: "github-deployment-dynamodb-abac.yaml"
+    - name: "MCI-DynamoDB-DeploymentABAC"
+      file: "MCI-DynamoDB-DeploymentABAC.yaml"
       description: "DynamoDB con control ABAC basado en tags (solo deployment)"
       
-    - name: "github-deployment-eventbridge-stepfunctions"
-      file: "github-deployment-eventbridge-stepfunctions.yaml"
+    - name: "MCI-EventBridge-DeploymentABAC"
+      file: "MCI-EventBridge-DeploymentABAC.yaml"
       description: "EventBridge y Step Functions con control ABAC (solo deployment)"
       
-    - name: "github-deployment-cloudwatch-sns"
-      file: "github-deployment-cloudwatch-sns.yaml"
+    - name: "MCI-CloudWatch-DeploymentABAC"
+      file: "MCI-CloudWatch-DeploymentABAC.yaml"
       description: "CloudWatch y SNS con control ABAC (solo deployment)"
       
-    - name: "github-deployment-glue-iam-kms"
-      file: "github-deployment-glue-iam-kms.yaml"
+    - name: "MCI-Glue-DeploymentABAC"
+      file: "MCI-Glue-DeploymentABAC.yaml"
       description: "Glue, IAM PassRole y KMS con control ABAC (solo deployment)"
 
   # Organizational tags for compliance and governance
