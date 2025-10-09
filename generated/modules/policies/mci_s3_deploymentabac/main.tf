@@ -17,14 +17,14 @@ Effect = "Allow"
         Action = ["s3:CreateBucket", "s3:DeleteBucket", "s3:ListBucket", "s3:GetBucketLocation", "s3:GetBucketVersioning", "s3:PutBucketVersioning", "s3:GetBucketPolicy", "s3:PutBucketPolicy", "s3:DeleteBucketPolicy", "s3:GetBucketTagging", "s3:PutBucketTagging", "s3:GetBucketEncryption", "s3:PutBucketEncryption", "s3:GetBucketPublicAccessBlock", "s3:PutBucketPublicAccessBlock", "s3:GetBucketLifecycleConfiguration", "s3:PutBucketLifecycleConfiguration", "s3:GetBucketCors", "s3:PutBucketCors", "s3:DeleteBucketCors"]
         Resource = [          "arn:aws:s3:::*"        ]
         Condition = {
-          StringEquals = {            "aws:RequestTag/gerencia" = ["${aws:PrincipalTag/gerencia}"]          }        }
+          StringEquals = {            "aws:RequestTag/gerencia" = ["$${aws:PrincipalTag/gerencia}"]          }        }
       },      {
 Sid    = "S3ObjectManagement"
 Effect = "Allow"
         Action = ["s3:GetObject", "s3:PutObject", "s3:DeleteObject", "s3:GetObjectVersion", "s3:DeleteObjectVersion", "s3:GetObjectTagging", "s3:PutObjectTagging", "s3:GetObjectAcl", "s3:PutObjectAcl", "s3:ListMultipartUploadParts", "s3:AbortMultipartUpload"]
         Resource = [          "arn:aws:s3:::*/*"        ]
         Condition = {
-          StringEquals = {            "s3:ExistingObjectTag/gerencia" = ["${aws:PrincipalTag/gerencia}"]          }        }
+          StringEquals = {            "s3:ExistingObjectTag/gerencia" = ["$${aws:PrincipalTag/gerencia}"]          }        }
       },      {
 Sid    = "S3ListAllBuckets"
 Effect = "Allow"

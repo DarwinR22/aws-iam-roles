@@ -17,7 +17,7 @@ Effect = "Allow"
         Action = ["logs:CreateLogGroup", "logs:DeleteLogGroup", "logs:DescribeLogGroups", "logs:PutRetentionPolicy", "logs:DeleteRetentionPolicy", "logs:CreateLogStream", "logs:DeleteLogStream", "logs:DescribeLogStreams", "logs:PutLogEvents", "logs:GetLogEvents", "logs:FilterLogEvents", "logs:PutMetricFilter", "logs:DeleteMetricFilter", "logs:DescribeMetricFilters", "logs:TagLogGroup", "logs:UntagLogGroup", "logs:ListTagsLogGroup"]
         Resource = [          "arn:aws:logs:*:*:log-group:*",          "arn:aws:logs:*:*:log-group:*:log-stream:*"        ]
         Condition = {
-          StringEquals = {            "aws:RequestTag/gerencia" = ["${aws:PrincipalTag/gerencia}"]          }        }
+          StringEquals = {            "aws:RequestTag/gerencia" = ["$${aws:PrincipalTag/gerencia}"]          }        }
       },      {
 Sid    = "CloudWatchMetricsAndAlarms"
 Effect = "Allow"
@@ -34,7 +34,7 @@ Effect = "Allow"
         Action = ["sns:CreateTopic", "sns:DeleteTopic", "sns:GetTopicAttributes", "sns:SetTopicAttributes", "sns:ListTopics", "sns:Subscribe", "sns:Unsubscribe", "sns:ListSubscriptions", "sns:ListSubscriptionsByTopic", "sns:Publish", "sns:AddPermission", "sns:RemovePermission", "sns:TagResource", "sns:UntagResource", "sns:ListTagsForResource"]
         Resource = [          "arn:aws:sns:*:*:*"        ]
         Condition = {
-          StringEquals = {            "aws:RequestTag/gerencia" = ["${aws:PrincipalTag/gerencia}"]          }        }
+          StringEquals = {            "aws:RequestTag/gerencia" = ["$${aws:PrincipalTag/gerencia}"]          }        }
       },      {
 Sid    = "SNSPlatformEndpoints"
 Effect = "Allow"

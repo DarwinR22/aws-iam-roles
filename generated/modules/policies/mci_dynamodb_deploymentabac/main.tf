@@ -17,14 +17,14 @@ Effect = "Allow"
         Action = ["dynamodb:CreateTable", "dynamodb:DeleteTable", "dynamodb:DescribeTable", "dynamodb:UpdateTable", "dynamodb:ListTables", "dynamodb:DescribeTimeToLive", "dynamodb:UpdateTimeToLive", "dynamodb:ListTagsOfResource", "dynamodb:TagResource", "dynamodb:UntagResource", "dynamodb:DescribeContinuousBackups", "dynamodb:UpdateContinuousBackups"]
         Resource = [          "arn:aws:dynamodb:*:*:table/*"        ]
         Condition = {
-          StringEquals = {            "aws:RequestTag/gerencia" = ["${aws:PrincipalTag/gerencia}"],            "aws:ResourceTag/gerencia" = ["${aws:PrincipalTag/gerencia}"]          }        }
+          StringEquals = {            "aws:RequestTag/gerencia" = ["$${aws:PrincipalTag/gerencia}"],            "aws:ResourceTag/gerencia" = ["$${aws:PrincipalTag/gerencia}"]          }        }
       },      {
 Sid    = "DynamoDBDataAccess"
 Effect = "Allow"
         Action = ["dynamodb:GetItem", "dynamodb:PutItem", "dynamodb:DeleteItem", "dynamodb:UpdateItem", "dynamodb:Query", "dynamodb:Scan", "dynamodb:BatchGetItem", "dynamodb:BatchWriteItem"]
         Resource = [          "arn:aws:dynamodb:*:*:table/*"        ]
         Condition = {
-          StringEquals = {            "dynamodb:LeadingKeys" = ["${aws:PrincipalTag/gerencia}"]          }        }
+          StringEquals = {            "dynamodb:LeadingKeys" = ["$${aws:PrincipalTag/gerencia}"]          }        }
       },      {
 Sid    = "DynamoDBBackupManagement"
 Effect = "Allow"

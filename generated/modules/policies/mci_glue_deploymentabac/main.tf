@@ -17,7 +17,7 @@ Effect = "Allow"
         Action = ["glue:CreateDatabase", "glue:DeleteDatabase", "glue:GetDatabase", "glue:GetDatabases", "glue:UpdateDatabase", "glue:CreateTable", "glue:DeleteTable", "glue:GetTable", "glue:GetTables", "glue:UpdateTable", "glue:CreatePartition", "glue:DeletePartition", "glue:GetPartition", "glue:GetPartitions", "glue:UpdatePartition", "glue:BatchCreatePartition", "glue:BatchDeletePartition", "glue:BatchGetPartition", "glue:BatchUpdatePartition", "glue:CreateJob", "glue:DeleteJob", "glue:GetJob", "glue:GetJobs", "glue:UpdateJob", "glue:StartJobRun", "glue:StopJobRun", "glue:GetJobRun", "glue:GetJobRuns", "glue:GetJobBookmark", "glue:ResetJobBookmark", "glue:CreateCrawler", "glue:DeleteCrawler", "glue:GetCrawler", "glue:GetCrawlers", "glue:UpdateCrawler", "glue:StartCrawler", "glue:StopCrawler", "glue:GetCrawlerMetrics", "glue:CreateTrigger", "glue:DeleteTrigger", "glue:GetTrigger", "glue:GetTriggers", "glue:UpdateTrigger", "glue:StartTrigger", "glue:StopTrigger", "glue:CreateWorkflow", "glue:DeleteWorkflow", "glue:GetWorkflow", "glue:UpdateWorkflow", "glue:TagResource", "glue:UntagResource", "glue:GetTags"]
         Resource = [          "arn:aws:glue:*:*:catalog",          "arn:aws:glue:*:*:database/*",          "arn:aws:glue:*:*:table/*",          "arn:aws:glue:*:*:job/*",          "arn:aws:glue:*:*:crawler/*",          "arn:aws:glue:*:*:trigger/*",          "arn:aws:glue:*:*:workflow/*"        ]
         Condition = {
-          StringEquals = {            "aws:RequestTag/gerencia" = ["${aws:PrincipalTag/gerencia}"]          }        }
+          StringEquals = {            "aws:RequestTag/gerencia" = ["$${aws:PrincipalTag/gerencia}"]          }        }
       },      {
 Sid    = "IAMPassRoleForServices"
 Effect = "Allow"

@@ -30,7 +30,7 @@ resource "aws_iam_policy" "main" {
           {%- for test_type in conditions_by_test.keys() %}
           {{ test_type }} = {
             {%- for condition in conditions_by_test[test_type] %}
-            "{{ condition.variable }}" = {% if condition.variable == "aws:PrincipalTag/Gerencia" or condition.variable == "aws:PrincipalTag/Area" %}var.abac_conditions["{{ condition.variable }}"]{% else %}{{ condition['values'] | tojson }}{% endif %}{% if not loop.last %},{% endif %}
+            "{{ condition.variable }}" = {% if condition.variable == "aws:PrincipalTag/Gerencia" or condition.variable == "aws:PrincipalTag/Area" %}var.abac_conditions["{{ condition.variable }}"]{% else %}{{ condition['values'] | tojson | replace('${', '$${') }}{% endif %}{% if not loop.last %},{% endif %}
             {%- endfor %}
           }{% if not loop.last %},{% endif %}
           {%- endfor %}

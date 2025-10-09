@@ -17,7 +17,7 @@ Effect = "Allow"
         Action = ["events:PutRule", "events:DeleteRule", "events:DescribeRule", "events:EnableRule", "events:DisableRule", "events:ListRules", "events:PutTargets", "events:RemoveTargets", "events:ListTargetsByRule", "events:PutEvents", "events:TagResource", "events:UntagResource", "events:ListTagsForResource"]
         Resource = [          "arn:aws:events:*:*:rule/*"        ]
         Condition = {
-          StringEquals = {            "aws:RequestTag/gerencia" = ["${aws:PrincipalTag/gerencia}"]          }        }
+          StringEquals = {            "aws:RequestTag/gerencia" = ["$${aws:PrincipalTag/gerencia}"]          }        }
       },      {
 Sid    = "EventBridgeSchedulerManagement"
 Effect = "Allow"
@@ -29,7 +29,7 @@ Effect = "Allow"
         Action = ["states:CreateStateMachine", "states:DeleteStateMachine", "states:UpdateStateMachine", "states:DescribeStateMachine", "states:ListStateMachines", "states:StartExecution", "states:StopExecution", "states:DescribeExecution", "states:GetExecutionHistory", "states:ListExecutions", "states:TagResource", "states:UntagResource", "states:ListTagsForResource"]
         Resource = [          "arn:aws:states:*:*:stateMachine:*",          "arn:aws:states:*:*:execution:*:*"        ]
         Condition = {
-          StringEquals = {            "aws:RequestTag/gerencia" = ["${aws:PrincipalTag/gerencia}"]          }        }
+          StringEquals = {            "aws:RequestTag/gerencia" = ["$${aws:PrincipalTag/gerencia}"]          }        }
       },      {
 Sid    = "StepFunctionsActivityManagement"
 Effect = "Allow"
