@@ -116,6 +116,7 @@ module "{{ terraform_name }}" {
   kms_key_id          = "*"
   
   common_tags = {
+    "Pais" = "{{ role.tags.Pais }}"
     "Gerencia" = "{{ role.tags.Gerencia }}"
     "Area" = "{{ role.tags.Area }}"  
     "Ambiente" = "{{ role.tags.Ambiente }}"
