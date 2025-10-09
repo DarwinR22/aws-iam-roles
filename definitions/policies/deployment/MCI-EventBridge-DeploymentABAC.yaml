@@ -28,8 +28,8 @@ policy:
       # ✅ ABAC: Solo reglas con tags coincidentes
       abac_conditions:
         - test: "StringEquals"
-          variable: "aws:RequestTag/gerencia"
-          values: ["${aws:PrincipalTag/gerencia}"]
+          variable: "aws:RequestTag/Gerencia"
+          values: ["${aws:PrincipalTag/Gerencia}"]
 
     - sid: "EventBridgeSchedulerManagement"
       effect: "Allow"
@@ -74,8 +74,8 @@ policy:
       # ✅ ABAC: Solo state machines con tags coincidentes
       abac_conditions:
         - test: "StringEquals"
-          variable: "aws:RequestTag/gerencia"
-          values: ["${aws:PrincipalTag/gerencia}"]
+          variable: "aws:RequestTag/Gerencia"
+          values: ["${aws:PrincipalTag/Gerencia}"]
 
     - sid: "StepFunctionsActivityManagement"
       effect: "Allow"

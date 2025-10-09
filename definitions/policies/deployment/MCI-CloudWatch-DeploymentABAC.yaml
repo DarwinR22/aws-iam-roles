@@ -33,8 +33,8 @@ policy:
       # ✅ ABAC: Solo log groups con tags coincidentes
       abac_conditions:
         - test: "StringEquals"
-          variable: "aws:RequestTag/gerencia"
-          values: ["${aws:PrincipalTag/gerencia}"]
+          variable: "aws:RequestTag/Gerencia"
+          values: ["${aws:PrincipalTag/Gerencia}"]
 
     - sid: "CloudWatchMetricsAndAlarms"
       effect: "Allow"
@@ -92,8 +92,8 @@ policy:
       # ✅ ABAC: Solo topics con tags coincidentes
       abac_conditions:
         - test: "StringEquals"
-          variable: "aws:RequestTag/gerencia"
-          values: ["${aws:PrincipalTag/gerencia}"]
+          variable: "aws:RequestTag/Gerencia"
+          values: ["${aws:PrincipalTag/Gerencia}"]
 
     - sid: "SNSPlatformEndpoints"
       effect: "Allow"

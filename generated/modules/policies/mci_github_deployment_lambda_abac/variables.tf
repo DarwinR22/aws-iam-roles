@@ -3,7 +3,7 @@
 variable "policy_description" {
   description = "Description for the github-deployment-lambda-abac policy"
   type        = string
-  default     = "Despliegue completo de funciones Lambda con control ABAC basado en tags de gerencia y ambiente"
+  default     = "Despliegue completo de funciones Lambda con control ABAC basado en tags de Gerencia y ambiente"
 }
 
 variable "abac_conditions" {
