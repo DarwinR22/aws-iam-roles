@@ -1,10 +1,10 @@
 # Data source for current AWS caller identity
 data "aws_caller_identity" "current" {}
 
-# MCI-Lambda-DeploymentABAC Policy Module - Following ABAC Pattern
-# Converted from definitions/policies/deployment/MCI-Lambda-DeploymentABAC.yaml
+# github-deployment-lambda-abac Policy Module - Following ABAC Pattern
+# Converted from definitions/policies/deployment/github-deployment-lambda-abac.yaml
 resource "aws_iam_policy" "main" {
-  name        = "mci-mci-lambda-deploymentabac"
+  name        = "mci-github-deployment-lambda-abac"
   path        = "/policies/"
   description = var.policy_description
 
@@ -32,7 +32,7 @@ resource "aws_iam_policy" "main" {
   })
 
   tags = merge(var.common_tags, {
-    Name = "mci-lambda-deploymentabac-${var.environment}"
+    Name = "github-deployment-lambda-abac-${var.environment}"
     Type = "Policy"
   })
 }

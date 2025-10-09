@@ -2,7 +2,7 @@
 data "aws_caller_identity" "current" {}
 
 # MCI-DynamoDB-DeploymentABAC Policy Module - Following ABAC Pattern
-# Converted from definitions/policies/deployment\MCI-DynamoDB-DeploymentABAC.yaml
+# Converted from definitions/policies/deployment/MCI-DynamoDB-DeploymentABAC.yaml
 resource "aws_iam_policy" "main" {
   name        = "mci-mci-dynamodb-deploymentabac"
   path        = "/policies/"
@@ -12,30 +12,30 @@ resource "aws_iam_policy" "main" {
     Version = "2012-10-17"
     Statement = [
       {
-Sid    = "DynamoDBTableManagement"
-Effect = "Allow"
-        Action = ["dynamodb:CreateTable", "dynamodb:DeleteTable", "dynamodb:DescribeTable", "dynamodb:UpdateTable", "dynamodb:ListTables", "dynamodb:DescribeTimeToLive", "dynamodb:UpdateTimeToLive", "dynamodb:ListTagsOfResource", "dynamodb:TagResource", "dynamodb:UntagResource", "dynamodb:DescribeContinuousBackups", "dynamodb:UpdateContinuousBackups"]
-        Resource = [          "arn:aws:dynamodb:*:*:table/*"        ]
+        Sid      = "DynamoDBTableManagement"
+        Effect   = "Allow"
+        Action   = ["dynamodb:CreateTable", "dynamodb:DeleteTable", "dynamodb:DescribeTable", "dynamodb:UpdateTable", "dynamodb:ListTables", "dynamodb:DescribeTimeToLive", "dynamodb:UpdateTimeToLive", "dynamodb:ListTagsOfResource", "dynamodb:TagResource", "dynamodb:UntagResource", "dynamodb:DescribeContinuousBackups", "dynamodb:UpdateContinuousBackups"]
+        Resource = ["arn:aws:dynamodb:*:*:table/*"]
         Condition = {
-          StringEquals = {            "aws:RequestTag/gerencia" = ["$${aws:PrincipalTag/gerencia}"],            "aws:ResourceTag/gerencia" = ["$${aws:PrincipalTag/gerencia}"]          }        }
-      },      {
-Sid    = "DynamoDBDataAccess"
-Effect = "Allow"
-        Action = ["dynamodb:GetItem", "dynamodb:PutItem", "dynamodb:DeleteItem", "dynamodb:UpdateItem", "dynamodb:Query", "dynamodb:Scan", "dynamodb:BatchGetItem", "dynamodb:BatchWriteItem"]
-        Resource = [          "arn:aws:dynamodb:*:*:table/*"        ]
+        StringEquals = { "aws:RequestTag/gerencia" = ["$${aws:PrincipalTag/gerencia}"], "aws:ResourceTag/gerencia" = ["$${aws:PrincipalTag/gerencia}"] } }
+        }, {
+        Sid      = "DynamoDBDataAccess"
+        Effect   = "Allow"
+        Action   = ["dynamodb:GetItem", "dynamodb:PutItem", "dynamodb:DeleteItem", "dynamodb:UpdateItem", "dynamodb:Query", "dynamodb:Scan", "dynamodb:BatchGetItem", "dynamodb:BatchWriteItem"]
+        Resource = ["arn:aws:dynamodb:*:*:table/*"]
         Condition = {
-          StringEquals = {            "dynamodb:LeadingKeys" = ["$${aws:PrincipalTag/gerencia}"]          }        }
-      },      {
-Sid    = "DynamoDBBackupManagement"
-Effect = "Allow"
-        Action = ["dynamodb:CreateBackup", "dynamodb:DeleteBackup", "dynamodb:DescribeBackup", "dynamodb:ListBackups", "dynamodb:RestoreTableFromBackup", "dynamodb:RestoreTableToPointInTime"]
-        Resource = [          "arn:aws:dynamodb:*:*:table/*/backup/*"        ]
-      },      {
-Sid    = "DynamoDBStreamAccess"
-Effect = "Allow"
-        Action = ["dynamodb:DescribeStream", "dynamodb:GetRecords", "dynamodb:GetShardIterator", "dynamodb:ListStreams"]
-        Resource = [          "arn:aws:dynamodb:*:*:table/*/stream/*"        ]
-      }    ]
+        StringEquals = { "dynamodb:LeadingKeys" = ["$${aws:PrincipalTag/gerencia}"] } }
+        }, {
+        Sid      = "DynamoDBBackupManagement"
+        Effect   = "Allow"
+        Action   = ["dynamodb:CreateBackup", "dynamodb:DeleteBackup", "dynamodb:DescribeBackup", "dynamodb:ListBackups", "dynamodb:RestoreTableFromBackup", "dynamodb:RestoreTableToPointInTime"]
+        Resource = ["arn:aws:dynamodb:*:*:table/*/backup/*"]
+        }, {
+        Sid      = "DynamoDBStreamAccess"
+        Effect   = "Allow"
+        Action   = ["dynamodb:DescribeStream", "dynamodb:GetRecords", "dynamodb:GetShardIterator", "dynamodb:ListStreams"]
+        Resource = ["arn:aws:dynamodb:*:*:table/*/stream/*"]
+    }]
   })
 
   tags = merge(var.common_tags, {

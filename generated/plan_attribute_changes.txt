@@ -1,14 +1,8 @@
   ~ resource "aws_iam_role" "github_actions_iam_deployment_role" {
       ~ tags                  = {
-          ~ "Ciclo de Vida"          = "Creacion" -> "Actualizacion"
-          ~ "Generated"              = "2025-10-01T21:22:09.313076" -> "2025-10-09T20:13:09.825466"
-          ~ "Versión"                = "v1.0.8" -> "v2.0.0"
-          ~ "Última Actualización"   = "2025-09-26" -> "2025-10-09"
+          ~ "Generated"              = "2025-10-09T14:11:32.716169" -> "2025-10-09T20:27:23.235122"
       ~ tags_all              = {
-          ~ "Ciclo de Vida"          = "Creacion" -> "Actualizacion"
-          ~ "Generated"              = "2025-10-01T21:22:09.313076" -> "2025-10-09T20:13:09.825466"
-          ~ "Versión"                = "v1.0.8" -> "v2.0.0"
-          ~ "Última Actualización"   = "2025-09-26" -> "2025-10-09"
+          ~ "Generated"              = "2025-10-09T14:11:32.716169" -> "2025-10-09T20:27:23.235122"
   + resource "aws_iam_policy" "main" {
       + arn              = (known after apply)
       + attachment_count = (known after apply)

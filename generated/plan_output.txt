@@ -1,4 +1,4 @@
-[command]/home/runner/work/_temp/b418257d-3b51-4c14-bd28-9fe4eadd09d0/terraform-bin plan -no-color -input=false
+[command]/home/runner/work/_temp/6f7a000a-2415-47e3-854a-42acdd01af25/terraform-bin plan -no-color -input=false
 aws_iam_role.github_actions_iam_deployment_role: Refreshing state... [id=github-actions-iam-deployment-role]
 
 Terraform used the selected providers to generate the following execution
@@ -17,13 +17,13 @@ Terraform will perform the following actions:
             "Ambiente"               = "dev"
             "Aplicacion"             = "CICD"
             "Area"                   = "DevOps"
-          ~ "Ciclo de Vida"          = "Creacion" -> "Actualizacion"
+            "Ciclo de Vida"          = "Actualizacion"
             "Contacto"               = "darwin.lopez@claro.com.gt"
             "Creado Por"             = "DarwinLopez"
             "Direccion"              = "TIRegional"
             "Dominio"                = "BusinessIntelligence"
             "Fecha de Creacion"      = "2025-09-16"
-          ~ "Generated"              = "2025-10-01T21:22:09.313076" -> "2025-10-09T20:13:09.825466"
+          ~ "Generated"              = "2025-10-09T14:11:32.716169" -> "2025-10-09T20:27:23.235122"
             "Gerencia"               = "MCI"
             "Layer"                  = "Devops"
             "ManagedBy"              = "terraform"
@@ -36,15 +36,12 @@ Terraform will perform the following actions:
             "Source"                 = "definitions/roles/github-deployment-role.yaml"
             "Subdominio"             = "Analytics"
             "Tipo de Recurso"        = "IAMRole"
-          ~ "Versión"                = "v1.0.8" -> "v2.0.0"
-          ~ "Última Actualización"   = "2025-09-26" -> "2025-10-09"
+            "Versión"                = "v2.0.0"
+            "Última Actualización"   = "2025-10-09"
         }
       ~ tags_all              = {
-          ~ "Ciclo de Vida"          = "Creacion" -> "Actualizacion"
-          ~ "Generated"              = "2025-10-01T21:22:09.313076" -> "2025-10-09T20:13:09.825466"
-          ~ "Versión"                = "v1.0.8" -> "v2.0.0"
-          ~ "Última Actualización"   = "2025-09-26" -> "2025-10-09"
-            # (21 unchanged elements hidden)
+          ~ "Generated"              = "2025-10-09T14:11:32.716169" -> "2025-10-09T20:27:23.235122"
+            # (24 unchanged elements hidden)
         }
         # (9 unchanged attributes hidden)
 

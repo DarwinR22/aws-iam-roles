@@ -1,10 +1,10 @@
 # Data source for current AWS caller identity
 data "aws_caller_identity" "current" {}
 
-# MCI-Terraform-StateManagement Policy Module - Following ABAC Pattern
-# Converted from definitions/policies/deployment/MCI-Terraform-StateManagement.yaml
+# github-deployment-terraform-state Policy Module - Following ABAC Pattern
+# Converted from definitions/policies/deployment/github-deployment-terraform-state.yaml
 resource "aws_iam_policy" "main" {
-  name        = "mci-mci-terraform-statemanagement"
+  name        = "mci-github-deployment-terraform-state"
   path        = "/policies/"
   description = var.policy_description
 
@@ -25,7 +25,7 @@ resource "aws_iam_policy" "main" {
   })
 
   tags = merge(var.common_tags, {
-    Name = "mci-terraform-statemanagement-${var.environment}"
+    Name = "github-deployment-terraform-state-${var.environment}"
     Type = "Policy"
   })
 }
