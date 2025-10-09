@@ -46,16 +46,16 @@ role:
       file: "terraform-state-management.yaml"
       description: "S3 y DynamoDB para gestión de estado de Terraform"
     
-    - name: "lambda-abac"
-      file: "lambda-abac.yaml"
+    - name: "lambda-deployment-abac"
+      file: "lambda-deployment-abac.yaml"
       description: "Lambda con control ABAC basado en tags"
       
-    - name: "s3-abac"
-      file: "s3-abac.yaml"
+    - name: "s3-deployment-abac"
+      file: "s3-deployment-abac.yaml"
       description: "S3 con control ABAC basado en tags"
       
-    - name: "dynamodb-abac"
-      file: "dynamodb-abac.yaml"
+    - name: "dynamodb-deployment-abac"
+      file: "dynamodb-deployment-abac.yaml"
       description: "DynamoDB con control ABAC basado en tags"
       
     - name: "eventbridge-stepfunctions-abac"
