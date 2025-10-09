@@ -2,7 +2,7 @@
 data "aws_caller_identity" "current" {}
 
 # MCI-IAM-Deployment Policy Module - Following ABAC Pattern
-# Converted from definitions/policies/deployment\MCI-IAM-Deployment.yaml
+# Converted from definitions/policies/deployment/MCI-IAM-Deployment.yaml
 resource "aws_iam_policy" "main" {
   name        = "mci-iam-deployment"
   path        = "/"
@@ -12,31 +12,31 @@ resource "aws_iam_policy" "main" {
     Version = "2012-10-17"
     Statement = [
       {
-Sid    = "IAMRoleFullManagement"
-Effect = "Allow"
-        Action = ["iam:CreateRole", "iam:DeleteRole", "iam:UpdateRole", "iam:GetRole", "iam:ListRoles", "iam:ListRoleTags", "iam:TagRole", "iam:UntagRole", "iam:UpdateAssumeRolePolicy"]
-        Resource = [          "arn:aws:iam::*:role/*"        ]
-      },      {
-Sid    = "IAMPolicyFullManagement"
-Effect = "Allow"
-        Action = ["iam:CreatePolicy", "iam:DeletePolicy", "iam:GetPolicy", "iam:GetPolicyVersion", "iam:ListPolicies", "iam:ListPolicyVersions", "iam:CreatePolicyVersion", "iam:DeletePolicyVersion", "iam:SetDefaultPolicyVersion", "iam:TagPolicy", "iam:UntagPolicy", "iam:ListPolicyTags"]
-        Resource = [          "arn:aws:iam::*:policy/*"        ]
-      },      {
-Sid    = "IAMRolePolicyAttachment"
-Effect = "Allow"
-        Action = ["iam:AttachRolePolicy", "iam:DetachRolePolicy", "iam:ListAttachedRolePolicies", "iam:PutRolePolicy", "iam:DeleteRolePolicy", "iam:GetRolePolicy", "iam:ListRolePolicies"]
-        Resource = [          "arn:aws:iam::*:role/*"        ]
-      },      {
-Sid    = "IAMPassRoleForServices"
-Effect = "Allow"
-        Action = ["iam:PassRole"]
-        Resource = [          "arn:aws:iam::*:role/*"        ]
-      },      {
-Sid    = "IAMReadOnlyAccess"
-Effect = "Allow"
-        Action = ["iam:ListInstanceProfiles", "iam:GetAccountSummary", "iam:GetAccountPasswordPolicy", "iam:ListUsers", "iam:ListGroups", "iam:ListAccountAliases"]
-        Resource = [          "*"        ]
-      }    ]
+        Sid      = "IAMRoleFullManagement"
+        Effect   = "Allow"
+        Action   = ["iam:CreateRole", "iam:DeleteRole", "iam:UpdateRole", "iam:GetRole", "iam:ListRoles", "iam:ListRoleTags", "iam:TagRole", "iam:UntagRole", "iam:UpdateAssumeRolePolicy"]
+        Resource = ["arn:aws:iam::*:role/*"]
+        }, {
+        Sid      = "IAMPolicyFullManagement"
+        Effect   = "Allow"
+        Action   = ["iam:CreatePolicy", "iam:DeletePolicy", "iam:GetPolicy", "iam:GetPolicyVersion", "iam:ListPolicies", "iam:ListPolicyVersions", "iam:CreatePolicyVersion", "iam:DeletePolicyVersion", "iam:SetDefaultPolicyVersion", "iam:TagPolicy", "iam:UntagPolicy", "iam:ListPolicyTags"]
+        Resource = ["arn:aws:iam::*:policy/*"]
+        }, {
+        Sid      = "IAMRolePolicyAttachment"
+        Effect   = "Allow"
+        Action   = ["iam:AttachRolePolicy", "iam:DetachRolePolicy", "iam:ListAttachedRolePolicies", "iam:PutRolePolicy", "iam:DeleteRolePolicy", "iam:GetRolePolicy", "iam:ListRolePolicies"]
+        Resource = ["arn:aws:iam::*:role/*"]
+        }, {
+        Sid      = "IAMPassRoleForServices"
+        Effect   = "Allow"
+        Action   = ["iam:PassRole"]
+        Resource = ["arn:aws:iam::*:role/*"]
+        }, {
+        Sid      = "IAMReadOnlyAccess"
+        Effect   = "Allow"
+        Action   = ["iam:ListInstanceProfiles", "iam:GetAccountSummary", "iam:GetAccountPasswordPolicy", "iam:ListUsers", "iam:ListGroups", "iam:ListAccountAliases"]
+        Resource = ["*"]
+    }]
   })
 
   tags = merge(var.common_tags, {

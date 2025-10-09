@@ -1,7 +1,11 @@
 aws_iam_role.github_actions_iam_deployment_role -> update
-aws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_cloudformation_deployment -> create
-aws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_iam_fullmanagement -> create
-module.mci_cloudformation_deployment.aws_iam_policy.main -> create
-module.mci_dynamodb_deploymentabac.aws_iam_policy.main -> update
-module.mci_iam_fullmanagement.aws_iam_policy.main -> create
-module.mci_s3_deploymentabac.aws_iam_policy.main -> update
+aws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_iam_deployment -> create
+aws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_iam_fullmanagement -> destroy
+module.mci_iam_deployment.aws_iam_policy.main -> create
+module.mci_iam_fullmanagement.aws_iam_policy.main -> destroy
+aws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_dynamodb_deploymentabac -> replace
+aws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_lambda_deploymentabac -> replace
+aws_iam_role_policy_attachment.github_actions_iam_deployment_role_mci_s3_deploymentabac -> replace
+module.mci_dynamodb_deploymentabac.aws_iam_policy.main -> replace
+module.mci_lambda_deploymentabac.aws_iam_policy.main -> replace
+module.mci_s3_deploymentabac.aws_iam_policy.main -> replace

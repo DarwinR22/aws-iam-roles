@@ -1,3 +1,1 @@
 aws_iam_role.github_actions_iam_deployment_role
-module.mci_dynamodb_deploymentabac.aws_iam_policy.main
-module.mci_s3_deploymentabac.aws_iam_policy.main
