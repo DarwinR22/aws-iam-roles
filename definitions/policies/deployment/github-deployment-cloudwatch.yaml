@@ -1,5 +1,5 @@
 policy:
-  name: "MCI-CloudWatch-DeploymentABAC"
+  name: "github-deployment-cloudwatch"
   description: "Gestión completa de CloudWatch Logs, Métricas, Alarmas y SNS con ABAC"
   service: "cloudwatch"
   version: "1.0.0"

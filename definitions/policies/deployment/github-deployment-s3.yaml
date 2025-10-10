@@ -1,5 +1,5 @@
 policy:
-  name: "MCI-S3-DeploymentABAC"
+  name: "github-deployment-s3"
   description: "Gestión completa de buckets S3 sin restricciones ABAC para CI/CD deployment"
   service: "s3"
   version: "1.0.0"

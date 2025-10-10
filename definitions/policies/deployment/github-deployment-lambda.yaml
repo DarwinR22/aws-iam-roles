@@ -1,6 +1,6 @@
 policy:
-  name: "github-deployment-lambda-abac"
-  description: "Despliegue completo de funciones Lambda con control ABAC basado en tags de Gerencia y ambiente"
+  name: "github-deployment-lambda"
+  description: "Despliegue completo de funciones Lambda sin restricciones ABAC para CI/CD"
   service: "lambda"
   version: "1.0.0"
   
@@ -31,16 +31,6 @@ policy:
         
       resources:
         - "arn:aws:lambda:*:*:function:*"
-        
-      # ✅ ABAC: Solo funciones con tags que coincidan con el rol
-      abac_conditions:
-        - test: "StringEquals"
-          variable: "aws:RequestTag/Gerencia"
-          values: ["${aws:PrincipalTag/Gerencia}"]
-          
-        - test: "StringEquals"
-          variable: "aws:ResourceTag/Gerencia"
-          values: ["${aws:PrincipalTag/Gerencia}"]
 
     - sid: "LambdaLayersManagement"
       effect: "Allow"

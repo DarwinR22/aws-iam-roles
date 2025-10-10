@@ -1,5 +1,5 @@
 policy:
-  name: "MCI-Glue-DeploymentABAC"
+  name: "github-deployment-glue"
   description: "Gestión de Glue, IAM PassRole y KMS para despliegue de infraestructura con ABAC"
   service: "glue"
   version: "1.0.0"

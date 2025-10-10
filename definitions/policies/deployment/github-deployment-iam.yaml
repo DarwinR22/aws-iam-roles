@@ -1,5 +1,5 @@
 policy:
-  name: "MCI-IAM-Deployment"
+  name: "github-deployment-iam"
   description: "Gestión completa de roles y políticas IAM para despliegues de infraestructura con Terraform (sin restricciones ABAC para CI/CD)"
   service: "iam"
   version: "1.0.0"

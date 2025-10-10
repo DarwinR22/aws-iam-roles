@@ -42,40 +42,40 @@ role:
 
   # Referenced policy modules - these will be combined into the role
   policy_modules:
-    - name: "MCI-Terraform-StateManagement"
-      file: "MCI-Terraform-StateManagement.yaml"
+    - name: "github-deployment-tfstate"
+      file: "github-deployment-tfstate.yaml"
       description: "S3 y DynamoDB para gestión de estado de Terraform (solo GitHub Actions)"
     
-    - name: "MCI-Lambda-DeploymentABAC"
-      file: "MCI-Lambda-DeploymentABAC.yaml"
+    - name: "github-deployment-lambda"
+      file: "github-deployment-lambda.yaml"
       description: "Lambda con control ABAC basado en tags (solo deployment)"
       
-    - name: "MCI-S3-DeploymentABAC"
-      file: "MCI-S3-DeploymentABAC.yaml"
+    - name: "github-deployment-s3"
+      file: "github-deployment-s3.yaml"
       description: "S3 con control ABAC basado en tags (solo deployment)"
       
-    - name: "MCI-DynamoDB-DeploymentABAC"
-      file: "MCI-DynamoDB-DeploymentABAC.yaml"
+    - name: "github-deployment-dynamodb"
+      file: "github-deployment-dynamodb.yaml"
       description: "DynamoDB con control ABAC basado en tags (solo deployment)"
       
-    - name: "MCI-EventBridge-DeploymentABAC"
-      file: "MCI-EventBridge-DeploymentABAC.yaml"
+    - name: "github-deployment-eventbridge"
+      file: "github-deployment-eventbridge.yaml"
       description: "EventBridge y Step Functions con control ABAC (solo deployment)"
       
-    - name: "MCI-CloudWatch-DeploymentABAC"
-      file: "MCI-CloudWatch-DeploymentABAC.yaml"
+    - name: "github-deployment-cloudwatch"
+      file: "github-deployment-cloudwatch.yaml"
       description: "CloudWatch y SNS con control ABAC (solo deployment)"
       
-    - name: "MCI-Glue-DeploymentABAC"
-      file: "MCI-Glue-DeploymentABAC.yaml"
+    - name: "github-deployment-glue"
+      file: "github-deployment-glue.yaml"
       description: "Glue, IAM PassRole y KMS con control ABAC (solo deployment)"
       
-    - name: "MCI-IAM-Deployment"
-      file: "MCI-IAM-Deployment.yaml"
+    - name: "github-deployment-iam"
+      file: "github-deployment-iam.yaml"
       description: "Gestión completa de IAM (CreateRole, CreatePolicy, AttachRolePolicy, PassRole)"
       
-    - name: "MCI-CloudFormation-Deployment"
-      file: "MCI-CloudFormation-Deployment.yaml"
+    - name: "github-deployment-cloudformation"
+      file: "github-deployment-cloudformation.yaml"
       description: "CloudFormation stacks y KMS encryption con ViaService conditions"
 
   # Organizational tags for compliance and governance

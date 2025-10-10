@@ -6,7 +6,7 @@
 # This file is auto-generated from YAML definitions.
 # DO NOT EDIT MANUALLY - Changes will be overwritten.
 # 
-# Generated: 2025-10-09T23:41:00.756605
+# Generated: 2025-10-10T10:32:41.489300
 # Source: Multiple role definitions in definitions/roles/
 # ==============================================================================
 
@@ -25,7 +25,7 @@ data "aws_iam_policy_document" "github_actions_iam_deployment_role_trust" {
   # OIDC Trust Policy for GitHub Actions
   statement {
     effect = "Allow"
-
+    
     principals {
       type        = "Federated"
       identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/token.actions.githubusercontent.com"]
@@ -36,14 +36,14 @@ data "aws_iam_policy_document" "github_actions_iam_deployment_role_trust" {
     condition {
       test     = "StringEquals"
       variable = "token.actions.githubusercontent.com:aud"
-      values = [
+      values   = [
         "sts.amazonaws.com"
       ]
     }
     condition {
       test     = "StringLike"
       variable = "token.actions.githubusercontent.com:sub"
-      values = [
+      values   = [
         "repo:ClaroCENAM/*"
       ]
     }
@@ -59,451 +59,451 @@ resource "aws_iam_role" "github_actions_iam_deployment_role" {
   max_session_duration = 3600
 
   tags = {
-    "Pais"                 = "RG"
-    "Gerencia"             = "MCI"
-    "Area"                 = "DevOps"
-    "Ambiente"             = "DEV"
-    "Direccion"            = "TIRegional"
-    "Modulo"               = "IAM"
-    "Alcance SOX"          = "No"
-    "Propietario"          = "DarwinLopez"
-    "Proveedor"            = "InHouse"
-    "Layer"                = "Devops"
-    "Dominio"              = "BusinessIntelligence"
-    "Subdominio"           = "Analytics"
-    "Aplicacion"           = "CICD"
-    "Name"                 = "github-actions-iam-deployment-role"
-    "Tipo de Recurso"      = "IAMRole"
-    "Soporte"              = "darwin.lopez@claro.com.gt"
-    "Contacto"             = "darwin.lopez@claro.com.gt"
-    "Creado Por"           = "DarwinLopez"
-    "Ciclo de Vida"        = "Actualizacion"
-    "Versión"              = "v2.0.0"
-    "Fecha de Creacion"    = "2025-09-16"
+    "Pais" = "RG"
+    "Gerencia" = "MCI"
+    "Area" = "DevOps"
+    "Ambiente" = "DEV"
+    "Direccion" = "TIRegional"
+    "Modulo" = "IAM"
+    "Alcance SOX" = "No"
+    "Propietario" = "DarwinLopez"
+    "Proveedor" = "InHouse"
+    "Layer" = "Devops"
+    "Dominio" = "BusinessIntelligence"
+    "Subdominio" = "Analytics"
+    "Aplicacion" = "CICD"
+    "Name" = "github-actions-iam-deployment-role"
+    "Tipo de Recurso" = "IAMRole"
+    "Soporte" = "darwin.lopez@claro.com.gt"
+    "Contacto" = "darwin.lopez@claro.com.gt"
+    "Creado Por" = "DarwinLopez"
+    "Ciclo de Vida" = "Actualizacion"
+    "Versión" = "v2.0.0"
+    "Fecha de Creacion" = "2025-09-16"
     "Última Actualización" = "2025-10-09"
     # Auto-generated tags
     "ManagedBy" = "terraform"
     "Source"    = "definitions/roles/github-deployment-role.yaml"
-    "Generated" = "2025-10-09T23:41:00.756605"
+    "Generated" = "2025-10-10T10:32:41.489300"
   }
 }
 
 # Create policies as independent modules (not attached to role)
-module "mci_terraform_statemanagement" {
-  source = "./modules/policies/mci_terraform_statemanagement"
-
+module "github_deployment_tfstate" {
+  source = "./modules/policies/github_deployment_tfstate"
+  
   environment = "DEV"
-
+  
   # ABAC conditions for policy restrictions
   abac_conditions = {
     "aws:PrincipalTag/Gerencia" = ["MCI"]
     "aws:PrincipalTag/Area"     = ["DevOps"]
     "aws:PrincipalTag/Ambiente" = ["DEV"]
   }
-
+  
   # AWS Configuration
-  aws_region          = "us-east-1"
-  role_prefix         = "MCI-"
-  policy_prefix       = "MCI-"
-  s3_bucket_name      = "mci-terraform-state"
-  dynamodb_table_name = "mci-terraform-locks"
+  aws_region            = "us-east-1"
+  role_prefix          = "MCI-"
+  policy_prefix        = "MCI-"
+  s3_bucket_name       = "mci-terraform-state"
+  dynamodb_table_name  = "mci-terraform-locks"
   kms_key_id          = "*"
-
+  
   common_tags = {
-    "Pais"            = "RG"
-    "Gerencia"        = "MCI"
-    "Area"            = "DevOps"
-    "Ambiente"        = "DEV"
-    "Direccion"       = "TIRegional"
-    "Modulo"          = "IAM"
-    "Alcance SOX"     = "No"
-    "Propietario"     = "DarwinLopez"
-    "Proveedor"       = "InHouse"
-    "Layer"           = "Devops"
-    "Dominio"         = "BusinessIntelligence"
-    "Subdominio"      = "Analytics"
-    "Aplicacion"      = "CICD"
+    "Pais" = "RG"
+    "Gerencia" = "MCI"
+    "Area" = "DevOps"  
+    "Ambiente" = "DEV"
+    "Direccion" = "TIRegional"
+    "Modulo" = "IAM"
+    "Alcance SOX" = "No"
+    "Propietario" = "DarwinLopez"
+    "Proveedor" = "InHouse"
+    "Layer" = "Devops"
+    "Dominio" = "BusinessIntelligence"
+    "Subdominio" = "Analytics"
+    "Aplicacion" = "CICD"
     "Tipo de Recurso" = "IAMPolicy"
-    "Soporte"         = "darwin.lopez@claro.com.gt"
-    "Contacto"        = "darwin.lopez@claro.com.gt"
-    "Creado Por"      = "DarwinLopez"
-    "Ciclo de Vida"   = "Creacion"
-    "ManagedBy"       = "terraform"
+    "Soporte" = "darwin.lopez@claro.com.gt"
+    "Contacto" = "darwin.lopez@claro.com.gt"
+    "Creado Por" = "DarwinLopez"
+    "Ciclo de Vida" = "Creacion"
+    "ManagedBy" = "terraform"
   }
 }
-module "mci_lambda_deploymentabac" {
-  source = "./modules/policies/mci_lambda_deploymentabac"
-
+module "github_deployment_lambda" {
+  source = "./modules/policies/github_deployment_lambda"
+  
   environment = "DEV"
-
+  
   # ABAC conditions for policy restrictions
   abac_conditions = {
     "aws:PrincipalTag/Gerencia" = ["MCI"]
     "aws:PrincipalTag/Area"     = ["DevOps"]
     "aws:PrincipalTag/Ambiente" = ["DEV"]
   }
-
+  
   # AWS Configuration
-  aws_region          = "us-east-1"
-  role_prefix         = "MCI-"
-  policy_prefix       = "MCI-"
-  s3_bucket_name      = "mci-terraform-state"
-  dynamodb_table_name = "mci-terraform-locks"
+  aws_region            = "us-east-1"
+  role_prefix          = "MCI-"
+  policy_prefix        = "MCI-"
+  s3_bucket_name       = "mci-terraform-state"
+  dynamodb_table_name  = "mci-terraform-locks"
   kms_key_id          = "*"
-
+  
   common_tags = {
-    "Pais"            = "RG"
-    "Gerencia"        = "MCI"
-    "Area"            = "DevOps"
-    "Ambiente"        = "DEV"
-    "Direccion"       = "TIRegional"
-    "Modulo"          = "IAM"
-    "Alcance SOX"     = "No"
-    "Propietario"     = "DarwinLopez"
-    "Proveedor"       = "InHouse"
-    "Layer"           = "Devops"
-    "Dominio"         = "BusinessIntelligence"
-    "Subdominio"      = "Analytics"
-    "Aplicacion"      = "CICD"
+    "Pais" = "RG"
+    "Gerencia" = "MCI"
+    "Area" = "DevOps"  
+    "Ambiente" = "DEV"
+    "Direccion" = "TIRegional"
+    "Modulo" = "IAM"
+    "Alcance SOX" = "No"
+    "Propietario" = "DarwinLopez"
+    "Proveedor" = "InHouse"
+    "Layer" = "Devops"
+    "Dominio" = "BusinessIntelligence"
+    "Subdominio" = "Analytics"
+    "Aplicacion" = "CICD"
     "Tipo de Recurso" = "IAMPolicy"
-    "Soporte"         = "darwin.lopez@claro.com.gt"
-    "Contacto"        = "darwin.lopez@claro.com.gt"
-    "Creado Por"      = "DarwinLopez"
-    "Ciclo de Vida"   = "Creacion"
-    "ManagedBy"       = "terraform"
+    "Soporte" = "darwin.lopez@claro.com.gt"
+    "Contacto" = "darwin.lopez@claro.com.gt"
+    "Creado Por" = "DarwinLopez"
+    "Ciclo de Vida" = "Creacion"
+    "ManagedBy" = "terraform"
   }
 }
-module "mci_s3_deploymentabac" {
-  source = "./modules/policies/mci_s3_deploymentabac"
-
+module "github_deployment_s3" {
+  source = "./modules/policies/github_deployment_s3"
+  
   environment = "DEV"
-
+  
   # ABAC conditions for policy restrictions
   abac_conditions = {
     "aws:PrincipalTag/Gerencia" = ["MCI"]
     "aws:PrincipalTag/Area"     = ["DevOps"]
     "aws:PrincipalTag/Ambiente" = ["DEV"]
   }
-
+  
   # AWS Configuration
-  aws_region          = "us-east-1"
-  role_prefix         = "MCI-"
-  policy_prefix       = "MCI-"
-  s3_bucket_name      = "mci-terraform-state"
-  dynamodb_table_name = "mci-terraform-locks"
+  aws_region            = "us-east-1"
+  role_prefix          = "MCI-"
+  policy_prefix        = "MCI-"
+  s3_bucket_name       = "mci-terraform-state"
+  dynamodb_table_name  = "mci-terraform-locks"
   kms_key_id          = "*"
-
+  
   common_tags = {
-    "Pais"            = "RG"
-    "Gerencia"        = "MCI"
-    "Area"            = "DevOps"
-    "Ambiente"        = "DEV"
-    "Direccion"       = "TIRegional"
-    "Modulo"          = "IAM"
-    "Alcance SOX"     = "No"
-    "Propietario"     = "DarwinLopez"
-    "Proveedor"       = "InHouse"
-    "Layer"           = "Devops"
-    "Dominio"         = "BusinessIntelligence"
-    "Subdominio"      = "Analytics"
-    "Aplicacion"      = "CICD"
+    "Pais" = "RG"
+    "Gerencia" = "MCI"
+    "Area" = "DevOps"  
+    "Ambiente" = "DEV"
+    "Direccion" = "TIRegional"
+    "Modulo" = "IAM"
+    "Alcance SOX" = "No"
+    "Propietario" = "DarwinLopez"
+    "Proveedor" = "InHouse"
+    "Layer" = "Devops"
+    "Dominio" = "BusinessIntelligence"
+    "Subdominio" = "Analytics"
+    "Aplicacion" = "CICD"
     "Tipo de Recurso" = "IAMPolicy"
-    "Soporte"         = "darwin.lopez@claro.com.gt"
-    "Contacto"        = "darwin.lopez@claro.com.gt"
-    "Creado Por"      = "DarwinLopez"
-    "Ciclo de Vida"   = "Creacion"
-    "ManagedBy"       = "terraform"
+    "Soporte" = "darwin.lopez@claro.com.gt"
+    "Contacto" = "darwin.lopez@claro.com.gt"
+    "Creado Por" = "DarwinLopez"
+    "Ciclo de Vida" = "Creacion"
+    "ManagedBy" = "terraform"
   }
 }
-module "mci_dynamodb_deploymentabac" {
-  source = "./modules/policies/mci_dynamodb_deploymentabac"
-
+module "github_deployment_dynamodb" {
+  source = "./modules/policies/github_deployment_dynamodb"
+  
   environment = "DEV"
-
+  
   # ABAC conditions for policy restrictions
   abac_conditions = {
     "aws:PrincipalTag/Gerencia" = ["MCI"]
     "aws:PrincipalTag/Area"     = ["DevOps"]
     "aws:PrincipalTag/Ambiente" = ["DEV"]
   }
-
+  
   # AWS Configuration
-  aws_region          = "us-east-1"
-  role_prefix         = "MCI-"
-  policy_prefix       = "MCI-"
-  s3_bucket_name      = "mci-terraform-state"
-  dynamodb_table_name = "mci-terraform-locks"
+  aws_region            = "us-east-1"
+  role_prefix          = "MCI-"
+  policy_prefix        = "MCI-"
+  s3_bucket_name       = "mci-terraform-state"
+  dynamodb_table_name  = "mci-terraform-locks"
   kms_key_id          = "*"
-
+  
   common_tags = {
-    "Pais"            = "RG"
-    "Gerencia"        = "MCI"
-    "Area"            = "DevOps"
-    "Ambiente"        = "DEV"
-    "Direccion"       = "TIRegional"
-    "Modulo"          = "IAM"
-    "Alcance SOX"     = "No"
-    "Propietario"     = "DarwinLopez"
-    "Proveedor"       = "InHouse"
-    "Layer"           = "Devops"
-    "Dominio"         = "BusinessIntelligence"
-    "Subdominio"      = "Analytics"
-    "Aplicacion"      = "CICD"
+    "Pais" = "RG"
+    "Gerencia" = "MCI"
+    "Area" = "DevOps"  
+    "Ambiente" = "DEV"
+    "Direccion" = "TIRegional"
+    "Modulo" = "IAM"
+    "Alcance SOX" = "No"
+    "Propietario" = "DarwinLopez"
+    "Proveedor" = "InHouse"
+    "Layer" = "Devops"
+    "Dominio" = "BusinessIntelligence"
+    "Subdominio" = "Analytics"
+    "Aplicacion" = "CICD"
     "Tipo de Recurso" = "IAMPolicy"
-    "Soporte"         = "darwin.lopez@claro.com.gt"
-    "Contacto"        = "darwin.lopez@claro.com.gt"
-    "Creado Por"      = "DarwinLopez"
-    "Ciclo de Vida"   = "Creacion"
-    "ManagedBy"       = "terraform"
+    "Soporte" = "darwin.lopez@claro.com.gt"
+    "Contacto" = "darwin.lopez@claro.com.gt"
+    "Creado Por" = "DarwinLopez"
+    "Ciclo de Vida" = "Creacion"
+    "ManagedBy" = "terraform"
   }
 }
-module "mci_eventbridge_deploymentabac" {
-  source = "./modules/policies/mci_eventbridge_deploymentabac"
-
+module "github_deployment_eventbridge" {
+  source = "./modules/policies/github_deployment_eventbridge"
+  
   environment = "DEV"
-
+  
   # ABAC conditions for policy restrictions
   abac_conditions = {
     "aws:PrincipalTag/Gerencia" = ["MCI"]
     "aws:PrincipalTag/Area"     = ["DevOps"]
     "aws:PrincipalTag/Ambiente" = ["DEV"]
   }
-
+  
   # AWS Configuration
-  aws_region          = "us-east-1"
-  role_prefix         = "MCI-"
-  policy_prefix       = "MCI-"
-  s3_bucket_name      = "mci-terraform-state"
-  dynamodb_table_name = "mci-terraform-locks"
+  aws_region            = "us-east-1"
+  role_prefix          = "MCI-"
+  policy_prefix        = "MCI-"
+  s3_bucket_name       = "mci-terraform-state"
+  dynamodb_table_name  = "mci-terraform-locks"
   kms_key_id          = "*"
-
+  
   common_tags = {
-    "Pais"            = "RG"
-    "Gerencia"        = "MCI"
-    "Area"            = "DevOps"
-    "Ambiente"        = "DEV"
-    "Direccion"       = "TIRegional"
-    "Modulo"          = "IAM"
-    "Alcance SOX"     = "No"
-    "Propietario"     = "DarwinLopez"
-    "Proveedor"       = "InHouse"
-    "Layer"           = "Devops"
-    "Dominio"         = "BusinessIntelligence"
-    "Subdominio"      = "Analytics"
-    "Aplicacion"      = "CICD"
+    "Pais" = "RG"
+    "Gerencia" = "MCI"
+    "Area" = "DevOps"  
+    "Ambiente" = "DEV"
+    "Direccion" = "TIRegional"
+    "Modulo" = "IAM"
+    "Alcance SOX" = "No"
+    "Propietario" = "DarwinLopez"
+    "Proveedor" = "InHouse"
+    "Layer" = "Devops"
+    "Dominio" = "BusinessIntelligence"
+    "Subdominio" = "Analytics"
+    "Aplicacion" = "CICD"
     "Tipo de Recurso" = "IAMPolicy"
-    "Soporte"         = "darwin.lopez@claro.com.gt"
-    "Contacto"        = "darwin.lopez@claro.com.gt"
-    "Creado Por"      = "DarwinLopez"
-    "Ciclo de Vida"   = "Creacion"
-    "ManagedBy"       = "terraform"
+    "Soporte" = "darwin.lopez@claro.com.gt"
+    "Contacto" = "darwin.lopez@claro.com.gt"
+    "Creado Por" = "DarwinLopez"
+    "Ciclo de Vida" = "Creacion"
+    "ManagedBy" = "terraform"
   }
 }
-module "mci_cloudwatch_deploymentabac" {
-  source = "./modules/policies/mci_cloudwatch_deploymentabac"
-
+module "github_deployment_cloudwatch" {
+  source = "./modules/policies/github_deployment_cloudwatch"
+  
   environment = "DEV"
-
+  
   # ABAC conditions for policy restrictions
   abac_conditions = {
     "aws:PrincipalTag/Gerencia" = ["MCI"]
     "aws:PrincipalTag/Area"     = ["DevOps"]
     "aws:PrincipalTag/Ambiente" = ["DEV"]
   }
-
+  
   # AWS Configuration
-  aws_region          = "us-east-1"
-  role_prefix         = "MCI-"
-  policy_prefix       = "MCI-"
-  s3_bucket_name      = "mci-terraform-state"
-  dynamodb_table_name = "mci-terraform-locks"
+  aws_region            = "us-east-1"
+  role_prefix          = "MCI-"
+  policy_prefix        = "MCI-"
+  s3_bucket_name       = "mci-terraform-state"
+  dynamodb_table_name  = "mci-terraform-locks"
   kms_key_id          = "*"
-
+  
   common_tags = {
-    "Pais"            = "RG"
-    "Gerencia"        = "MCI"
-    "Area"            = "DevOps"
-    "Ambiente"        = "DEV"
-    "Direccion"       = "TIRegional"
-    "Modulo"          = "IAM"
-    "Alcance SOX"     = "No"
-    "Propietario"     = "DarwinLopez"
-    "Proveedor"       = "InHouse"
-    "Layer"           = "Devops"
-    "Dominio"         = "BusinessIntelligence"
-    "Subdominio"      = "Analytics"
-    "Aplicacion"      = "CICD"
+    "Pais" = "RG"
+    "Gerencia" = "MCI"
+    "Area" = "DevOps"  
+    "Ambiente" = "DEV"
+    "Direccion" = "TIRegional"
+    "Modulo" = "IAM"
+    "Alcance SOX" = "No"
+    "Propietario" = "DarwinLopez"
+    "Proveedor" = "InHouse"
+    "Layer" = "Devops"
+    "Dominio" = "BusinessIntelligence"
+    "Subdominio" = "Analytics"
+    "Aplicacion" = "CICD"
     "Tipo de Recurso" = "IAMPolicy"
-    "Soporte"         = "darwin.lopez@claro.com.gt"
-    "Contacto"        = "darwin.lopez@claro.com.gt"
-    "Creado Por"      = "DarwinLopez"
-    "Ciclo de Vida"   = "Creacion"
-    "ManagedBy"       = "terraform"
+    "Soporte" = "darwin.lopez@claro.com.gt"
+    "Contacto" = "darwin.lopez@claro.com.gt"
+    "Creado Por" = "DarwinLopez"
+    "Ciclo de Vida" = "Creacion"
+    "ManagedBy" = "terraform"
   }
 }
-module "mci_glue_deploymentabac" {
-  source = "./modules/policies/mci_glue_deploymentabac"
-
+module "github_deployment_glue" {
+  source = "./modules/policies/github_deployment_glue"
+  
   environment = "DEV"
-
+  
   # ABAC conditions for policy restrictions
   abac_conditions = {
     "aws:PrincipalTag/Gerencia" = ["MCI"]
     "aws:PrincipalTag/Area"     = ["DevOps"]
     "aws:PrincipalTag/Ambiente" = ["DEV"]
   }
-
+  
   # AWS Configuration
-  aws_region          = "us-east-1"
-  role_prefix         = "MCI-"
-  policy_prefix       = "MCI-"
-  s3_bucket_name      = "mci-terraform-state"
-  dynamodb_table_name = "mci-terraform-locks"
+  aws_region            = "us-east-1"
+  role_prefix          = "MCI-"
+  policy_prefix        = "MCI-"
+  s3_bucket_name       = "mci-terraform-state"
+  dynamodb_table_name  = "mci-terraform-locks"
   kms_key_id          = "*"
-
+  
   common_tags = {
-    "Pais"            = "RG"
-    "Gerencia"        = "MCI"
-    "Area"            = "DevOps"
-    "Ambiente"        = "DEV"
-    "Direccion"       = "TIRegional"
-    "Modulo"          = "IAM"
-    "Alcance SOX"     = "No"
-    "Propietario"     = "DarwinLopez"
-    "Proveedor"       = "InHouse"
-    "Layer"           = "Devops"
-    "Dominio"         = "BusinessIntelligence"
-    "Subdominio"      = "Analytics"
-    "Aplicacion"      = "CICD"
+    "Pais" = "RG"
+    "Gerencia" = "MCI"
+    "Area" = "DevOps"  
+    "Ambiente" = "DEV"
+    "Direccion" = "TIRegional"
+    "Modulo" = "IAM"
+    "Alcance SOX" = "No"
+    "Propietario" = "DarwinLopez"
+    "Proveedor" = "InHouse"
+    "Layer" = "Devops"
+    "Dominio" = "BusinessIntelligence"
+    "Subdominio" = "Analytics"
+    "Aplicacion" = "CICD"
     "Tipo de Recurso" = "IAMPolicy"
-    "Soporte"         = "darwin.lopez@claro.com.gt"
-    "Contacto"        = "darwin.lopez@claro.com.gt"
-    "Creado Por"      = "DarwinLopez"
-    "Ciclo de Vida"   = "Creacion"
-    "ManagedBy"       = "terraform"
+    "Soporte" = "darwin.lopez@claro.com.gt"
+    "Contacto" = "darwin.lopez@claro.com.gt"
+    "Creado Por" = "DarwinLopez"
+    "Ciclo de Vida" = "Creacion"
+    "ManagedBy" = "terraform"
   }
 }
-module "mci_iam_deployment" {
-  source = "./modules/policies/mci_iam_deployment"
-
+module "github_deployment_iam" {
+  source = "./modules/policies/github_deployment_iam"
+  
   environment = "DEV"
-
+  
   # ABAC conditions for policy restrictions
   abac_conditions = {
     "aws:PrincipalTag/Gerencia" = ["MCI"]
     "aws:PrincipalTag/Area"     = ["DevOps"]
     "aws:PrincipalTag/Ambiente" = ["DEV"]
   }
-
+  
   # AWS Configuration
-  aws_region          = "us-east-1"
-  role_prefix         = "MCI-"
-  policy_prefix       = "MCI-"
-  s3_bucket_name      = "mci-terraform-state"
-  dynamodb_table_name = "mci-terraform-locks"
+  aws_region            = "us-east-1"
+  role_prefix          = "MCI-"
+  policy_prefix        = "MCI-"
+  s3_bucket_name       = "mci-terraform-state"
+  dynamodb_table_name  = "mci-terraform-locks"
   kms_key_id          = "*"
-
+  
   common_tags = {
-    "Pais"            = "RG"
-    "Gerencia"        = "MCI"
-    "Area"            = "DevOps"
-    "Ambiente"        = "DEV"
-    "Direccion"       = "TIRegional"
-    "Modulo"          = "IAM"
-    "Alcance SOX"     = "No"
-    "Propietario"     = "DarwinLopez"
-    "Proveedor"       = "InHouse"
-    "Layer"           = "Devops"
-    "Dominio"         = "BusinessIntelligence"
-    "Subdominio"      = "Analytics"
-    "Aplicacion"      = "CICD"
+    "Pais" = "RG"
+    "Gerencia" = "MCI"
+    "Area" = "DevOps"  
+    "Ambiente" = "DEV"
+    "Direccion" = "TIRegional"
+    "Modulo" = "IAM"
+    "Alcance SOX" = "No"
+    "Propietario" = "DarwinLopez"
+    "Proveedor" = "InHouse"
+    "Layer" = "Devops"
+    "Dominio" = "BusinessIntelligence"
+    "Subdominio" = "Analytics"
+    "Aplicacion" = "CICD"
     "Tipo de Recurso" = "IAMPolicy"
-    "Soporte"         = "darwin.lopez@claro.com.gt"
-    "Contacto"        = "darwin.lopez@claro.com.gt"
-    "Creado Por"      = "DarwinLopez"
-    "Ciclo de Vida"   = "Creacion"
-    "ManagedBy"       = "terraform"
+    "Soporte" = "darwin.lopez@claro.com.gt"
+    "Contacto" = "darwin.lopez@claro.com.gt"
+    "Creado Por" = "DarwinLopez"
+    "Ciclo de Vida" = "Creacion"
+    "ManagedBy" = "terraform"
   }
 }
-module "mci_cloudformation_deployment" {
-  source = "./modules/policies/mci_cloudformation_deployment"
-
+module "github_deployment_cloudformation" {
+  source = "./modules/policies/github_deployment_cloudformation"
+  
   environment = "DEV"
-
+  
   # ABAC conditions for policy restrictions
   abac_conditions = {
     "aws:PrincipalTag/Gerencia" = ["MCI"]
     "aws:PrincipalTag/Area"     = ["DevOps"]
     "aws:PrincipalTag/Ambiente" = ["DEV"]
   }
-
+  
   # AWS Configuration
-  aws_region          = "us-east-1"
-  role_prefix         = "MCI-"
-  policy_prefix       = "MCI-"
-  s3_bucket_name      = "mci-terraform-state"
-  dynamodb_table_name = "mci-terraform-locks"
+  aws_region            = "us-east-1"
+  role_prefix          = "MCI-"
+  policy_prefix        = "MCI-"
+  s3_bucket_name       = "mci-terraform-state"
+  dynamodb_table_name  = "mci-terraform-locks"
   kms_key_id          = "*"
-
+  
   common_tags = {
-    "Pais"            = "RG"
-    "Gerencia"        = "MCI"
-    "Area"            = "DevOps"
-    "Ambiente"        = "DEV"
-    "Direccion"       = "TIRegional"
-    "Modulo"          = "IAM"
-    "Alcance SOX"     = "No"
-    "Propietario"     = "DarwinLopez"
-    "Proveedor"       = "InHouse"
-    "Layer"           = "Devops"
-    "Dominio"         = "BusinessIntelligence"
-    "Subdominio"      = "Analytics"
-    "Aplicacion"      = "CICD"
+    "Pais" = "RG"
+    "Gerencia" = "MCI"
+    "Area" = "DevOps"  
+    "Ambiente" = "DEV"
+    "Direccion" = "TIRegional"
+    "Modulo" = "IAM"
+    "Alcance SOX" = "No"
+    "Propietario" = "DarwinLopez"
+    "Proveedor" = "InHouse"
+    "Layer" = "Devops"
+    "Dominio" = "BusinessIntelligence"
+    "Subdominio" = "Analytics"
+    "Aplicacion" = "CICD"
     "Tipo de Recurso" = "IAMPolicy"
-    "Soporte"         = "darwin.lopez@claro.com.gt"
-    "Contacto"        = "darwin.lopez@claro.com.gt"
-    "Creado Por"      = "DarwinLopez"
-    "Ciclo de Vida"   = "Creacion"
-    "ManagedBy"       = "terraform"
+    "Soporte" = "darwin.lopez@claro.com.gt"
+    "Contacto" = "darwin.lopez@claro.com.gt"
+    "Creado Por" = "DarwinLopez"
+    "Ciclo de Vida" = "Creacion"
+    "ManagedBy" = "terraform"
   }
 }
 
 # Attach policies to role
-resource "aws_iam_role_policy_attachment" "github_actions_iam_deployment_role_mci_terraform_statemanagement" {
+resource "aws_iam_role_policy_attachment" "github_actions_iam_deployment_role_github_deployment_tfstate" {
   role       = aws_iam_role.github_actions_iam_deployment_role.name
-  policy_arn = module.mci_terraform_statemanagement.policy_arn
+  policy_arn = module.github_deployment_tfstate.policy_arn
 }
-resource "aws_iam_role_policy_attachment" "github_actions_iam_deployment_role_mci_lambda_deploymentabac" {
+resource "aws_iam_role_policy_attachment" "github_actions_iam_deployment_role_github_deployment_lambda" {
   role       = aws_iam_role.github_actions_iam_deployment_role.name
-  policy_arn = module.mci_lambda_deploymentabac.policy_arn
+  policy_arn = module.github_deployment_lambda.policy_arn
 }
-resource "aws_iam_role_policy_attachment" "github_actions_iam_deployment_role_mci_s3_deploymentabac" {
+resource "aws_iam_role_policy_attachment" "github_actions_iam_deployment_role_github_deployment_s3" {
   role       = aws_iam_role.github_actions_iam_deployment_role.name
-  policy_arn = module.mci_s3_deploymentabac.policy_arn
+  policy_arn = module.github_deployment_s3.policy_arn
 }
-resource "aws_iam_role_policy_attachment" "github_actions_iam_deployment_role_mci_dynamodb_deploymentabac" {
+resource "aws_iam_role_policy_attachment" "github_actions_iam_deployment_role_github_deployment_dynamodb" {
   role       = aws_iam_role.github_actions_iam_deployment_role.name
-  policy_arn = module.mci_dynamodb_deploymentabac.policy_arn
+  policy_arn = module.github_deployment_dynamodb.policy_arn
 }
-resource "aws_iam_role_policy_attachment" "github_actions_iam_deployment_role_mci_eventbridge_deploymentabac" {
+resource "aws_iam_role_policy_attachment" "github_actions_iam_deployment_role_github_deployment_eventbridge" {
   role       = aws_iam_role.github_actions_iam_deployment_role.name
-  policy_arn = module.mci_eventbridge_deploymentabac.policy_arn
+  policy_arn = module.github_deployment_eventbridge.policy_arn
 }
-resource "aws_iam_role_policy_attachment" "github_actions_iam_deployment_role_mci_cloudwatch_deploymentabac" {
+resource "aws_iam_role_policy_attachment" "github_actions_iam_deployment_role_github_deployment_cloudwatch" {
   role       = aws_iam_role.github_actions_iam_deployment_role.name
-  policy_arn = module.mci_cloudwatch_deploymentabac.policy_arn
+  policy_arn = module.github_deployment_cloudwatch.policy_arn
 }
-resource "aws_iam_role_policy_attachment" "github_actions_iam_deployment_role_mci_glue_deploymentabac" {
+resource "aws_iam_role_policy_attachment" "github_actions_iam_deployment_role_github_deployment_glue" {
   role       = aws_iam_role.github_actions_iam_deployment_role.name
-  policy_arn = module.mci_glue_deploymentabac.policy_arn
+  policy_arn = module.github_deployment_glue.policy_arn
 }
-resource "aws_iam_role_policy_attachment" "github_actions_iam_deployment_role_mci_iam_deployment" {
+resource "aws_iam_role_policy_attachment" "github_actions_iam_deployment_role_github_deployment_iam" {
   role       = aws_iam_role.github_actions_iam_deployment_role.name
-  policy_arn = module.mci_iam_deployment.policy_arn
+  policy_arn = module.github_deployment_iam.policy_arn
 }
-resource "aws_iam_role_policy_attachment" "github_actions_iam_deployment_role_mci_cloudformation_deployment" {
+resource "aws_iam_role_policy_attachment" "github_actions_iam_deployment_role_github_deployment_cloudformation" {
   role       = aws_iam_role.github_actions_iam_deployment_role.name
-  policy_arn = module.mci_cloudformation_deployment.policy_arn
+  policy_arn = module.github_deployment_cloudformation.policy_arn
 }
 
 # Cleanup module for obsolete policies (TEMPORARILY DISABLED - performance issue)

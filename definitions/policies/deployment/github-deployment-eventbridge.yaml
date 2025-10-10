@@ -1,5 +1,5 @@
 policy:
-  name: "MCI-EventBridge-DeploymentABAC"
+  name: "github-deployment-eventbridge"
   description: "Gestión de EventBridge, Scheduler y StepFunctions con control ABAC"
   service: "events"
   version: "1.0.0"

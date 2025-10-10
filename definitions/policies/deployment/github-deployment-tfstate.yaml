@@ -1,5 +1,5 @@
 policy:
-  name: "github-deployment-terraform-state"
+  name: "github-deployment-tfstate"
   description: "Gestión de estado de Terraform en S3 y locks en DynamoDB (sin ABAC - requerido para CI/CD)"
   service: "terraform"
   version: "1.0.0"

@@ -1,5 +1,5 @@
 policy:
-  name: "MCI-DynamoDB-DeploymentABAC"
+  name: "github-deployment-dynamodb"
   description: "Gestión completa de tablas DynamoDB sin restricciones ABAC para CI/CD deployment"
   service: "dynamodb"
   version: "1.0.0"
