@@ -2,7 +2,7 @@ policy:
   name: "github-deployment-cloudformation"
   description: "Permisos para despliegues con CloudFormation, KMS encryption y servicios adicionales"
   service: "cloudformation"
-  version: "1.0.1"
+  version: "1.0.2"
   
   statements:
     - sid: "CloudFormationFullAccess"
