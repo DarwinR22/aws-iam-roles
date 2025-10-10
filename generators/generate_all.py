@@ -185,8 +185,9 @@ class IAMGenerator:
             
             # Generate terraform name with MCI prefix for consistency
             terraform_name = self.generate_terraform_name(definition['policy']['name'])
-            # Add MCI prefix to directory name for enterprise consistency
-            if not terraform_name.startswith('mci_'):
+            # Add MCI prefix ONLY to non-github-deployment policies
+            # github-deployment-* are legacy GitHub Actions policies, should NOT have MCI prefix
+            if not terraform_name.startswith('mci_') and not terraform_name.startswith('github_deployment'):
                 terraform_name = f"mci_{terraform_name}"
             
             # Create module directory
