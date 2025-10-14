@@ -10,13 +10,13 @@ role:
   
   # Metadata for role management
   metadata:
-    version: "2.4.1"
+    version: "2.5.0"
     created_by: "DevOps Team"
     created_date: "2025-09-16"
-    last_updated: "2025-10-14T22:15:00"
+    last_updated: "2025-10-14T23:30:00"
     purpose: "GitHub Actions CI/CD deployment con políticas ABAC modulares basadas en tags"
     risk_level: "high"
-    security_improvements: "v2.4.1 - Restricción a 3 repos + protección anti-eliminación (permite trust policy updates)"
+    security_improvements: "v2.5.0 - Restricción a 3 repos con wildcards. Inline protection policy removida"
     
   # OIDC Trust Policy Configuration
   trust_policy:
@@ -80,24 +80,6 @@ role:
       file: "github-deployment-iam.yaml"
       description: "Gestión completa de IAM (CreateRole, CreatePolicy, AttachRolePolicy, PassRole)"
     
-    # ✅ MEJORA 3: Protección contra auto-eliminación (sin bloquear trust policy updates)
-    - name: "github-deployment-protection"
-      inline_policy:
-        statements:
-          - sid: "DenyDeleteSelfRole"
-            effect: "Deny"
-            actions:
-              - "iam:DeleteRole"
-              - "iam:DeleteRolePolicy"
-              - "iam:DetachRolePolicy"
-              # Removido: iam:UpdateAssumeRolePolicy (necesario para actualizaciones del trust policy)
-            resources:
-              - "arn:aws:iam::${account_id}:role/github-actions-iam-deployment-role"
-            conditions:
-              - test: "StringEquals"
-                variable: "aws:PrincipalArn"
-                values: ["arn:aws:iam::${account_id}:role/github-actions-iam-deployment-role"]
-      
     - name: "github-deployment-cloudformation"
       file: "github-deployment-cloudformation.yaml"
       description: "CloudFormation stacks y KMS encryption con ViaService conditions"
@@ -134,9 +116,9 @@ role:
     
     # Lifecycle management
     "Ciclo de Vida": "Actualizacion"
-    "Versión": "v2.1.0"  # ABAC + Seguridad mejorada: repo específico, rama dev, protección auto-eliminación
+    "Versión": "v2.5.0"  # ABAC + 3 repos con wildcards, sin inline protection policy
     "Fecha de Creacion": "2025-09-16"
-    "Última Actualización": "2025-10-09"
+    "Última Actualización": "2025-10-14"
 
 # Environment variables for multi-environment deployment
 variables:
