@@ -2,7 +2,7 @@ policy:
   name: "github-deployment-iam"
   description: "Gestión completa de roles y políticas IAM para despliegues de infraestructura con Terraform (sin restricciones ABAC para CI/CD)"
   service: "iam"
-  version: "2.2.1"
+  version: "2.3.0"
   
   statements:
     - sid: "IAMRoleFullManagement"
@@ -69,18 +69,6 @@ policy:
         - "iam:ListAccountAliases"
       resources:
         - "*"
-
-    # ✅ MEJORA 3: Protección contra auto-eliminación del rol de deployment
-    - sid: "DenyDeleteOwnDeploymentRole"
-      effect: "Deny"
-      actions:
-        - "iam:DeleteRole"
-        - "iam:DeleteRolePolicy"
-        - "iam:DetachRolePolicy"
-        # Removido: iam:UpdateAssumeRolePolicy (necesario para actualizaciones del trust policy)
-      resources:
-        - "arn:aws:iam::*:role/github-actions-iam-deployment-role"
-      note: "Previene que el rol de deployment se elimine o desadjunte políticas accidentalmente. UpdateAssumeRolePolicy permitido para actualizaciones controladas."
 
 # Metadata
 environments: ["dev", "qa", "prod"]
