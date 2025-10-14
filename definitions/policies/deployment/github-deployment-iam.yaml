@@ -70,6 +70,18 @@ policy:
       resources:
         - "*"
 
+    # ✅ MEJORA 3: Protección contra auto-eliminación del rol de deployment
+    - sid: "DenyDeleteOwnDeploymentRole"
+      effect: "Deny"
+      actions:
+        - "iam:DeleteRole"
+        - "iam:DeleteRolePolicy"
+        - "iam:DetachRolePolicy"
+        - "iam:UpdateAssumeRolePolicy"
+      resources:
+        - "arn:aws:iam::*:role/github-actions-iam-deployment-role"
+      note: "Previene que el rol de deployment se elimine o modifique a sí mismo accidentalmente"
+
 # Metadata
 environments: ["dev", "qa", "prod"]
 owner: "Infrastructure Team"
