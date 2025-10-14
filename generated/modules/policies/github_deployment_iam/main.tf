@@ -36,11 +36,6 @@ resource "aws_iam_policy" "main" {
         Effect   = "Allow"
         Action   = ["iam:ListInstanceProfiles", "iam:GetAccountSummary", "iam:GetAccountPasswordPolicy", "iam:ListUsers", "iam:ListGroups", "iam:ListAccountAliases"]
         Resource = ["*"]
-        }, {
-        Sid      = "DenyDeleteOwnDeploymentRole"
-        Effect   = "Deny"
-        Action   = ["iam:DeleteRole", "iam:DeleteRolePolicy", "iam:DetachRolePolicy"]
-        Resource = ["arn:aws:iam::*:role/github-actions-iam-deployment-role"]
     }]
   })
 
