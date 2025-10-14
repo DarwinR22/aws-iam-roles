@@ -6,7 +6,7 @@
 # This file is auto-generated from YAML definitions.
 # DO NOT EDIT MANUALLY - Changes will be overwritten.
 # 
-# Generated: 2025-10-14T21:04:31.847705
+# Generated: 2025-10-14T21:14:16.142121
 # Source: Multiple role definitions in definitions/roles/
 # ==============================================================================
 
@@ -44,7 +44,8 @@ data "aws_iam_policy_document" "github_actions_iam_deployment_role_trust" {
       test     = "StringLike"
       variable = "token.actions.githubusercontent.com:sub"
       values = [
-        "repo:ClaroCENAM/mci-aws-iam:ref:refs/heads/dev"
+        "repo:ClaroCENAM/mci-aws-iam:ref:refs/heads/dev",
+        "repo:ClaroCENAM/mci-aws-iam:pull_request"
       ]
     }
   }
@@ -84,7 +85,7 @@ resource "aws_iam_role" "github_actions_iam_deployment_role" {
     # Auto-generated tags
     "ManagedBy" = "terraform"
     "Source"    = "definitions/roles/github-deployment-role.yaml"
-    "Generated" = "2025-10-14T21:04:31.847705"
+    "Generated" = "2025-10-14T21:14:16.142121"
   }
 }
 
