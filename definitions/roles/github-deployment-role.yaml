@@ -39,9 +39,7 @@ role:
           
         - test: "StringLike"
           variable: "token.actions.githubusercontent.com:sub"
-          values: 
-            - "repo:ClaroCENAM/mci-aws-iam:ref:refs/heads/dev"  # ✅ MEJORA 2: Solo rama dev (cuenta DEV)
-            - "repo:ClaroCENAM/mci-aws-iam:pull_request"  # Permite PRs para preview
+          values: ["repo:ClaroCENAM/mci-aws-iam:ref:refs/heads/dev"]  # ✅ MEJORA 2: Solo rama dev (cuenta DEV)
 
   # Referenced policy modules - these will be combined into the role
   policy_modules:
