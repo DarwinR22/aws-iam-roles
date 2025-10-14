@@ -151,6 +151,11 @@ jobs:
       id: plan
       run: |
         cd generated
+        
+        # Clean up old plan analysis files to prevent accumulation
+        echo "🧹 Cleaning up old plan analysis files..."
+        rm -f plan_*.txt group_*.txt || true
+        
         echo "## 🗂️ Terraform Plan Preview" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
 

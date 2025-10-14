@@ -16,6 +16,7 @@ role:
     last_updated: "2025-10-09"
     purpose: "GitHub Actions CI/CD deployment con políticas ABAC modulares basadas en tags"
     risk_level: "high"
+    security_improvements: "v2.1.0 - Restricción a repo específico + rama dev + protección auto-eliminación"
     
   # OIDC Trust Policy Configuration
   trust_policy:
@@ -28,7 +29,7 @@ role:
       
       # Repository access configuration
       repositories:
-        - "repo:ClaroCENAM/*"  # Allow all repos under ClaroCENAM org
+        - "repo:ClaroCENAM/mci-aws-iam"  # ✅ MEJORA 1: Solo este repositorio específico
         
       # Additional OIDC conditions for security
       conditions:
@@ -38,7 +39,9 @@ role:
           
         - test: "StringLike"
           variable: "token.actions.githubusercontent.com:sub"
-          values: ["repo:ClaroCENAM/*"]
+          values: 
+            - "repo:ClaroCENAM/mci-aws-iam:ref:refs/heads/dev"  # ✅ MEJORA 2: Solo rama dev (cuenta DEV)
+            - "repo:ClaroCENAM/mci-aws-iam:pull_request"  # Permite PRs para preview
 
   # Referenced policy modules - these will be combined into the role
   policy_modules:
@@ -73,6 +76,24 @@ role:
     - name: "github-deployment-iam"
       file: "github-deployment-iam.yaml"
       description: "Gestión completa de IAM (CreateRole, CreatePolicy, AttachRolePolicy, PassRole)"
+    
+    # ✅ MEJORA 3: Protección contra auto-eliminación
+    - name: "github-deployment-protection"
+      inline_policy:
+        statements:
+          - sid: "DenyDeleteSelfRole"
+            effect: "Deny"
+            actions:
+              - "iam:DeleteRole"
+              - "iam:DeleteRolePolicy"
+              - "iam:DetachRolePolicy"
+              - "iam:UpdateAssumeRolePolicy"
+            resources:
+              - "arn:aws:iam::${account_id}:role/github-actions-iam-deployment-role"
+            conditions:
+              - test: "StringEquals"
+                variable: "aws:PrincipalArn"
+                values: ["arn:aws:iam::${account_id}:role/github-actions-iam-deployment-role"]
       
     - name: "github-deployment-cloudformation"
       file: "github-deployment-cloudformation.yaml"
@@ -110,7 +131,7 @@ role:
     
     # Lifecycle management
     "Ciclo de Vida": "Actualizacion"
-    "Versión": "v2.0.0"  # ABAC: Políticas modulares con control basado en tags
+    "Versión": "v2.1.0"  # ABAC + Seguridad mejorada: repo específico, rama dev, protección auto-eliminación
     "Fecha de Creacion": "2025-09-16"
     "Última Actualización": "2025-10-09"
 

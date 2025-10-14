@@ -1,4 +1,13 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+import sys
+import io
+
+# Force UTF-8 encoding for Windows console
+if sys.platform == 'win32':
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
+
 """
 MCI AWS IAM Policy and Role Generator
 ====================================
@@ -22,6 +31,7 @@ import os
 import yaml
 import json
 import argparse
+import subprocess
 from pathlib import Path
 from jinja2 import Environment, FileSystemLoader
 from datetime import datetime
@@ -49,13 +59,57 @@ class IAMGenerator:
             lstrip_blocks=True
         )
         
-        # AWS session for validation (optional)
+        # Detect current branch and map to account ID
+        self.current_branch = self._detect_current_branch()
+        self.account_id = self._get_account_id_for_branch()
+        print(f"Branch: {self.current_branch} -> Account: {self.account_id}")
+    
+    def _detect_current_branch(self) -> str:
+        """Detect current git branch"""
         try:
-            self.aws_session = boto3.Session()
-            self.account_id = self.aws_session.client('sts').get_caller_identity()['Account']
-        except Exception:
-            print("⚠️  AWS credentials not available - using default account ID")
-            self.account_id = "393209814297"  # MCI account
+            result = subprocess.run(
+                ['git', 'branch', '--show-current'],
+                capture_output=True,
+                text=True,
+                check=True
+            )
+            branch = result.stdout.strip()
+            return branch if branch else 'dev'
+        except Exception as e:
+            print(f"⚠️  Could not detect branch: {e}")
+            return 'dev'
+    
+    def _get_account_id_for_branch(self) -> str:
+        """Map branch to AWS account ID"""
+        branch_to_account = {
+            'dev': '393209814297',
+            'qa': '873152456645',
+            'main': '331355389575',
+            'prod': '331355389575'  # Alias for main
+        }
+        
+        account_id = branch_to_account.get(self.current_branch)
+        
+        if not account_id:
+            print(f"⚠️  Unknown branch '{self.current_branch}', defaulting to DEV account")
+            return '393209814297'
+        
+        return account_id
+    
+    def _get_branch_restriction(self) -> str:
+        """Get OIDC branch restriction for current branch"""
+        branch_restrictions = {
+            'dev': 'ref:refs/heads/dev',
+            'qa': 'ref:refs/heads/qa',
+            'main': 'ref:refs/heads/main',
+            'prod': 'ref:refs/heads/main'
+        }
+        return branch_restrictions.get(self.current_branch, 'ref:refs/heads/dev')
+    
+    def _allow_pull_requests(self) -> bool:
+        """Determine if pull requests should be allowed for current branch"""
+        # Only allow PRs in dev and qa, NOT in production
+        return self.current_branch in ['dev', 'qa']
     
     def _get_last_generation_time(self) -> str:
         """Get the last generation timestamp from existing files"""
@@ -291,6 +345,10 @@ class IAMGenerator:
             real_policy_names = []
             
             for pm in policy_modules:
+                # Skip inline policies (they don't have a file)
+                if 'inline_policy' in pm:
+                    continue
+                    
                 policy_file = self.definitions_dir / "policies" / "deployment" / pm['file']
                 if policy_file.exists():
                     with open(policy_file, 'r') as f:
@@ -307,6 +365,25 @@ class IAMGenerator:
             should_update = self._should_update_timestamp(yaml_content, yaml_file)
             generation_time = self.current_generation_time if should_update else self.last_generation_time
             
+            # Override account_id and branch restriction in role definition
+            definition['role']['variables'] = {
+                'account_id': {'default': self.account_id},
+                'environment': {'default': self.current_branch}
+            }
+            
+            # Update OIDC conditions with current branch restriction
+            if definition['role'].get('trust_policy', {}).get('type') == 'oidc':
+                conditions = definition['role']['trust_policy']['oidc_config']['conditions']
+                for condition in conditions:
+                    if condition['variable'] == 'token.actions.githubusercontent.com:sub':
+                        # Replace branch restriction
+                        branch_restriction = f"repo:ClaroCENAM/mci-aws-iam:ref:refs/heads/{self.current_branch}"
+                        condition['values'] = [branch_restriction]
+                        
+                        # Add pull_request only for dev/qa
+                        if self._allow_pull_requests():
+                            condition['values'].append("repo:ClaroCENAM/mci-aws-iam:pull_request")
+            
             # Categorize by role type (deployment vs application)
             role_name = definition['role']['name'].lower()
             if 'github' in role_name or 'deployment' in role_name or 'ci' in role_name or 'cd' in role_name:
@@ -318,7 +395,8 @@ class IAMGenerator:
                         policy_modules=definition.get('role', {}).get('policy_modules', []),
                         source_file=f"definitions/roles/{yaml_file.name}",
                         generation_time=generation_time,
-                        account_id=self.account_id
+                        account_id=self.account_id,
+                        current_branch=self.current_branch
                     )
                 })
             else:
@@ -330,7 +408,8 @@ class IAMGenerator:
                         policy_modules=definition.get('role', {}).get('policy_modules', []),
                         source_file=f"definitions/roles/{yaml_file.name}",
                         generation_time=generation_time,
-                        account_id=self.account_id
+                        account_id=self.account_id,
+                        current_branch=self.current_branch
                     )
                 })
         
@@ -388,27 +467,27 @@ class IAMGenerator:
     
     def clean_generated(self):
         """Remove all generated files"""
-        print("🧹 Cleaning generated files...")
+        print("Cleaning generated files...")
         for tf_file in self.generated_dir.rglob("*.tf"):
             tf_file.unlink()
-            print(f"🗑️  Removed: {tf_file}")
+            print(f"Removed: {tf_file}")
     
     def generate_all(self, clean_first=False):
         """Generate all policies and roles"""
         if clean_first:
             self.clean_generated()
         
-        print("🚀 Starting IAM generation...")
+        print("Starting IAM generation...")
         
         # Generate policies
         policy_files = self.generate_policies()
-        print(f"📋 Generated {len(policy_files)} policy files")
+        print(f"Generated {len(policy_files)} policy files")
         
         # Generate roles  
         role_files = self.generate_roles()
-        print(f"👥 Generated {len(role_files)} role files")
+        print(f"Generated {len(role_files)} role files")
         
-        print(f"✅ Generation complete! Total files: {len(policy_files) + len(role_files)}")
+        print(f"Generation complete! Total files: {len(policy_files) + len(role_files)}")
         return policy_files + role_files
 
 def main():
@@ -424,7 +503,7 @@ def main():
     generator = IAMGenerator(repo_root)
     
     if args.validate_only:
-        print("🔍 Validation mode - no files will be generated")
+        print("Validation mode - no files will be generated")
         # Add validation-only logic
     else:
         generator.generate_all(clean_first=args.clean)
