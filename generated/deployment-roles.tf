@@ -44,8 +44,7 @@ data "aws_iam_policy_document" "github_actions_iam_deployment_role_trust" {
       test     = "StringLike"
       variable = "token.actions.githubusercontent.com:sub"
       values = [
-        "repo:ClaroCENAM/mci-aws-iam:ref:refs/heads/dev",
-        "repo:ClaroCENAM/mci-aws-iam:pull_request"
+        "repo:ClaroCENAM/mci-aws-iam:ref:refs/heads/dev"
       ]
     }
   }
