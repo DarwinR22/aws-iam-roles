@@ -14,7 +14,7 @@ resource "aws_iam_policy" "main" {
       {
         Sid      = "IAMRoleFullManagement"
         Effect   = "Allow"
-        Action   = ["iam:CreateRole", "iam:DeleteRole", "iam:UpdateRole", "iam:GetRole", "iam:ListRoles", "iam:ListRoleTags", "iam:TagRole", "iam:UntagRole", "iam:UpdateAssumeRolePolicy"]
+        Action   = ["iam:CreateRole", "iam:DeleteRole", "iam:UpdateRole", "iam:UpdateRoleDescription", "iam:GetRole", "iam:ListRoles", "iam:ListRoleTags", "iam:TagRole", "iam:UntagRole", "iam:UpdateAssumeRolePolicy"]
         Resource = ["arn:aws:iam::*:role/*"]
         }, {
         Sid      = "IAMPolicyFullManagement"
