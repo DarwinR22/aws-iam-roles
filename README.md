@@ -3,6 +3,7 @@
 # 🚀 MCI AWS IAM - Arquitectura Empresarial
 
 ### *Gestión empresarial de IAM con Control de Acceso Basado en Atributos (ABAC)*
+<!-- v2.2.0 - Security hardening implemented -->
 
 [![Terraform](https://img.shields.io/badge/Terraform-1.6+-623CE4?style=for-the-badge&logo=terraform&logoColor=white)](https://www.terraform.io/)
 [![AWS](https://img.shields.io/badge/AWS-IAM-FF9900?style=for-the-badge&logo=amazon-aws&logoColor=white)](https://aws.amazon.com/iam/)
