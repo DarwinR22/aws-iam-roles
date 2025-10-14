@@ -6,34 +6,34 @@
 # Get current AWS account ID
 data "aws_caller_identity" "current" {}
 
+# Trust policy for the role (using jsonencode to preserve array format)
+{% if role.trust_policy.type == "oidc" %}
+locals {
+  {{ role.terraform_name }}_trust_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Principal = {
+        Federated = "{{ role.trust_policy.oidc_config.provider_arn | replace('${account_id}', '${data.aws_caller_identity.current.account_id}') }}"
+      }
+      Action = "sts:AssumeRoleWithWebIdentity"
+      Condition = {
+        {% for condition in role.trust_policy.oidc_config.conditions %}
+        {{ condition['test'] }} = {
+          "{{ condition['variable'] }}" = [
+            {% for value in condition['values'] %}
+            "{{ value }}"{{ "," if not loop.last else "" }}
+            {% endfor %}
+          ]
+        }{{ "," if not loop.last else "" }}
+        {% endfor %}
+      }
+    }]
+  })
+}
+{% else %}
 # Trust policy for the role
 data "aws_iam_policy_document" "{{ role.terraform_name }}_trust" {
-  {% if role.trust_policy.type == "oidc" %}
-  # OIDC Trust Policy for GitHub Actions
-  statement {
-    effect = "Allow"
-    
-    principals {
-      type        = "Federated"
-      identifiers = ["{{ role.trust_policy.oidc_config.provider_arn | replace('${account_id}', '${data.aws_caller_identity.current.account_id}') }}"]
-    }
-
-    actions = ["sts:AssumeRoleWithWebIdentity"]
-
-    {% for condition in role.trust_policy.oidc_config.conditions %}
-    condition {
-      test     = "{{ condition['test'] }}"
-      variable = "{{ condition['variable'] }}"
-      values   = [
-        {% for value in condition['values'] %}
-        "{{ value }}"{{ "," if not loop.last else "" }}
-        {% endfor %}
-      ]
-    }
-    {% endfor %}
-  }
-  {% else %}
-  # Standard Trust Policy
   {% for trust in role.trust_policy %}
   statement {
     effect = "Allow"
@@ -68,14 +68,18 @@ data "aws_iam_policy_document" "{{ role.terraform_name }}_trust" {
     {% endif %}
   }
   {% endfor %}
-  {% endif %}
 }
+{% endif %}
 
 # IAM Role
 resource "aws_iam_role" "{{ role.terraform_name }}" {
   name               = "{{ role.name }}"
   description        = "{{ role.description }}"
+  {% if role.trust_policy.type == "oidc" %}
+  assume_role_policy = local.{{ role.terraform_name }}_trust_policy
+  {% else %}
   assume_role_policy = data.aws_iam_policy_document.{{ role.terraform_name }}_trust.json
+  {% endif %}
 
   {% if role.max_session_duration %}
   max_session_duration = {{ role.max_session_duration }}
