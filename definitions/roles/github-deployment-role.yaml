@@ -13,7 +13,7 @@ role:
     version: "2.2.0"
     created_by: "DevOps Team"
     created_date: "2025-09-16"
-    last_updated: "2025-10-14"
+    last_updated: "2025-10-14T20:45:00"
     purpose: "GitHub Actions CI/CD deployment con políticas ABAC modulares basadas en tags"
     risk_level: "high"
     security_improvements: "v2.2.0 - Restricción a repo específico + solo rama dev (sin PRs) + protección auto-eliminación"
