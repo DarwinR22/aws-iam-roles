@@ -4,19 +4,19 @@
 
 role:
   name: "github-actions-iam-deployment-role"
-  description: "Rol IAM para despliegues automaticos desde GitHub Actions (repositorio: ClaroCENAM/mci-aws-iam) utilizando OIDC. Permite unicamente la creacion y administracion de recursos IAM a traves de la canalizacion (pipeline) de Terraform"
+  description: "Rol IAM para despliegues automaticos desde GitHub Actions (repos: mci-aws-iam, DataOps_infra_meta_services, DataOps_code_meta_services) utilizando OIDC. Permite unicamente la creacion y administracion de recursos IAM a traves de la canalizacion (pipeline) de Terraform"
   path: "/"
   max_session_duration: 3600
   
   # Metadata for role management
   metadata:
-    version: "2.3.0"
+    version: "2.4.0"
     created_by: "DevOps Team"
     created_date: "2025-09-16"
-    last_updated: "2025-10-14T21:30:00"
+    last_updated: "2025-10-14T21:45:00"
     purpose: "GitHub Actions CI/CD deployment con políticas ABAC modulares basadas en tags"
     risk_level: "high"
-    security_improvements: "v2.3.0 - Restricción a organización ClaroCENAM (wildcard) + protección auto-eliminación"
+    security_improvements: "v2.4.0 - Restricción a 3 repos específicos (IAM + DataOps infra/code) + protección auto-eliminación"
     
   # OIDC Trust Policy Configuration
   trust_policy:
@@ -29,7 +29,9 @@ role:
       
       # Repository access configuration
       repositories:
-        - "repo:ClaroCENAM/mci-aws-iam"  # ✅ MEJORA 1: Solo este repositorio específico
+        - "repo:ClaroCENAM/mci-aws-iam"
+        - "repo:ClaroCENAM/DataOps_infra_meta_services"
+        - "repo:ClaroCENAM/DataOps_code_meta_services"
         
       # Additional OIDC conditions for security
       conditions:
@@ -39,7 +41,10 @@ role:
           
         - test: "StringLike"
           variable: "token.actions.githubusercontent.com:sub"
-          values: ["repo:ClaroCENAM/*"]  # ✅ MEJORA 1+2: Solo organización ClaroCENAM (wildcard funciona con OIDC)
+          values: 
+            - "repo:ClaroCENAM/mci-aws-iam:*"                      # ✅ MEJORA 1: IAM Infrastructure
+            - "repo:ClaroCENAM/DataOps_infra_meta_services:*"      # ✅ MEJORA 1: DataOps Infrastructure
+            - "repo:ClaroCENAM/DataOps_code_meta_services:*"       # ✅ MEJORA 1: DataOps Code
 
   # Referenced policy modules - these will be combined into the role
   policy_modules:
