@@ -39,7 +39,7 @@ resource "aws_iam_policy" "main" {
         }, {
         Sid      = "DenyDeleteOwnDeploymentRole"
         Effect   = "Deny"
-        Action   = ["iam:DeleteRole", "iam:DeleteRolePolicy", "iam:DetachRolePolicy", "iam:UpdateAssumeRolePolicy"]
+        Action   = ["iam:DeleteRole", "iam:DeleteRolePolicy", "iam:DetachRolePolicy"]
         Resource = ["arn:aws:iam::*:role/github-actions-iam-deployment-role"]
     }]
   })
