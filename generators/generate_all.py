@@ -372,17 +372,18 @@ class IAMGenerator:
             }
             
             # Update OIDC conditions with current branch restriction
-            if definition['role'].get('trust_policy', {}).get('type') == 'oidc':
-                conditions = definition['role']['trust_policy']['oidc_config']['conditions']
-                for condition in conditions:
-                    if condition['variable'] == 'token.actions.githubusercontent.com:sub':
-                        # Replace branch restriction
-                        branch_restriction = f"repo:ClaroCENAM/mci-aws-iam:ref:refs/heads/{self.current_branch}"
-                        condition['values'] = [branch_restriction]
-                        
-                        # Add pull_request only for dev/qa
-                        if self._allow_pull_requests():
-                            condition['values'].append("repo:ClaroCENAM/mci-aws-iam:pull_request")
+            # DISABLED: Respect YAML values instead of hardcoding branch restrictions
+            # if definition['role'].get('trust_policy', {}).get('type') == 'oidc':
+            #     conditions = definition['role']['trust_policy']['oidc_config']['conditions']
+            #     for condition in conditions:
+            #         if condition['variable'] == 'token.actions.githubusercontent.com:sub':
+            #             # Replace branch restriction
+            #             branch_restriction = f"repo:ClaroCENAM/mci-aws-iam:ref:refs/heads/{self.current_branch}"
+            #             condition['values'] = [branch_restriction]
+            #             
+            #             # Add pull_request only for dev/qa
+            #             if self._allow_pull_requests():
+            #                 condition['values'].append("repo:ClaroCENAM/mci-aws-iam:pull_request")
             
             # Categorize by role type (deployment vs application)
             role_name = definition['role']['name'].lower()
