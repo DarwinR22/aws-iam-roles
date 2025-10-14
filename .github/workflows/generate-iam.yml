@@ -82,6 +82,16 @@ jobs:
       with:
         terraform_version: 1.6.0
 
+    - name: 🧪 Debug - Info OIDC Token
+      run: |
+        echo "🔍 GitHub OIDC Token Info:"
+        echo "Repository: ${{ github.repository }}"
+        echo "Ref: ${{ github.ref }}"
+        echo "SHA: ${{ github.sha }}"
+        echo "Run ID: ${{ github.run_id }}"
+        echo "Expected sub: repo:ClaroCENAM/mci-aws-iam:ref:refs/heads/dev"
+        echo "Actual sub would be: repo:${{ github.repository }}:ref:${{ github.ref }}"
+
     - name: 🔐 Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v2
       with:
@@ -89,6 +99,11 @@ jobs:
         aws-region: us-east-1
         audience: sts.amazonaws.com
         role-session-name: mci-iam-repo-${{ github.run_id }}
+
+    - name: ✅ Verify AWS Identity
+      run: |
+        echo "✅ Credentials configuradas. Verificando identidad..."
+        aws sts get-caller-identity
 
     - name: 🏗️ Generate Terraform Files
       run: |
