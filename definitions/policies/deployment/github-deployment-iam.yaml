@@ -2,7 +2,7 @@ policy:
   name: "github-deployment-iam"
   description: "Gestión completa de roles y políticas IAM para despliegues de infraestructura con Terraform (sin restricciones ABAC para CI/CD)"
   service: "iam"
-  version: "2.3.0"
+  version: "2.3.1"
   
   statements:
     - sid: "IAMRoleFullManagement"
@@ -11,6 +11,7 @@ policy:
         - "iam:CreateRole"
         - "iam:DeleteRole"
         - "iam:UpdateRole"
+        - "iam:UpdateRoleDescription"
         - "iam:GetRole"
         - "iam:ListRoles"
         - "iam:ListRoleTags"
