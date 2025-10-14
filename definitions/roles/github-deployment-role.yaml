@@ -10,13 +10,13 @@ role:
   
   # Metadata for role management
   metadata:
-    version: "2.4.0"
+    version: "2.4.1"
     created_by: "DevOps Team"
     created_date: "2025-09-16"
-    last_updated: "2025-10-14T22:00:00"
+    last_updated: "2025-10-14T22:15:00"
     purpose: "GitHub Actions CI/CD deployment con políticas ABAC modulares basadas en tags"
     risk_level: "high"
-    security_improvements: "v2.4.0 - Restricción a 3 repos específicos (IAM + DataOps infra/code) + protección auto-eliminación"
+    security_improvements: "v2.4.1 - Restricción a 3 repos + protección anti-eliminación (permite trust policy updates)"
     
   # OIDC Trust Policy Configuration
   trust_policy:
@@ -80,7 +80,7 @@ role:
       file: "github-deployment-iam.yaml"
       description: "Gestión completa de IAM (CreateRole, CreatePolicy, AttachRolePolicy, PassRole)"
     
-    # ✅ MEJORA 3: Protección contra auto-eliminación
+    # ✅ MEJORA 3: Protección contra auto-eliminación (sin bloquear trust policy updates)
     - name: "github-deployment-protection"
       inline_policy:
         statements:
@@ -90,7 +90,7 @@ role:
               - "iam:DeleteRole"
               - "iam:DeleteRolePolicy"
               - "iam:DetachRolePolicy"
-              - "iam:UpdateAssumeRolePolicy"
+              # Removido: iam:UpdateAssumeRolePolicy (necesario para actualizaciones del trust policy)
             resources:
               - "arn:aws:iam::${account_id}:role/github-actions-iam-deployment-role"
             conditions:

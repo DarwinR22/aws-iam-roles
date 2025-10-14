@@ -77,10 +77,10 @@ policy:
         - "iam:DeleteRole"
         - "iam:DeleteRolePolicy"
         - "iam:DetachRolePolicy"
-        - "iam:UpdateAssumeRolePolicy"
+        # Removido: iam:UpdateAssumeRolePolicy (necesario para actualizaciones del trust policy)
       resources:
         - "arn:aws:iam::*:role/github-actions-iam-deployment-role"
-      note: "Previene que el rol de deployment se elimine o modifique a sí mismo accidentalmente"
+      note: "Previene que el rol de deployment se elimine o desadjunte políticas accidentalmente. UpdateAssumeRolePolicy permitido para actualizaciones controladas."
 
 # Metadata
 environments: ["dev", "qa", "prod"]
