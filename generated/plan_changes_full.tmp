@@ -1,1 +1,8 @@
 aws_iam_role.github_actions_iam_deployment_role will be updated in-place
+aws_iam_role.mci_lambda_execution_role will be created
+aws_iam_role_policy_attachment.mci_lambda_execution_role_mci_lambda_cloudtrail_read will be created
+aws_iam_role_policy_attachment.mci_lambda_execution_role_mci_lambda_cloudwatch_logs will be created
+aws_iam_role_policy_attachment.mci_lambda_execution_role_mci_lambda_sns_publish will be created
+module.mci_lambda_cloudtrail_read.aws_iam_policy.main will be created
+module.mci_lambda_cloudwatch_logs.aws_iam_policy.main will be created
+module.mci_lambda_sns_publish.aws_iam_policy.main will be created
