@@ -2,7 +2,7 @@
 data "aws_caller_identity" "current" {}
 
 # mci-lambda-sns-publish Policy Module - Following ABAC Pattern
-# Converted from definitions/policies/execution/mci-lambda-sns-publish.yaml
+# Converted from definitions/policies/execution\mci-lambda-sns-publish.yaml
 resource "aws_iam_policy" "main" {
   name        = "mci-lambda-sns-publish"
   path        = "/"
@@ -12,13 +12,13 @@ resource "aws_iam_policy" "main" {
     Version = "2012-10-17"
     Statement = [
       {
-        Sid      = "PublishToSNSWithABAC"
-        Effect   = "Allow"
-        Action   = ["sns:Publish"]
-        Resource = ["arn:aws:sns:*:*:*"]
+Sid    = "PublishToSNSWithABAC"
+Effect = "Allow"
+        Action = ["sns:Publish"]
+        Resource = [          "arn:aws:sns:*:*:*"        ]
         Condition = {
-        StringEquals = { "aws:PrincipalTag/Gerencia" = var.abac_conditions["aws:PrincipalTag/Gerencia"], "aws:PrincipalTag/Ambiente" = ["$${aws:ResourceTag/Ambiente}"] } }
-    }]
+          StringEquals = {            "aws:PrincipalTag/Gerencia" = var.abac_conditions["aws:PrincipalTag/Gerencia"],            "aws:PrincipalTag/Ambiente" = ["$${aws:ResourceTag/Ambiente}"]          }        }
+      }    ]
   })
 
   tags = merge(var.common_tags, {

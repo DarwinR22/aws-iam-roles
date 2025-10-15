@@ -51,6 +51,16 @@ data "aws_iam_policy_document" "{{ role.terraform_name }}_trust" {
       {% endif %}
     }
 
+    actions = [
+      {% if trust.service %}
+      "sts:AssumeRole"
+      {% elif trust.federated %}
+      "sts:AssumeRoleWithWebIdentity"
+      {% elif trust.aws %}
+      "sts:AssumeRole"
+      {% endif %}
+    ]
+
     {% if trust.condition %}
     condition {
       test     = "{{ trust.condition.test }}"
