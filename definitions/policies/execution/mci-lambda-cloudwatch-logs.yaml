@@ -1,0 +1,53 @@
+policy:
+  name: "mci-lambda-cloudwatch-logs"
+  description: "Permite a Lambda escribir logs en CloudWatch con control ABAC basado en tags Gerencia y Ambiente"
+  service: "logs"
+  version: "1.0.0"
+  
+  statements:
+    - sid: "CreateLogGroupWithABAC"
+      effect: "Allow"
+      actions:
+        - "logs:CreateLogGroup"
+      resources:
+        - "arn:aws:logs:*:*:*"
+      abac_conditions:
+        - test: "StringEquals"
+          variable: "aws:PrincipalTag/Gerencia"
+          values: ["${aws:ResourceTag/Gerencia}"]
+          note: "Solo puede crear log groups con mismo tag Gerencia que el rol Lambda"
+        - test: "StringEquals"
+          variable: "aws:PrincipalTag/Ambiente"
+          values: ["${aws:ResourceTag/Ambiente}"]
+          note: "Solo puede crear log groups con mismo tag Ambiente que el rol Lambda"
+    
+    - sid: "WriteLogsWithABAC"
+      effect: "Allow"
+      actions:
+        - "logs:CreateLogStream"
+        - "logs:PutLogEvents"
+      resources:
+        - "arn:aws:logs:*:*:log-group:/aws/lambda/*:*"
+      
+      abac_conditions:
+        - test: "StringEquals"
+          variable: "aws:PrincipalTag/Gerencia"
+          values: ["${aws:ResourceTag/Gerencia}"]
+          note: "Solo puede escribir en log groups con mismo tag Gerencia"
+        
+        - test: "StringEquals"
+          variable: "aws:PrincipalTag/Ambiente"
+          values: ["${aws:ResourceTag/Ambiente}"]
+          note: "Solo puede escribir en log groups con mismo tag Ambiente"
+
+# Metadata
+environments: ["dev", "qa", "prod"]
+owner: "DevOps Team"
+critical: false
+
+tags:
+  Service: "CloudWatchLogs"
+  AccessLevel: "Write"
+  PolicyType: "ABAC"
+  ManagedBy: "mci-aws-iam"
+  ABACEnabled: "true"

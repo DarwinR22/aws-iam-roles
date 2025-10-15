@@ -1,0 +1,48 @@
+role:
+  name: "mci-lambda-execution-role"
+  description: "Rol generico para funciones Lambda con control ABAC basado en tags. Un solo rol para multiples Lambdas diferenciadas por tags."
+  service: "lambda"
+  version: "1.0.0"
+  
+  trust_policy:
+    type: "service"
+    service_principal: "lambda.amazonaws.com"
+    
+  policy_modules:
+    - name: "mci-lambda-cloudwatch-logs"
+      file: "mci-lambda-cloudwatch-logs.yaml"
+      description: "Permite escribir logs en CloudWatch con ABAC por Gerencia y Ambiente"
+      
+    - name: "mci-lambda-sns-publish"
+      file: "mci-lambda-sns-publish.yaml"
+      description: "Permite publicar en SNS Topics con ABAC por Gerencia y Ambiente"
+      
+    - name: "mci-lambda-cloudtrail-read"
+      file: "mci-lambda-cloudtrail-read.yaml"
+      description: "Permite leer CloudTrail (solo para Lambdas de seguridad con Gerencia=MCI y Dominio=Security/Serverless)"
+
+  # Tags requeridos para validacion ABAC
+  tags:
+    Ambiente: "dev"
+    Gerencia: "MCI"
+    Area: "DevOps"
+    Pais: "GT"
+    Direccion: "Gerencia de TI - DevOps"
+    Cuenta: "dev-mci-account"
+    Modulo: "Aplicacion"
+    "Alcance SOX": "No"
+    Propietario: "DevOps Team"
+    Proveedor: "Inhouse"
+    Layer: "Serverless"
+    Dominio: "Infrastructure"
+    Subdominio: "Lambda"
+    Aplicacion: "LAMBDA-EXECUTION-GENERIC"
+    Name: "mci-lambda-execution-role"
+    Soporte: "Equipo DevOps MCI"
+    Contacto: "devops@mci.com"
+    Proyecto: "MCI-2025-IAM-ABAC"
+    "Fecha de Creacion": "2025-10-15"
+    "Creado Por": "github-copilot@mci.com"
+    "Tipo de Recurso": "IAM Role"
+    "Ciclo de Vida": "Implementacion"
+    Version: "1.0.0"

@@ -190,12 +190,27 @@ class IAMGenerator:
     
     def validate_naming_convention(self, name: str, type: str) -> bool:
         """Validate naming follows MCI standards"""
+        
+        # Excepciones para recursos legacy/existentes (sin warnings)
+        legacy_exceptions = [
+            # Políticas de GitHub deployment (legacy)
+            r'^github-deployment-.*$',
+            # Rol de GitHub deployment existente (legacy)
+            r'^github-actions-iam-deployment-role$'
+        ]
+        
+        # Verificar si es una excepción legacy
+        for exception_pattern in legacy_exceptions:
+            if re.match(exception_pattern, name):
+                return True  # Sin warning para recursos legacy
+        
+        # Validación estricta para nuevos recursos MCI
         if type == 'policy':
-            # MCI-Service-Action pattern (more flexible)
-            pattern = r'^MCI-[A-Za-z0-9]+-[A-Za-z0-9]+$'
+            # mci-service-action pattern (kebab-case)
+            pattern = r'^mci-[a-z0-9]+-[a-z0-9-]+$'
         elif type == 'role':
-            # MCI-Area-Function pattern (more flexible)
-            pattern = r'^MCI-[A-Za-z0-9]+-[A-Za-z0-9]+$'
+            # mci-service-layer-ambiente-nombre pattern (kebab-case)
+            pattern = r'^mci-[a-z0-9]+-[a-z0-9-]+$'
         
         if not re.match(pattern, name):
             print(f"⚠️  Warning: Name '{name}' doesn't follow strict MCI naming convention, but proceeding...")

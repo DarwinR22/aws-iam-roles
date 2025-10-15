@@ -1,0 +1,36 @@
+policy:
+  name: "mci-lambda-sns-publish"
+  description: "Permite a Lambda publicar mensajes en SNS Topics con control ABAC basado en tags Gerencia y Ambiente"
+  service: "sns"
+  version: "1.0.0"
+  
+  statements:
+    - sid: "PublishToSNSWithABAC"
+      effect: "Allow"
+      actions:
+        - "sns:Publish"
+      resources:
+        - "arn:aws:sns:*:*:*"
+      
+      abac_conditions:
+        - test: "StringEquals"
+          variable: "aws:PrincipalTag/Gerencia"
+          values: ["${aws:ResourceTag/Gerencia}"]
+          note: "Lambda solo puede publicar en topics con su mismo tag Gerencia"
+        
+        - test: "StringEquals"
+          variable: "aws:PrincipalTag/Ambiente"
+          values: ["${aws:ResourceTag/Ambiente}"]
+          note: "Lambda solo puede publicar en topics con su mismo tag Ambiente"
+
+# Metadata
+environments: ["dev", "qa", "prod"]
+owner: "DevOps Team"
+critical: false
+
+tags:
+  Service: "SNS"
+  AccessLevel: "Write"
+  PolicyType: "ABAC"
+  ManagedBy: "mci-aws-iam"
+  ABACEnabled: "true"

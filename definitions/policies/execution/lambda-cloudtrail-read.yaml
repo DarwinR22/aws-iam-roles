@@ -1,0 +1,39 @@
+policy:
+  name: "lambda-cloudtrail-read"
+  description: "Permite a Lambda de seguridad leer eventos CloudTrail con control ABAC por Gerencia y Dominio"
+  service: "cloudtrail"
+  version: "1.0.0"
+  
+  statements:
+    - sid: "ReadCloudTrailWithABAC"
+      effect: "Allow"
+      actions:
+        - "cloudtrail:LookupEvents"
+        - "cloudtrail:GetEventSelectors"
+      resources:
+        - "*"
+      
+      abac_conditions:
+        - test: "StringEquals"
+          variable: "aws:PrincipalTag/Gerencia"
+          values: ["MCI"]
+          note: "Solo Lambdas de gerencia MCI pueden leer CloudTrail"
+        
+        - test: "StringEquals"
+          variable: "aws:PrincipalTag/Dominio"
+          values: ["Security", "Serverless"]
+          note: "Solo Lambdas de dominio Security o Serverless tienen acceso a CloudTrail"
+
+# Metadata
+environments: ["dev", "qa", "prod"]
+owner: "Security Team"
+critical: false
+note: "Política restringida para Lambdas de monitoreo de seguridad únicamente"
+
+tags:
+  Service: "CloudTrail"
+  AccessLevel: "Read"
+  PolicyType: "ABAC"
+  ManagedBy: "mci-aws-iam"
+  ABACEnabled: "true"
+  SecuritySensitive: "true"
