@@ -11,14 +11,17 @@ role:
   policy_modules:
     - name: "mci-lambda-cloudwatch-logs"
       file: "mci-lambda-cloudwatch-logs.yaml"
+      folder: "execution"
       description: "Permite escribir logs en CloudWatch con ABAC por Gerencia y Ambiente"
       
     - name: "mci-lambda-sns-publish"
       file: "mci-lambda-sns-publish.yaml"
+      folder: "execution"
       description: "Permite publicar en SNS Topics con ABAC por Gerencia y Ambiente"
       
     - name: "mci-lambda-cloudtrail-read"
       file: "mci-lambda-cloudtrail-read.yaml"
+      folder: "execution"
       description: "Permite leer CloudTrail (solo para Lambdas de seguridad con Gerencia=MCI y Dominio=Security/Serverless)"
 
   # Tags requeridos para validacion ABAC

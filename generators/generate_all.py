@@ -364,7 +364,10 @@ class IAMGenerator:
                 if 'inline_policy' in pm:
                     continue
                     
-                policy_file = self.definitions_dir / "policies" / "deployment" / pm['file']
+                # Allow specifying policy folder, default to 'deployment'
+                policy_folder = pm.get('folder', 'deployment')
+                policy_file = self.definitions_dir / "policies" / policy_folder / pm['file']
+                
                 if policy_file.exists():
                     with open(policy_file, 'r') as f:
                         policy_def = yaml.safe_load(f)
