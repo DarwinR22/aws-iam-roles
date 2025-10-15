@@ -6,9 +6,13 @@
 # This file is auto-generated from YAML definitions.
 # DO NOT EDIT MANUALLY - Changes will be overwritten.
 # 
-# Generated: 2025-10-15T10:36:50.579161
+# Generated: 2025-10-15T10:43:06.585797
 # Source: Multiple role definitions in definitions/roles/
 # ==============================================================================
+
+
+# Common data sources (shared by all roles)
+data "aws_caller_identity" "current" {}
 
 
 # Role from: github-deployment-role.yaml
@@ -18,8 +22,6 @@
 # Last update: 2025-10-09 - Added complete tags for SCP compliance
 
 # Get current AWS account ID
-data "aws_caller_identity" "current" {}
-
 # Trust policy for the role (using jsonencode to preserve array format)
 locals {
   github_actions_iam_deployment_role_trust_policy = jsonencode({
@@ -82,7 +84,7 @@ resource "aws_iam_role" "github_actions_iam_deployment_role" {
     # Auto-generated tags
     "ManagedBy" = "terraform"
     "Source"    = "definitions/roles/github-deployment-role.yaml"
-    "Generated" = "2025-10-15T10:36:50.579161"
+    "Generated" = "2025-10-15T10:43:06.585797"
   }
 }
 
@@ -534,8 +536,6 @@ output "github_actions_iam_deployment_role_arn" {
 # Last update: 2025-10-09 - Added complete tags for SCP compliance
 
 # Get current AWS account ID
-data "aws_caller_identity" "current" {}
-
 # Trust policy for the role (using jsonencode to preserve array format)
 # Trust policy for the role
 data "aws_iam_policy_document" "mci_lambda_execution_role_trust" {
@@ -589,7 +589,7 @@ resource "aws_iam_role" "mci_lambda_execution_role" {
     # Auto-generated tags
     "ManagedBy" = "terraform"
     "Source"    = "definitions/roles/mci-lambda-execution-role.yaml"
-    "Generated" = "2025-10-15T10:36:50.579161"
+    "Generated" = "2025-10-15T10:43:06.585797"
   }
 }
 

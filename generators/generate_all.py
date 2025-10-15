@@ -474,12 +474,20 @@ class IAMGenerator:
 # Source: Multiple role definitions in definitions/roles/
 # ==============================================================================
 
+
+# Common data sources (shared by all roles)
+data "aws_caller_identity" "current" {{}}
+
 '''
         
         content = header
         for role_data in roles:
             content += f"\n# Role from: {role_data['yaml_file'].name}\n"
-            content += role_data['terraform_code']
+            # Remove duplicate data sources from individual role code
+            role_code = role_data['terraform_code']
+            role_code = role_code.replace('data "aws_caller_identity" "current" {}\n\n', '')
+            role_code = role_code.replace('# Get current AWS account ID\ndata "aws_caller_identity" "current" {}\n\n', '')
+            content += role_code
             content += "\n\n"
         
         return content
