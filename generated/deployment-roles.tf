@@ -6,7 +6,7 @@
 # This file is auto-generated from YAML definitions.
 # DO NOT EDIT MANUALLY - Changes will be overwritten.
 # 
-# Generated: 2025-10-15T10:29:44.066130
+# Generated: 2025-10-15T10:36:50.579161
 # Source: Multiple role definitions in definitions/roles/
 # ==============================================================================
 
@@ -82,7 +82,7 @@ resource "aws_iam_role" "github_actions_iam_deployment_role" {
     # Auto-generated tags
     "ManagedBy" = "terraform"
     "Source"    = "definitions/roles/github-deployment-role.yaml"
-    "Generated" = "2025-10-15T10:29:44.066130"
+    "Generated" = "2025-10-15T10:36:50.579161"
   }
 }
 
@@ -589,13 +589,151 @@ resource "aws_iam_role" "mci_lambda_execution_role" {
     # Auto-generated tags
     "ManagedBy" = "terraform"
     "Source"    = "definitions/roles/mci-lambda-execution-role.yaml"
-    "Generated" = "2025-10-15T10:29:44.066130"
+    "Generated" = "2025-10-15T10:36:50.579161"
   }
 }
 
 # Create policies as independent modules (not attached to role)
+module "mci_lambda_cloudwatch_logs" {
+  source = "./modules/policies/mci_lambda_cloudwatch_logs"
+  
+  environment = "dev"
+  
+  # ABAC conditions for policy restrictions
+  abac_conditions = {
+    "aws:PrincipalTag/Gerencia" = ["MCI"]
+    "aws:PrincipalTag/Area"     = ["DevOps"]
+    "aws:PrincipalTag/Ambiente" = ["dev"]
+  }
+  
+  # AWS Configuration
+  aws_region            = "us-east-1"
+  role_prefix          = "MCI-"
+  policy_prefix        = "MCI-"
+  s3_bucket_name       = "mci-terraform-state"
+  dynamodb_table_name  = "mci-terraform-locks"
+  kms_key_id          = "*"
+  
+  common_tags = {
+    "Pais" = "GT"
+    "Gerencia" = "MCI"
+    "Area" = "DevOps"  
+    "Ambiente" = "dev"
+    "Direccion" = "Gerencia de TI - DevOps"
+    "Modulo" = "Aplicacion"
+    "Alcance SOX" = "No"
+    "Propietario" = "DevOps Team"
+    "Proveedor" = "Inhouse"
+    "Layer" = "Serverless"
+    "Dominio" = "Infrastructure"
+    "Subdominio" = "Lambda"
+    "Aplicacion" = "LAMBDA-EXECUTION-GENERIC"
+    "Tipo de Recurso" = "IAMPolicy"
+    "Soporte" = "Equipo DevOps MCI"
+    "Contacto" = "devops@mci.com"
+    "Creado Por" = "github-copilot@mci.com"
+    "Ciclo de Vida" = "Creacion"
+    "ManagedBy" = "terraform"
+  }
+}
+module "mci_lambda_sns_publish" {
+  source = "./modules/policies/mci_lambda_sns_publish"
+  
+  environment = "dev"
+  
+  # ABAC conditions for policy restrictions
+  abac_conditions = {
+    "aws:PrincipalTag/Gerencia" = ["MCI"]
+    "aws:PrincipalTag/Area"     = ["DevOps"]
+    "aws:PrincipalTag/Ambiente" = ["dev"]
+  }
+  
+  # AWS Configuration
+  aws_region            = "us-east-1"
+  role_prefix          = "MCI-"
+  policy_prefix        = "MCI-"
+  s3_bucket_name       = "mci-terraform-state"
+  dynamodb_table_name  = "mci-terraform-locks"
+  kms_key_id          = "*"
+  
+  common_tags = {
+    "Pais" = "GT"
+    "Gerencia" = "MCI"
+    "Area" = "DevOps"  
+    "Ambiente" = "dev"
+    "Direccion" = "Gerencia de TI - DevOps"
+    "Modulo" = "Aplicacion"
+    "Alcance SOX" = "No"
+    "Propietario" = "DevOps Team"
+    "Proveedor" = "Inhouse"
+    "Layer" = "Serverless"
+    "Dominio" = "Infrastructure"
+    "Subdominio" = "Lambda"
+    "Aplicacion" = "LAMBDA-EXECUTION-GENERIC"
+    "Tipo de Recurso" = "IAMPolicy"
+    "Soporte" = "Equipo DevOps MCI"
+    "Contacto" = "devops@mci.com"
+    "Creado Por" = "github-copilot@mci.com"
+    "Ciclo de Vida" = "Creacion"
+    "ManagedBy" = "terraform"
+  }
+}
+module "mci_lambda_cloudtrail_read" {
+  source = "./modules/policies/mci_lambda_cloudtrail_read"
+  
+  environment = "dev"
+  
+  # ABAC conditions for policy restrictions
+  abac_conditions = {
+    "aws:PrincipalTag/Gerencia" = ["MCI"]
+    "aws:PrincipalTag/Area"     = ["DevOps"]
+    "aws:PrincipalTag/Ambiente" = ["dev"]
+  }
+  
+  # AWS Configuration
+  aws_region            = "us-east-1"
+  role_prefix          = "MCI-"
+  policy_prefix        = "MCI-"
+  s3_bucket_name       = "mci-terraform-state"
+  dynamodb_table_name  = "mci-terraform-locks"
+  kms_key_id          = "*"
+  
+  common_tags = {
+    "Pais" = "GT"
+    "Gerencia" = "MCI"
+    "Area" = "DevOps"  
+    "Ambiente" = "dev"
+    "Direccion" = "Gerencia de TI - DevOps"
+    "Modulo" = "Aplicacion"
+    "Alcance SOX" = "No"
+    "Propietario" = "DevOps Team"
+    "Proveedor" = "Inhouse"
+    "Layer" = "Serverless"
+    "Dominio" = "Infrastructure"
+    "Subdominio" = "Lambda"
+    "Aplicacion" = "LAMBDA-EXECUTION-GENERIC"
+    "Tipo de Recurso" = "IAMPolicy"
+    "Soporte" = "Equipo DevOps MCI"
+    "Contacto" = "devops@mci.com"
+    "Creado Por" = "github-copilot@mci.com"
+    "Ciclo de Vida" = "Creacion"
+    "ManagedBy" = "terraform"
+  }
+}
 
 # Attach policies to role
+resource "aws_iam_role_policy_attachment" "mci_lambda_execution_role_mci_lambda_cloudwatch_logs" {
+  role       = aws_iam_role.mci_lambda_execution_role.name
+  policy_arn = module.mci_lambda_cloudwatch_logs.policy_arn
+}
+resource "aws_iam_role_policy_attachment" "mci_lambda_execution_role_mci_lambda_sns_publish" {
+  role       = aws_iam_role.mci_lambda_execution_role.name
+  policy_arn = module.mci_lambda_sns_publish.policy_arn
+}
+resource "aws_iam_role_policy_attachment" "mci_lambda_execution_role_mci_lambda_cloudtrail_read" {
+  role       = aws_iam_role.mci_lambda_execution_role.name
+  policy_arn = module.mci_lambda_cloudtrail_read.policy_arn
+}
 
 # Cleanup module for obsolete policies (TEMPORARILY DISABLED - performance issue)
 # TODO: Re-enable after optimizing the external data source performance
