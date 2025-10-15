@@ -5,8 +5,7 @@ role:
   version: "1.0.0"
   
   trust_policy:
-    type: "service"
-    service_principal: "lambda.amazonaws.com"
+    - service: "lambda.amazonaws.com"
     
   policy_modules:
     - name: "mci-lambda-cloudwatch-logs"

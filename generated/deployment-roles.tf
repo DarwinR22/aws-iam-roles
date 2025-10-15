@@ -6,7 +6,7 @@
 # This file is auto-generated from YAML definitions.
 # DO NOT EDIT MANUALLY - Changes will be overwritten.
 # 
-# Generated: 2025-10-15T10:43:06.585797
+# Generated: 2025-10-15T10:52:58.272603
 # Source: Multiple role definitions in definitions/roles/
 # ==============================================================================
 
@@ -84,7 +84,7 @@ resource "aws_iam_role" "github_actions_iam_deployment_role" {
     # Auto-generated tags
     "ManagedBy" = "terraform"
     "Source"    = "definitions/roles/github-deployment-role.yaml"
-    "Generated" = "2025-10-15T10:43:06.585797"
+    "Generated" = "2025-10-15T10:52:58.272603"
   }
 }
 
@@ -543,13 +543,8 @@ data "aws_iam_policy_document" "mci_lambda_execution_role_trust" {
     effect = "Allow"
     
     principals {
-    }
-
-  }
-  statement {
-    effect = "Allow"
-    
-    principals {
+      type        = "Service"
+      identifiers = ["lambda.amazonaws.com"]
     }
 
   }
@@ -589,7 +584,7 @@ resource "aws_iam_role" "mci_lambda_execution_role" {
     # Auto-generated tags
     "ManagedBy" = "terraform"
     "Source"    = "definitions/roles/mci-lambda-execution-role.yaml"
-    "Generated" = "2025-10-15T10:43:06.585797"
+    "Generated" = "2025-10-15T10:52:58.272603"
   }
 }
 
