@@ -170,21 +170,30 @@ class IAMGenerator:
     def validate_abac_compliance(self, definition: dict) -> bool:
         """Ensure ABAC tags and conditions are present"""
         if 'policy' in definition:
-            # Check ABAC conditions
+            # Check ABAC conditions - support both patterns:
+            # - Deployment policies: use Gerencia + Ambiente
+            # - Execution policies: use Cuenta (+ Proposito for S3)
             statements = definition['policy'].get('statements', [])
             for stmt in statements:
                 conditions = stmt.get('abac_conditions', [])
                 has_gerencia = any(c.get('variable') == 'aws:PrincipalTag/Gerencia' for c in conditions)
-                if not has_gerencia:
-                    raise ValueError(f"Policy missing required ABAC Gerencia condition")
+                has_cuenta = any(c.get('variable') == 'aws:PrincipalTag/Cuenta' for c in conditions)
+                
+                # Policy must have at least one ABAC pattern
+                if not has_gerencia and not has_cuenta:
+                    raise ValueError(f"Policy missing required ABAC condition (needs Gerencia OR Cuenta)")
         
         if 'role' in definition:
-            # Check required tags
+            # Check required tags - flexible validation
             tags = definition['role'].get('tags', {})
-            required_tags = ['Gerencia', 'Area', 'Ambiente']
-            for tag in required_tags:
-                if tag not in tags:
-                    raise ValueError(f"Role missing required tag: {tag}")
+            
+            # Deployment roles need: Gerencia, Area, Ambiente
+            # Execution roles need: Cuenta (+ Proposito for S3 access)
+            has_deployment_tags = all(tag in tags for tag in ['Gerencia', 'Area', 'Ambiente'])
+            has_execution_tags = 'Cuenta' in tags
+            
+            if not has_deployment_tags and not has_execution_tags:
+                raise ValueError(f"Role missing required tags. Need either [Gerencia, Area, Ambiente] OR [Cuenta]")
                     
         return True
     
