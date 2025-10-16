@@ -1,0 +1,51 @@
+policy:
+  name: "mci-aws-cloudwatch-logs"
+  description: "Permite escribir logs en CloudWatch con control ABAC por Cuenta. Política genérica reutilizable para Lambda, Glue, ECS, etc."
+  service: "logs"
+  version: "1.0.0"
+  
+  statements:
+    - sid: "CreateLogGroupWithABAC"
+      effect: "Allow"
+      actions:
+        - "logs:CreateLogGroup"
+      resources:
+        - "arn:aws:logs:*:*:*"
+      
+      abac_conditions:
+        - test: "StringEquals"
+          variable: "aws:PrincipalTag/Cuenta"
+          values: ["${aws:ResourceTag/Cuenta}"]
+          note: "Solo puede crear log groups de su misma Cuenta (dev/qa/prod)"
+    
+    - sid: "WriteLogsWithABAC"
+      effect: "Allow"
+      actions:
+        - "logs:CreateLogStream"
+        - "logs:PutLogEvents"
+        - "logs:DescribeLogStreams"
+      resources:
+        - "arn:aws:logs:*:*:log-group:/aws/glue/*:*"
+        - "arn:aws:logs:*:*:log-group:/aws/lambda/*:*"
+        - "arn:aws:logs:*:*:log-group:/aws/ecs/*:*"
+        - "arn:aws:logs:*:*:log-group:/aws/batch/*:*"
+      
+      abac_conditions:
+        - test: "StringEquals"
+          variable: "aws:PrincipalTag/Cuenta"
+          values: ["${aws:ResourceTag/Cuenta}"]
+          note: "Solo puede escribir en log groups de su misma Cuenta"
+
+# Metadata
+environments: ["dev", "qa", "prod"]
+owner: "DevOps Team"
+critical: false
+note: "Política genérica para escritura de logs en CloudWatch. Funciona para Lambda, Glue, ECS, Batch y otros servicios AWS."
+
+tags:
+  Service: "CloudWatchLogs"
+  AccessLevel: "Write"
+  PolicyType: "ABAC"
+  ManagedBy: "mci-aws-iam"
+  ABACEnabled: "true"
+  Reusable: "true"

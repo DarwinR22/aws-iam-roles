@@ -1,0 +1,47 @@
+policy:
+  name: "mci-aws-glue-catalog-write"
+  description: "Permite escritura en Glue Data Catalog con control ABAC por Cuenta. Política genérica reutilizable."
+  service: "glue"
+  version: "1.0.0"
+  
+  statements:
+    - sid: "WriteGlueCatalogWithABAC"
+      effect: "Allow"
+      actions:
+        - "glue:CreateDatabase"
+        - "glue:UpdateDatabase"
+        - "glue:DeleteDatabase"
+        - "glue:CreateTable"
+        - "glue:UpdateTable"
+        - "glue:DeleteTable"
+        - "glue:BatchCreatePartition"
+        - "glue:CreatePartition"
+        - "glue:UpdatePartition"
+        - "glue:DeletePartition"
+        - "glue:BatchDeletePartition"
+        - "glue:BatchUpdatePartition"
+      resources:
+        - "arn:aws:glue:*:*:catalog"
+        - "arn:aws:glue:*:*:database/*"
+        - "arn:aws:glue:*:*:table/*/*"
+      
+      abac_conditions:
+        - test: "StringEquals"
+          variable: "aws:PrincipalTag/Cuenta"
+          values: ["${aws:ResourceTag/Cuenta}"]
+          note: "Solo puede modificar bases de datos/tablas de su misma Cuenta (dev/qa/prod)"
+
+# Metadata
+environments: ["dev", "qa", "prod"]
+owner: "DevOps Team"
+critical: true
+note: "Política genérica para escritura en catálogo Glue. Incluye create, update, delete de databases, tables, partitions."
+
+tags:
+  Service: "Glue"
+  AccessLevel: "Write"
+  PolicyType: "ABAC"
+  ManagedBy: "mci-aws-iam"
+  ABACEnabled: "true"
+  Reusable: "true"
+  Destructive: "true"

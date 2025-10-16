@@ -1,6 +1,8 @@
-# 📋 Políticas de Ejecución Lambda (ABAC)
+# 📋 Políticas de Ejecución ABAC (Genéricas y Reutilizables)
 
-Políticas genéricas con Attribute-Based Access Control (ABAC) para funciones Lambda.
+Políticas genéricas con Attribute-Based Access Control (ABAC) para **cualquier servicio AWS**: Lambda, Glue, ECS, Batch, etc.
+
+**📖 Ver estrategia completa:** [ABAC-STRATEGY.md](../../../docs/ABAC-STRATEGY.md)
 
 ## 🎯 Patrón ABAC
 
@@ -15,7 +17,93 @@ Estas políticas permiten que **un solo rol Lambda** sirva a **múltiples funcio
 
 ## 📄 Políticas Disponibles
 
-### 1. `lambda-cloudwatch-logs.yaml`
+### **Amazon S3**
+
+#### 1. `mci-aws-s3-read.yaml` ✨ NUEVA
+**Propósito:** Lectura en buckets S3 con ABAC
+
+**Control ABAC:**
+- Solo buckets con mismo `Cuenta` (dev/qa/prod)
+- Solo buckets con mismo `Proposito` (DataLake, Reporting, etc)
+
+**Usado por:** Glue, Lambda, ECS, cualquier servicio que necesite leer S3
+
+#### 2. `mci-aws-s3-write.yaml` ✨ NUEVA
+**Propósito:** Escritura en buckets S3 con ABAC
+
+**Control ABAC:**
+- Solo buckets con mismo `Cuenta` y `Proposito`
+- Incluye permisos de delete para sobrescritura
+
+**Usado por:** Glue, Lambda, ECS
+
+---
+
+### **AWS Glue**
+
+#### 3. `mci-aws-glue-catalog-read.yaml` ✨ NUEVA
+**Propósito:** Lectura del Glue Data Catalog
+
+**Control ABAC:**
+- Solo databases/tables con mismo `Cuenta`
+
+**Usado por:** Glue Jobs, Athena, Lambda Analytics
+
+#### 4. `mci-aws-glue-catalog-write.yaml` ✨ NUEVA
+**Propósito:** Escritura en Glue Data Catalog
+
+**Control ABAC:**
+- Solo databases/tables con mismo `Cuenta`
+- Incluye create, update, delete
+
+**Usado por:** Glue Jobs, Glue Crawlers
+
+---
+
+### **Amazon DynamoDB**
+
+#### 5. `mci-aws-dynamodb-read.yaml` ✨ NUEVA
+**Propósito:** Lectura en tablas DynamoDB
+
+**Control ABAC:**
+- Solo tablas con mismo `Cuenta`
+
+**Usado por:** Lambda, Glue (para tracking/metadatos)
+
+---
+
+### **AWS KMS**
+
+#### 6. `mci-aws-kms-decrypt.yaml` ✨ NUEVA
+**Propósito:** Descifrado con KMS
+
+**Control ABAC:**
+- Solo KMS keys con mismo `Cuenta`
+
+**Usado por:** Cualquier servicio que lea/escriba S3 encriptado
+
+---
+
+### **Amazon CloudWatch**
+
+#### 7. `mci-aws-cloudwatch-logs.yaml` ✨ ACTUALIZADA
+**Propósito:** Escritura de logs en CloudWatch
+
+**Control ABAC:**
+- Solo log groups con mismo `Cuenta`
+
+**Usado por:** Lambda, Glue, ECS, Batch, cualquier servicio AWS
+
+---
+
+### **Políticas Legacy (para compatibilidad)**
+
+#### 8. `mci-lambda-cloudwatch-logs.yaml` ⚠️ DEPRECADA
+**Propósito:** Escribir logs en CloudWatch Logs (solo Lambda)
+
+**Estado:** Usar `mci-aws-cloudwatch-logs.yaml` en su lugar
+
+#### 9. `mci-lambda-sns-publish.yaml`
 **Propósito:** Escribir logs en CloudWatch Logs
 
 **Control ABAC:**

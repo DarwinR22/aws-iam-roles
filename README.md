@@ -55,6 +55,8 @@
 
 *Gobernanza automatizada • Cumplimiento integral • Seguridad por diseño*
 
+📖 **[Ver Estrategia ABAC Completa](docs/ABAC-STRATEGY.md)** - Políticas genéricas modulares a largo plazo
+
 </div>
 
 ### 📦 Estructura del Repositorio

@@ -1,0 +1,37 @@
+policy:
+  name: "mci-aws-dynamodb-read"
+  description: "Permite lectura en tablas DynamoDB con control ABAC por Cuenta. Política genérica reutilizable."
+  service: "dynamodb"
+  version: "1.0.0"
+  
+  statements:
+    - sid: "ReadDynamoDBWithABAC"
+      effect: "Allow"
+      actions:
+        - "dynamodb:GetItem"
+        - "dynamodb:BatchGetItem"
+        - "dynamodb:Query"
+        - "dynamodb:Scan"
+        - "dynamodb:DescribeTable"
+      resources:
+        - "arn:aws:dynamodb:*:*:table/*"
+      
+      abac_conditions:
+        - test: "StringEquals"
+          variable: "aws:PrincipalTag/Cuenta"
+          values: ["${aws:ResourceTag/Cuenta}"]
+          note: "Solo puede leer tablas DynamoDB de su misma Cuenta (dev/qa/prod)"
+
+# Metadata
+environments: ["dev", "qa", "prod"]
+owner: "DevOps Team"
+critical: false
+note: "Política genérica para lectura DynamoDB. Funciona para Lambda, Glue, cualquier servicio que necesite leer DynamoDB."
+
+tags:
+  Service: "DynamoDB"
+  AccessLevel: "Read"
+  PolicyType: "ABAC"
+  ManagedBy: "mci-aws-iam"
+  ABACEnabled: "true"
+  Reusable: "true"

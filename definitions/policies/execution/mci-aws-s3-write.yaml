@@ -1,0 +1,61 @@
+policy:
+  name: "mci-aws-s3-write"
+  description: "Permite escritura en buckets S3 con control ABAC por Cuenta y Proposito. Política genérica reutilizable para cualquier rol."
+  service: "s3"
+  version: "1.0.0"
+  
+  statements:
+    - sid: "WriteObjectsWithABAC"
+      effect: "Allow"
+      actions:
+        - "s3:PutObject"
+        - "s3:PutObjectAcl"
+        - "s3:DeleteObject"
+        - "s3:AbortMultipartUpload"
+        - "s3:ListMultipartUploadParts"
+      resources:
+        - "arn:aws:s3:::*/*"
+      
+      abac_conditions:
+        - test: "StringEquals"
+          variable: "aws:PrincipalTag/Cuenta"
+          values: ["${aws:ResourceTag/Cuenta}"]
+          note: "Solo puede escribir en buckets de su misma Cuenta (dev/qa/prod)"
+        
+        - test: "StringEquals"
+          variable: "aws:PrincipalTag/Proposito"
+          values: ["${aws:ResourceTag/Proposito}"]
+          note: "Solo puede escribir en buckets del mismo Proposito (DataLake, Reporting, etc)"
+    
+    - sid: "ManageMultipartUploadsWithABAC"
+      effect: "Allow"
+      actions:
+        - "s3:ListBucketMultipartUploads"
+      resources:
+        - "arn:aws:s3:::*"
+      
+      abac_conditions:
+        - test: "StringEquals"
+          variable: "aws:PrincipalTag/Cuenta"
+          values: ["${aws:ResourceTag/Cuenta}"]
+          note: "Solo puede gestionar multipart uploads de su misma Cuenta"
+        
+        - test: "StringEquals"
+          variable: "aws:PrincipalTag/Proposito"
+          values: ["${aws:ResourceTag/Proposito}"]
+          note: "Solo puede gestionar multipart uploads del mismo Proposito"
+
+# Metadata
+environments: ["dev", "qa", "prod"]
+owner: "DevOps Team"
+critical: true
+note: "Política genérica para escritura S3. Incluye delete para permitir sobrescritura/limpieza. Funciona para Glue, Lambda, ECS."
+
+tags:
+  Service: "S3"
+  AccessLevel: "Write"
+  PolicyType: "ABAC"
+  ManagedBy: "mci-aws-iam"
+  ABACEnabled: "true"
+  Reusable: "true"
+  Destructive: "true"
