@@ -15,7 +15,7 @@ permissions:
 
 on:
   push:
-    branches: [main, dev]
+    branches: [main, dev, qa]
     paths: 
       - 'definitions/**'
       - 'generators/**'
@@ -24,7 +24,7 @@ on:
       - 'modules/**'
   
   pull_request:
-    branches: [main]
+    branches: [main, qa]
     paths:
       - 'definitions/**'
   
@@ -77,6 +77,25 @@ jobs:
         echo "🔍 Validating YAML definitions..."
         python generators/generate_all.py --validate-only
 
+    - name: 🌍 Determine AWS Role ARN by Environment
+      id: aws-role
+      run: |
+        if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+          echo "role_arn=${{ secrets.AWS_ROLE_ARN_PROD }}" >> $GITHUB_OUTPUT
+          echo "environment=PROD" >> $GITHUB_OUTPUT
+        elif [[ "${{ github.ref }}" == "refs/heads/qa" ]]; then
+          echo "role_arn=${{ secrets.AWS_ROLE_ARN_QA }}" >> $GITHUB_OUTPUT
+          echo "environment=QA" >> $GITHUB_OUTPUT
+        elif [[ "${{ github.ref }}" == "refs/heads/dev" ]]; then
+          echo "role_arn=${{ secrets.AWS_ROLE_ARN }}" >> $GITHUB_OUTPUT
+          echo "environment=DEV" >> $GITHUB_OUTPUT
+        else
+          echo "role_arn=${{ secrets.AWS_ROLE_ARN }}" >> $GITHUB_OUTPUT
+          echo "environment=DEV" >> $GITHUB_OUTPUT
+        fi
+        echo "🌍 Deploying to: $(echo $environment)"
+        echo "🔑 Using role: $(echo $role_arn)"
+
     - name: 🛠️ Setup Terraform
       uses: hashicorp/setup-terraform@v2
       with:
@@ -95,7 +114,7 @@ jobs:
     - name: 🔐 Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v2
       with:
-        role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+        role-to-assume: ${{ steps.aws-role.outputs.role_arn }}
         aws-region: us-east-1
         audience: sts.amazonaws.com
         role-session-name: mci-iam-repo-${{ github.run_id }}
@@ -635,6 +654,25 @@ jobs:
     - name: 📥 Checkout Repository
       uses: actions/checkout@v4
 
+    - name: 🌍 Determine AWS Role ARN by Environment
+      id: aws-role
+      run: |
+        if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+          echo "role_arn=${{ secrets.AWS_ROLE_ARN_PROD }}" >> $GITHUB_OUTPUT
+          echo "environment=PROD" >> $GITHUB_OUTPUT
+        elif [[ "${{ github.ref }}" == "refs/heads/qa" ]]; then
+          echo "role_arn=${{ secrets.AWS_ROLE_ARN_QA }}" >> $GITHUB_OUTPUT
+          echo "environment=QA" >> $GITHUB_OUTPUT
+        elif [[ "${{ github.ref }}" == "refs/heads/dev" ]]; then
+          echo "role_arn=${{ secrets.AWS_ROLE_ARN }}" >> $GITHUB_OUTPUT
+          echo "environment=DEV" >> $GITHUB_OUTPUT
+        else
+          echo "role_arn=${{ secrets.AWS_ROLE_ARN }}" >> $GITHUB_OUTPUT
+          echo "environment=DEV" >> $GITHUB_OUTPUT
+        fi
+        echo "🌍 Deploying to: $(echo $environment)"
+        echo "🔑 Using role: $(echo $role_arn)"
+
     - name: 🔧 Setup Terraform
       uses: hashicorp/setup-terraform@v2
       with:
@@ -643,7 +681,7 @@ jobs:
     - name: 🔐 Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v2
       with:
-        role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+        role-to-assume: ${{ steps.aws-role.outputs.role_arn }}
         aws-region: us-east-1
         audience: sts.amazonaws.com
         role-session-name: mci-iam-repo-${{ github.run_id }}
@@ -733,6 +771,25 @@ jobs:
     - name: 📥 Checkout Repository
       uses: actions/checkout@v4
 
+    - name: 🌍 Determine AWS Role ARN by Environment
+      id: aws-role
+      run: |
+        if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+          echo "role_arn=${{ secrets.AWS_ROLE_ARN_PROD }}" >> $GITHUB_OUTPUT
+          echo "environment=PROD" >> $GITHUB_OUTPUT
+        elif [[ "${{ github.ref }}" == "refs/heads/qa" ]]; then
+          echo "role_arn=${{ secrets.AWS_ROLE_ARN_QA }}" >> $GITHUB_OUTPUT
+          echo "environment=QA" >> $GITHUB_OUTPUT
+        elif [[ "${{ github.ref }}" == "refs/heads/dev" ]]; then
+          echo "role_arn=${{ secrets.AWS_ROLE_ARN }}" >> $GITHUB_OUTPUT
+          echo "environment=DEV" >> $GITHUB_OUTPUT
+        else
+          echo "role_arn=${{ secrets.AWS_ROLE_ARN }}" >> $GITHUB_OUTPUT
+          echo "environment=DEV" >> $GITHUB_OUTPUT
+        fi
+        echo "🌍 Deploying to: $(echo $environment)"
+        echo "🔑 Using role: $(echo $role_arn)"
+
     - name: 🔧 Setup Terraform
       uses: hashicorp/setup-terraform@v2
       with:
@@ -741,7 +798,7 @@ jobs:
     - name: 🔐 Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v2
       with:
-        role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+        role-to-assume: ${{ steps.aws-role.outputs.role_arn }}
         aws-region: us-east-1
         audience: sts.amazonaws.com
         role-session-name: mci-iam-repo-${{ github.run_id }}
