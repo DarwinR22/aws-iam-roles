@@ -6,7 +6,7 @@
 # This file is auto-generated from YAML definitions.
 # DO NOT EDIT MANUALLY - Changes will be overwritten.
 # 
-# Generated: 2025-10-15T17:01:05.214138
+# Generated: 2025-10-16T15:27:37.969277
 # Source: Multiple role definitions in definitions/roles/
 # ==============================================================================
 
@@ -74,7 +74,7 @@ resource "aws_iam_role" "mci_lambda_execution_role" {
     # Auto-generated tags
     "ManagedBy" = "terraform"
     "Source"    = "definitions/roles/mci-lambda-execution-role.yaml"
-    "Generated" = "2025-10-15T17:01:05.214138"
+    "Generated" = "2025-10-16T15:27:37.969277"
   }
 }
 
@@ -312,7 +312,7 @@ resource "aws_iam_role" "github_actions_iam_deployment_role" {
     # Auto-generated tags
     "ManagedBy" = "terraform"
     "Source"    = "definitions/roles/github-deployment-role.yaml"
-    "Generated" = "2025-10-15T17:01:05.214138"
+    "Generated" = "2025-10-16T15:27:37.969277"
   }
 }
 
