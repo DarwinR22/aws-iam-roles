@@ -96,94 +96,42 @@ Estas políticas permiten que **un solo rol Lambda** sirva a **múltiples funcio
 
 ---
 
-### **Políticas Legacy (para compatibilidad)**
+## 📝 Nota Importante
 
-#### 8. `mci-lambda-cloudwatch-logs.yaml` ⚠️ DEPRECADA
-**Propósito:** Escribir logs en CloudWatch Logs (solo Lambda)
+Estas son políticas **genéricas y reutilizables**. No crear políticas específicas por tipo de recurso (ej: mci-aws-s3-datalake-read, mci-aws-s3-reports-read).
 
-**Estado:** Usar `mci-aws-cloudwatch-logs.yaml` en su lugar
-
-#### 9. `mci-lambda-sns-publish.yaml`
-**Propósito:** Escribir logs en CloudWatch Logs
-
-**Control ABAC:**
-- Lambda solo puede crear log groups con sus mismos tags `Gerencia` y `Ambiente`
-- Lambda solo puede escribir en log streams que coincidan con sus tags
-
-**Uso:**
-```yaml
-# Tags de la Lambda
-Gerencia: MCI
-Ambiente: DEV
-
-# Solo puede escribir en log groups con:
-Gerencia: MCI  ✅
-Ambiente: DEV  ✅
-```
-
----
-
-### 2. `lambda-sns-publish.yaml`
-**Propósito:** Publicar mensajes en SNS Topics
-
-**Control ABAC:**
-- Lambda solo puede publicar en topics con su misma `Gerencia` y `Ambiente`
-
-**Uso:**
-```yaml
-# Lambda con tags:
-Gerencia: MCI
-Ambiente: DEV
-
-# Puede publicar en:
-arn:aws:sns:us-east-1:123:iam-security-alerts
-  Tags: Gerencia=MCI, Ambiente=DEV  ✅
-
-# NO puede publicar en:
-arn:aws:sns:us-east-1:123:other-team-alerts
-  Tags: Gerencia=TI, Ambiente=DEV  ❌
-```
-
----
-
-### 3. `lambda-cloudtrail-read.yaml`
-**Propósito:** Leer eventos de CloudTrail (para Lambdas de monitoreo)
-
-**Control ABAC:**
-- Solo Lambdas con `Gerencia: MCI`
-- Solo Lambdas con `Dominio: Security` o `Dominio: Serverless`
-
-**Uso:**
-```yaml
-# Lambda de seguridad IAM:
-Gerencia: MCI       ✅
-Dominio: Security   ✅
-Resultado: PUEDE leer CloudTrail
-
-# Lambda de procesamiento datos:
-Gerencia: MCI       ✅
-Dominio: DataProcessing  ❌
-Resultado: NO puede leer CloudTrail
-```
+**Una política = Un servicio AWS**. El control de acceso se hace vía tags ABAC (`Cuenta` + `Proposito`).
 
 ---
 
 ## 🏗️ Cómo Usar
 
-### Paso 1: Crear rol genérico (en este repo)
+### Paso 1: Crear rol que combine políticas necesarias
 
 ```yaml
-# definitions/roles/lambda-execution-role.yaml
+# Ejemplo: definitions/roles/mci-glue-service-role.yaml
 role:
-  name: "lambda-execution-role"
+  name: "mci-glue-service-role"
   trust_policy:
-    type: "service"
-    service_principal: "lambda.amazonaws.com"
+    - service: "glue.amazonaws.com"
   
   policy_modules:
-    - name: "lambda-cloudwatch-logs"
-      file: "lambda-cloudwatch-logs.yaml"
-    - name: "lambda-sns-publish"
+    - name: "mci-aws-s3-read"
+      file: "mci-aws-s3-read.yaml"
+      folder: "execution"
+    - name: "mci-aws-s3-write"
+      file: "mci-aws-s3-write.yaml"
+      folder: "execution"
+    - name: "mci-aws-glue-catalog-read"
+      file: "mci-aws-glue-catalog-read.yaml"
+      folder: "execution"
+    - name: "mci-aws-cloudwatch-logs"
+      file: "mci-aws-cloudwatch-logs.yaml"
+      folder: "execution"
+  
+  tags:
+    Cuenta: "clarohn-data-analytics-dev"
+    Proposito: "DataLake"
       file: "lambda-sns-publish.yaml"
     - name: "lambda-cloudtrail-read"
       file: "lambda-cloudtrail-read.yaml"
@@ -216,56 +164,56 @@ Dominio = Security  # Le da acceso a CloudTrail
 
 | Recurso | Tags Requeridos | Resultado |
 |---------|-----------------|-----------|
-| **CloudWatch Log Group** | `Gerencia` + `Ambiente` match | ✅ Puede escribir |
-| **SNS Topic** | `Gerencia` + `Ambiente` match | ✅ Puede publicar |
-| **CloudTrail** | `Gerencia=MCI` + `Dominio=Security/Serverless` | ✅ Puede leer |
+| **S3 Bucket** | `Cuenta` + `Proposito` match | ✅ Puede acceder |
+| **Glue Database/Table** | `Cuenta` match | ✅ Puede acceder |
+| **DynamoDB Table** | `Cuenta` match | ✅ Puede acceder |
+| **KMS Key** | `Cuenta` match | ✅ Puede usar |
+| **CloudWatch Log Group** | `Cuenta` match | ✅ Puede escribir |
 | **Recurso sin tags** | N/A | ❌ Denegado |
 | **Recurso con tags diferentes** | No match | ❌ Denegado |
 
 ---
 
-## 📊 Ejemplo Completo: Lambda IAM Security Monitor
+## 📊 Ejemplo Completo: Glue Job con ABAC
 
-### Lambda Function Tags:
+### Glue Role Tags:
 ```yaml
-Gerencia: MCI
-Area: DevOps
-Ambiente: DEV
-Dominio: Security
+Cuenta: clarohn-data-analytics-dev
+Proposito: DataLake
 ```
 
 ### Puede acceder a:
 
-✅ **CloudWatch Log Group:**
+✅ **S3 Bucket DataLake:**
 ```
-/aws/lambda/iam-security-monitor-dev
-Tags: Gerencia=MCI, Ambiente=DEV
-```
-
-✅ **SNS Topic:**
-```
-arn:aws:sns:us-east-1:393209814297:iam-security-alerts
-Tags: Gerencia=MCI, Ambiente=DEV
+s3-data-analytics-raw-dev-datalake
+Tags: Cuenta=clarohn-data-analytics-dev, Proposito=DataLake
 ```
 
-✅ **CloudTrail:**
+✅ **Glue Database:**
 ```
-Permisos: LookupEvents, GetEventSelectors
-Condición: Gerencia=MCI + Dominio=Security ✅
+glue_catalog_database: analytics_dev
+Tags: Cuenta=clarohn-data-analytics-dev
+```
+
+✅ **DynamoDB Table:**
+```
+dynamodb-db-dev-glue-tracking
+Tags: Cuenta=clarohn-data-analytics-dev
 ```
 
 ### NO puede acceder a:
 
-❌ **SNS Topic de otro equipo:**
+❌ **S3 Bucket de Reports:**
 ```
-arn:aws:sns:us-east-1:393209814297:dataops-alerts
-Tags: Gerencia=DataOps, Ambiente=DEV
+s3-data-analytics-reports-dev
+Tags: Cuenta=clarohn-data-analytics-dev, Proposito=Reporting
 ```
 
-❌ **Log Group sin tags:**
+❌ **S3 Bucket de PROD:**
 ```
-/aws/lambda/legacy-function
-Sin tags
+s3-data-analytics-raw-prod-datalake
+Tags: Cuenta=clarohn-data-analytics-prod, Proposito=DataLake
 ```
 
 ---
@@ -274,15 +222,16 @@ Sin tags
 
 Con este patrón ABAC:
 
-| Lambdas | Roles Necesarios | Políticas Necesarias |
-|---------|------------------|----------------------|
-| 1 Lambda | 1 rol | 3 políticas |
-| 10 Lambdas | 1 rol | 3 políticas |
-| 100 Lambdas | 1 rol | 3 políticas |
+| Roles | Políticas Genéricas | Recursos AWS |
+|-------|---------------------|--------------|
+| 1 Glue Role | 7 políticas | Acceso ilimitado con tags correctos |
+| 10 Glue Roles | 7 políticas | Acceso ilimitado con tags correctos |
+| 100 Roles diversos | 12 políticas | Acceso ilimitado con tags correctos |
 
 **Sin ABAC necesitarías:**
 - 100 roles diferentes
-- 300 políticas diferentes
+- 500+ políticas hardcodeadas
+- Mantenimiento constante
 
 ---
 
@@ -291,7 +240,7 @@ Con este patrón ABAC:
 - Las políticas se generan automáticamente como módulos Terraform
 - Los tags se validan en tiempo de ejecución por AWS IAM
 - Si no hay match de tags, la solicitud es **denegada automáticamente**
-- No requiere cambios de código en la Lambda
+- Funciona para Lambda, Glue, ECS, Batch, cualquier servicio AWS
 
 ---
 
