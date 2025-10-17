@@ -25,11 +25,7 @@ policy:
       resources:
         - "arn:aws:events:*:*:rule/*"
         
-      # ✅ ABAC: Solo reglas con tags coincidentes
-      abac_conditions:
-        - test: "StringEquals"
-          variable: "aws:RequestTag/Gerencia"
-          values: ["${aws:PrincipalTag/Gerencia}"]
+      # ✅ Sin restricción ABAC: Roles de deployment deben crear EventBridge rules para cualquier gerencia
 
     - sid: "EventBridgeSchedulerManagement"
       effect: "Allow"
@@ -71,11 +67,7 @@ policy:
         - "arn:aws:states:*:*:stateMachine:*"
         - "arn:aws:states:*:*:execution:*:*"
         
-      # ✅ ABAC: Solo state machines con tags coincidentes
-      abac_conditions:
-        - test: "StringEquals"
-          variable: "aws:RequestTag/Gerencia"
-          values: ["${aws:PrincipalTag/Gerencia}"]
+      # ✅ Sin restricción ABAC: Roles de deployment deben crear Step Functions para cualquier gerencia
 
     - sid: "StepFunctionsActivityManagement"
       effect: "Allow"

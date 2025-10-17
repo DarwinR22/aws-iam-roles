@@ -70,11 +70,7 @@ policy:
         - "arn:aws:glue:*:*:trigger/*"
         - "arn:aws:glue:*:*:workflow/*"
         
-      # ✅ ABAC: Solo recursos con tags coincidentes
-      abac_conditions:
-        - test: "StringEquals"
-          variable: "aws:RequestTag/Gerencia"
-          values: ["${aws:PrincipalTag/Gerencia}"]
+      # ✅ Sin restricción ABAC: Roles de deployment deben crear Glue jobs para cualquier gerencia
 
     - sid: "IAMPassRoleForServices"
       effect: "Allow"
