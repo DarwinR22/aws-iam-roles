@@ -25,6 +25,9 @@ policy:
         - "logs:TagLogGroup"
         - "logs:UntagLogGroup"
         - "logs:ListTagsLogGroup"
+        - "logs:ListTagsForResource"
+        - "logs:TagResource"
+        - "logs:UntagResource"
         
       resources:
         - "arn:aws:logs:*:*:log-group:*"

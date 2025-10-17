@@ -2,7 +2,7 @@
 data "aws_caller_identity" "current" {}
 
 # mci-aws-kms-decrypt Policy Module - Following ABAC Pattern
-# Converted from definitions/policies/execution/mci-aws-kms-decrypt.yaml
+# Converted from definitions/policies/execution\mci-aws-kms-decrypt.yaml
 resource "aws_iam_policy" "main" {
   name        = "mci-aws-kms-decrypt"
   path        = "/"
@@ -12,13 +12,13 @@ resource "aws_iam_policy" "main" {
     Version = "2012-10-17"
     Statement = [
       {
-        Sid      = "DecryptWithKMSAndABAC"
-        Effect   = "Allow"
-        Action   = ["kms:Decrypt", "kms:DescribeKey", "kms:GenerateDataKey"]
-        Resource = ["arn:aws:kms:*:*:key/*"]
+Sid    = "DecryptWithKMSAndABAC"
+Effect = "Allow"
+        Action = ["kms:Decrypt", "kms:DescribeKey", "kms:GenerateDataKey"]
+        Resource = [          "arn:aws:kms:*:*:key/*"        ]
         Condition = {
-        StringEquals = { "aws:PrincipalTag/Cuenta" = ["$${aws:ResourceTag/Cuenta}"] } }
-    }]
+          StringEquals = {            "aws:PrincipalTag/Cuenta" = ["$${aws:ResourceTag/Cuenta}"]          }        }
+      }    ]
   })
 
   tags = merge(var.common_tags, {
