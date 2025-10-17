@@ -1,5 +1,14 @@
 aws_iam_role.github_actions_iam_deployment_role will be updated in-place
 aws_iam_role.mci_glue_service_role will be updated in-place
+module.github_deployment_cloudformation.aws_iam_policy.main will be updated in-place
+module.github_deployment_cloudwatch.aws_iam_policy.main will be updated in-place
+module.github_deployment_dynamodb.aws_iam_policy.main will be updated in-place
+module.github_deployment_eventbridge.aws_iam_policy.main will be updated in-place
+module.github_deployment_glue.aws_iam_policy.main will be updated in-place
+module.github_deployment_iam.aws_iam_policy.main will be updated in-place
+module.github_deployment_lambda.aws_iam_policy.main will be updated in-place
+module.github_deployment_s3.aws_iam_policy.main will be updated in-place
+module.github_deployment_tfstate.aws_iam_policy.main will be updated in-place
 module.mci_aws_cloudwatch_logs.aws_iam_policy.main will be updated in-place
 module.mci_aws_dynamodb_read.aws_iam_policy.main will be updated in-place
 module.mci_aws_glue_catalog_read.aws_iam_policy.main will be updated in-place
