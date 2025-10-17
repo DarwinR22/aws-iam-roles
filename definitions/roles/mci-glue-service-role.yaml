@@ -47,7 +47,7 @@ role:
   tags:
     Cuenta: "clarohn-data-analytics-dev"
     Proposito: "DataLake"
-    Gerencia: "MejoraContinuaeInformacion"
+    Gerencia: "MejoraContinuaEInformacion"
     Dominio: "DataAnalytics"
     Subdominio: "ETL"
     Area: "DevOps"

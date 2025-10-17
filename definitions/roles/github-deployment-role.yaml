@@ -88,7 +88,7 @@ role:
   tags:
     # Core organizational tags
     "Pais": "RG"
-    "Gerencia": "MejoraContinuaeInformacion"
+    "Gerencia": "MejoraContinuaEInformacion"
     "Area": "DevOps"
     "Ambiente": "DEV"
     "Direccion": "TICENAM"
