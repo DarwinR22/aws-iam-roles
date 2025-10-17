@@ -4,6 +4,8 @@ Políticas genéricas con Attribute-Based Access Control (ABAC) para **cualquier
 
 **📖 Ver estrategia completa:** [ABAC-STRATEGY.md](../../../docs/ABAC-STRATEGY.md)
 
+**✅ Estado:** 7 políticas ABAC creadas y desplegadas en DEV (2025-10-17)
+
 ## 🎯 Patrón ABAC
 
 Estas políticas permiten que **un solo rol Lambda** sirva a **múltiples funciones**, diferenciadas únicamente por **tags**.

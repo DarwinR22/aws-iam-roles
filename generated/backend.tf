@@ -5,5 +5,6 @@ terraform {
     region         = "us-east-1"
     dynamodb_table = "dynamodb-db-dev-terraform-lock"
     encrypt        = true
+    profile        = "darkh"
   }
 }
