@@ -75,6 +75,8 @@ policy:
         - "sns:Unsubscribe"
         - "sns:ListSubscriptions"
         - "sns:ListSubscriptionsByTopic"
+        - "sns:GetSubscriptionAttributes"
+        - "sns:SetSubscriptionAttributes"
         - "sns:Publish"
         - "sns:AddPermission"
         - "sns:RemovePermission"
