@@ -50,7 +50,7 @@ role:
     Gerencia: "MejoraContinuaeInformacion"
     Dominio: "DataAnalytics"
     Subdominio: "ETL"
-    Area: "MCI"
+    Area: "DevOps"
     Pais: "GT"
     Direccion: "TICENAM"
     Modulo: "Glue"

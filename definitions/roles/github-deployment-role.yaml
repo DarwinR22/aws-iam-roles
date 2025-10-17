@@ -116,9 +116,9 @@ role:
     
     # Lifecycle management
     "Ciclo de Vida": "Actualizacion"
-    "Versión": "v2.5.0"  # ABAC + 3 repos con wildcards, sin inline protection policy
+    "Version": "v2.5.0"  # ABAC + 3 repos con wildcards, sin inline protection policy
     "Fecha de Creacion": "2025-09-16"
-    "Última Actualización": "2025-10-14"
+    "Ultima Actualizacion": "2025-10-14"
 
 # Environment variables for multi-environment deployment
 variables:
