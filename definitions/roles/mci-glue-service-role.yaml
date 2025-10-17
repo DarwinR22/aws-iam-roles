@@ -72,7 +72,7 @@ role:
     FechaCreacion: "2025-10-16"
     Criticidad: "Alta"
     TipoRecurso: "IAMRole"
-    Gestionadorloor: "Terraform"
+    Gestionador: "Terraform"
     Equipo: "DevOps"
     Servicio: "Glue"
     map_migrated: "migBTC1DHWF13"

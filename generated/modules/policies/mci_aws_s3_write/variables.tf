@@ -1,9 +1,9 @@
-# Variables for github-deployment-tfstate Policy Module
+# Variables for mci-aws-s3-write Policy Module
 
 variable "policy_description" {
-  description = "Description for the github-deployment-tfstate policy"
+  description = "Description for the mci-aws-s3-write policy"
   type        = string
-  default     = "Gestión de estado de Terraform en S3 y locks en DynamoDB (sin ABAC - requerido para CI/CD)"
+  default     = "Permite escritura en buckets S3 con control ABAC por Cuenta y Proposito. Política genérica reutilizable para cualquier rol."
 }
 
 variable "abac_conditions" {

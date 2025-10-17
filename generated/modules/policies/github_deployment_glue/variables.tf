@@ -3,7 +3,7 @@
 variable "policy_description" {
   description = "Description for the github-deployment-glue policy"
   type        = string
-  default     = "GestiÃ³n de Glue, IAM PassRole y KMS para despliegue de infraestructura con ABAC"
+  default     = "Gestión de Glue, IAM PassRole y KMS para despliegue de infraestructura con ABAC"
 }
 
 variable "abac_conditions" {

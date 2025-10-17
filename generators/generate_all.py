@@ -117,7 +117,7 @@ class IAMGenerator:
             # Try to read from existing deployment-roles.tf
             deployment_file = self.generated_dir / "deployment-roles.tf"
             if deployment_file.exists():
-                content = deployment_file.read_text()
+                content = deployment_file.read_text(encoding='utf-8')
                 # Look for Generated tag in the content
                 import re
                 match = re.search(r'"Generated"\s*=\s*"([^"]+)"', content)
@@ -155,7 +155,7 @@ class IAMGenerator:
     
     def validate_yaml_schema(self, yaml_file: Path, schema_type: str) -> dict:
         """Validate YAML against expected schema"""
-        with open(yaml_file, 'r') as f:
+        with open(yaml_file, 'r', encoding='utf-8') as f:
             data = yaml.safe_load(f)
         
         if schema_type == 'policy':
@@ -388,7 +388,7 @@ class IAMGenerator:
             definition['role']['policies'] = real_policy_names
             
             # Determine smart timestamp - only update if real changes detected
-            yaml_content = yaml_file.read_text()
+            yaml_content = yaml_file.read_text(encoding='utf-8')
             should_update = self._should_update_timestamp(yaml_content, yaml_file)
             generation_time = self.current_generation_time if should_update else self.last_generation_time
             

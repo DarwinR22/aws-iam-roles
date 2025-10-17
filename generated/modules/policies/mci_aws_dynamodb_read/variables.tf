@@ -1,9 +1,9 @@
-# Variables for github-deployment-tfstate Policy Module
+# Variables for mci-aws-dynamodb-read Policy Module
 
 variable "policy_description" {
-  description = "Description for the github-deployment-tfstate policy"
+  description = "Description for the mci-aws-dynamodb-read policy"
   type        = string
-  default     = "Gestión de estado de Terraform en S3 y locks en DynamoDB (sin ABAC - requerido para CI/CD)"
+  default     = "Permite lectura en tablas DynamoDB con control ABAC por Cuenta. Política genérica reutilizable."
 }
 
 variable "abac_conditions" {

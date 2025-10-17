@@ -1,9 +1,9 @@
-# Variables for github-deployment-tfstate Policy Module
+# Variables for mci-aws-glue-catalog-write Policy Module
 
 variable "policy_description" {
-  description = "Description for the github-deployment-tfstate policy"
+  description = "Description for the mci-aws-glue-catalog-write policy"
   type        = string
-  default     = "Gestión de estado de Terraform en S3 y locks en DynamoDB (sin ABAC - requerido para CI/CD)"
+  default     = "Permite escritura en Glue Data Catalog con control ABAC por Cuenta. Política genérica reutilizable."
 }
 
 variable "abac_conditions" {

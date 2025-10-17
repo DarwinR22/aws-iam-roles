@@ -1,9 +1,9 @@
-# Variables for github-deployment-tfstate Policy Module
+# Variables for mci-aws-cloudwatch-logs Policy Module
 
 variable "policy_description" {
-  description = "Description for the github-deployment-tfstate policy"
+  description = "Description for the mci-aws-cloudwatch-logs policy"
   type        = string
-  default     = "Gestión de estado de Terraform en S3 y locks en DynamoDB (sin ABAC - requerido para CI/CD)"
+  default     = "Permite escribir logs en CloudWatch con control ABAC por Cuenta. Política genérica reutilizable para Lambda, Glue, ECS, etc."
 }
 
 variable "abac_conditions" {

@@ -1,9 +1,9 @@
-# Variables for github-deployment-tfstate Policy Module
+# Variables for mci-aws-kms-decrypt Policy Module
 
 variable "policy_description" {
-  description = "Description for the github-deployment-tfstate policy"
+  description = "Description for the mci-aws-kms-decrypt policy"
   type        = string
-  default     = "Gestión de estado de Terraform en S3 y locks en DynamoDB (sin ABAC - requerido para CI/CD)"
+  default     = "Permite descifrar objetos con KMS con control ABAC por Cuenta. Necesario para S3 encriptado. Política genérica reutilizable."
 }
 
 variable "abac_conditions" {

@@ -3,7 +3,7 @@
 variable "policy_description" {
   description = "Description for the github-deployment-cloudwatch policy"
   type        = string
-  default     = "GestiÃ³n completa de CloudWatch Logs, MÃ©tricas, Alarmas y SNS con ABAC"
+  default     = "Gestión completa de CloudWatch Logs, Métricas, Alarmas y SNS con ABAC"
 }
 
 variable "abac_conditions" {
