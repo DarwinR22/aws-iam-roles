@@ -88,10 +88,10 @@ role:
   tags:
     # Core organizational tags
     "Pais": "RG"
-    "Gerencia": "MCI"
+    "Gerencia": "MejoraContinuaeInformacion"
     "Area": "DevOps"
     "Ambiente": "DEV"
-    "Direccion": "TIRegional"
+    "Direccion": "TICENAM"
     "Modulo": "IAM"
     
     # Compliance and governance
