@@ -1,3 +1,3 @@
 aws_iam_role.github_actions_iam_deployment_role will be updated in-place
 aws_iam_role.mci_glue_service_role will be updated in-place
-module.github_deployment_s3.aws_iam_policy.main will be updated in-place
+module.github_deployment_cloudwatch.aws_iam_policy.main will be updated in-place
