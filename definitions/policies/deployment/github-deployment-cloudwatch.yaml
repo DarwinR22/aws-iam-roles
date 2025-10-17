@@ -30,11 +30,7 @@ policy:
         - "arn:aws:logs:*:*:log-group:*"
         - "arn:aws:logs:*:*:log-group:*:log-stream:*"
         
-      # ✅ ABAC: Solo log groups con tags coincidentes
-      abac_conditions:
-        - test: "StringEquals"
-          variable: "aws:RequestTag/Gerencia"
-          values: ["${aws:PrincipalTag/Gerencia}"]
+      # ✅ Sin restricción ABAC: Roles de deployment deben crear logs para cualquier gerencia
 
     - sid: "CloudWatchMetricsAndAlarms"
       effect: "Allow"
@@ -89,11 +85,7 @@ policy:
       resources:
         - "arn:aws:sns:*:*:*"
         
-      # ✅ ABAC: Solo topics con tags coincidentes
-      abac_conditions:
-        - test: "StringEquals"
-          variable: "aws:RequestTag/Gerencia"
-          values: ["${aws:PrincipalTag/Gerencia}"]
+      # ✅ Sin restricción ABAC: Roles de deployment deben crear SNS para cualquier gerencia
 
     - sid: "SNSPlatformEndpoints"
       effect: "Allow"
