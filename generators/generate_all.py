@@ -288,19 +288,19 @@ class IAMGenerator:
             # Generate main.tf
             main_code = main_template.render(**template_data)
             main_file = module_dir / "main.tf"
-            with open(main_file, 'w') as f:
+            with open(main_file, 'w', encoding='utf-8') as f:
                 f.write(main_code)
             
             # Generate variables.tf
             variables_code = variables_template.render(**template_data)
             variables_file = module_dir / "variables.tf"
-            with open(variables_file, 'w') as f:
+            with open(variables_file, 'w', encoding='utf-8') as f:
                 f.write(variables_code)
             
             # Generate outputs.tf
             outputs_code = outputs_template.render(**template_data)
             outputs_file = module_dir / "outputs.tf"
-            with open(outputs_file, 'w') as f:
+            with open(outputs_file, 'w', encoding='utf-8') as f:
                 f.write(outputs_code)
             
             generated_files.extend([main_file, variables_file, outputs_file])
@@ -378,7 +378,7 @@ class IAMGenerator:
                 policy_file = self.definitions_dir / "policies" / policy_folder / pm['file']
                 
                 if policy_file.exists():
-                    with open(policy_file, 'r') as f:
+                    with open(policy_file, 'r', encoding='utf-8') as f:
                         policy_def = yaml.safe_load(f)
                         real_name = policy_def['policy']['name']
                         real_policy_names.append(real_name)
@@ -449,7 +449,7 @@ class IAMGenerator:
                 "CI/CD, GitHub Actions, and infrastructure automation roles"
             )
             deployment_file = self.generated_dir / "deployment-roles.tf"
-            with open(deployment_file, 'w') as f:
+            with open(deployment_file, 'w', encoding='utf-8') as f:
                 f.write(deployment_content)
             generated_files.append(deployment_file)
             print(f"✅ Generated: deployment-roles.tf ({len(deployment_roles)} roles)")
@@ -462,7 +462,7 @@ class IAMGenerator:
                 "Business user roles for applications, analytics, and services"
             )
             application_file = self.generated_dir / "application-roles.tf"
-            with open(application_file, 'w') as f:
+            with open(application_file, 'w', encoding='utf-8') as f:
                 f.write(application_content)
             generated_files.append(application_file)
             print(f"✅ Generated: application-roles.tf ({len(application_roles)} roles)")
