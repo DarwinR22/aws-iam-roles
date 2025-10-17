@@ -54,7 +54,7 @@ role:
     Pais: "GT"
     Direccion: "TICENAM"
     Modulo: "Glue"
-    "Alcance SOX": "No"
+    AlcanceSOX: "No"
     Propietario: "JorgeMarioRubioVidal"
     Proveedor: "INHOUSE"
     Layer: "DataProcessing"

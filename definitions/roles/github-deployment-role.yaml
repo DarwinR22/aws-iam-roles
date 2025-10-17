@@ -95,7 +95,7 @@ role:
     "Modulo": "IAM"
     
     # Compliance and governance
-    "Alcance SOX": "No"
+    "AlcanceSOX": "No"
     "Propietario": "DarwinLopez"
     "Proveedor": "InHouse"
     
