@@ -3,7 +3,7 @@
 variable "policy_description" {
   description = "Description for the mci-aws-cloudwatch-logs policy"
   type        = string
-  default     = "Permite escribir logs en CloudWatch con control ABAC por Cuenta. Política genérica reutilizable para Lambda, Glue, ECS, etc."
+  default     = "Permite escribir logs en CloudWatch con control ABAC por Cuenta. PolÃ­tica genÃ©rica reutilizable para Lambda, Glue, ECS, etc."
 }
 
 variable "abac_conditions" {

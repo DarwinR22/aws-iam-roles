@@ -3,7 +3,7 @@
 variable "policy_description" {
   description = "Description for the mci-aws-kms-decrypt policy"
   type        = string
-  default     = "Permite descifrar objetos con KMS con control ABAC por Cuenta. Necesario para S3 encriptado. Política genérica reutilizable."
+  default     = "Permite descifrar objetos con KMS con control ABAC por Cuenta. Necesario para S3 encriptado. PolÃ­tica genÃ©rica reutilizable."
 }
 
 variable "abac_conditions" {

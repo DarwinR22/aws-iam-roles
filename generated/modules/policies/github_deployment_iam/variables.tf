@@ -3,7 +3,7 @@
 variable "policy_description" {
   description = "Description for the github-deployment-iam policy"
   type        = string
-  default     = "Gestión completa de roles y políticas IAM para despliegues de infraestructura con Terraform (sin restricciones ABAC para CI/CD)"
+  default     = "GestiÃ³n completa de roles y polÃ­ticas IAM para despliegues de infraestructura con Terraform (sin restricciones ABAC para CI/CD)"
 }
 
 variable "abac_conditions" {

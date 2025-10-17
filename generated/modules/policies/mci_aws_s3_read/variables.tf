@@ -3,7 +3,7 @@
 variable "policy_description" {
   description = "Description for the mci-aws-s3-read policy"
   type        = string
-  default     = "Permite lectura en buckets S3 con control ABAC por Cuenta y Proposito. Política genérica reutilizable para cualquier rol."
+  default     = "Permite lectura en buckets S3 con control ABAC por Cuenta y Proposito. PolÃ­tica genÃ©rica reutilizable para cualquier rol."
 }
 
 variable "abac_conditions" {

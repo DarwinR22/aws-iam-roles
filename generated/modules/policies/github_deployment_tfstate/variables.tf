@@ -3,7 +3,7 @@
 variable "policy_description" {
   description = "Description for the github-deployment-tfstate policy"
   type        = string
-  default     = "Gestión de estado de Terraform en S3 y locks en DynamoDB (sin ABAC - requerido para CI/CD)"
+  default     = "GestiÃ³n de estado de Terraform en S3 y locks en DynamoDB (sin ABAC - requerido para CI/CD)"
 }
 
 variable "abac_conditions" {

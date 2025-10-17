@@ -3,7 +3,7 @@
 variable "policy_description" {
   description = "Description for the github-deployment-dynamodb policy"
   type        = string
-  default     = "Gestión completa de tablas DynamoDB sin restricciones ABAC para CI/CD deployment"
+  default     = "GestiÃ³n completa de tablas DynamoDB sin restricciones ABAC para CI/CD deployment"
 }
 
 variable "abac_conditions" {

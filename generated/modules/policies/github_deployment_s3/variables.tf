@@ -3,7 +3,7 @@
 variable "policy_description" {
   description = "Description for the github-deployment-s3 policy"
   type        = string
-  default     = "Gestión completa de buckets S3 sin restricciones ABAC para CI/CD deployment"
+  default     = "GestiÃ³n completa de buckets S3 sin restricciones ABAC para CI/CD deployment"
 }
 
 variable "abac_conditions" {

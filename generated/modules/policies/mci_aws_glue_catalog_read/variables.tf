@@ -3,7 +3,7 @@
 variable "policy_description" {
   description = "Description for the mci-aws-glue-catalog-read policy"
   type        = string
-  default     = "Permite lectura del Glue Data Catalog con control ABAC por Cuenta. Política genérica reutilizable."
+  default     = "Permite lectura del Glue Data Catalog con control ABAC por Cuenta. PolÃ­tica genÃ©rica reutilizable."
 }
 
 variable "abac_conditions" {

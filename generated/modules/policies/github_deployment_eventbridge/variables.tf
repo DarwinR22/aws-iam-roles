@@ -3,7 +3,7 @@
 variable "policy_description" {
   description = "Description for the github-deployment-eventbridge policy"
   type        = string
-  default     = "Gestión de EventBridge, Scheduler y StepFunctions con control ABAC"
+  default     = "GestiÃ³n de EventBridge, Scheduler y StepFunctions con control ABAC"
 }
 
 variable "abac_conditions" {
