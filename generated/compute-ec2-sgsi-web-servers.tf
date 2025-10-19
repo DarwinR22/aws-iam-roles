@@ -6,9 +6,9 @@ resource "aws_launch_template" "sgsi_web_server_template" {
   name_prefix   = "sgsi-web-server-"
   image_id      = "ami-0abcdef1234567890"
   instance_type = "t3.micro"
-  
+
   vpc_security_group_ids = [local.web_sg_id]
-  
+
   user_data = base64encode(<<-EOF
     #!/bin/bash
     yum update -y

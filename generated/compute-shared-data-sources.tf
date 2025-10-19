@@ -1,5 +1,5 @@
 # Shared Data Sources for SGSI Layer 3
-# Generated: 2025-10-18 - Updated for workflow trigger
+# Generated: 2025-10-18
 # This file contains all shared data sources to avoid duplicates
 
 # VPC DATA SOURCE
@@ -121,26 +121,26 @@ data "aws_launch_template" "sgsi_web_server_template" {
 locals {
   # VPC
   vpc_id = data.aws_vpc.sgsi_vpc_main.id
-  
+
   # Subnet Groups
   public_subnet_ids = [
     data.aws_subnet.sgsi_dmz_subnet_us_east_1a.id,
     data.aws_subnet.sgsi_dmz_subnet_us_east_1b.id,
     data.aws_subnet.sgsi_dmz_subnet_us_east_1c.id
   ]
-  
+
   private_subnet_ids = [
     data.aws_subnet.sgsi_app_subnet_us_east_1a.id,
     data.aws_subnet.sgsi_app_subnet_us_east_1b.id,
     data.aws_subnet.sgsi_app_subnet_us_east_1c.id
   ]
-  
+
   db_subnet_ids = [
     data.aws_subnet.sgsi_db_subnet_us_east_1a.id,
     data.aws_subnet.sgsi_db_subnet_us_east_1b.id,
     data.aws_subnet.sgsi_db_subnet_us_east_1c.id
   ]
-  
+
   # Security Groups
   alb_sg_id    = data.aws_security_group.sgsi_alb_sg.id
   web_sg_id    = data.aws_security_group.sgsi_web_sg.id
