@@ -2,7 +2,7 @@
 
 resource "aws_iam_policy" "github_deployment_iam" {
   name        = "${var.environment}-github-deployment-iam"
-  description = "Gestión completa de roles y políticas IAM para despliegues de infraestructura con Terraform (sin restricciones ABAC para CI/CD)"
+  description = "GestiÃ³n completa de roles y polÃ­ticas IAM para despliegues de infraestructura con Terraform (sin restricciones ABAC para CI/CD)"
   path        = "/"
 
   policy = jsonencode({

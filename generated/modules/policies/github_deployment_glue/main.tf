@@ -2,7 +2,7 @@
 
 resource "aws_iam_policy" "github_deployment_glue" {
   name        = "${var.environment}-github-deployment-glue"
-  description = "Gestión de Glue, IAM PassRole y KMS para despliegue de infraestructura con ABAC"
+  description = "GestiÃ³n de Glue, IAM PassRole y KMS para despliegue de infraestructura con ABAC"
   path        = "/"
 
   policy = jsonencode({

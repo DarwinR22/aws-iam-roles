@@ -2,7 +2,7 @@
 
 resource "aws_iam_policy" "github_deployment_cloudwatch" {
   name        = "${var.environment}-github-deployment-cloudwatch"
-  description = "Gestión completa de CloudWatch Logs, Métricas, Alarmas y SNS con ABAC"
+  description = "GestiÃ³n completa de CloudWatch Logs, MÃ©tricas, Alarmas y SNS con ABAC"
   path        = "/"
 
   policy = jsonencode({

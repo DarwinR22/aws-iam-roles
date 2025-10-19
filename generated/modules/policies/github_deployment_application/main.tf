@@ -2,7 +2,7 @@
 
 resource "aws_iam_policy" "github_deployment_application" {
   name        = "${var.environment}-github-deployment-application"
-  description = "Política consolidada de servicios de aplicación (Lambda, S3, DynamoDB, EventBridge) para GitHub Actions deployment con control ABAC basado en tags"
+  description = "PolÃ­tica consolidada de servicios de aplicaciÃ³n (Lambda, S3, DynamoDB, EventBridge) para GitHub Actions deployment con control ABAC basado en tags"
   path        = "/"
 
   policy = jsonencode({

@@ -2,7 +2,7 @@
 
 resource "aws_iam_policy" "github_deployment_compute" {
   name        = "${var.environment}-github-deployment-compute"
-  description = "Política consolidada para recursos de cómputo (EC2, ALB, Auto Scaling) del SGSI Layer 3"
+  description = "PolÃ­tica consolidada para recursos de cÃ³mputo (EC2, ALB, Auto Scaling) del SGSI Layer 3"
   path        = "/"
 
   policy = jsonencode({

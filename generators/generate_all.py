@@ -122,7 +122,7 @@ variable "environment" {
 }
 '''
     
-    with open("generated/main.tf", "w") as f:
+    with open("generated/main.tf", "w", encoding="utf-8") as f:
         f.write(terraform_content)
     
     print("📄 Generated main.tf")
@@ -140,7 +140,7 @@ def generate_backend_config():
 }
 '''
     
-    with open("generated/backend.tf", "w") as f:
+    with open("generated/backend.tf", "w", encoding="utf-8") as f:
         f.write(backend_content)
     
     print("📄 Generated backend.tf")
@@ -246,7 +246,7 @@ resource "aws_iam_policy" "{module_name}" {{
 }}
 '''
     
-    with open(module_dir / "main.tf", "w") as f:
+    with open(module_dir / "main.tf", "w", encoding="utf-8") as f:
         f.write(main_content)
 
 def generate_policy_variables_tf(module_dir):
@@ -269,7 +269,7 @@ variable "common_tags" {
 }
 '''
     
-    with open(module_dir / "variables.tf", "w") as f:
+    with open(module_dir / "variables.tf", "w", encoding="utf-8") as f:
         f.write(variables_content)
 
 def generate_policy_outputs_tf(module_dir, module_name):
@@ -290,7 +290,7 @@ output "policy_id" {{
 }}
 '''
     
-    with open(module_dir / "outputs.tf", "w") as f:
+    with open(module_dir / "outputs.tf", "w", encoding="utf-8") as f:
         f.write(outputs_content)
 
 if __name__ == "__main__":

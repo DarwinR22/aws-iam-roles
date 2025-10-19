@@ -2,7 +2,7 @@
 
 resource "aws_iam_policy" "github_deployment_tfstate" {
   name        = "${var.environment}-github-deployment-tfstate"
-  description = "Gestión de estado de Terraform en S3 y locks en DynamoDB (sin ABAC - requerido para CI/CD)"
+  description = "GestiÃ³n de estado de Terraform en S3 y locks en DynamoDB (sin ABAC - requerido para CI/CD)"
   path        = "/"
 
   policy = jsonencode({

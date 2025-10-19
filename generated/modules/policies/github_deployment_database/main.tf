@@ -2,7 +2,7 @@
 
 resource "aws_iam_policy" "github_deployment_database" {
   name        = "${var.environment}-github-deployment-database"
-  description = "Política consolidada para recursos de base de datos (RDS) del SGSI Layer 3"
+  description = "PolÃ­tica consolidada para recursos de base de datos (RDS) del SGSI Layer 3"
   path        = "/"
 
   policy = jsonencode({
