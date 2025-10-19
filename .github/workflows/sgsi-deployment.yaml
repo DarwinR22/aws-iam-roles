@@ -242,10 +242,10 @@ jobs:
         id: aws-config
         run: |
           if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-            echo "role_arn=arn:aws:iam::051963532279:role/github-actions-iam-deployment-role" >> $GITHUB_OUTPUT
+            echo "role_arn=arn:aws:iam::051963532279:role/github-actions-deployment-role" >> $GITHUB_OUTPUT
             echo "environment=PRODUCTION" >> $GITHUB_OUTPUT
           else
-            echo "role_arn=arn:aws:iam::051963532279:role/github-actions-iam-deployment-role" >> $GITHUB_OUTPUT
+            echo "role_arn=arn:aws:iam::051963532279:role/github-actions-deployment-role" >> $GITHUB_OUTPUT
             echo "environment=DEVELOPMENT" >> $GITHUB_OUTPUT
           fi
           echo "🌍 Target Environment: $environment"
@@ -420,7 +420,7 @@ jobs:
       - name: 🔐 Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::051963532279:role/github-actions-iam-deployment-role
+          role-to-assume: arn:aws:iam::051963532279:role/github-actions-deployment-role
           aws-region: ${{ env.AWS_REGION }}
           role-session-name: sgsi-deployment-${{ github.run_id }}
 

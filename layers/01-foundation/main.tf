@@ -53,65 +53,32 @@ provider "aws" {
 # No need to create or reference it in Terraform - GitHub Actions handles OIDC automatically
 
 # ==============================================================================
-# IAM DEPLOYMENT ROLE (Main deployment role for GitHub Actions)
+# IAM DEPLOYMENT ROLE (Use existing role for now)
 # ==============================================================================
-resource "aws_iam_role" "github_actions_iam_deployment_role" {
-  name                 = "github-actions-iam-deployment-role"
-  description          = "GitHub Actions deployment role with comprehensive AWS permissions"
-  max_session_duration = 3600
-  path                 = "/"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Principal = {
-          Federated = "arn:aws:iam::051963532279:oidc-provider/token.actions.githubusercontent.com"
-        }
-        Action = "sts:AssumeRoleWithWebIdentity"
-        Condition = {
-          StringEquals = {
-            "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
-          }
-          StringLike = {
-            "token.actions.githubusercontent.com:sub" = "repo:DarwinR22/aws-iam-roles:*"
-          }
-        }
-      }
-    ]
-  })
-
-  tags = merge(
-    var.common_tags,
-    {
-      Name                = "github-actions-iam-deployment-role"
-      RoleType           = "Deployment"
-      PolicyCount        = "13"
-      AccessLevel        = "Full"
-      ReviewDate         = "2025-01-19"
-    }
-  )
+# Using existing role: github-actions-deployment-role for this deployment
+data "aws_iam_role" "github_actions_deployment_role" {
+  name = "github-actions-deployment-role"
 }
 
 # ==============================================================================
 # TEMPORARY INLINE POLICY FOR DEPLOYMENT (Remove after managed policies work)
 # ==============================================================================
-resource "aws_iam_role_policy" "temp_deployment_policy" {
-  name = "temp-full-deployment-policy"
-  role = aws_iam_role.github_actions_iam_deployment_role.id
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Action = "*"
-        Resource = "*"
-      }
-    ]
-  })
-}
+# Commented out - using existing role with existing permissions
+# resource "aws_iam_role_policy" "temp_deployment_policy" {
+#   name = "temp-full-deployment-policy"
+#   role = data.aws_iam_role.github_actions_deployment_role.id
+#
+#   policy = jsonencode({
+#     Version = "2012-10-17"
+#     Statement = [
+#       {
+#         Effect = "Allow"
+#         Action = "*"
+#         Resource = "*"
+#       }
+#     ]
+#   })
+# }
 
 # ==============================================================================
 # IAM POLICY MODULES (Import from existing modules)
@@ -215,25 +182,26 @@ module "github_deployment_glue" {
 # ==============================================================================
 # POLICY ATTACHMENTS
 # ==============================================================================
-resource "aws_iam_role_policy_attachment" "github_deployment_policies" {
-  for_each = {
-    iam            = module.github_deployment_iam.policy_arn
-    sts            = module.github_deployment_sts.policy_arn
-    tfstate        = module.github_deployment_tfstate.policy_arn
-    network        = module.github_deployment_network.policy_arn
-    compute        = module.github_deployment_compute.policy_arn
-    database       = module.github_deployment_database.policy_arn
-    storage        = module.github_deployment_storage.policy_arn
-    monitoring     = module.github_deployment_monitoring.policy_arn
-    application    = module.github_deployment_application.policy_arn
-    cloudformation = module.github_deployment_cloudformation.policy_arn
-    cloudwatch     = module.github_deployment_cloudwatch.policy_arn
-    glue           = module.github_deployment_glue.policy_arn
-  }
-
-  role       = aws_iam_role.github_actions_iam_deployment_role.name
-  policy_arn = each.value
-}
+# Commented out - using existing role with existing permissions for this deployment
+# resource "aws_iam_role_policy_attachment" "github_deployment_policies" {
+#   for_each = {
+#     iam            = module.github_deployment_iam.policy_arn
+#     sts            = module.github_deployment_sts.policy_arn
+#     tfstate        = module.github_deployment_tfstate.policy_arn
+#     network        = module.github_deployment_network.policy_arn
+#     compute        = module.github_deployment_compute.policy_arn
+#     database       = module.github_deployment_database.policy_arn
+#     storage        = module.github_deployment_storage.policy_arn
+#     monitoring     = module.github_deployment_monitoring.policy_arn
+#     application    = module.github_deployment_application.policy_arn
+#     cloudformation = module.github_deployment_cloudformation.policy_arn
+#     cloudwatch     = module.github_deployment_cloudwatch.policy_arn
+#     glue           = module.github_deployment_glue.policy_arn
+#   }
+#
+#   role       = data.aws_iam_role.github_actions_deployment_role.name
+#   policy_arn = each.value
+# }
 
 # ==============================================================================
 # DATA SOURCES
