@@ -1,5 +1,6 @@
 # EC2 Instances generated from sgsi-web-servers.yaml
-# Generated: 2025-10-18T22:18:12.464579
+# Generated: 2025-10-18
+# Updated: Force workflow triggerT22:18:12.464579
 
 
 # Launch Template
