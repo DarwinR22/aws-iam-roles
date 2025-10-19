@@ -130,6 +130,13 @@ security_groups:
         source_security_group: "sgsi-app-sg"
         description: "MySQL from app servers"
         
+      # MySQL desde Lambda Functions (Serverless tier)
+      - protocol: "tcp"
+        from_port: 3306
+        to_port: 3306
+        source_security_group: "sgsi-lambda-sg"
+        description: "MySQL from Lambda functions"
+        
       # PostgreSQL desde Application Tier únicamente
       - protocol: "tcp"
         from_port: 5432
@@ -158,6 +165,41 @@ security_groups:
         to_port: 65535
         cidr_blocks: ["10.0.0.0/16"]
         description: "Response traffic within VPC"
+
+  # =========================================
+  # SERVERLESS TIER SECURITY GROUPS
+  # =========================================
+  - name: "sgsi-lambda-sg"
+    description: "Security Group for Lambda Functions (Serverless Tier)"
+    vpc_name: "sgsi-vpc-main"
+    tier: "serverless"
+    
+    ingress_rules:
+      # Sin ingress rules - Lambda functions no reciben tráfico directo
+      # Todas las conexiones son outbound
+      []
+    
+    egress_rules:
+      # Conexión a RDS para API processor
+      - protocol: "tcp"
+        from_port: 3306
+        to_port: 3306
+        source_security_group: "sgsi-db-sg"
+        description: "MySQL to database from Lambda"
+        
+      # HTTPS para APIs externas y Secrets Manager
+      - protocol: "tcp"
+        from_port: 443
+        to_port: 443
+        cidr_blocks: ["0.0.0.0/0"]
+        description: "HTTPS for AWS services (Secrets Manager, etc.)"
+        
+      # DNS resolution
+      - protocol: "udp"
+        from_port: 53
+        to_port: 53
+        cidr_blocks: ["0.0.0.0/0"]
+        description: "DNS resolution"
 
   # =========================================
   # MANAGEMENT TIER SECURITY GROUPS

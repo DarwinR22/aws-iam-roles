@@ -13,16 +13,20 @@ role:
     version: "2.6.0"
     created_by: "DevOps Team"
     created_date: "2025-09-16"
-    last_updated: "2025-10-18T20:45:00"
-    purpose: "GitHub Actions CI/CD deployment con políticas ABAC modulares basadas en tags"
+    last_updated: "2025-10-19T12:00:00"
+    purpose: "GitHub Actions CI/CD deployment con políticas ABAC modulares basadas en tags para Layer 1, 2 y 3 SGSI"
     risk_level: "high"
-    security_improvements: "v2.6.0 - Consolidación de políticas para respetar límite AWS (Lambda+S3+DynamoDB+EventBridge → Application)"
+    security_improvements: "v2.7.0 - Agregadas políticas compute y database para Layer 3 SGSI"
     policy_consolidation:
       - action: "consolidated"
         policies: ["lambda", "s3", "dynamodb", "eventbridge"] 
         into: "github-deployment-application"
         reason: "AWS 10-policy limit per role"
         date: "2025-10-18"
+      - action: "added"
+        policies: ["github-deployment-compute", "github-deployment-database"]
+        reason: "Layer 3 SGSI infrastructure permissions"
+        date: "2025-10-19"
     
   # OIDC Trust Policy Configuration
   trust_policy:
@@ -82,6 +86,14 @@ role:
     - name: "github-deployment-ec2"
       file: "github-deployment-ec2.yaml"
       description: "Permisos EC2 y VPC para desplegar infraestructura de red SGSI (VPC, Security Groups, Subnets, etc.)"
+      
+    - name: "github-deployment-compute"
+      file: "github-deployment-compute.yaml"
+      description: "Permisos completos de cómputo para Layer 3 SGSI (EC2, ALB, Auto Scaling, Launch Templates)"
+      
+    - name: "github-deployment-database"
+      file: "github-deployment-database.yaml"
+      description: "Permisos completos de base de datos para Layer 3 SGSI (RDS, Performance Insights, Enhanced Monitoring)"
 
   # Organizational tags for compliance and governance
   tags:
@@ -115,10 +127,10 @@ role:
     
     # Lifecycle management
     "Ciclo de Vida": "Consolidacion"
-    "Version": "v2.6.0"  # Política consolidada Application (Lambda+S3+DynamoDB+EventBridge)
+    "Version": "v2.7.0"  # Agregadas políticas compute y database para Layer 3 SGSI
     "Fecha de Creacion": "2025-09-16"
-    "Ultima Actualizacion": "2025-10-18"
-    "Politicas Consolidadas": "8/10"  # Respetamos límite AWS de 10 políticas por rol
+    "Ultima Actualizacion": "2025-10-19"
+    "Politicas Consolidadas": "10/10"  # Máximo permitido por AWS
 
 # Environment variables for multi-environment deployment
 variables:
