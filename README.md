@@ -21,6 +21,36 @@ Enterprise-grade SGSI (Security Management System Implementation) with **modular
 - Terraform >= 1.0
 - Python 3.8+ (for automation scripts)
 
+### GitHub Actions Workflows
+
+This repository uses **2 separate workflows** with clear responsibilities:
+
+#### 🤖 IAM Policies Generator (`generate-iam.yml`)
+- **Purpose:** Generate Terraform modules from YAML policy definitions
+- **Triggers:** Changes in `definitions/`, `generators/`, `templates/`
+- **Scope:** ✅ IAM policies only | ❌ No infrastructure deployment
+
+#### 🚀 SGSI Infrastructure (`sgsi-deployment.yaml`)
+- **Purpose:** Deploy complete 5-layer SGSI infrastructure
+- **Triggers:** Changes in `layers/`, infrastructure files
+- **Scope:** ✅ Full infrastructure including IAM roles
+
+```mermaid
+graph LR
+    A[YAML Definitions] --> B[generate-iam.yml]
+    B --> C[IAM Policy Modules]
+    
+    D[Infrastructure Layers] --> E[sgsi-deployment.yaml]
+    E --> F[Complete SGSI Stack]
+    
+    C -.->|Used by| E
+    
+    style B fill:#e1f5fe
+    style E fill:#f3e5f5
+```
+
+> **No Conflicts:** Each workflow has distinct responsibilities and resource scopes.
+
 ### Basic Usage
 
 ```hcl

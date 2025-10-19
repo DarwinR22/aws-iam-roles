@@ -1,4 +1,18 @@
-name: 🤖 Auto-Generate IAM Terraform
+name: 🤖 Auto-Generate IAM Terraform (Policies Only)
+
+# =============================================================================
+# IAM POLICIES GENERATOR - SCOPE LIMITED  
+# =============================================================================
+# This workflow ONLY generates and manages IAM POLICIES from YAML definitions.
+# 
+# IMPORTANT: This workflow does NOT deploy IAM ROLES - those are handled by
+# the SGSI Infrastructure Deployment workflow (Layer 1 - Foundation).
+#
+# Scope:
+# ✅ Generate Terraform modules from YAML policy definitions
+# ✅ Apply POLICY resources in DEV environment for testing
+# ❌ Does NOT create IAM roles (handled by sgsi-deployment.yaml Layer 1)
+# =============================================================================
 
 # Prevent multiple workflows running simultaneously to avoid state lock conflicts
 # Note: cancel-in-progress disabled to avoid orphaned Terraform state locks
@@ -647,10 +661,10 @@ jobs:
           }
 
   terraform-plan:
-    name: 📋 Terraform Plan (Dev)
+    name: 📋 Terraform Plan (Dev) - IAM Only
     runs-on: ubuntu-latest
     needs: generate-and-validate
-    if: github.ref == 'refs/heads/dev'
+    if: github.ref == 'refs/heads/dev' && !contains(github.event.head_commit.message, '[skip-iam-apply]')
     
     env:
       TF_LOG: ""           # Disable terraform logging to prevent debug output
@@ -761,10 +775,10 @@ jobs:
           generated/terraform.tfstate*
 
   terraform-apply:
-    name: 🚀 Terraform Apply (Dev)
+    name: 🚀 Terraform Apply (Dev) - IAM Only
     runs-on: ubuntu-latest
     needs: terraform-plan
-    if: github.ref == 'refs/heads/dev'
+    if: github.ref == 'refs/heads/dev' && !contains(github.event.head_commit.message, '[skip-iam-apply]')
     environment: 
       name: dev
       url: https://console.aws.amazon.com/iam/

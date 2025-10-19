@@ -1,15 +1,41 @@
-name: 🚀 SGSI Infrastructure Deployment
+name: 🚀 SGSI Infrastructure Deployment (Modular Architecture)
+
+# =============================================================================
+# SGSI INFRASTRUCTURE DEPLOYMENT WORKFLOW
+# =============================================================================
+# This workflow deploys the 5-layer SGSI infrastructure using the new modular
+# architecture. It supports:
+# - Sequential layer deployment (Foundation → Network → Compute → Storage → Observability)  
+# - Change detection to deploy only modified layers
+# - Manual deployment with environment selection
+# - Integration with enterprise modules
+# =============================================================================
 
 on:
   push:
-    branches: [main]
+    branches: [main]  # Solo en main para producción
     paths:
       - 'layers/**'
+      - 'modules/**'
+      - 'definitions/**'
       - '.github/workflows/**'
   pull_request:
     branches: [main]
     paths:
       - 'layers/**'
+      - 'modules/**'
+      - 'definitions/**'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment'
+        required: true
+        default: 'development'
+        type: choice
+        options:
+          - development
+          - staging
+          - production
 
 env:
   AWS_REGION: us-east-1
