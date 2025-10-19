@@ -1,9 +1,9 @@
-# Variables for github-deployment-eventbridge Policy Module
+# Variables for github-deployment-database Policy Module
 
 variable "policy_description" {
-  description = "Description for the github-deployment-eventbridge policy"
+  description = "Description for the github-deployment-database policy"
   type        = string
-  default     = "Gestión de EventBridge, Scheduler y StepFunctions con control ABAC"
+  default     = "Política consolidada para recursos de base de datos (RDS) del SGSI Layer 3"
 }
 
 variable "abac_conditions" {

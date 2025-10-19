@@ -1,9 +1,9 @@
-# Variables for github-deployment-lambda Policy Module
+# Variables for github-deployment-compute Policy Module
 
 variable "policy_description" {
-  description = "Description for the github-deployment-lambda policy"
+  description = "Description for the github-deployment-compute policy"
   type        = string
-  default     = "Despliegue completo de funciones Lambda sin restricciones ABAC para CI/CD"
+  default     = "Política consolidada para recursos de cómputo (EC2, ALB, Auto Scaling) del SGSI Layer 3"
 }
 
 variable "abac_conditions" {

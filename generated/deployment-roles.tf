@@ -6,7 +6,7 @@
 # This file is auto-generated from YAML definitions.
 # DO NOT EDIT MANUALLY - Changes will be overwritten.
 # 
-# Generated: 2025-10-19T03:23:40.201631
+# Generated: 2025-10-19T03:37:47.472074
 # Source: Multiple role definitions in definitions/roles/
 # ==============================================================================
 
@@ -83,7 +83,7 @@ resource "aws_iam_role" "github_actions_iam_deployment_role" {
     # Auto-generated tags
     "ManagedBy" = "terraform"
     "Source"    = "definitions/roles/github-deployment-role.yaml"
-    "Generated" = "2025-10-19T03:23:40.201631"
+    "Generated" = "2025-10-19T03:37:47.472074"
   }
 }
 
@@ -382,48 +382,6 @@ module "github_deployment_cloudformation" {
     "ManagedBy"       = "terraform"
   }
 }
-module "github_deployment_ec2" {
-  source = "./modules/policies/github_deployment_ec2"
-
-  environment = "DEV"
-
-  # ABAC conditions for policy restrictions
-  abac_conditions = {
-    "aws:PrincipalTag/Gerencia" = ["MejoraContinuaEInformacion"]
-    "aws:PrincipalTag/Area"     = ["DevOps"]
-    "aws:PrincipalTag/Ambiente" = ["DEV"]
-  }
-
-  # AWS Configuration
-  aws_region          = "us-east-1"
-  role_prefix         = "APP-"
-  policy_prefix       = "APP-"
-  s3_bucket_name      = "terraform-state-bucket-051963532279"
-  dynamodb_table_name = "terraform-locks"
-  kms_key_id          = "*"
-
-  common_tags = {
-    "Pais"            = "RG"
-    "Gerencia"        = "MejoraContinuaEInformacion"
-    "Area"            = "DevOps"
-    "Ambiente"        = "DEV"
-    "Direccion"       = "TICENAM"
-    "Modulo"          = "IAM"
-    "Alcance SOX"     = "No"
-    "Propietario"     = "DarwinLopez"
-    "Proveedor"       = "InHouse"
-    "Layer"           = "Devops"
-    "Dominio"         = "BusinessIntelligence"
-    "Subdominio"      = "Analytics"
-    "Aplicacion"      = "CICD"
-    "Tipo de Recurso" = "IAMPolicy"
-    "Soporte"         = "darwin.lopez@claro.com.gt"
-    "Contacto"        = "darwin.lopez@claro.com.gt"
-    "Creado Por"      = "DarwinLopez"
-    "Ciclo de Vida"   = "Creacion"
-    "ManagedBy"       = "terraform"
-  }
-}
 
 # Attach policies to role
 resource "aws_iam_role_policy_attachment" "github_actions_iam_deployment_role_github_deployment_sts" {
@@ -453,10 +411,6 @@ resource "aws_iam_role_policy_attachment" "github_actions_iam_deployment_role_gi
 resource "aws_iam_role_policy_attachment" "github_actions_iam_deployment_role_github_deployment_cloudformation" {
   role       = aws_iam_role.github_actions_iam_deployment_role.name
   policy_arn = module.github_deployment_cloudformation.policy_arn
-}
-resource "aws_iam_role_policy_attachment" "github_actions_iam_deployment_role_github_deployment_ec2" {
-  role       = aws_iam_role.github_actions_iam_deployment_role.name
-  policy_arn = module.github_deployment_ec2.policy_arn
 }
 
 # Cleanup module for obsolete policies (TEMPORARILY DISABLED - performance issue)
