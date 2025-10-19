@@ -3,6 +3,7 @@ policy:
   description: "Permisos STS necesarios para GitHub Actions OIDC"
   service: "sts"
   version: "1.0.0"
+  # Trigger workflow: 2025-10-18
   
   statements:
     - sid: "STSAssumeRoleWithWebIdentity"
