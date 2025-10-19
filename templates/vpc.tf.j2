@@ -1,0 +1,184 @@
+# ==============================================================================
+# VPC Module: {{ vpc.name }}
+# ==============================================================================
+# Generated: {{ timestamp }}
+# Source: {{ source_file }}
+# ==============================================================================
+
+# VPC Resource
+resource "aws_vpc" "{{ vpc.name | replace('-', '_') }}" {
+  cidr_block           = "{{ vpc.cidr_block }}"
+  instance_tenancy     = "{{ vpc.instance_tenancy | default('default') }}"
+  enable_dns_hostnames = {{ vpc.enable_dns_hostnames | default(true) | lower }}
+  enable_dns_support   = {{ vpc.enable_dns_support | default(true) | lower }}
+
+  tags = merge(
+    {
+      Name = "{{ vpc.name }}"
+      {% for key, value in tags.items() -%}
+      "{{ key }}" = "{{ value }}"
+      {% endfor -%}
+    },
+    var.additional_tags
+  )
+}
+
+{% if vpc.internet_gateway and vpc.internet_gateway.enabled %}
+# Internet Gateway
+resource "aws_internet_gateway" "{{ vpc.internet_gateway.name | replace('-', '_') }}" {
+  vpc_id = aws_vpc.{{ vpc.name | replace('-', '_') }}.id
+
+  tags = merge(
+    {
+      Name = "{{ vpc.internet_gateway.name }}"
+      {% for key, value in tags.items() -%}
+      "{{ key }}" = "{{ value }}"
+      {% endfor -%}
+    },
+    var.additional_tags
+  )
+}
+{% endif %}
+
+{% if vpc.subnets %}
+# Subnets
+{% for subnet in vpc.subnets %}
+resource "aws_subnet" "{{ subnet.name | replace('-', '_') }}" {
+  vpc_id                  = aws_vpc.{{ vpc.name | replace('-', '_') }}.id
+  cidr_block              = "{{ subnet.cidr_block }}"
+  availability_zone       = "{{ subnet.availability_zone }}"
+  map_public_ip_on_launch = {{ subnet.map_public_ip_on_launch | default(false) | lower }}
+
+  tags = merge(
+    {
+      Name = "{{ subnet.name }}"
+      Type = "{{ subnet.type }}"
+      {% for key, value in tags.items() -%}
+      "{{ key }}" = "{{ value }}"
+      {% endfor -%}
+    },
+    var.additional_tags
+  )
+}
+
+{% endfor %}
+{% endif %}
+
+{% if vpc.nat_gateways %}
+# Elastic IPs for NAT Gateways
+{% for nat_gw in vpc.nat_gateways %}
+resource "aws_eip" "{{ nat_gw.name | replace('-', '_') }}_eip" {
+  domain = "vpc"
+  
+  tags = merge(
+    {
+      Name = "{{ nat_gw.name }}-eip"
+      {% for key, value in tags.items() -%}
+      "{{ key }}" = "{{ value }}"
+      {% endfor -%}
+    },
+    var.additional_tags
+  )
+  
+  depends_on = [aws_internet_gateway.{{ vpc.internet_gateway.name | replace('-', '_') }}]
+}
+
+# NAT Gateway
+resource "aws_nat_gateway" "{{ nat_gw.name | replace('-', '_') }}" {
+  allocation_id = aws_eip.{{ nat_gw.name | replace('-', '_') }}_eip.id
+  subnet_id     = aws_subnet.{{ nat_gw.subnet | replace('-', '_') }}.id
+
+  tags = merge(
+    {
+      Name = "{{ nat_gw.name }}"
+      {% for key, value in tags.items() -%}
+      "{{ key }}" = "{{ value }}"
+      {% endfor -%}
+    },
+    var.additional_tags
+  )
+
+  depends_on = [aws_internet_gateway.{{ vpc.internet_gateway.name | replace('-', '_') }}]
+}
+
+{% endfor %}
+{% endif %}
+
+{% if vpc.route_tables %}
+# Route Tables
+{% for rt in vpc.route_tables %}
+resource "aws_route_table" "{{ rt.name | replace('-', '_') }}" {
+  vpc_id = aws_vpc.{{ vpc.name | replace('-', '_') }}.id
+
+  {% for route in rt.routes %}
+  route {
+    cidr_block = "{{ route.cidr_block }}"
+    {% if route.gateway_type == 'internet_gateway' -%}
+    gateway_id = aws_internet_gateway.{{ vpc.internet_gateway.name | replace('-', '_') }}.id
+    {% elif route.gateway_type == 'nat_gateway' -%}
+    nat_gateway_id = aws_nat_gateway.{{ route.nat_gateway | replace('-', '_') }}.id
+    {% endif -%}
+  }
+  {% endfor %}
+
+  tags = merge(
+    {
+      Name = "{{ rt.name }}"
+      Type = "{{ rt.type }}"
+      {% for key, value in tags.items() -%}
+      "{{ key }}" = "{{ value }}"
+      {% endfor -%}
+    },
+    var.additional_tags
+  )
+}
+
+# Route Table Associations for {{ rt.name }}
+{% for subnet in vpc.subnets %}
+{% if (rt.type == 'public' and subnet.type == 'public') or 
+      (rt.type == 'private' and subnet.type in ['private', 'database'] and rt.name.endswith(subnet.availability_zone[-2:])) %}
+resource "aws_route_table_association" "{{ rt.name | replace('-', '_') }}_{{ subnet.name | replace('-', '_') }}" {
+  subnet_id      = aws_subnet.{{ subnet.name | replace('-', '_') }}.id
+  route_table_id = aws_route_table.{{ rt.name | replace('-', '_') }}.id
+}
+{% endif %}
+{% endfor %}
+
+{% endfor %}
+{% endif %}
+
+# ==============================================================================
+# Outputs
+# ==============================================================================
+
+output "vpc_id" {
+  description = "ID of the VPC"
+  value       = aws_vpc.{{ vpc.name | replace('-', '_') }}.id
+}
+
+output "vpc_arn" {
+  description = "ARN of the VPC"
+  value       = aws_vpc.{{ vpc.name | replace('-', '_') }}.arn
+}
+
+output "vpc_cidr_block" {
+  description = "CIDR block of the VPC"
+  value       = aws_vpc.{{ vpc.name | replace('-', '_') }}.cidr_block
+}
+
+{% if vpc.subnets %}
+# Subnet outputs
+{% for subnet in vpc.subnets %}
+output "{{ subnet.name | replace('-', '_') }}_id" {
+  description = "ID of {{ subnet.name }} subnet"
+  value       = aws_subnet.{{ subnet.name | replace('-', '_') }}.id
+}
+{% endfor %}
+{% endif %}
+
+{% if vpc.internet_gateway and vpc.internet_gateway.enabled %}
+output "internet_gateway_id" {
+  description = "ID of the Internet Gateway"
+  value       = aws_internet_gateway.{{ vpc.internet_gateway.name | replace('-', '_') }}.id
+}
+{% endif %}

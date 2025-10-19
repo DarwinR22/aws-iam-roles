@@ -1,0 +1,253 @@
+security_groups:
+  # =========================================
+  # DMZ TIER SECURITY GROUPS
+  # =========================================
+  - name: "sgsi-alb-sg"
+    description: "Security Group for Application Load Balancer (DMZ Tier)"
+    vpc_name: "sgsi-vpc-main"
+    tier: "dmz"
+    
+    ingress_rules:
+      # Tráfico web desde Internet (Zero Trust: verificar todo)
+      - protocol: "tcp"
+        from_port: 80
+        to_port: 80
+        cidr_blocks: ["0.0.0.0/0"]
+        description: "HTTP traffic from Internet"
+        
+      - protocol: "tcp"
+        from_port: 443
+        to_port: 443
+        cidr_blocks: ["0.0.0.0/0"]
+        description: "HTTPS traffic from Internet"
+    
+    egress_rules:
+      # Solo hacia Application Tier en puertos específicos
+      - protocol: "tcp"
+        from_port: 8080
+        to_port: 8080
+        source_security_group: "sgsi-web-sg"
+        description: "HTTP to web servers"
+
+  # =========================================
+  # APPLICATION TIER SECURITY GROUPS  
+  # =========================================
+  - name: "sgsi-web-sg"
+    description: "Security Group for Web Servers (Application Tier)"
+    vpc_name: "sgsi-vpc-main"
+    tier: "application"
+    
+    ingress_rules:
+      # Solo tráfico desde Load Balancer
+      - protocol: "tcp"
+        from_port: 8080
+        to_port: 8080
+        source_security_group: "sgsi-alb-sg"
+        description: "HTTP from ALB only"
+        
+      # SSH para administración (solo desde Management Tier)
+      - protocol: "tcp"
+        from_port: 22
+        to_port: 22
+        source_security_group: "sgsi-mgmt-sg"
+        description: "SSH from management subnet only"
+    
+    egress_rules:
+      # Conexión a base de datos
+      - protocol: "tcp"
+        from_port: 3306
+        to_port: 3306
+        source_security_group: "sgsi-db-sg"
+        description: "MySQL to database"
+        
+      - protocol: "tcp"
+        from_port: 5432
+        to_port: 5432
+        source_security_group: "sgsi-db-sg"
+        description: "PostgreSQL to database"
+        
+      # HTTPS para APIs externas (a través de NAT)
+      - protocol: "tcp"
+        from_port: 443
+        to_port: 443
+        cidr_blocks: ["0.0.0.0/0"]
+        description: "HTTPS for external APIs"
+
+  - name: "sgsi-app-sg"
+    description: "Security Group for Application Servers (Application Tier)"
+    vpc_name: "sgsi-vpc-main"
+    tier: "application"
+    
+    ingress_rules:
+      # Tráfico desde Web Servers
+      - protocol: "tcp"
+        from_port: 8443
+        to_port: 8443
+        source_security_group: "sgsi-web-sg"
+        description: "HTTPS from web servers"
+        
+      # SSH para administración
+      - protocol: "tcp"
+        from_port: 22
+        to_port: 22
+        source_security_group: "sgsi-mgmt-sg"
+        description: "SSH from management only"
+    
+    egress_rules:
+      # Conexión a base de datos
+      - protocol: "tcp"
+        from_port: 3306
+        to_port: 3306
+        source_security_group: "sgsi-db-sg"
+        description: "MySQL to database"
+        
+      # HTTPS para servicios externos
+      - protocol: "tcp"
+        from_port: 443
+        to_port: 443
+        cidr_blocks: ["0.0.0.0/0"]
+        description: "HTTPS for external services"
+
+  # =========================================
+  # DATABASE TIER SECURITY GROUPS
+  # =========================================
+  - name: "sgsi-db-sg"
+    description: "Security Group for Database Servers (Database Tier)"
+    vpc_name: "sgsi-vpc-main"
+    tier: "database"
+    
+    ingress_rules:
+      # MySQL desde Application Tier únicamente
+      - protocol: "tcp"
+        from_port: 3306
+        to_port: 3306
+        source_security_group: "sgsi-web-sg"
+        description: "MySQL from web servers"
+        
+      - protocol: "tcp"
+        from_port: 3306
+        to_port: 3306
+        source_security_group: "sgsi-app-sg"
+        description: "MySQL from app servers"
+        
+      # PostgreSQL desde Application Tier únicamente
+      - protocol: "tcp"
+        from_port: 5432
+        to_port: 5432
+        source_security_group: "sgsi-web-sg"
+        description: "PostgreSQL from web servers"
+        
+      - protocol: "tcp"
+        from_port: 5432
+        to_port: 5432
+        source_security_group: "sgsi-app-sg"
+        description: "PostgreSQL from app servers"
+        
+      # SSH para administración (solo desde Management)
+      - protocol: "tcp"
+        from_port: 22
+        to_port: 22
+        source_security_group: "sgsi-mgmt-sg"
+        description: "SSH from management only"
+    
+    egress_rules:
+      # Sin salida a Internet (máxima seguridad)
+      # Solo respuestas a conexiones establecidas
+      - protocol: "tcp"
+        from_port: 1024
+        to_port: 65535
+        cidr_blocks: ["10.0.0.0/16"]
+        description: "Response traffic within VPC"
+
+  # =========================================
+  # MANAGEMENT TIER SECURITY GROUPS
+  # =========================================
+  - name: "sgsi-mgmt-sg"
+    description: "Security Group for Management and Monitoring (Management Tier)"
+    vpc_name: "sgsi-vpc-main"
+    tier: "management"
+    
+    ingress_rules:
+      # SSH desde IP específica del administrador
+      - protocol: "tcp"
+        from_port: 22
+        to_port: 22
+        cidr_blocks: ["0.0.0.0/0"]  # Cambiar por IP específica en producción
+        description: "SSH from admin IP (change to specific IP)"
+        
+      # HTTPS para herramientas de monitoreo
+      - protocol: "tcp"
+        from_port: 443
+        to_port: 443
+        cidr_blocks: ["10.0.0.0/16"]
+        description: "HTTPS for monitoring tools"
+        
+      # Prometheus/Grafana
+      - protocol: "tcp"
+        from_port: 3000
+        to_port: 3000
+        cidr_blocks: ["10.0.0.0/16"]
+        description: "Grafana dashboard"
+        
+      - protocol: "tcp"
+        from_port: 9090
+        to_port: 9090
+        cidr_blocks: ["10.0.0.0/16"]
+        description: "Prometheus metrics"
+    
+    egress_rules:
+      # Acceso completo para administración
+      - protocol: "tcp"
+        from_port: 22
+        to_port: 22
+        cidr_blocks: ["10.0.0.0/16"]
+        description: "SSH to all instances"
+        
+      - protocol: "tcp"
+        from_port: 443
+        to_port: 443
+        cidr_blocks: ["0.0.0.0/0"]
+        description: "HTTPS for updates and external services"
+        
+      - protocol: "tcp"
+        from_port: 80
+        to_port: 80
+        cidr_blocks: ["0.0.0.0/0"]
+        description: "HTTP for package updates"
+
+# Compliance y Seguridad
+metadata:
+  iso27001_controls:
+    - "A.13.1.1"  # Network controls
+    - "A.13.1.2"  # Security of network services
+    - "A.13.2.1"  # Information transfer policies
+  
+  nist_csf_functions:
+    - "Protect (PR)"
+    - "Detect (DE)"
+  
+  zero_trust_principles:
+    - "Verify explicitly"
+    - "Use least privilege access"
+    - "Assume breach"
+
+# Variables
+variables:
+  admin_ip:
+    description: "IP address for administrative access"
+    type: "string"
+    default: "0.0.0.0/0"  # Cambiar en producción
+    
+  environment:
+    description: "Environment name"
+    type: "string" 
+    default: "production"
+
+# Tags de Seguridad y Compliance
+tags:
+  "SecurityLevel": "High"
+  "ComplianceScope": "ISO27001-A.13"
+  "AssetType": "Network-Security"
+  "ZeroTrustLayer": "Network-Segmentation"
+  "DataClassification": "Internal"
+  "MaintenanceWindow": "Sunday-2AM-6AM"
