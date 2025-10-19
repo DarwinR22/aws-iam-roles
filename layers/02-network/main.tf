@@ -17,7 +17,7 @@ terraform {
     bucket         = "terraform-state-bucket-051963532279"
     key            = "sgsi/layer2-network/terraform.tfstate"
     region         = "us-east-1"
-    dynamodb_table = "terraform-state-lock"
+    dynamodb_table = "terraform-locks"
     encrypt        = true
   }
 }

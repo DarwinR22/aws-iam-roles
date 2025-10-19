@@ -17,7 +17,7 @@ terraform {
     bucket         = "terraform-state-bucket-051963532279"
     key            = "sgsi/layer1-foundation/terraform.tfstate"
     region         = "us-east-1"
-    dynamodb_table = "terraform-state-lock"
+    dynamodb_table = "terraform-locks"
     encrypt        = true
     
     # Optional: Use workspace for environment separation
