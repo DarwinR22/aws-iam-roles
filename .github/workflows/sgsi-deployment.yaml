@@ -437,7 +437,7 @@ jobs:
           echo "🚀 Deploying Generated IAM Resources..."
           terraform init
           echo "📋 Creating IAM plan..."
-          terraform plan -out=iam.tfplan
+          terraform plan -lock=false -out=iam.tfplan
           echo "🚀 Applying IAM plan..."
           terraform apply -auto-approve iam.tfplan
           echo "✅ Generated IAM deployment completed"
@@ -450,7 +450,7 @@ jobs:
           echo "🏗️ Deploying Foundation Layer..."
           terraform init
           echo "📋 Creating foundation plan..."
-          terraform plan -out=foundation.tfplan
+          terraform plan -lock=false -out=foundation.tfplan
           echo "🚀 Applying foundation plan..."
           terraform apply -auto-approve foundation.tfplan
           echo "✅ Foundation layer deployment completed"

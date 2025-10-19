@@ -71,6 +71,20 @@ policy:
       resources:
         - "*"
 
+    - sid: "IAMOIDCProviderManagement"
+      effect: "Allow"
+      actions:
+        - "iam:CreateOpenIDConnectProvider"
+        - "iam:DeleteOpenIDConnectProvider"
+        - "iam:GetOpenIDConnectProvider"
+        - "iam:ListOpenIDConnectProviders"
+        - "iam:UpdateOpenIDConnectProviderThumbprint"
+        - "iam:TagOpenIDConnectProvider"
+        - "iam:UntagOpenIDConnectProvider"
+        - "iam:ListOpenIDConnectProviderTags"
+      resources:
+        - "arn:aws:iam::*:oidc-provider/*"
+
 # Metadata
 environments: ["dev", "qa", "prod"]
 owner: "Infrastructure Team"
