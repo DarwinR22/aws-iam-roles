@@ -5,7 +5,8 @@ resource "aws_iam_policy" "github_deployment_application" {
   description = "Política consolidada de servicios de aplicación (Lambda, S3, DynamoDB, EventBridge) para GitHub Actions deployment con control ABAC basado en tags"
   path        = "/"
 
-  policy = {
+  policy = <<EOF
+{
   "Version": "2012-10-17",
   "Statement": [
     {
@@ -227,6 +228,7 @@ resource "aws_iam_policy" "github_deployment_application" {
     }
   ]
 }
+EOF
 
   tags = merge(
     var.common_tags,

@@ -5,7 +5,8 @@ resource "aws_iam_policy" "github_deployment_database" {
   description = "Política consolidada para recursos de base de datos (RDS) del SGSI Layer 3"
   path        = "/"
 
-  policy = {
+  policy = <<EOF
+{
   "Version": "2012-10-17",
   "Statement": [
     {
@@ -183,6 +184,7 @@ resource "aws_iam_policy" "github_deployment_database" {
     }
   ]
 }
+EOF
 
   tags = merge(
     var.common_tags,

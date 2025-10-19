@@ -5,7 +5,8 @@ resource "aws_iam_policy" "github_deployment_cloudwatch" {
   description = "Gestión completa de CloudWatch Logs, Métricas, Alarmas y SNS con ABAC"
   path        = "/"
 
-  policy = {
+  policy = <<EOF
+{
   "Version": "2012-10-17",
   "Statement": [
     {
@@ -121,6 +122,7 @@ resource "aws_iam_policy" "github_deployment_cloudwatch" {
     }
   ]
 }
+EOF
 
   tags = merge(
     var.common_tags,

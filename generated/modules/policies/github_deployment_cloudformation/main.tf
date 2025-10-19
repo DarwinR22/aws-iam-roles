@@ -5,7 +5,8 @@ resource "aws_iam_policy" "github_deployment_cloudformation" {
   description = "Permisos para despliegues con CloudFormation, KMS encryption y servicios adicionales"
   path        = "/"
 
-  policy = {
+  policy = <<EOF
+{
   "Version": "2012-10-17",
   "Statement": [
     {
@@ -99,6 +100,7 @@ resource "aws_iam_policy" "github_deployment_cloudformation" {
     }
   ]
 }
+EOF
 
   tags = merge(
     var.common_tags,

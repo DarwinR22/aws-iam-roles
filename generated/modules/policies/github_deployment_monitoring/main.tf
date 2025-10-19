@@ -5,7 +5,8 @@ resource "aws_iam_policy" "github_deployment_monitoring" {
   description = "GitHub Actions deployment policy for Monitoring and Compliance infrastructure (CloudTrail, Config, GuardDuty, Security Hub)"
   path        = "/"
 
-  policy = {
+  policy = <<EOF
+{
   "Version": "2012-10-17",
   "Statement": [
     {
@@ -294,6 +295,7 @@ resource "aws_iam_policy" "github_deployment_monitoring" {
     }
   ]
 }
+EOF
 
   tags = merge(
     var.common_tags,

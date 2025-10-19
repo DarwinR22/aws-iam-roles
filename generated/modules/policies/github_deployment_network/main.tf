@@ -5,7 +5,8 @@ resource "aws_iam_policy" "github_deployment_network" {
   description = "GitHub Actions deployment policy for Network infrastructure (VPC, Subnets, Security Groups, NACLs)"
   path        = "/"
 
-  policy = {
+  policy = <<EOF
+{
   "Version": "2012-10-17",
   "Statement": [
     {
@@ -169,6 +170,7 @@ resource "aws_iam_policy" "github_deployment_network" {
     }
   ]
 }
+EOF
 
   tags = merge(
     var.common_tags,

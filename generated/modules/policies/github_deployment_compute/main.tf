@@ -5,7 +5,8 @@ resource "aws_iam_policy" "github_deployment_compute" {
   description = "Política consolidada para recursos de cómputo (EC2, ALB, Auto Scaling) del SGSI Layer 3"
   path        = "/"
 
-  policy = {
+  policy = <<EOF
+{
   "Version": "2012-10-17",
   "Statement": [
     {
@@ -347,6 +348,7 @@ resource "aws_iam_policy" "github_deployment_compute" {
     }
   ]
 }
+EOF
 
   tags = merge(
     var.common_tags,

@@ -5,7 +5,8 @@ resource "aws_iam_policy" "github_deployment_storage" {
   description = "GitHub Actions deployment policy for Storage infrastructure (S3, EFS, EBS, Backup)"
   path        = "/"
 
-  policy = {
+  policy = <<EOF
+{
   "Version": "2012-10-17",
   "Statement": [
     {
@@ -209,6 +210,7 @@ resource "aws_iam_policy" "github_deployment_storage" {
     }
   ]
 }
+EOF
 
   tags = merge(
     var.common_tags,

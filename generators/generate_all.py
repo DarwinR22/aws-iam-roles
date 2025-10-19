@@ -233,7 +233,9 @@ resource "aws_iam_policy" "{module_name}" {{
   description = "{policy_section.get('description', f'Policy for {policy_name}')}"
   path        = "/"
 
-  policy = {json.dumps({"Version": "2012-10-17", "Statement": terraform_statements}, indent=2)}
+  policy = <<EOF
+{json.dumps({"Version": "2012-10-17", "Statement": terraform_statements}, indent=2)}
+EOF
 
   tags = merge(
     var.common_tags,

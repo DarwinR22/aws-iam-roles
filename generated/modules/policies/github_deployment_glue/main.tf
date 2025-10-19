@@ -5,7 +5,8 @@ resource "aws_iam_policy" "github_deployment_glue" {
   description = "Gestión de Glue, IAM PassRole y KMS para despliegue de infraestructura con ABAC"
   path        = "/"
 
-  policy = {
+  policy = <<EOF
+{
   "Version": "2012-10-17",
   "Statement": [
     {
@@ -146,6 +147,7 @@ resource "aws_iam_policy" "github_deployment_glue" {
     }
   ]
 }
+EOF
 
   tags = merge(
     var.common_tags,

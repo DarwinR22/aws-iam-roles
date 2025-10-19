@@ -5,7 +5,8 @@ resource "aws_iam_policy" "github_deployment_sts" {
   description = "Permisos STS necesarios para GitHub Actions OIDC"
   path        = "/"
 
-  policy = {
+  policy = <<EOF
+{
   "Version": "2012-10-17",
   "Statement": [
     {
@@ -39,6 +40,7 @@ resource "aws_iam_policy" "github_deployment_sts" {
     }
   ]
 }
+EOF
 
   tags = merge(
     var.common_tags,

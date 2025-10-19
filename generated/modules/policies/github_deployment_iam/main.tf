@@ -5,7 +5,8 @@ resource "aws_iam_policy" "github_deployment_iam" {
   description = "Gestión completa de roles y políticas IAM para despliegues de infraestructura con Terraform (sin restricciones ABAC para CI/CD)"
   path        = "/"
 
-  policy = {
+  policy = <<EOF
+{
   "Version": "2012-10-17",
   "Statement": [
     {
@@ -109,6 +110,7 @@ resource "aws_iam_policy" "github_deployment_iam" {
     }
   ]
 }
+EOF
 
   tags = merge(
     var.common_tags,

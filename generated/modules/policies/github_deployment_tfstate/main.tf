@@ -5,7 +5,8 @@ resource "aws_iam_policy" "github_deployment_tfstate" {
   description = "Gestión de estado de Terraform en S3 y locks en DynamoDB (sin ABAC - requerido para CI/CD)"
   path        = "/"
 
-  policy = {
+  policy = <<EOF
+{
   "Version": "2012-10-17",
   "Statement": [
     {
@@ -42,6 +43,7 @@ resource "aws_iam_policy" "github_deployment_tfstate" {
     }
   ]
 }
+EOF
 
   tags = merge(
     var.common_tags,
