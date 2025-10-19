@@ -46,6 +46,29 @@ provider "aws" {
 }
 
 # ==============================================================================
+# OIDC IDENTITY PROVIDER FOR GITHUB ACTIONS
+# ==============================================================================
+resource "aws_iam_openid_connect_provider" "github_actions" {
+  url = "https://token.actions.githubusercontent.com"
+  
+  client_id_list = [
+    "sts.amazonaws.com"
+  ]
+  
+  thumbprint_list = [
+    "6938fd4d98bab03faadb97b34396831e3780aea1",
+    "1c58a3a8518e8759bf075b76b750d4f2df264fcd"
+  ]
+
+  tags = {
+    Name        = "github-actions-oidc-provider"
+    Environment = var.environment
+    Layer       = "Foundation"
+    Purpose     = "GitHub Actions OIDC Authentication"
+  }
+}
+
+# ==============================================================================
 # IAM DEPLOYMENT ROLE (Main deployment role for GitHub Actions)
 # ==============================================================================
 resource "aws_iam_role" "github_actions_iam_deployment_role" {
@@ -60,7 +83,7 @@ resource "aws_iam_role" "github_actions_iam_deployment_role" {
       {
         Effect = "Allow"
         Principal = {
-          Federated = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/token.actions.githubusercontent.com"
+          Federated = aws_iam_openid_connect_provider.github_actions.arn
         }
         Action = "sts:AssumeRoleWithWebIdentity"
         Condition = {
