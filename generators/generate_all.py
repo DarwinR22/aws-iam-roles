@@ -77,6 +77,9 @@ def generate_all_infrastructure():
     generate_terraform_config()
     generate_backend_config()
     
+    # Generate policy modules
+    generate_policy_modules()
+    
     print("✅ Infrastructure generation completed")
 
 def generate_terraform_config():
@@ -141,6 +144,151 @@ def generate_backend_config():
         f.write(backend_content)
     
     print("📄 Generated backend.tf")
+
+def generate_policy_modules():
+    """Generate policy modules from YAML definitions"""
+    policies_dir = Path("definitions/policies")
+    modules_dir = Path("generated/modules/policies")
+    
+    if not policies_dir.exists():
+        print("⚠️ No policies directory found")
+        return
+    
+    # Create modules directory
+    modules_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Process deployment policies
+    deployment_dir = policies_dir / "deployment"
+    if deployment_dir.exists():
+        for yaml_file in deployment_dir.glob("*.yaml"):
+            process_policy_file(yaml_file, modules_dir)
+    
+    # Process execution policies  
+    execution_dir = policies_dir / "execution"
+    if execution_dir.exists():
+        for yaml_file in execution_dir.glob("*.yaml"):
+            process_policy_file(yaml_file, modules_dir)
+
+def process_policy_file(yaml_file, modules_dir):
+    """Process a single policy YAML file and generate Terraform module"""
+    try:
+        with open(yaml_file, 'r', encoding='utf-8') as f:
+            policy_data = yaml.safe_load(f)
+        
+        # Extract module name from filename (remove .yaml and convert dashes to underscores)
+        module_name = yaml_file.stem.replace('-', '_')
+        module_dir = modules_dir / module_name
+        module_dir.mkdir(exist_ok=True)
+        
+        # Generate main.tf
+        generate_policy_main_tf(policy_data, module_dir, module_name)
+        
+        # Generate variables.tf
+        generate_policy_variables_tf(module_dir)
+        
+        # Generate outputs.tf
+        generate_policy_outputs_tf(module_dir, module_name)
+        
+        print(f"📦 Generated module: {module_name}")
+        
+    except Exception as e:
+        print(f"❌ Error processing {yaml_file}: {e}")
+
+def generate_policy_main_tf(policy_data, module_dir, module_name):
+    """Generate main.tf for a policy module"""
+    
+    # Extract policy name and statements
+    policy_name = policy_data.get('name', module_name.replace('_', '-'))
+    statements = policy_data.get('statements', [])
+    
+    # Convert statements to Terraform format
+    terraform_statements = []
+    for stmt in statements:
+        tf_stmt = {
+            "Effect": stmt.get('effect', 'Allow'),
+            "Action": stmt.get('actions', []),
+        }
+        
+        # Add resources if present
+        if 'resources' in stmt:
+            tf_stmt["Resource"] = stmt['resources']
+        
+        # Add conditions if present
+        if 'conditions' in stmt:
+            tf_stmt["Condition"] = stmt['conditions']
+            
+        terraform_statements.append(tf_stmt)
+    
+    main_content = f'''# Auto-generated policy module: {module_name}
+
+resource "aws_iam_policy" "{module_name}" {{
+  name        = "${{var.environment}}-{policy_name}"
+  description = "{policy_data.get('description', f'Policy for {policy_name}')}"
+  path        = "/"
+
+  policy = jsonencode({{
+    Version = "2012-10-17"
+    Statement = {json.dumps(terraform_statements, indent=6)}
+  }})
+
+  tags = merge(
+    var.common_tags,
+    {{
+      Name                = "${{var.environment}}-{policy_name}"
+      PolicyType         = "{policy_data.get('type', 'Custom')}"
+      Scope              = "{policy_data.get('scope', 'Service')}"
+      GeneratedFrom      = "{module_name}.yaml"
+    }}
+  )
+}}
+'''
+    
+    with open(module_dir / "main.tf", "w") as f:
+        f.write(main_content)
+
+def generate_policy_variables_tf(module_dir):
+    """Generate variables.tf for a policy module"""
+    variables_content = '''variable "environment" {
+  description = "Environment name"
+  type        = string
+}
+
+variable "abac_conditions" {
+  description = "ABAC conditions for policies"
+  type        = map(any)
+  default     = {}
+}
+
+variable "common_tags" {
+  description = "Common tags to apply to resources"
+  type        = map(string)
+  default     = {}
+}
+'''
+    
+    with open(module_dir / "variables.tf", "w") as f:
+        f.write(variables_content)
+
+def generate_policy_outputs_tf(module_dir, module_name):
+    """Generate outputs.tf for a policy module"""
+    outputs_content = f'''output "policy_arn" {{
+  description = "ARN of the generated IAM policy"
+  value       = aws_iam_policy.{module_name}.arn
+}}
+
+output "policy_name" {{
+  description = "Name of the generated IAM policy"
+  value       = aws_iam_policy.{module_name}.name
+}}
+
+output "policy_id" {{
+  description = "ID of the generated IAM policy"
+  value       = aws_iam_policy.{module_name}.id
+}}
+'''
+    
+    with open(module_dir / "outputs.tf", "w") as f:
+        f.write(outputs_content)
 
 if __name__ == "__main__":
     main()
