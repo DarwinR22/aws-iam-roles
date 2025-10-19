@@ -169,10 +169,10 @@ jobs:
         cat > backend.tf << EOF
         terraform {
           backend "s3" {
-            bucket         = "s3-data-analytics-dev-tfstate-datalake"
-            key            = "iam-management/terraform.tfstate"
+            bucket         = "terraform-state-bucket-051963532279"
+            key            = "aws-iam-roles/terraform.tfstate"
             region         = "us-east-1"
-            dynamodb_table = "dynamodb-db-dev-terraform-lock"
+            dynamodb_table = "terraform-locks"
             encrypt        = true
           }
         }
@@ -694,10 +694,10 @@ jobs:
         cat > backend.tf << EOF
         terraform {
           backend "s3" {
-            bucket         = "s3-data-analytics-dev-tfstate-datalake"
-            key            = "iam-management/terraform.tfstate" 
+            bucket         = "terraform-state-bucket-051963532279"
+            key            = "aws-iam-roles/terraform.tfstate" 
             region         = "us-east-1"
-            dynamodb_table = "dynamodb-db-dev-terraform-lock"
+            dynamodb_table = "terraform-locks"
             encrypt        = true
           }
         }
@@ -817,10 +817,10 @@ jobs:
         cat > backend.tf << EOF
         terraform {
           backend "s3" {
-            bucket         = "s3-data-analytics-dev-tfstate-datalake"
-            key            = "iam-management/terraform.tfstate" 
+            bucket         = "terraform-state-bucket-051963532279"
+            key            = "aws-iam-roles/terraform.tfstate" 
             region         = "us-east-1"
-            dynamodb_table = "dynamodb-db-dev-terraform-lock"
+            dynamodb_table = "terraform-locks"
             encrypt        = true
           }
         }

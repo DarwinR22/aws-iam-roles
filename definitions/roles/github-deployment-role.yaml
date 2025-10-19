@@ -26,6 +26,7 @@ role:
     oidc_config:
       provider_arn: "arn:aws:iam::${account_id}:oidc-provider/token.actions.githubusercontent.com"
       audience: "sts.amazonaws.com"
+      action: "sts:AssumeRoleWithWebIdentity"
       
       # Repository access configuration
       repositories:
@@ -37,13 +38,17 @@ role:
           variable: "token.actions.githubusercontent.com:aud"
           values: ["sts.amazonaws.com"]
           
-        - test: "StringEquals"
+        - test: "StringLike"
           variable: "token.actions.githubusercontent.com:sub"
           values: 
-            - "repo:DarwinR22/aws-iam-roles:ref:refs/heads/dev"
+            - "repo:DarwinR22/aws-iam-roles:*"
 
   # Referenced policy modules - these will be combined into the role
   policy_modules:
+    - name: "github-deployment-sts"
+      file: "github-deployment-sts.yaml"
+      description: "STS permissions for GitHub Actions OIDC authentication"
+      
     - name: "github-deployment-tfstate"
       file: "github-deployment-tfstate.yaml"
       description: "S3 y DynamoDB para gestión de estado de Terraform (solo GitHub Actions)"
