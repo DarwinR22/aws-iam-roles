@@ -1,12 +1,12 @@
 policy:
-  name: "github-deployment-compute"
-  description: "Política consolidada para recursos de cómputo (EC2, ALB, Auto Scaling) del SGSI Layer 3"
-  service: "compute"
-  version: "1.0.0"
+  name: "github-deployment-infrastructure"
+  description: "Política consolidada para recursos de infraestructura (VPC, EC2, ALB, Auto Scaling) del SGSI - Consolidación de network + compute"
+  service: "infrastructure"
+  version: "2.0.0"
   
   statements:
     # ===========================================
-    # VPC AND NETWORK INFRASTRUCTURE
+    # VPC AND NETWORK INFRASTRUCTURE (from network)
     # ===========================================
     - sid: "VPCManagement"
       effect: "Allow"
@@ -22,8 +22,9 @@ policy:
       resources:
         - "arn:aws:ec2:*:*:vpc/*"
       conditions:
-        StringEquals:
-          "aws:RequestedRegion": "us-east-1"
+        - test: "StringEquals"
+          variable: "aws:RequestedRegion"
+          values: ["us-east-1"]
 
     - sid: "InternetGatewayManagement"
       effect: "Allow"
@@ -37,8 +38,9 @@ policy:
         - "arn:aws:ec2:*:*:internet-gateway/*"
         - "arn:aws:ec2:*:*:vpc/*"
       conditions:
-        StringEquals:
-          "aws:RequestedRegion": "us-east-1"
+        - test: "StringEquals"
+          variable: "aws:RequestedRegion"
+          values: ["us-east-1"]
 
     - sid: "SubnetManagement"
       effect: "Allow"
@@ -52,47 +54,52 @@ policy:
         - "arn:aws:ec2:*:*:subnet/*"
         - "arn:aws:ec2:*:*:vpc/*"
       conditions:
-        StringEquals:
-          "aws:RequestedRegion": "us-east-1"
+        - test: "StringEquals"
+          variable: "aws:RequestedRegion"
+          values: ["us-east-1"]
 
     - sid: "SecurityGroupManagement"
       effect: "Allow"
       actions:
         - "ec2:CreateSecurityGroup"
         - "ec2:DeleteSecurityGroup"
+        - "ec2:DescribeSecurityGroups"
+        - "ec2:DescribeSecurityGroupRules"
         - "ec2:AuthorizeSecurityGroupIngress"
         - "ec2:AuthorizeSecurityGroupEgress"
         - "ec2:RevokeSecurityGroupIngress"
         - "ec2:RevokeSecurityGroupEgress"
-        - "ec2:DescribeSecurityGroups"
-        - "ec2:DescribeSecurityGroupRules"
+        - "ec2:ModifySecurityGroupRules"
       resources:
         - "arn:aws:ec2:*:*:security-group/*"
         - "arn:aws:ec2:*:*:vpc/*"
       conditions:
-        StringEquals:
-          "aws:RequestedRegion": "us-east-1"
+        - test: "StringEquals"
+          variable: "aws:RequestedRegion"
+          values: ["us-east-1"]
 
     - sid: "RouteTableManagement"
       effect: "Allow"
       actions:
         - "ec2:CreateRouteTable"
         - "ec2:DeleteRouteTable"
-        - "ec2:AssociateRouteTable"
-        - "ec2:DisassociateRouteTable"
+        - "ec2:DescribeRouteTables"
         - "ec2:CreateRoute"
         - "ec2:DeleteRoute"
         - "ec2:ReplaceRoute"
-        - "ec2:DescribeRouteTables"
+        - "ec2:AssociateRouteTable"
+        - "ec2:DisassociateRouteTable"
+        - "ec2:ReplaceRouteTableAssociation"
       resources:
         - "arn:aws:ec2:*:*:route-table/*"
-        - "arn:aws:ec2:*:*:subnet/*"
         - "arn:aws:ec2:*:*:vpc/*"
+        - "arn:aws:ec2:*:*:subnet/*"
         - "arn:aws:ec2:*:*:internet-gateway/*"
-        - "arn:aws:ec2:*:*:nat-gateway/*"
+        - "arn:aws:ec2:*:*:natgateway/*"
       conditions:
-        StringEquals:
-          "aws:RequestedRegion": "us-east-1"
+        - test: "StringEquals"
+          variable: "aws:RequestedRegion"
+          values: ["us-east-1"]
 
     - sid: "NATGatewayManagement"
       effect: "Allow"
@@ -103,56 +110,63 @@ policy:
         - "ec2:AllocateAddress"
         - "ec2:ReleaseAddress"
         - "ec2:DescribeAddresses"
+        - "ec2:AssociateAddress"
+        - "ec2:DisassociateAddress"
       resources:
-        - "arn:aws:ec2:*:*:nat-gateway/*"
+        - "arn:aws:ec2:*:*:natgateway/*"
         - "arn:aws:ec2:*:*:subnet/*"
         - "arn:aws:ec2:*:*:elastic-ip/*"
       conditions:
-        StringEquals:
-          "aws:RequestedRegion": "us-east-1"
+        - test: "StringEquals"
+          variable: "aws:RequestedRegion"
+          values: ["us-east-1"]
 
     # ===========================================
-    # EC2 COMPUTE PERMISSIONS
+    # EC2 COMPUTE INFRASTRUCTURE (from compute)
     # ===========================================
     - sid: "EC2InstanceManagement"
       effect: "Allow"
       actions:
-        # Instance lifecycle
         - "ec2:RunInstances"
         - "ec2:TerminateInstances"
-        - "ec2:StopInstances"
         - "ec2:StartInstances"
+        - "ec2:StopInstances"
         - "ec2:RebootInstances"
         - "ec2:DescribeInstances"
         - "ec2:DescribeInstanceStatus"
         - "ec2:DescribeInstanceAttribute"
         - "ec2:ModifyInstanceAttribute"
-        # Instance metadata and monitoring
-        - "ec2:DescribeInstanceTypes"
         - "ec2:GetConsoleOutput"
-        - "ec2:GetPasswordData"
-        - "ec2:MonitorInstances"
-        - "ec2:UnmonitorInstances"
-        # Instance tags
-        - "ec2:CreateTags"
-        - "ec2:DeleteTags"
-        - "ec2:DescribeTags"
-      resources: ["*"]
+        - "ec2:GetConsoleScreenshot"
+        - "ec2:DescribeImages"
+        - "ec2:DescribeSnapshots"
+        - "ec2:DescribeVolumes"
+        - "ec2:AttachVolume"
+        - "ec2:DetachVolume"
+        - "ec2:CreateVolume"
+        - "ec2:DeleteVolume"
+        - "ec2:ModifyVolume"
+        - "ec2:CreateSnapshot"
+        - "ec2:DeleteSnapshot"
+        - "ec2:DescribeKeyPairs"
+        - "ec2:CreateKeyPair"
+        - "ec2:DeleteKeyPair"
+      resources:
+        - "arn:aws:ec2:*:*:instance/*"
+        - "arn:aws:ec2:*:*:volume/*"
+        - "arn:aws:ec2:*:*:snapshot/*"
+        - "arn:aws:ec2:*:*:image/*"
+        - "arn:aws:ec2:*:*:key-pair/*"
+        - "arn:aws:ec2:*:*:subnet/*"
+        - "arn:aws:ec2:*:*:security-group/*"
       conditions:
-        StringEquals:
-          "aws:RequestedRegion": "us-east-1"
-        StringLike:
-          "ec2:InstanceProfile":
-            - "arn:aws:iam::*:instance-profile/sgsi-*"
-            - "arn:aws:iam::*:instance-profile/mci-*"
+        - test: "StringEquals"
+          variable: "aws:RequestedRegion"
+          values: ["us-east-1"]
 
-    # ===========================================
-    # EC2 LAUNCH TEMPLATES & AMI
-    # ===========================================
     - sid: "EC2LaunchTemplatesAndAMI"
       effect: "Allow"
       actions:
-        # Launch Templates
         - "ec2:CreateLaunchTemplate"
         - "ec2:CreateLaunchTemplateVersion"
         - "ec2:DeleteLaunchTemplate"
@@ -160,43 +174,42 @@ policy:
         - "ec2:DescribeLaunchTemplates"
         - "ec2:DescribeLaunchTemplateVersions"
         - "ec2:ModifyLaunchTemplate"
-        # AMI Management
-        - "ec2:DescribeImages"
+        - "ec2:GetLaunchTemplateData"
+        - "ec2:CreateImage"
+        - "ec2:DeregisterImage"
+        - "ec2:CopyImage"
+        - "ec2:ModifyImageAttribute"
+        - "ec2:ResetImageAttribute"
         - "ec2:DescribeImageAttribute"
-        # Key Pairs
-        - "ec2:CreateKeyPair"
-        - "ec2:DeleteKeyPair"
-        - "ec2:DescribeKeyPairs"
-        - "ec2:ImportKeyPair"
-      resources: ["*"]
+      resources:
+        - "arn:aws:ec2:*:*:launch-template/*"
+        - "arn:aws:ec2:*:*:image/*"
+        - "arn:aws:ec2:*:*:instance/*"
+        - "arn:aws:ec2:*:*:snapshot/*"
       conditions:
-        StringEquals:
-          "aws:RequestedRegion": "us-east-1"
+        - test: "StringEquals"
+          variable: "aws:RequestedRegion"
+          values: ["us-east-1"]
 
     # ===========================================
-    # APPLICATION LOAD BALANCER
+    # LOAD BALANCER MANAGEMENT (from compute)
     # ===========================================
     - sid: "LoadBalancerManagement"
       effect: "Allow"
       actions:
-        # ALB Lifecycle
         - "elasticloadbalancing:CreateLoadBalancer"
         - "elasticloadbalancing:DeleteLoadBalancer"
         - "elasticloadbalancing:DescribeLoadBalancers"
         - "elasticloadbalancing:DescribeLoadBalancerAttributes"
         - "elasticloadbalancing:ModifyLoadBalancerAttributes"
-        # Target Groups
         - "elasticloadbalancing:CreateTargetGroup"
         - "elasticloadbalancing:DeleteTargetGroup"
         - "elasticloadbalancing:DescribeTargetGroups"
         - "elasticloadbalancing:DescribeTargetGroupAttributes"
-        - "elasticloadbalancing:ModifyTargetGroup"
         - "elasticloadbalancing:ModifyTargetGroupAttributes"
-        # Target Health and Registration
         - "elasticloadbalancing:RegisterTargets"
         - "elasticloadbalancing:DeregisterTargets"
         - "elasticloadbalancing:DescribeTargetHealth"
-        # Listeners and Rules
         - "elasticloadbalancing:CreateListener"
         - "elasticloadbalancing:DeleteListener"
         - "elasticloadbalancing:DescribeListeners"
@@ -205,76 +218,57 @@ policy:
         - "elasticloadbalancing:DeleteRule"
         - "elasticloadbalancing:DescribeRules"
         - "elasticloadbalancing:ModifyRule"
-        # Tags
         - "elasticloadbalancing:AddTags"
         - "elasticloadbalancing:RemoveTags"
         - "elasticloadbalancing:DescribeTags"
-      resources: ["*"]
+      resources:
+        - "arn:aws:elasticloadbalancing:*:*:loadbalancer/*/*"
+        - "arn:aws:elasticloadbalancing:*:*:targetgroup/*/*"
+        - "arn:aws:elasticloadbalancing:*:*:listener/*/*"
+        - "arn:aws:elasticloadbalancing:*:*:listener-rule/*/*"
       conditions:
-        StringEquals:
-          "aws:RequestedRegion": "us-east-1"
+        - test: "StringEquals"
+          variable: "aws:RequestedRegion"
+          values: ["us-east-1"]
 
     # ===========================================
-    # AUTO SCALING
+    # AUTO SCALING MANAGEMENT (from compute)
     # ===========================================
     - sid: "AutoScalingManagement"
       effect: "Allow"
       actions:
-        # Auto Scaling Groups
         - "autoscaling:CreateAutoScalingGroup"
+        - "autoscaling:UpdateAutoScalingGroup"
         - "autoscaling:DeleteAutoScalingGroup"
         - "autoscaling:DescribeAutoScalingGroups"
-        - "autoscaling:UpdateAutoScalingGroup"
+        - "autoscaling:DescribeAutoScalingInstances"
+        - "autoscaling:DescribeScalingActivities"
         - "autoscaling:SetDesiredCapacity"
         - "autoscaling:TerminateInstanceInAutoScalingGroup"
-        # Launch Configurations
         - "autoscaling:CreateLaunchConfiguration"
         - "autoscaling:DeleteLaunchConfiguration"
         - "autoscaling:DescribeLaunchConfigurations"
-        # Scaling Policies
+        - "autoscaling:CreateOrUpdateTags"
+        - "autoscaling:DeleteTags"
+        - "autoscaling:DescribeTags"
         - "autoscaling:PutScalingPolicy"
         - "autoscaling:DeletePolicy"
         - "autoscaling:DescribePolicies"
         - "autoscaling:ExecutePolicy"
-        # Lifecycle Hooks
-        - "autoscaling:PutLifecycleHook"
-        - "autoscaling:DeleteLifecycleHook"
-        - "autoscaling:DescribeLifecycleHooks"
-        - "autoscaling:CompleteLifecycleAction"
-        # Tags
-        - "autoscaling:CreateOrUpdateTags"
-        - "autoscaling:DeleteTags"
-        - "autoscaling:DescribeTags"
-        # Notifications
         - "autoscaling:PutNotificationConfiguration"
         - "autoscaling:DeleteNotificationConfiguration"
         - "autoscaling:DescribeNotificationConfigurations"
-      resources: ["*"]
+      resources:
+        - "arn:aws:autoscaling:*:*:autoScalingGroup:*:autoScalingGroupName/*"
+        - "arn:aws:autoscaling:*:*:launchConfiguration:*:launchConfigurationName/*"
+        - "arn:aws:autoscaling:*:*:scalingPolicy:*:autoScalingGroupName/*:policyName/*"
       conditions:
-        StringEquals:
-          "aws:RequestedRegion": "us-east-1"
+        - test: "StringEquals"
+          variable: "aws:RequestedRegion"
+          values: ["us-east-1"]
 
     # ===========================================
-    # APPLICATION AUTO SCALING
-    # ===========================================
-    - sid: "ApplicationAutoScalingManagement"
-      effect: "Allow"
-      actions:
-        # Application Auto Scaling
-        - "application-autoscaling:RegisterScalableTarget"
-        - "application-autoscaling:DeregisterScalableTarget"
-        - "application-autoscaling:DescribeScalableTargets"
-        - "application-autoscaling:PutScalingPolicy"
-        - "application-autoscaling:DeleteScalingPolicy"
-        - "application-autoscaling:DescribeScalingPolicies"
-        - "application-autoscaling:DescribeScalingActivities"
-      resources: ["*"]
-      conditions:
-        StringEquals:
-          "aws:RequestedRegion": "us-east-1"
-
-    # ===========================================
-    # VPC FLOW LOGS (Para monitoreo SGSI)
+    # VPC FLOW LOGS AND READ ACCESS (from compute)
     # ===========================================
     - sid: "VPCFlowLogs"
       effect: "Allow"
@@ -283,66 +277,64 @@ policy:
         - "ec2:DeleteFlowLogs"
         - "ec2:DescribeFlowLogs"
         - "logs:CreateLogGroup"
+        - "logs:CreateLogStream"
         - "logs:DescribeLogGroups"
-        - "logs:PutRetentionPolicy"
+        - "logs:DescribeLogStreams"
+        - "logs:PutLogEvents"
+        - "iam:PassRole"
       resources:
         - "arn:aws:ec2:*:*:vpc/*"
-        - "arn:aws:ec2:*:*:network-interface/*"
         - "arn:aws:ec2:*:*:subnet/*"
+        - "arn:aws:ec2:*:*:networkinterface/*"
         - "arn:aws:logs:*:*:log-group:*"
+        - "arn:aws:iam::*:role/flowlogsRole"
       conditions:
-        StringEquals:
-          "aws:RequestedRegion": "us-east-1"
+        - test: "StringEquals"
+          variable: "aws:RequestedRegion"
+          values: ["us-east-1"]
 
-    # ===========================================
-    # READ-ONLY PERMISSIONS (Para validaciones)
-    # ===========================================
     - sid: "EC2ReadOnlyAccess"
       effect: "Allow"
       actions:
-        - "ec2:DescribeRegions"
-        - "ec2:DescribeAccountAttributes"
-        - "ec2:DescribeVpcEndpoints"
-        - "ec2:DescribeNetworkAcls"
-        - "ec2:DescribeVpcClassicLink"
-        - "ec2:DescribeVpcClassicLinkDnsSupport"
+        - "ec2:Describe*"
+        - "ec2:Get*"
+        - "ec2:List*"
+        - "elasticloadbalancing:Describe*"
+        - "autoscaling:Describe*"
       resources: ["*"]
-      conditions:
-        StringEquals:
-          "aws:RequestedRegion": "us-east-1"
 
-  # Organizational tags for compliance and governance
-  tags:
-    # Core organizational tags
-    "Pais": "RG"
-    "Gerencia": "MejoraContinuaEInformacion"
-    "Area": "DevOps"
-    "Ambiente": "DEV"
-    "Direccion": "TICENAM"
-    "Modulo": "Compute"
-    
-    # Compliance and governance
-    "AlcanceSOX": "No"
-    "Propietario": "DarwinLopez"
-    "Proveedor": "InHouse"
-    
-    # Technical classification
-    "Layer": "Compute"
-    "Dominio": "BusinessIntelligence"
-    "Subdominio": "Analytics"
-    "Aplicacion": "CICD"
-    
-    # Resource identification
-    "Name": "github-deployment-compute"
-    "Tipo de Recurso": "IAMPolicy"
-    
-    # Contact and support information
-    "Soporte": "darwin.lopez@claro.com.gt"
-    "Contacto": "darwin.lopez@claro.com.gt"
-    "Creado Por": "DarwinLopez"
-    
-    # Lifecycle management
-    "Ciclo de Vida": "Desarrollo"
-    "Version": "v1.0.0"
-    "Fecha de Creacion": "2025-10-18"
-    "Layer": "SGSI-Layer3-Compute"
+# Organizational tags for compliance and governance
+tags:
+  # Core organizational tags
+  "Pais": "RG"
+  "Gerencia": "MejoraContinuaEInformacion"
+  "Area": "DevOps"
+  "Ambiente": "DEV"
+  "Direccion": "TICENAM"
+  "Modulo": "Infrastructure"
+  
+  # Compliance and governance
+  "AlcanceSOX": "No"
+  "Propietario": "DarwinLopez"
+  "Proveedor": "InHouse"
+  
+  # Technical classification
+  "Layer": "Infrastructure"
+  "Dominio": "BusinessIntelligence"
+  "Subdominio": "Analytics"
+  "Aplicacion": "CICD"
+  
+  # Resource identification
+  "Name": "github-deployment-infrastructure"
+  "Tipo de Recurso": "IAMPolicy"
+  
+  # Contact and support information
+  "Soporte": "darwin.lopez@claro.com.gt"
+  "Contacto": "darwin.lopez@claro.com.gt"
+  "Creado Por": "DarwinLopez"
+  
+  # Lifecycle management
+  "Ciclo de Vida": "Consolidacion"
+  "Version": "v2.0.0"
+  "Fecha de Creacion": "2025-10-19"
+  "Consolidates": "Network-Compute"

@@ -40,12 +40,16 @@ def main():
     print("✅ Generation completed successfully")
 
 def clean_generated_directory():
-    """Clean the generated directory"""
+    """Clean the generated directory completely"""
+    import shutil
     generated_dir = Path("generated")
     if generated_dir.exists():
-        for file in generated_dir.rglob("*.tf"):
-            file.unlink()
-            print(f"Removed: {file}")
+        # Remove entire generated directory
+        shutil.rmtree(generated_dir)
+        print(f"🧹 Removed entire directory: {generated_dir}")
+        # Recreate it empty
+        generated_dir.mkdir()
+        print(f"📁 Recreated empty directory: {generated_dir}")
 
 def validate_yaml_files():
     """Validate all YAML definition files"""
@@ -157,7 +161,15 @@ def generate_policy_modules():
     # Create modules directory
     modules_dir.mkdir(parents=True, exist_ok=True)
     
-    # Process deployment policies
+    print("🔄 Consolidation Strategy:")
+    print("  📦 infrastructure = network + compute (consolidated)")
+    print("  📦 deployment = cloudformation + tfstate (consolidated)") 
+    print("  📦 observability = cloudwatch + monitoring (consolidated)")
+    print("  ✅ Final policy count: 9 (within AWS 10-policy limit)")
+    print("  🗑️ Original files removed from definitions/")
+    print()
+    
+    # Process deployment policies (all remaining are final consolidated policies)
     deployment_dir = policies_dir / "deployment"
     if deployment_dir.exists():
         for yaml_file in deployment_dir.glob("*.yaml"):

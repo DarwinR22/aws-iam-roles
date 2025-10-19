@@ -1,0 +1,231 @@
+policy:
+  name: "github-deployment-deployment"
+  description: "Política consolidada para herramientas de deployment (CloudFormation + Terraform State) del SGSI - Consolidación de cloudformation + tfstate"
+  service: "deployment"
+  version: "2.0.0"
+  
+  statements:
+    # ===========================================
+    # CLOUDFORMATION MANAGEMENT (from cloudformation)
+    # ===========================================
+    - sid: "CloudFormationFullAccess"
+      effect: "Allow"
+      actions:
+        - "cloudformation:CreateStack"
+        - "cloudformation:UpdateStack"
+        - "cloudformation:DeleteStack"
+        - "cloudformation:DescribeStacks"
+        - "cloudformation:DescribeStackEvents"
+        - "cloudformation:DescribeStackResources"
+        - "cloudformation:DescribeStackResource"
+        - "cloudformation:GetTemplate"
+        - "cloudformation:GetStackPolicy"
+        - "cloudformation:SetStackPolicy"
+        - "cloudformation:ValidateTemplate"
+        - "cloudformation:EstimateTemplateCost"
+        - "cloudformation:ListStacks"
+        - "cloudformation:ListStackResources"
+        - "cloudformation:CancelUpdateStack"
+        - "cloudformation:ContinueUpdateRollback"
+        - "cloudformation:CreateChangeSet"
+        - "cloudformation:DeleteChangeSet"
+        - "cloudformation:DescribeChangeSet"
+        - "cloudformation:ExecuteChangeSet"
+        - "cloudformation:ListChangeSets"
+        - "cloudformation:SignalResource"
+        - "cloudformation:DetectStackDrift"
+        - "cloudformation:DetectStackResourceDrift"
+        - "cloudformation:DescribeStackDriftDetectionStatus"
+        - "cloudformation:DescribeStackResourceDrifts"
+      resources:
+        - "arn:aws:cloudformation:*:*:stack/sgsi-*/*"
+        - "arn:aws:cloudformation:*:*:stack/mci-*/*"
+        - "arn:aws:cloudformation:*:*:changeSet/*"
+      conditions:
+        - test: "StringEquals"
+          variable: "aws:RequestedRegion"
+          values: ["us-east-1"]
+
+    - sid: "CloudFormationTagging"
+      effect: "Allow"
+      actions:
+        - "cloudformation:TagResource"
+        - "cloudformation:UntagResource"
+        - "cloudformation:ListTagsForResource"
+      resources:
+        - "arn:aws:cloudformation:*:*:stack/sgsi-*/*"
+        - "arn:aws:cloudformation:*:*:stack/mci-*/*"
+
+    # ===========================================
+    # TERRAFORM STATE MANAGEMENT (from tfstate)
+    # ===========================================
+    - sid: "TerraformS3StateBackend"
+      effect: "Allow"
+      actions:
+        - "s3:GetObject"
+        - "s3:PutObject"
+        - "s3:DeleteObject"
+        - "s3:ListBucket"
+        - "s3:GetBucketVersioning"
+        - "s3:GetBucketLocation"
+        - "s3:GetBucketLogging"
+        - "s3:GetBucketPolicy"
+        - "s3:GetBucketTagging"
+        - "s3:GetBucketAcl"
+        - "s3:GetBucketCors"
+        - "s3:GetBucketWebsite"
+        - "s3:GetBucketNotification"
+        - "s3:GetEncryptionConfiguration"
+        - "s3:GetObjectVersion"
+        - "s3:GetObjectVersionAcl"
+        - "s3:DeleteObjectVersion"
+        - "s3:ListBucketVersions"
+        - "s3:ListBucketMultipartUploads"
+        - "s3:GetObjectRetention"
+        - "s3:GetObjectLegalHold"
+        - "s3:ListMultipartUploadParts"
+        - "s3:AbortMultipartUpload"
+      resources:
+        - "arn:aws:s3:::terraform-state-bucket-*"
+        - "arn:aws:s3:::terraform-state-bucket-*/*"
+        - "arn:aws:s3:::sgsi-terraform-state-*"
+        - "arn:aws:s3:::sgsi-terraform-state-*/*"
+        - "arn:aws:s3:::mci-terraform-state-*"
+        - "arn:aws:s3:::mci-terraform-state-*/*"
+      conditions:
+        - test: "StringEquals"
+          variable: "aws:RequestedRegion"
+          values: ["us-east-1"]
+
+    - sid: "TerraformDynamoDBStateLocking"
+      effect: "Allow"
+      actions:
+        - "dynamodb:GetItem"
+        - "dynamodb:PutItem"
+        - "dynamodb:DeleteItem"
+        - "dynamodb:DescribeTable"
+        - "dynamodb:Query"
+        - "dynamodb:Scan"
+        - "dynamodb:UpdateItem"
+        - "dynamodb:CreateTable"
+        - "dynamodb:UpdateTable"
+        - "dynamodb:DeleteTable"
+        - "dynamodb:DescribeTimeToLive"
+        - "dynamodb:UpdateTimeToLive"
+        - "dynamodb:ListTagsOfResource"
+        - "dynamodb:TagResource"
+        - "dynamodb:UntagResource"
+      resources:
+        - "arn:aws:dynamodb:*:*:table/terraform-locks"
+        - "arn:aws:dynamodb:*:*:table/terraform-state-locks"
+        - "arn:aws:dynamodb:*:*:table/sgsi-terraform-locks"
+        - "arn:aws:dynamodb:*:*:table/mci-terraform-locks"
+        - "arn:aws:dynamodb:*:*:table/terraform-locks/index/*"
+        - "arn:aws:dynamodb:*:*:table/terraform-state-locks/index/*"
+        - "arn:aws:dynamodb:*:*:table/sgsi-terraform-locks/index/*"
+        - "arn:aws:dynamodb:*:*:table/mci-terraform-locks/index/*"
+      conditions:
+        - test: "StringEquals"
+          variable: "aws:RequestedRegion"
+          values: ["us-east-1"]
+
+    - sid: "TerraformStateBucketReadOnlyAccess"
+      effect: "Allow"
+      actions:
+        - "s3:ListAllMyBuckets"
+        - "s3:GetBucketLocation"
+        - "s3:HeadBucket"
+      resources: ["*"]
+
+    - sid: "TerraformDynamoDBReadAccess"
+      effect: "Allow"
+      actions:
+        - "dynamodb:ListTables"
+        - "dynamodb:DescribeTable"
+      resources: ["*"]
+
+    # ===========================================
+    # KMS ACCESS FOR STATE ENCRYPTION
+    # ===========================================
+    - sid: "TerraformStateKMSAccess"
+      effect: "Allow"
+      actions:
+        - "kms:Decrypt"
+        - "kms:Encrypt"
+        - "kms:ReEncrypt*"
+        - "kms:GenerateDataKey*"
+        - "kms:DescribeKey"
+        - "kms:CreateGrant"
+        - "kms:ListAliases"
+        - "kms:ListKeys"
+      resources:
+        - "arn:aws:kms:*:*:key/*"
+        - "arn:aws:kms:*:*:alias/terraform-state-*"
+        - "arn:aws:kms:*:*:alias/sgsi-*"
+      conditions:
+        - test: "StringEquals"
+          variable: "aws:RequestedRegion"
+          values: ["us-east-1"]
+        - test: "StringLike"
+          variable: "kms:ViaService"
+          values: ["s3.*.amazonaws.com", "dynamodb.*.amazonaws.com"]
+
+    # ===========================================
+    # DEPLOYMENT COORDINATION AND MONITORING
+    # ===========================================
+    - sid: "DeploymentCoordination"
+      effect: "Allow"
+      actions:
+        - "sts:GetCallerIdentity"
+        - "sts:AssumeRole"
+        - "iam:GetRole"
+        - "iam:ListRoles"
+        - "iam:PassRole"
+        - "logs:CreateLogGroup"
+        - "logs:CreateLogStream"
+        - "logs:PutLogEvents"
+        - "logs:DescribeLogGroups"
+        - "logs:DescribeLogStreams"
+      resources:
+        - "arn:aws:iam::*:role/github-*"
+        - "arn:aws:iam::*:role/terraform-*"
+        - "arn:aws:iam::*:role/sgsi-*"
+        - "arn:aws:logs:*:*:log-group:/aws/cloudformation/*"
+        - "arn:aws:logs:*:*:log-group:/aws/terraform/*"
+        - "arn:aws:logs:*:*:log-group:/aws/deployment/*"
+
+# Organizational tags for compliance and governance
+tags:
+  # Core organizational tags
+  "Pais": "RG"
+  "Gerencia": "MejoraContinuaEInformacion"
+  "Area": "DevOps"
+  "Ambiente": "DEV"
+  "Direccion": "TICENAM"
+  "Modulo": "Deployment"
+  
+  # Compliance and governance
+  "AlcanceSOX": "No"
+  "Propietario": "DarwinLopez"
+  "Proveedor": "InHouse"
+  
+  # Technical classification
+  "Layer": "Deployment"
+  "Dominio": "BusinessIntelligence"
+  "Subdominio": "Analytics"
+  "Aplicacion": "CICD"
+  
+  # Resource identification
+  "Name": "github-deployment-deployment"
+  "Tipo de Recurso": "IAMPolicy"
+  
+  # Contact and support information
+  "Soporte": "darwin.lopez@claro.com.gt"
+  "Contacto": "darwin.lopez@claro.com.gt"
+  "Creado Por": "DarwinLopez"
+  
+  # Lifecycle management
+  "Ciclo de Vida": "Consolidacion"
+  "Version": "v2.0.0"
+  "Fecha de Creacion": "2025-10-19"
+  "Consolidates": "CloudFormation-TFState"

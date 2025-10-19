@@ -1,14 +1,122 @@
-# Auto-generated policy module: github_deployment_monitoring
+# Auto-generated policy module: github_deployment_observability
 
-resource "aws_iam_policy" "github_deployment_monitoring" {
-  name        = "${var.environment}-github-deployment-monitoring"
-  description = "GitHub Actions deployment policy for Monitoring and Compliance infrastructure (CloudTrail, Config, GuardDuty, Security Hub)"
+resource "aws_iam_policy" "github_deployment_observability" {
+  name        = "${var.environment}-github-deployment-observability"
+  description = "Política consolidada para observabilidad completa (CloudWatch, Logs, Monitoring, Security) del SGSI - Consolidación de cloudwatch + monitoring"
   path        = "/"
 
   policy = <<EOF
 {
   "Version": "2012-10-17",
   "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "logs:CreateLogGroup",
+        "logs:DeleteLogGroup",
+        "logs:DescribeLogGroups",
+        "logs:PutRetentionPolicy",
+        "logs:DeleteRetentionPolicy",
+        "logs:CreateLogStream",
+        "logs:DeleteLogStream",
+        "logs:DescribeLogStreams",
+        "logs:PutLogEvents",
+        "logs:GetLogEvents",
+        "logs:FilterLogEvents",
+        "logs:PutMetricFilter",
+        "logs:DeleteMetricFilter",
+        "logs:DescribeMetricFilters",
+        "logs:TagLogGroup",
+        "logs:UntagLogGroup",
+        "logs:ListTagsLogGroup",
+        "logs:ListTagsForResource",
+        "logs:TagResource",
+        "logs:UntagResource"
+      ],
+      "Sid": "CloudWatchLogsManagement",
+      "Resource": [
+        "arn:aws:logs:*:*:log-group:*",
+        "arn:aws:logs:*:*:log-group:*:log-stream:*"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "cloudwatch:PutMetricData",
+        "cloudwatch:GetMetricData",
+        "cloudwatch:GetMetricStatistics",
+        "cloudwatch:ListMetrics",
+        "cloudwatch:PutMetricAlarm",
+        "cloudwatch:DeleteAlarms",
+        "cloudwatch:DescribeAlarms",
+        "cloudwatch:DescribeAlarmsForMetric",
+        "cloudwatch:DescribeAlarmHistory",
+        "cloudwatch:SetAlarmState",
+        "cloudwatch:EnableAlarmActions",
+        "cloudwatch:DisableAlarmActions",
+        "cloudwatch:TagResource",
+        "cloudwatch:UntagResource",
+        "cloudwatch:ListTagsForResource"
+      ],
+      "Sid": "CloudWatchMetricsAndAlarms",
+      "Resource": [
+        "arn:aws:cloudwatch:*:*:alarm:*",
+        "*"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "cloudwatch:PutDashboard",
+        "cloudwatch:GetDashboard",
+        "cloudwatch:DeleteDashboards",
+        "cloudwatch:ListDashboards"
+      ],
+      "Sid": "CloudWatchDashboards",
+      "Resource": [
+        "*"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "sns:CreateTopic",
+        "sns:DeleteTopic",
+        "sns:GetTopicAttributes",
+        "sns:SetTopicAttributes",
+        "sns:ListTopics",
+        "sns:Subscribe",
+        "sns:Unsubscribe",
+        "sns:ListSubscriptions",
+        "sns:ListSubscriptionsByTopic",
+        "sns:GetSubscriptionAttributes",
+        "sns:SetSubscriptionAttributes",
+        "sns:Publish",
+        "sns:AddPermission",
+        "sns:RemovePermission",
+        "sns:TagResource",
+        "sns:UntagResource",
+        "sns:ListTagsForResource",
+        "sns:CreatePlatformApplication",
+        "sns:DeletePlatformApplication",
+        "sns:GetPlatformApplicationAttributes",
+        "sns:SetPlatformApplicationAttributes",
+        "sns:ListPlatformApplications",
+        "sns:CreatePlatformEndpoint",
+        "sns:DeleteEndpoint",
+        "sns:GetEndpointAttributes",
+        "sns:SetEndpointAttributes"
+      ],
+      "Sid": "SNSManagement",
+      "Resource": [
+        "arn:aws:sns:*:*:*",
+        "arn:aws:sns:*:*:app/*",
+        "arn:aws:sns:*:*:endpoint/*",
+        "arn:aws:sns:*:*:sgsi-*",
+        "arn:aws:sns:*:*:security-*",
+        "arn:aws:sns:*:*:compliance-*"
+      ]
+    },
     {
       "Effect": "Allow",
       "Action": [
@@ -26,7 +134,10 @@ resource "aws_iam_policy" "github_deployment_monitoring" {
         "cloudtrail:CreateEventDataStore",
         "cloudtrail:DeleteEventDataStore",
         "cloudtrail:GetEventDataStore",
-        "cloudtrail:ListEventDataStores"
+        "cloudtrail:ListEventDataStores",
+        "cloudtrail:AddTags",
+        "cloudtrail:RemoveTags",
+        "cloudtrail:ListTags"
       ],
       "Sid": "CloudTrailManagement",
       "Resource": [
@@ -86,16 +197,7 @@ resource "aws_iam_policy" "github_deployment_monitoring" {
         "guardduty:CreatePublishingDestination",
         "guardduty:DeletePublishingDestination",
         "guardduty:DescribePublishingDestination",
-        "guardduty:ListPublishingDestinations"
-      ],
-      "Sid": "GuardDutyManagement",
-      "Resource": [
-        "*"
-      ]
-    },
-    {
-      "Effect": "Allow",
-      "Action": [
+        "guardduty:ListPublishingDestinations",
         "securityhub:EnableSecurityHub",
         "securityhub:DisableSecurityHub",
         "securityhub:GetEnabledStandards",
@@ -121,40 +223,7 @@ resource "aws_iam_policy" "github_deployment_monitoring" {
         "securityhub:GetMembers",
         "securityhub:InviteMembers"
       ],
-      "Sid": "SecurityHubManagement",
-      "Resource": [
-        "*"
-      ]
-    },
-    {
-      "Effect": "Allow",
-      "Action": [
-        "cloudwatch:PutMetricAlarm",
-        "cloudwatch:DeleteAlarms",
-        "cloudwatch:DescribeAlarms",
-        "cloudwatch:EnableAlarmActions",
-        "cloudwatch:DisableAlarmActions",
-        "cloudwatch:PutDashboard",
-        "cloudwatch:DeleteDashboards",
-        "cloudwatch:GetDashboard",
-        "cloudwatch:ListDashboards",
-        "cloudwatch:GetMetricStatistics",
-        "cloudwatch:ListMetrics",
-        "cloudwatch:PutMetricData",
-        "logs:CreateLogGroup",
-        "logs:DeleteLogGroup",
-        "logs:DescribeLogGroups",
-        "logs:CreateLogStream",
-        "logs:DeleteLogStream",
-        "logs:DescribeLogStreams",
-        "logs:PutLogEvents",
-        "logs:PutMetricFilter",
-        "logs:DeleteMetricFilter",
-        "logs:DescribeMetricFilters",
-        "logs:PutRetentionPolicy",
-        "logs:DeleteRetentionPolicy"
-      ],
-      "Sid": "CloudWatchManagement",
+      "Sid": "SecurityMonitoring",
       "Resource": [
         "*"
       ]
@@ -179,16 +248,7 @@ resource "aws_iam_policy" "github_deployment_monitoring" {
         "inspector:DescribeAssessmentTemplates",
         "inspector:StartAssessmentRun",
         "inspector:StopAssessmentRun",
-        "inspector:DescribeAssessmentRuns"
-      ],
-      "Sid": "InspectorManagement",
-      "Resource": [
-        "*"
-      ]
-    },
-    {
-      "Effect": "Allow",
-      "Action": [
+        "inspector:DescribeAssessmentRuns",
         "ssm:PutComplianceItems",
         "ssm:ListComplianceItems",
         "ssm:ListComplianceSummary",
@@ -201,28 +261,10 @@ resource "aws_iam_policy" "github_deployment_monitoring" {
         "ssm:DeleteDocument",
         "ssm:DescribeDocument",
         "ssm:ListDocuments",
-        "ssm:UpdateDocument"
-      ],
-      "Sid": "SystemsManagerCompliance",
-      "Resource": [
-        "*"
-      ]
-    },
-    {
-      "Effect": "Allow",
-      "Action": [
+        "ssm:UpdateDocument",
         "support:DescribeTrustedAdvisorChecks",
         "support:DescribeTrustedAdvisorCheckResult",
-        "support:RefreshTrustedAdvisorCheck"
-      ],
-      "Sid": "TrustedAdvisorAccess",
-      "Resource": [
-        "*"
-      ]
-    },
-    {
-      "Effect": "Allow",
-      "Action": [
+        "support:RefreshTrustedAdvisorCheck",
         "wellarchitected:CreateWorkload",
         "wellarchitected:DeleteWorkload",
         "wellarchitected:GetWorkload",
@@ -233,28 +275,9 @@ resource "aws_iam_policy" "github_deployment_monitoring" {
         "wellarchitected:GetLensReview",
         "wellarchitected:UpdateLensReview"
       ],
-      "Sid": "WellArchitectedTool",
+      "Sid": "InspectorAndCompliance",
       "Resource": [
         "*"
-      ]
-    },
-    {
-      "Effect": "Allow",
-      "Action": [
-        "sns:CreateTopic",
-        "sns:DeleteTopic",
-        "sns:GetTopicAttributes",
-        "sns:ListTopics",
-        "sns:SetTopicAttributes",
-        "sns:Subscribe",
-        "sns:Unsubscribe",
-        "sns:Publish"
-      ],
-      "Sid": "SNSForMonitoring",
-      "Resource": [
-        "arn:aws:sns:*:*:sgsi-*",
-        "arn:aws:sns:*:*:security-*",
-        "arn:aws:sns:*:*:compliance-*"
       ]
     },
     {
@@ -274,24 +297,6 @@ resource "aws_iam_policy" "github_deployment_monitoring" {
       "Resource": [
         "*"
       ]
-    },
-    {
-      "Effect": "Allow",
-      "Action": [
-        "cloudtrail:AddTags",
-        "cloudtrail:RemoveTags",
-        "cloudtrail:ListTags",
-        "cloudwatch:TagResource",
-        "cloudwatch:UntagResource",
-        "cloudwatch:ListTagsForResource",
-        "logs:TagLogGroup",
-        "logs:UntagLogGroup",
-        "logs:ListTagsLogGroup"
-      ],
-      "Sid": "MonitoringTagging",
-      "Resource": [
-        "*"
-      ]
     }
   ]
 }
@@ -300,10 +305,10 @@ EOF
   tags = merge(
     var.common_tags,
     {
-      Name          = "${var.environment}-github-deployment-monitoring"
-      PolicyType    = "Custom"
-      Scope         = "Service"
-      GeneratedFrom = "github_deployment_monitoring.yaml"
+      Name                = "${var.environment}-github-deployment-observability"
+      PolicyType         = "Custom"
+      Scope              = "Service"
+      GeneratedFrom      = "github_deployment_observability.yaml"
     }
   )
 }
