@@ -47,6 +47,29 @@ output "aws_region" {
   value       = data.aws_region.current.name
 }
 
+# Security Module Outputs
+output "iam_access_analyzer" {
+  description = "IAM Access Analyzer information"
+  value = {
+    id           = module.iam_access_analyzer.analyzer_id
+    arn          = module.iam_access_analyzer.analyzer_arn
+    name         = module.iam_access_analyzer.analyzer_name
+    alarm_arn    = module.iam_access_analyzer.cloudwatch_alarm_arn
+    event_rule   = module.iam_access_analyzer.eventbridge_rule_arn
+  }
+}
+
+output "credential_rotation_policy" {
+  description = "Credential rotation policy information"
+  value = {
+    password_expire     = module.credential_rotation.password_policy_expire_passwords
+    max_password_age    = module.credential_rotation.password_policy_max_age
+    key_checker_arn     = module.credential_rotation.access_key_checker_function_arn
+    key_checker_name    = module.credential_rotation.access_key_checker_function_name
+    cloudwatch_rule_arn = module.credential_rotation.cloudwatch_rule_arn
+  }
+}
+
 # Environment Information
 output "environment" {
   description = "Environment name"
@@ -60,5 +83,12 @@ output "layer_info" {
     layer_number  = "01"
     state_key     = "sgsi/layer1-foundation/terraform.tfstate"
     deployed_at   = timestamp()
+    compliance_level = "Enhanced - 100% Foundation"
+    new_features = [
+      "IAM Access Analyzer",
+      "Credential Rotation Policy",
+      "External Access Detection",
+      "Password Policy Enforcement"
+    ]
   }
 }
