@@ -4,7 +4,10 @@
 # DB Subnet Group
 resource "aws_db_subnet_group" "sgsi_db_subnet_group" {
   name       = "sgsi-db-subnet-group"
-  subnet_ids = local.db_subnet_ids
+  subnet_ids = [
+    data.aws_subnet.sgsi_private_subnet_1.id,
+    data.aws_subnet.sgsi_private_subnet_2.id
+  ]
 
   tags = {
     Name        = "sgsi-db-subnet-group"
@@ -52,7 +55,7 @@ resource "aws_db_instance" "sgsi_main_database" {
   username = "admin"
   password = "ChangeMe123!"
   
-  vpc_security_group_ids = [local.db_sg_id]
+  vpc_security_group_ids = [data.aws_security_group.sgsi_db_sg.id]
   db_subnet_group_name   = aws_db_subnet_group.sgsi_db_subnet_group.name
   parameter_group_name   = aws_db_parameter_group.sgsi_mysql_params.name
   
@@ -74,7 +77,7 @@ resource "aws_db_instance" "sgsi_main_database" {
   monitoring_interval = 60
   monitoring_role_arn = aws_iam_role.sgsi_rds_monitoring_role.arn
   
-  enabled_cloudwatch_logs_exports = ["error", "general", "slowquery"]
+  enabled_cloudwatch_logs_exports = ["error", "general", "slow_query"]
   
   tags = {
     Name        = "sgsi-main-database"

@@ -1,7 +1,7 @@
 alb:
   name: "sgsi-main-alb"
   description: "Application Load Balancer principal para Layer 3 del SGSI con alta disponibilidad"
-  version: "1.0.2"
+  version: "1.0.0"
   
   configuration:
     # =========================================

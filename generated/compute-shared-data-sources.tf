@@ -1,135 +1,118 @@
 # Shared Data Sources for SGSI Layer 3
 # Generated: 2025-10-18
-# References to existing network resources created in Layer 2
+# This file contains all shared data sources to avoid duplicates
 
-# VPC Reference
-data "aws_vpc" "sgsi_main" {
+# VPC DATA SOURCE
+data "aws_vpc" "sgsi_vpc_main" {
   filter {
     name   = "tag:Name"
     values = ["sgsi-vpc-main"]
   }
 }
 
-# Public Subnets (DMZ)
-data "aws_subnet" "dmz_1a" {
+# SUBNET DATA SOURCES - DMZ (Public)
+data "aws_subnet" "sgsi_dmz_subnet_us_east_1a" {
   filter {
     name   = "tag:Name"
     values = ["sgsi-dmz-subnet-us-east-1a"]
   }
 }
 
-data "aws_subnet" "dmz_1b" {
+data "aws_subnet" "sgsi_dmz_subnet_us_east_1b" {
   filter {
     name   = "tag:Name"
     values = ["sgsi-dmz-subnet-us-east-1b"]
   }
 }
 
-data "aws_subnet" "dmz_1c" {
+data "aws_subnet" "sgsi_dmz_subnet_us_east_1c" {
   filter {
     name   = "tag:Name"
     values = ["sgsi-dmz-subnet-us-east-1c"]
   }
 }
 
-# Private App Subnets
-data "aws_subnet" "app_1a" {
+# SUBNET DATA SOURCES - App (Private)
+data "aws_subnet" "sgsi_app_subnet_us_east_1a" {
   filter {
     name   = "tag:Name"
     values = ["sgsi-app-subnet-us-east-1a"]
   }
 }
 
-data "aws_subnet" "app_1b" {
+data "aws_subnet" "sgsi_app_subnet_us_east_1b" {
   filter {
     name   = "tag:Name"
     values = ["sgsi-app-subnet-us-east-1b"]
   }
 }
 
-data "aws_subnet" "app_1c" {
+data "aws_subnet" "sgsi_app_subnet_us_east_1c" {
   filter {
     name   = "tag:Name"
     values = ["sgsi-app-subnet-us-east-1c"]
   }
 }
 
-# Private DB Subnets
-data "aws_subnet" "db_1a" {
+# SUBNET DATA SOURCES - DB (Isolated)
+data "aws_subnet" "sgsi_db_subnet_us_east_1a" {
   filter {
     name   = "tag:Name"
     values = ["sgsi-db-subnet-us-east-1a"]
   }
 }
 
-data "aws_subnet" "db_1b" {
+data "aws_subnet" "sgsi_db_subnet_us_east_1b" {
   filter {
     name   = "tag:Name"
     values = ["sgsi-db-subnet-us-east-1b"]
   }
 }
 
-data "aws_subnet" "db_1c" {
+data "aws_subnet" "sgsi_db_subnet_us_east_1c" {
   filter {
     name   = "tag:Name"
     values = ["sgsi-db-subnet-us-east-1c"]
   }
 }
 
-# Security Groups
-data "aws_security_group" "alb" {
+# SECURITY GROUP DATA SOURCES
+data "aws_security_group" "sgsi_alb_sg" {
   filter {
     name   = "tag:Name"
     values = ["sgsi-alb-sg"]
   }
 }
 
-data "aws_security_group" "web" {
+data "aws_security_group" "sgsi_web_sg" {
   filter {
     name   = "tag:Name"
     values = ["sgsi-web-sg"]
   }
 }
 
-data "aws_security_group" "app" {
+data "aws_security_group" "sgsi_app_sg" {
   filter {
     name   = "tag:Name"
     values = ["sgsi-app-sg"]
   }
 }
 
-data "aws_security_group" "db" {
+data "aws_security_group" "sgsi_db_sg" {
   filter {
     name   = "tag:Name"
     values = ["sgsi-db-sg"]
   }
 }
 
-# Locals for easy reference
-locals {
-  vpc_id = data.aws_vpc.sgsi_main.id
-  
-  public_subnet_ids = [
-    data.aws_subnet.dmz_1a.id,
-    data.aws_subnet.dmz_1b.id,
-    data.aws_subnet.dmz_1c.id
-  ]
-  
-  private_subnet_ids = [
-    data.aws_subnet.app_1a.id,
-    data.aws_subnet.app_1b.id,
-    data.aws_subnet.app_1c.id
-  ]
-  
-  db_subnet_ids = [
-    data.aws_subnet.db_1a.id,
-    data.aws_subnet.db_1b.id,
-    data.aws_subnet.db_1c.id
-  ]
-  
-  alb_sg_id    = data.aws_security_group.alb.id
-  web_sg_id    = data.aws_security_group.web.id
-  app_sg_id    = data.aws_security_group.app.id
-  db_sg_id     = data.aws_security_group.db.id
-  lambda_sg_id = data.aws_security_group.app.id
+data "aws_security_group" "sgsi_lambda_sg" {
+  filter {
+    name   = "tag:Name"
+    values = ["sgsi-lambda-sg"]
+  }
+}
+
+# LAUNCH TEMPLATE DATA SOURCE
+data "aws_launch_template" "sgsi_web_server_template" {
+  name = "sgsi-web-server-template"
 }

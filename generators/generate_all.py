@@ -638,150 +638,133 @@ data "aws_caller_identity" "current" {{}}
         return generated_files
 
     def generate_shared_data_sources(self):
-        """Generate shared locals for SGSI Layer 3"""
+        """Generate shared data sources to avoid duplicates"""
         output_file = self.generated_dir / "compute-shared-data-sources.tf"
         
         content = '''# Shared Data Sources for SGSI Layer 3
 # Generated: 2025-10-18
-# References to existing network resources created in Layer 2
+# This file contains all shared data sources to avoid duplicates
 
-# VPC Reference
-data "aws_vpc" "sgsi_main" {
+# VPC DATA SOURCE
+data "aws_vpc" "sgsi_vpc_main" {
   filter {
     name   = "tag:Name"
     values = ["sgsi-vpc-main"]
   }
 }
 
-# Public Subnets (DMZ)
-data "aws_subnet" "dmz_1a" {
+# SUBNET DATA SOURCES - DMZ (Public)
+data "aws_subnet" "sgsi_dmz_subnet_us_east_1a" {
   filter {
     name   = "tag:Name"
     values = ["sgsi-dmz-subnet-us-east-1a"]
   }
 }
 
-data "aws_subnet" "dmz_1b" {
+data "aws_subnet" "sgsi_dmz_subnet_us_east_1b" {
   filter {
     name   = "tag:Name"
     values = ["sgsi-dmz-subnet-us-east-1b"]
   }
 }
 
-data "aws_subnet" "dmz_1c" {
+data "aws_subnet" "sgsi_dmz_subnet_us_east_1c" {
   filter {
     name   = "tag:Name"
     values = ["sgsi-dmz-subnet-us-east-1c"]
   }
 }
 
-# Private App Subnets
-data "aws_subnet" "app_1a" {
+# SUBNET DATA SOURCES - App (Private)
+data "aws_subnet" "sgsi_app_subnet_us_east_1a" {
   filter {
     name   = "tag:Name"
     values = ["sgsi-app-subnet-us-east-1a"]
   }
 }
 
-data "aws_subnet" "app_1b" {
+data "aws_subnet" "sgsi_app_subnet_us_east_1b" {
   filter {
     name   = "tag:Name"
     values = ["sgsi-app-subnet-us-east-1b"]
   }
 }
 
-data "aws_subnet" "app_1c" {
+data "aws_subnet" "sgsi_app_subnet_us_east_1c" {
   filter {
     name   = "tag:Name"
     values = ["sgsi-app-subnet-us-east-1c"]
   }
 }
 
-# Private DB Subnets
-data "aws_subnet" "db_1a" {
+# SUBNET DATA SOURCES - DB (Isolated)
+data "aws_subnet" "sgsi_db_subnet_us_east_1a" {
   filter {
     name   = "tag:Name"
     values = ["sgsi-db-subnet-us-east-1a"]
   }
 }
 
-data "aws_subnet" "db_1b" {
+data "aws_subnet" "sgsi_db_subnet_us_east_1b" {
   filter {
     name   = "tag:Name"
     values = ["sgsi-db-subnet-us-east-1b"]
   }
 }
 
-data "aws_subnet" "db_1c" {
+data "aws_subnet" "sgsi_db_subnet_us_east_1c" {
   filter {
     name   = "tag:Name"
     values = ["sgsi-db-subnet-us-east-1c"]
   }
 }
 
-# Security Groups
-data "aws_security_group" "alb" {
+# SECURITY GROUP DATA SOURCES
+data "aws_security_group" "sgsi_alb_sg" {
   filter {
     name   = "tag:Name"
     values = ["sgsi-alb-sg"]
   }
 }
 
-data "aws_security_group" "web" {
+data "aws_security_group" "sgsi_web_sg" {
   filter {
     name   = "tag:Name"
     values = ["sgsi-web-sg"]
   }
 }
 
-data "aws_security_group" "app" {
+data "aws_security_group" "sgsi_app_sg" {
   filter {
     name   = "tag:Name"
     values = ["sgsi-app-sg"]
   }
 }
 
-data "aws_security_group" "db" {
+data "aws_security_group" "sgsi_db_sg" {
   filter {
     name   = "tag:Name"
     values = ["sgsi-db-sg"]
   }
 }
 
-# Locals for easy reference
-locals {
-  vpc_id = data.aws_vpc.sgsi_main.id
-  
-  public_subnet_ids = [
-    data.aws_subnet.dmz_1a.id,
-    data.aws_subnet.dmz_1b.id,
-    data.aws_subnet.dmz_1c.id
-  ]
-  
-  private_subnet_ids = [
-    data.aws_subnet.app_1a.id,
-    data.aws_subnet.app_1b.id,
-    data.aws_subnet.app_1c.id
-  ]
-  
-  db_subnet_ids = [
-    data.aws_subnet.db_1a.id,
-    data.aws_subnet.db_1b.id,
-    data.aws_subnet.db_1c.id
-  ]
-  
-  alb_sg_id    = data.aws_security_group.alb.id
-  web_sg_id    = data.aws_security_group.web.id
-  app_sg_id    = data.aws_security_group.app.id
-  db_sg_id     = data.aws_security_group.db.id
-  lambda_sg_id = data.aws_security_group.app.id
+data "aws_security_group" "sgsi_lambda_sg" {
+  filter {
+    name   = "tag:Name"
+    values = ["sgsi-lambda-sg"]
+  }
+}
+
+# LAUNCH TEMPLATE DATA SOURCE
+data "aws_launch_template" "sgsi_web_server_template" {
+  name = "sgsi-web-server-template"
 }
 '''
         
         with open(output_file, 'w', encoding='utf-8') as f:
             f.write(content)
         
-        print(f"✅ Generated shared locals: {output_file}")
+        print(f"✅ Generated shared data sources: {output_file}")
         return output_file
 
     def generate_alb_terraform(self, definition, source_file):
@@ -797,8 +780,11 @@ resource "aws_lb" "{name.replace('-', '_')}" {{
   name               = "{name}"
   internal           = {str(spec.get('internal', False)).lower()}
   load_balancer_type = "application"
-  security_groups    = [local.alb_sg_id]
-  subnets            = local.public_subnet_ids
+  security_groups    = [data.aws_security_group.sgsi_alb_sg.id]
+  subnets            = [
+    data.aws_subnet.sgsi_public_subnet_1.id,
+    data.aws_subnet.sgsi_public_subnet_2.id
+  ]
 
   enable_deletion_protection = {str(spec.get('enable_deletion_protection', False)).lower()}
 
@@ -815,7 +801,7 @@ resource "aws_lb_target_group" "{name.replace('-', '_')}_tg" {{
   name     = "{name}-tg"
   port     = {spec.get('target_group', {}).get('port', 80)}
   protocol = "{spec.get('target_group', {}).get('protocol', 'HTTP')}"
-  vpc_id   = local.vpc_id
+  vpc_id   = data.aws_vpc.sgsi_main_vpc.id
 
   health_check {{
     enabled             = true
@@ -873,7 +859,7 @@ resource "aws_launch_template" "sgsi_web_server_template" {{
   image_id      = "{spec.get('ami_id', 'ami-0abcdef1234567890')}"
   instance_type = "{spec.get('instance_type', 't3.micro')}"
   
-  vpc_security_group_ids = [local.web_sg_id]
+  vpc_security_group_ids = [data.aws_security_group.sgsi_web_sg.id]
   
   user_data = base64encode(<<-EOF
     #!/bin/bash
@@ -987,7 +973,10 @@ resource "aws_iam_instance_profile" "sgsi_ec2_profile" {{
 # DB Subnet Group
 resource "aws_db_subnet_group" "sgsi_db_subnet_group" {{
   name       = "sgsi-db-subnet-group"
-  subnet_ids = local.db_subnet_ids
+  subnet_ids = [
+    data.aws_subnet.sgsi_private_subnet_1.id,
+    data.aws_subnet.sgsi_private_subnet_2.id
+  ]
 
   tags = {{
     Name        = "sgsi-db-subnet-group"
@@ -1035,7 +1024,7 @@ resource "aws_db_instance" "{name.replace('-', '_')}" {{
   username = "{spec.get('master_username', 'admin')}"
   password = "{spec.get('master_password', 'ChangeMe123!')}"
   
-  vpc_security_group_ids = [local.db_sg_id]
+  vpc_security_group_ids = [data.aws_security_group.sgsi_db_sg.id]
   db_subnet_group_name   = aws_db_subnet_group.sgsi_db_subnet_group.name
   parameter_group_name   = aws_db_parameter_group.sgsi_mysql_params.name
   
@@ -1057,7 +1046,7 @@ resource "aws_db_instance" "{name.replace('-', '_')}" {{
   monitoring_interval = {spec.get('monitoring_interval', 60)}
   monitoring_role_arn = aws_iam_role.sgsi_rds_monitoring_role.arn
   
-  enabled_cloudwatch_logs_exports = {spec.get('enabled_cloudwatch_logs_exports', '["error", "general", "slowquery"]')}
+  enabled_cloudwatch_logs_exports = {spec.get('enabled_cloudwatch_logs_exports', '["error", "general", "slow_query"]')}
   
   tags = {{
     Name        = "{name}"
@@ -1121,8 +1110,11 @@ resource "aws_lambda_function" "sgsi_api_handler" {{
   memory_size     = {spec.get('memory_size', 128)}
 
   vpc_config {{
-    subnet_ids         = local.private_subnet_ids
-    security_group_ids = [local.lambda_sg_id]
+    subnet_ids         = [
+      data.aws_subnet.sgsi_private_subnet_1.id,
+      data.aws_subnet.sgsi_private_subnet_2.id
+    ]
+    security_group_ids = [data.aws_security_group.sgsi_lambda_sg.id]
   }}
 
   environment {{
@@ -1154,8 +1146,11 @@ resource "aws_lambda_function" "sgsi_data_processor" {{
   memory_size     = {spec.get('memory_size', 512)}
 
   vpc_config {{
-    subnet_ids         = local.private_subnet_ids
-    security_group_ids = [local.lambda_sg_id]
+    subnet_ids         = [
+      data.aws_subnet.sgsi_private_subnet_1.id,
+      data.aws_subnet.sgsi_private_subnet_2.id
+    ]
+    security_group_ids = [data.aws_security_group.sgsi_lambda_sg.id]
   }}
 
   environment {{
@@ -1248,7 +1243,10 @@ resource "aws_cloudwatch_log_group" "sgsi_data_processor_logs" {{
 
 resource "aws_autoscaling_group" "{name.replace('-', '_')}" {{
   name                = "{name}"
-  vpc_zone_identifier = local.private_subnet_ids
+  vpc_zone_identifier = [
+    data.aws_subnet.sgsi_private_subnet_1.id,
+    data.aws_subnet.sgsi_private_subnet_2.id
+  ]
   target_group_arns   = [aws_lb_target_group.sgsi_main_alb_tg.arn]
   health_check_type   = "ELB"
   health_check_grace_period = {spec.get('health_check_grace_period', 300)}
@@ -1258,7 +1256,7 @@ resource "aws_autoscaling_group" "{name.replace('-', '_')}" {{
   desired_capacity = {spec.get('desired_capacity', 2)}
 
   launch_template {{
-    id      = aws_launch_template.sgsi_web_server_template.id
+    id      = data.aws_launch_template.sgsi_web_server_template.id
     version = "$Latest"
   }}
 

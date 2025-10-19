@@ -5,8 +5,11 @@ resource "aws_lb" "sgsi_main_alb" {
   name               = "sgsi-main-alb"
   internal           = false
   load_balancer_type = "application"
-  security_groups    = [local.alb_sg_id]
-  subnets            = local.public_subnet_ids
+  security_groups    = [data.aws_security_group.sgsi_alb_sg.id]
+  subnets            = [
+    data.aws_subnet.sgsi_public_subnet_1.id,
+    data.aws_subnet.sgsi_public_subnet_2.id
+  ]
 
   enable_deletion_protection = false
 
@@ -23,7 +26,7 @@ resource "aws_lb_target_group" "sgsi_main_alb_tg" {
   name     = "sgsi-main-alb-tg"
   port     = 80
   protocol = "HTTP"
-  vpc_id   = local.vpc_id
+  vpc_id   = data.aws_vpc.sgsi_main_vpc.id
 
   health_check {
     enabled             = true

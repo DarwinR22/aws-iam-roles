@@ -7,7 +7,7 @@ resource "aws_launch_template" "sgsi_web_server_template" {
   image_id      = "ami-0abcdef1234567890"
   instance_type = "t3.micro"
   
-  vpc_security_group_ids = [local.web_sg_id]
+  vpc_security_group_ids = [data.aws_security_group.sgsi_web_sg.id]
   
   user_data = base64encode(<<-EOF
     #!/bin/bash
