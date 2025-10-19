@@ -127,13 +127,21 @@ jobs:
     - name: 🏗️ Generate Terraform Files
       run: |
         echo "🏗️ Generating Terraform from YAML definitions..."
+        
+        echo "🔐 Generating IAM resources..."
         python generators/generate_all.py --clean
         
+        echo "🌐 Generating SGSI Infrastructure (Networking, Security, etc.)..."
+        python generators/generate_sgsi_all.py --clean
+        
         echo "📋 Generated files:"
-        find generated -name "*.tf" -type f | head -10
+        find generated -name "*.tf" -type f | head -20
         
         echo "🔍 Checking file sizes:"
         ls -la generated/
+        
+        echo "🌐 Networking files generated:"
+        ls -la generated/network/ || echo "No network files generated"
         
     - name: 📐 Format Generated Terraform
       run: |
