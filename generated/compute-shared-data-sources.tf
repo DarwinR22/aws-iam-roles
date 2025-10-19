@@ -1,5 +1,5 @@
 # Shared Data Sources for SGSI Layer 3
-# Generated: 2025-10-18
+# Generated: 2025-10-18 - Updated for workflow trigger
 # This file contains all shared data sources to avoid duplicates
 
 # VPC DATA SOURCE
