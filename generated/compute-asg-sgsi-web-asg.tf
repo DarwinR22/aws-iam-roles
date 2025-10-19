@@ -13,7 +13,7 @@ resource "aws_autoscaling_group" "sgsi_web_asg" {
   desired_capacity = 2
 
   launch_template {
-    id      = data.aws_launch_template.sgsi_web_server_template.id
+    id      = aws_launch_template.sgsi_web_server_template.id
     version = "$Latest"
   }
 

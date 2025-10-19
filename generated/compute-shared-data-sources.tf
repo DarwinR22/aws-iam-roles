@@ -112,11 +112,6 @@ data "aws_security_group" "sgsi_lambda_sg" {
   }
 }
 
-# LAUNCH TEMPLATE DATA SOURCE
-data "aws_launch_template" "sgsi_web_server_template" {
-  name = "sgsi-web-server-template"
-}
-
 # LOCAL VALUES for easy reference
 locals {
   # VPC
