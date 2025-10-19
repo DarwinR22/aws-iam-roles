@@ -1122,15 +1122,28 @@ resource "aws_iam_role_policy_attachment" "sgsi_rds_monitoring" {{
         spec = lambda_config
         
         content = f'''# Lambda Terraform generated from {source_file}
-# Lambda Functions for SGSI Layer 3
+# Lambda Functions for SGSI Layer 3 - Best Practice Implementation
+
+# Archive files for Lambda deployment
+data "archive_file" "api_handler_zip" {{
+  type        = "zip"
+  source_dir  = "${{path.module}}/../lambda-code/api-handler"
+  output_path = "api_handler.zip"
+}}
+
+data "archive_file" "data_processor_zip" {{
+  type        = "zip"
+  source_dir  = "${{path.module}}/../lambda-code/data-processor"
+  output_path = "data_processor.zip"
+}}
 
 # Lambda Function 1: API Handler
 resource "aws_lambda_function" "sgsi_api_handler" {{
-  filename         = "api_handler.zip"
+  filename         = data.archive_file.api_handler_zip.output_path
   function_name    = "sgsi-api-handler"
   role            = aws_iam_role.sgsi_lambda_role.arn
   handler         = "index.handler"
-  source_code_hash = filebase64sha256("api_handler.zip")
+  source_code_hash = data.archive_file.api_handler_zip.output_base64sha256
   runtime         = "{spec.get('runtime', 'python3.9')}"
   timeout         = {spec.get('timeout', 30)}
   memory_size     = {spec.get('memory_size', 128)}
@@ -1159,11 +1172,11 @@ resource "aws_lambda_function" "sgsi_api_handler" {{
 
 # Lambda Function 2: Data Processor
 resource "aws_lambda_function" "sgsi_data_processor" {{
-  filename         = "data_processor.zip"
+  filename         = data.archive_file.data_processor_zip.output_path
   function_name    = "sgsi-data-processor"
   role            = aws_iam_role.sgsi_lambda_role.arn
   handler         = "processor.handler"
-  source_code_hash = filebase64sha256("data_processor.zip")
+  source_code_hash = data.archive_file.data_processor_zip.output_base64sha256
   runtime         = "{spec.get('runtime', 'python3.9')}"
   timeout         = {spec.get('timeout', 300)}
   memory_size     = {spec.get('memory_size', 512)}
