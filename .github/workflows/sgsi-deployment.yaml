@@ -436,6 +436,9 @@ jobs:
         run: |
           echo "🚀 Deploying Generated IAM Resources..."
           terraform init
+          echo "📋 Creating IAM plan..."
+          terraform plan -out=iam.tfplan
+          echo "🚀 Applying IAM plan..."
           terraform apply -auto-approve iam.tfplan
           echo "✅ Generated IAM deployment completed"
 
@@ -446,6 +449,9 @@ jobs:
         run: |
           echo "🏗️ Deploying Foundation Layer..."
           terraform init
+          echo "📋 Creating foundation plan..."
+          terraform plan -out=foundation.tfplan
+          echo "🚀 Applying foundation plan..."
           terraform apply -auto-approve foundation.tfplan
           echo "✅ Foundation layer deployment completed"
 
@@ -456,6 +462,9 @@ jobs:
         run: |
           echo "🌐 Deploying Network Layer..."
           terraform init
+          echo "📋 Creating network plan..."
+          terraform plan -out=network.tfplan
+          echo "🚀 Applying network plan..."
           terraform apply -auto-approve network.tfplan
           echo "✅ Network layer deployment completed"
 
