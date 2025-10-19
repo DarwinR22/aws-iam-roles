@@ -63,6 +63,7 @@ policy:
       effect: "Allow"
       actions:
         - "iam:ListInstanceProfiles"
+        - "iam:ListInstanceProfilesForRole"
         - "iam:GetAccountSummary"
         - "iam:GetAccountPasswordPolicy"
         - "iam:ListUsers"
