@@ -269,6 +269,18 @@ jobs:
           echo "📍 Region: ${{ env.AWS_REGION }}"
           echo "🎯 Environment: ${{ steps.aws-config.outputs.environment }}"
 
+      - name: 🧪 Test EC2 Permissions
+        run: |
+          echo "🧪 Testing EC2 DescribeAvailabilityZones permission..."
+          if aws ec2 describe-availability-zones --output json > /dev/null 2>&1; then
+            echo "✅ EC2 DescribeAvailabilityZones: ALLOWED"
+          else
+            echo "❌ EC2 DescribeAvailabilityZones: DENIED"
+            echo "⚠️ This will cause Terraform data.aws_availability_zones to fail"
+          fi
+          echo "📋 Available AZs in region:"
+          aws ec2 describe-availability-zones --query 'AvailabilityZones[*].ZoneName' --output table || echo "❌ Cannot list AZs"
+
       # Plan Generated IAM Resources (if they changed)
       - name: 📋 Plan Generated IAM Resources
         id: plan-iam

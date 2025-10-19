@@ -121,6 +121,29 @@ policy:
           variable: "aws:RequestedRegion"
           values: ["us-east-1"]
 
+    # ===========================================
+    # EC2 READ OPERATIONS FOR TERRAFORM DATA SOURCES
+    # ===========================================
+    - sid: "EC2ReadOperations"
+      effect: "Allow"
+      actions:
+        - "ec2:DescribeAvailabilityZones"
+        - "ec2:DescribeRegions"
+        - "ec2:DescribeSubnets"
+        - "ec2:DescribeVpcs"
+        - "ec2:DescribeRouteTables"
+        - "ec2:DescribeSecurityGroups"
+        - "ec2:DescribeInternetGateways"
+        - "ec2:DescribeNatGateways"
+        - "ec2:DescribeNetworkAcls"
+        - "ec2:DescribeVpcEndpoints"
+        - "ec2:DescribeTags"
+      resources: ["*"]
+      conditions:
+        - test: "StringEquals"
+          variable: "aws:RequestedRegion"
+          values: ["us-east-1"]
+
 # Organizational tags for compliance and governance
 tags:
   # Core organizational tags

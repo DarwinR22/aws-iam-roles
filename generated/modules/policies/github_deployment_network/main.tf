@@ -157,6 +157,33 @@ resource "aws_iam_policy" "github_deployment_network" {
           ]
         }
       }
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ec2:DescribeAvailabilityZones",
+        "ec2:DescribeRegions",
+        "ec2:DescribeSubnets",
+        "ec2:DescribeVpcs",
+        "ec2:DescribeRouteTables",
+        "ec2:DescribeSecurityGroups",
+        "ec2:DescribeInternetGateways",
+        "ec2:DescribeNatGateways",
+        "ec2:DescribeNetworkAcls",
+        "ec2:DescribeVpcEndpoints",
+        "ec2:DescribeTags"
+      ],
+      "Sid": "EC2ReadOperations",
+      "Resource": [
+        "*"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": [
+            "us-east-1"
+          ]
+        }
+      }
     }
   ]
 }
@@ -165,10 +192,10 @@ EOF
   tags = merge(
     var.common_tags,
     {
-      Name          = "${var.environment}-github-deployment-network"
-      PolicyType    = "Custom"
-      Scope         = "Service"
-      GeneratedFrom = "github_deployment_network.yaml"
+      Name                = "${var.environment}-github-deployment-network"
+      PolicyType         = "Custom"
+      Scope              = "Service"
+      GeneratedFrom      = "github_deployment_network.yaml"
     }
   )
 }

@@ -1,0 +1,116 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "STSPermissions",
+      "Effect": "Allow",
+      "Action": [
+        "sts:AssumeRoleWithWebIdentity",
+        "sts:GetCallerIdentity",
+        "sts:TagSession",
+        "sts:AssumeRole"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "IAMFullAccess",
+      "Effect": "Allow",
+      "Action": [
+        "iam:*"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "EC2FullAccess",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:*"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "S3TerraformBackend",
+      "Effect": "Allow",
+      "Action": [
+        "s3:*"
+      ],
+      "Resource": [
+        "arn:aws:s3:::terraform-state-bucket-051963532279",
+        "arn:aws:s3:::terraform-state-bucket-051963532279/*"
+      ]
+    },
+    {
+      "Sid": "DynamoDBTerraformLocks",
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:*"
+      ],
+      "Resource": [
+        "arn:aws:dynamodb:us-east-1:051963532279:table/terraform-locks"
+      ]
+    },
+    {
+      "Sid": "CloudFormationAccess",
+      "Effect": "Allow",
+      "Action": [
+        "cloudformation:*"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "EventBridgeAccess",
+      "Effect": "Allow",
+      "Action": [
+        "events:*"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "LambdaAccess",
+      "Effect": "Allow",
+      "Action": [
+        "lambda:*"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "GlueAccess",
+      "Effect": "Allow",
+      "Action": [
+        "glue:*"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "CloudWatchAccess",
+      "Effect": "Allow",
+      "Action": [
+        "logs:*",
+        "cloudwatch:*"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "KMSAccess",
+      "Effect": "Allow",
+      "Action": [
+        "kms:Decrypt",
+        "kms:DescribeKey",
+        "kms:Encrypt",
+        "kms:GenerateDataKey",
+        "kms:ReEncrypt*"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "DenyDeleteSelfRole",
+      "Effect": "Deny",
+      "Action": [
+        "iam:DeleteRole",
+        "iam:DeleteRolePolicy",
+        "iam:DetachRolePolicy"
+      ],
+      "Resource": "arn:aws:iam::051963532279:role/github-actions-deployment-role"
+    }
+  ]
+}

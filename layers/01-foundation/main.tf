@@ -166,25 +166,24 @@ module "github_deployment_glue" {
 }
 
 # ==============================================================================
-# POLICY ATTACHMENTS (9 Consolidated Policies)
+# POLICY ATTACHMENTS (9 Optimized Policies)
 # ==============================================================================
-# Commented out - using existing role with existing permissions for this deployment
-# resource "aws_iam_role_policy_attachment" "github_deployment_policies" {
-#   for_each = {
-#     iam            = module.github_deployment_iam.policy_arn
-#     sts            = module.github_deployment_sts.policy_arn
-#     infrastructure = module.github_deployment_infrastructure.policy_arn  # network + compute
-#     deployment     = module.github_deployment_deployment.policy_arn      # cloudformation + tfstate
-#     observability  = module.github_deployment_observability.policy_arn   # cloudwatch + monitoring
-#     application    = module.github_deployment_application.policy_arn
-#     database       = module.github_deployment_database.policy_arn
-#     storage        = module.github_deployment_storage.policy_arn
-#     glue           = module.github_deployment_glue.policy_arn
-#   }
-#
-#   role       = data.aws_iam_role.github_actions_deployment_role.name
-#   policy_arn = each.value
-# }
+resource "aws_iam_role_policy_attachment" "github_deployment_policies" {
+  for_each = {
+    iam         = module.github_deployment_iam.policy_arn         # IAM + STS consolidated
+    network     = module.github_deployment_network.policy_arn     # VPC infrastructure  
+    cloudwatch  = module.github_deployment_cloudwatch.policy_arn  # Logs, metrics, SNS
+    monitoring  = module.github_deployment_monitoring.policy_arn  # Security monitoring
+    deployment  = module.github_deployment_deployment.policy_arn  # CloudFormation + tfstate
+    application = module.github_deployment_application.policy_arn # Lambda, EventBridge
+    database    = module.github_deployment_database.policy_arn    # RDS
+    storage     = module.github_deployment_storage.policy_arn     # S3, EFS
+    glue        = module.github_deployment_glue.policy_arn        # AWS Glue
+  }
+
+  role       = data.aws_iam_role.github_actions_deployment_role.name
+  policy_arn = each.value
+}
 
 # ==============================================================================
 # DATA SOURCES
