@@ -780,11 +780,8 @@ resource "aws_lb" "{name.replace('-', '_')}" {{
   name               = "{name}"
   internal           = {str(spec.get('internal', False)).lower()}
   load_balancer_type = "application"
-  security_groups    = [data.aws_security_group.sgsi_alb_sg.id]
-  subnets            = [
-    data.aws_subnet.sgsi_public_subnet_1.id,
-    data.aws_subnet.sgsi_public_subnet_2.id
-  ]
+  security_groups    = [local.alb_sg_id]
+  subnets            = local.public_subnet_ids
 
   enable_deletion_protection = {str(spec.get('enable_deletion_protection', False)).lower()}
 
@@ -801,7 +798,7 @@ resource "aws_lb_target_group" "{name.replace('-', '_')}_tg" {{
   name     = "{name}-tg"
   port     = {spec.get('target_group', {}).get('port', 80)}
   protocol = "{spec.get('target_group', {}).get('protocol', 'HTTP')}"
-  vpc_id   = data.aws_vpc.sgsi_main_vpc.id
+  vpc_id   = local.vpc_id
 
   health_check {{
     enabled             = true
@@ -859,7 +856,7 @@ resource "aws_launch_template" "sgsi_web_server_template" {{
   image_id      = "{spec.get('ami_id', 'ami-0abcdef1234567890')}"
   instance_type = "{spec.get('instance_type', 't3.micro')}"
   
-  vpc_security_group_ids = [data.aws_security_group.sgsi_web_sg.id]
+  vpc_security_group_ids = [local.web_sg_id]
   
   user_data = base64encode(<<-EOF
     #!/bin/bash
@@ -973,10 +970,7 @@ resource "aws_iam_instance_profile" "sgsi_ec2_profile" {{
 # DB Subnet Group
 resource "aws_db_subnet_group" "sgsi_db_subnet_group" {{
   name       = "sgsi-db-subnet-group"
-  subnet_ids = [
-    data.aws_subnet.sgsi_private_subnet_1.id,
-    data.aws_subnet.sgsi_private_subnet_2.id
-  ]
+  subnet_ids = local.db_subnet_ids
 
   tags = {{
     Name        = "sgsi-db-subnet-group"
@@ -1024,7 +1018,7 @@ resource "aws_db_instance" "{name.replace('-', '_')}" {{
   username = "{spec.get('master_username', 'admin')}"
   password = "{spec.get('master_password', 'ChangeMe123!')}"
   
-  vpc_security_group_ids = [data.aws_security_group.sgsi_db_sg.id]
+  vpc_security_group_ids = [local.db_sg_id]
   db_subnet_group_name   = aws_db_subnet_group.sgsi_db_subnet_group.name
   parameter_group_name   = aws_db_parameter_group.sgsi_mysql_params.name
   
@@ -1110,11 +1104,8 @@ resource "aws_lambda_function" "sgsi_api_handler" {{
   memory_size     = {spec.get('memory_size', 128)}
 
   vpc_config {{
-    subnet_ids         = [
-      data.aws_subnet.sgsi_private_subnet_1.id,
-      data.aws_subnet.sgsi_private_subnet_2.id
-    ]
-    security_group_ids = [data.aws_security_group.sgsi_lambda_sg.id]
+    subnet_ids         = local.private_subnet_ids
+    security_group_ids = [local.lambda_sg_id]
   }}
 
   environment {{
@@ -1146,11 +1137,8 @@ resource "aws_lambda_function" "sgsi_data_processor" {{
   memory_size     = {spec.get('memory_size', 512)}
 
   vpc_config {{
-    subnet_ids         = [
-      data.aws_subnet.sgsi_private_subnet_1.id,
-      data.aws_subnet.sgsi_private_subnet_2.id
-    ]
-    security_group_ids = [data.aws_security_group.sgsi_lambda_sg.id]
+    subnet_ids         = local.private_subnet_ids
+    security_group_ids = [local.lambda_sg_id]
   }}
 
   environment {{
@@ -1243,10 +1231,7 @@ resource "aws_cloudwatch_log_group" "sgsi_data_processor_logs" {{
 
 resource "aws_autoscaling_group" "{name.replace('-', '_')}" {{
   name                = "{name}"
-  vpc_zone_identifier = [
-    data.aws_subnet.sgsi_private_subnet_1.id,
-    data.aws_subnet.sgsi_private_subnet_2.id
-  ]
+  vpc_zone_identifier = local.private_subnet_ids
   target_group_arns   = [aws_lb_target_group.sgsi_main_alb_tg.arn]
   health_check_type   = "ELB"
   health_check_grace_period = {spec.get('health_check_grace_period', 300)}

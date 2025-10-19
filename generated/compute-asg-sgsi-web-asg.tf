@@ -3,10 +3,7 @@
 
 resource "aws_autoscaling_group" "sgsi_web_asg" {
   name                = "sgsi-web-asg"
-  vpc_zone_identifier = [
-    data.aws_subnet.sgsi_private_subnet_1.id,
-    data.aws_subnet.sgsi_private_subnet_2.id
-  ]
+  vpc_zone_identifier = local.private_subnet_ids
   target_group_arns   = [aws_lb_target_group.sgsi_main_alb_tg.arn]
   health_check_type   = "ELB"
   health_check_grace_period = 300
