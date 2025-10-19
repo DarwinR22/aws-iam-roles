@@ -6,7 +6,7 @@
 # This file is auto-generated from YAML definitions.
 # DO NOT EDIT MANUALLY - Changes will be overwritten.
 # 
-# Generated: 2025-10-18T19:48:15.643439
+# Generated: 2025-10-18T20:06:38.929501
 # Source: Multiple role definitions in definitions/roles/
 # ==============================================================================
 
@@ -16,7 +16,7 @@ data "aws_caller_identity" "current" {}
 
 
 # Role from: github-deployment-role.yaml
-# Auto-generated role: github-actions-deployment-role
+# Auto-generated role: github-actions-iam-deployment-role
 # Generated from: definitions/roles/github-deployment-role.yaml
 # DO NOT EDIT MANUALLY - Changes will be overwritten
 # Last update: 2025-10-09 - Added complete tags for SCP compliance
@@ -24,7 +24,7 @@ data "aws_caller_identity" "current" {}
 # Get current AWS account ID
 # Trust policy for the role (using jsonencode to preserve array format)
 locals {
-  github_actions_deployment_role_trust_policy = jsonencode({
+  github_actions_iam_deployment_role_trust_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
       Effect = "Allow"
@@ -38,9 +38,9 @@ locals {
             "sts.amazonaws.com"
           ]
         },
-        StringEquals = {
+        StringLike = {
           "token.actions.githubusercontent.com:sub" = [
-            "repo:DarwinR22/aws-iam-roles:ref:refs/heads/dev"
+            "repo:DarwinR22/aws-iam-roles:*"
           ]
         }
       }
@@ -49,10 +49,10 @@ locals {
 }
 
 # IAM Role
-resource "aws_iam_role" "github_actions_deployment_role" {
-  name               = "github-actions-deployment-role"
+resource "aws_iam_role" "github_actions_iam_deployment_role" {
+  name               = "github-actions-iam-deployment-role"
   description        = "Rol para GitHub Actions deployment con permisos amplios para IAM management"
-  assume_role_policy = local.github_actions_deployment_role_trust_policy
+  assume_role_policy = local.github_actions_iam_deployment_role_trust_policy
 
   max_session_duration = 3600
 
@@ -82,11 +82,53 @@ resource "aws_iam_role" "github_actions_deployment_role" {
     # Auto-generated tags
     "ManagedBy" = "terraform"
     "Source"    = "definitions/roles/github-deployment-role.yaml"
-    "Generated" = "2025-10-18T19:48:15.643439"
+    "Generated" = "2025-10-18T20:06:38.929501"
   }
 }
 
 # Create policies as independent modules (not attached to role)
+module "github_deployment_sts" {
+  source = "./modules/policies/github_deployment_sts"
+  
+  environment = "DEV"
+  
+  # ABAC conditions for policy restrictions
+  abac_conditions = {
+    "aws:PrincipalTag/Gerencia" = ["MejoraContinuaEInformacion"]
+    "aws:PrincipalTag/Area"     = ["DevOps"]
+    "aws:PrincipalTag/Ambiente" = ["DEV"]
+  }
+  
+  # AWS Configuration
+  aws_region            = "us-east-1"
+  role_prefix          = "APP-"
+  policy_prefix        = "APP-"
+  s3_bucket_name       = "terraform-state-bucket-051963532279"
+  dynamodb_table_name  = "terraform-locks"
+  kms_key_id          = "*"
+  
+  common_tags = {
+    "Pais" = "RG"
+    "Gerencia" = "MejoraContinuaEInformacion"
+    "Area" = "DevOps"  
+    "Ambiente" = "DEV"
+    "Direccion" = "TICENAM"
+    "Modulo" = "IAM"
+    "Alcance SOX" = "No"
+    "Propietario" = "DarwinLopez"
+    "Proveedor" = "InHouse"
+    "Layer" = "Devops"
+    "Dominio" = "BusinessIntelligence"
+    "Subdominio" = "Analytics"
+    "Aplicacion" = "CICD"
+    "Tipo de Recurso" = "IAMPolicy"
+    "Soporte" = "darwin.lopez@claro.com.gt"
+    "Contacto" = "darwin.lopez@claro.com.gt"
+    "Creado Por" = "DarwinLopez"
+    "Ciclo de Vida" = "Creacion"
+    "ManagedBy" = "terraform"
+  }
+}
 module "github_deployment_tfstate" {
   source = "./modules/policies/github_deployment_tfstate"
   
@@ -467,40 +509,44 @@ module "github_deployment_cloudformation" {
 }
 
 # Attach policies to role
-resource "aws_iam_role_policy_attachment" "github_actions_deployment_role_github_deployment_tfstate" {
-  role       = aws_iam_role.github_actions_deployment_role.name
+resource "aws_iam_role_policy_attachment" "github_actions_iam_deployment_role_github_deployment_sts" {
+  role       = aws_iam_role.github_actions_iam_deployment_role.name
+  policy_arn = module.github_deployment_sts.policy_arn
+}
+resource "aws_iam_role_policy_attachment" "github_actions_iam_deployment_role_github_deployment_tfstate" {
+  role       = aws_iam_role.github_actions_iam_deployment_role.name
   policy_arn = module.github_deployment_tfstate.policy_arn
 }
-resource "aws_iam_role_policy_attachment" "github_actions_deployment_role_github_deployment_lambda" {
-  role       = aws_iam_role.github_actions_deployment_role.name
+resource "aws_iam_role_policy_attachment" "github_actions_iam_deployment_role_github_deployment_lambda" {
+  role       = aws_iam_role.github_actions_iam_deployment_role.name
   policy_arn = module.github_deployment_lambda.policy_arn
 }
-resource "aws_iam_role_policy_attachment" "github_actions_deployment_role_github_deployment_s3" {
-  role       = aws_iam_role.github_actions_deployment_role.name
+resource "aws_iam_role_policy_attachment" "github_actions_iam_deployment_role_github_deployment_s3" {
+  role       = aws_iam_role.github_actions_iam_deployment_role.name
   policy_arn = module.github_deployment_s3.policy_arn
 }
-resource "aws_iam_role_policy_attachment" "github_actions_deployment_role_github_deployment_dynamodb" {
-  role       = aws_iam_role.github_actions_deployment_role.name
+resource "aws_iam_role_policy_attachment" "github_actions_iam_deployment_role_github_deployment_dynamodb" {
+  role       = aws_iam_role.github_actions_iam_deployment_role.name
   policy_arn = module.github_deployment_dynamodb.policy_arn
 }
-resource "aws_iam_role_policy_attachment" "github_actions_deployment_role_github_deployment_eventbridge" {
-  role       = aws_iam_role.github_actions_deployment_role.name
+resource "aws_iam_role_policy_attachment" "github_actions_iam_deployment_role_github_deployment_eventbridge" {
+  role       = aws_iam_role.github_actions_iam_deployment_role.name
   policy_arn = module.github_deployment_eventbridge.policy_arn
 }
-resource "aws_iam_role_policy_attachment" "github_actions_deployment_role_github_deployment_cloudwatch" {
-  role       = aws_iam_role.github_actions_deployment_role.name
+resource "aws_iam_role_policy_attachment" "github_actions_iam_deployment_role_github_deployment_cloudwatch" {
+  role       = aws_iam_role.github_actions_iam_deployment_role.name
   policy_arn = module.github_deployment_cloudwatch.policy_arn
 }
-resource "aws_iam_role_policy_attachment" "github_actions_deployment_role_github_deployment_glue" {
-  role       = aws_iam_role.github_actions_deployment_role.name
+resource "aws_iam_role_policy_attachment" "github_actions_iam_deployment_role_github_deployment_glue" {
+  role       = aws_iam_role.github_actions_iam_deployment_role.name
   policy_arn = module.github_deployment_glue.policy_arn
 }
-resource "aws_iam_role_policy_attachment" "github_actions_deployment_role_github_deployment_iam" {
-  role       = aws_iam_role.github_actions_deployment_role.name
+resource "aws_iam_role_policy_attachment" "github_actions_iam_deployment_role_github_deployment_iam" {
+  role       = aws_iam_role.github_actions_iam_deployment_role.name
   policy_arn = module.github_deployment_iam.policy_arn
 }
-resource "aws_iam_role_policy_attachment" "github_actions_deployment_role_github_deployment_cloudformation" {
-  role       = aws_iam_role.github_actions_deployment_role.name
+resource "aws_iam_role_policy_attachment" "github_actions_iam_deployment_role_github_deployment_cloudformation" {
+  role       = aws_iam_role.github_actions_iam_deployment_role.name
   policy_arn = module.github_deployment_cloudformation.policy_arn
 }
 
@@ -515,9 +561,9 @@ resource "aws_iam_role_policy_attachment" "github_actions_deployment_role_github
 # }
 
 # Output role ARN
-output "github_actions_deployment_role_arn" {
-  description = "ARN of github-actions-deployment-role role"
-  value       = aws_iam_role.github_actions_deployment_role.arn
+output "github_actions_iam_deployment_role_arn" {
+  description = "ARN of github-actions-iam-deployment-role role"
+  value       = aws_iam_role.github_actions_iam_deployment_role.arn
 }
 
 # Output cleanup summary (DISABLED)
