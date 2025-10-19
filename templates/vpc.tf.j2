@@ -5,6 +5,13 @@
 # Source: {{ source_file }}
 # ==============================================================================
 
+# Variables
+variable "additional_tags" {
+  description = "Additional tags to be applied to all resources"
+  type        = map(string)
+  default     = {}
+}
+
 # VPC Resource
 resource "aws_vpc" "{{ vpc.name | replace('-', '_') }}" {
   cidr_block           = "{{ vpc.cidr_block }}"

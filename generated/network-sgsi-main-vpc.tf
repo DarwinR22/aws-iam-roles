@@ -1,9 +1,16 @@
 # ==============================================================================
 # VPC Module: sgsi-vpc-main
 # ==============================================================================
-# Generated: 2025-10-18T20:27:48.820718
+# Generated: 2025-10-18T20:30:23.789699
 # Source: sgsi-main-vpc.yaml
 # ==============================================================================
+
+# Variables
+variable "additional_tags" {
+  description = "Additional tags to be applied to all resources"
+  type        = map(string)
+  default     = {}
+}
 
 # VPC Resource
 resource "aws_vpc" "sgsi_vpc_main" {
