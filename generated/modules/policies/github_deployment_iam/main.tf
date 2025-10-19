@@ -2,7 +2,7 @@
 
 resource "aws_iam_policy" "github_deployment_iam" {
   name        = "${var.environment}-github-deployment-iam"
-  description = "Gestión completa de roles y políticas IAM para despliegues de infraestructura con Terraform (sin restricciones ABAC para CI/CD)"
+  description = "Gestión completa de IAM y STS para despliegues del SGSI - Consolidación de iam + sts"
   path        = "/"
 
   policy = <<EOF
@@ -107,6 +107,35 @@ resource "aws_iam_policy" "github_deployment_iam" {
       "Resource": [
         "arn:aws:iam::*:oidc-provider/*"
       ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "sts:AssumeRoleWithWebIdentity",
+        "sts:GetCallerIdentity",
+        "sts:TagSession"
+      ],
+      "Sid": "STSAssumeRoleWithWebIdentity",
+      "Resource": [
+        "*"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "sts:AssumeRole"
+      ],
+      "Sid": "AssumeOtherRoles",
+      "Resource": [
+        "arn:aws:iam::*:role/*"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": [
+            "us-east-1"
+          ]
+        }
+      }
     }
   ]
 }
@@ -115,10 +144,10 @@ EOF
   tags = merge(
     var.common_tags,
     {
-      Name          = "${var.environment}-github-deployment-iam"
-      PolicyType    = "Custom"
-      Scope         = "Service"
-      GeneratedFrom = "github_deployment_iam.yaml"
+      Name                = "${var.environment}-github-deployment-iam"
+      PolicyType         = "Custom"
+      Scope              = "Service"
+      GeneratedFrom      = "github_deployment_iam.yaml"
     }
   )
 }

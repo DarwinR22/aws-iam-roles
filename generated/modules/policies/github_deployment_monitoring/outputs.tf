@@ -1,14 +1,14 @@
 output "policy_arn" {
   description = "ARN of the generated IAM policy"
-  value       = aws_iam_policy.github_deployment_sts.arn
+  value       = aws_iam_policy.github_deployment_monitoring.arn
 }
 
 output "policy_name" {
   description = "Name of the generated IAM policy"
-  value       = aws_iam_policy.github_deployment_sts.name
+  value       = aws_iam_policy.github_deployment_monitoring.name
 }
 
 output "policy_id" {
   description = "ID of the generated IAM policy"
-  value       = aws_iam_policy.github_deployment_sts.id
+  value       = aws_iam_policy.github_deployment_monitoring.id
 }

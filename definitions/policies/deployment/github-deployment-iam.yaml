@@ -1,8 +1,8 @@
 policy:
   name: "github-deployment-iam"
-  description: "Gestión completa de roles y políticas IAM para despliegues de infraestructura con Terraform (sin restricciones ABAC para CI/CD)"
+  description: "Gestión completa de IAM y STS para despliegues del SGSI - Consolidación de iam + sts"
   service: "iam"
-  version: "2.3.4"
+  version: "3.0.0"
   
   statements:
     - sid: "IAMRoleFullManagement"
@@ -85,6 +85,28 @@ policy:
         - "iam:ListOpenIDConnectProviderTags"
       resources:
         - "arn:aws:iam::*:oidc-provider/*"
+
+    # ===========================================
+    # STS PERMISSIONS (Consolidated from github-deployment-sts)
+    # ===========================================
+    - sid: "STSAssumeRoleWithWebIdentity"
+      effect: "Allow"
+      actions:
+        - "sts:AssumeRoleWithWebIdentity"
+        - "sts:GetCallerIdentity"
+        - "sts:TagSession"
+      resources: ["*"]
+        
+    - sid: "AssumeOtherRoles"
+      effect: "Allow"
+      actions:
+        - "sts:AssumeRole"
+      resources:
+        - "arn:aws:iam::*:role/*"
+      conditions:
+        - test: "StringEquals"
+          variable: "aws:RequestedRegion"
+          values: ["us-east-1"]
 
 # Metadata
 environments: ["dev", "qa", "prod"]

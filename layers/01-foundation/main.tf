@@ -84,7 +84,7 @@ data "aws_iam_role" "github_actions_deployment_role" {
 # IAM POLICY MODULES (9 Consolidated Policies - Within AWS 10-Policy Limit)
 # ==============================================================================
 
-# Core IAM Management
+# Core IAM + STS Management (Consolidated)
 module "github_deployment_iam" {
   source = "../../generated/modules/policies/github_deployment_iam"
   
@@ -93,36 +93,45 @@ module "github_deployment_iam" {
   common_tags     = var.common_tags
 }
 
-# STS Role Assumptions
-module "github_deployment_sts" {
-  source = "../../generated/modules/policies/github_deployment_sts"
+# Network Infrastructure (VPC, Subnets, Security Groups)
+module "github_deployment_network" {
+  source = "../../generated/modules/policies/github_deployment_network"
   
   environment      = var.environment
   abac_conditions  = var.abac_conditions
   common_tags     = var.common_tags
 }
 
-# Consolidated: Infrastructure (Network + Compute)
-module "github_deployment_infrastructure" {
-  source = "../../generated/modules/policies/github_deployment_infrastructure"
+# Compute Infrastructure (EC2, ALB, Auto Scaling)
+module "github_deployment_compute" {
+  source = "../../generated/modules/policies/github_deployment_compute"
   
   environment      = var.environment
   abac_conditions  = var.abac_conditions
   common_tags     = var.common_tags
 }
 
-# Consolidated: Deployment (CloudFormation + Terraform State)
+# CloudWatch (Logs, Metrics, SNS)
+module "github_deployment_cloudwatch" {
+  source = "../../generated/modules/policies/github_deployment_cloudwatch"
+  
+  environment      = var.environment
+  abac_conditions  = var.abac_conditions
+  common_tags     = var.common_tags
+}
+
+# Security Monitoring (CloudTrail, Config, GuardDuty)
+module "github_deployment_monitoring" {
+  source = "../../generated/modules/policies/github_deployment_monitoring"
+  
+  environment      = var.environment
+  abac_conditions  = var.abac_conditions
+  common_tags     = var.common_tags
+}
+
+# Deployment Tools (CloudFormation + Terraform State)
 module "github_deployment_deployment" {
   source = "../../generated/modules/policies/github_deployment_deployment"
-  
-  environment      = var.environment
-  abac_conditions  = var.abac_conditions
-  common_tags     = var.common_tags
-}
-
-# Consolidated: Observability (CloudWatch + Monitoring)
-module "github_deployment_observability" {
-  source = "../../generated/modules/policies/github_deployment_observability"
   
   environment      = var.environment
   abac_conditions  = var.abac_conditions

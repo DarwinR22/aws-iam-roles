@@ -1,119 +1,12 @@
 policy:
-  name: "github-deployment-observability"
-  description: "Política consolidada para observabilidad completa (CloudWatch, Logs, Monitoring, Security) del SGSI - Consolidación de cloudwatch + monitoring"
-  service: "observability"
+  name: "github-deployment-monitoring"
+  description: "Gestión de servicios de monitoreo y seguridad del SGSI (CloudTrail, Config, GuardDuty, Security Hub)"
+  service: "monitoring"
   version: "2.0.0"
   
   statements:
     # ===========================================
-    # CLOUDWATCH LOGS MANAGEMENT (from cloudwatch)
-    # ===========================================
-    - sid: "CloudWatchLogsManagement"
-      effect: "Allow"
-      actions:
-        - "logs:CreateLogGroup"
-        - "logs:DeleteLogGroup"
-        - "logs:DescribeLogGroups"
-        - "logs:PutRetentionPolicy"
-        - "logs:DeleteRetentionPolicy"
-        - "logs:CreateLogStream"
-        - "logs:DeleteLogStream"
-        - "logs:DescribeLogStreams"
-        - "logs:PutLogEvents"
-        - "logs:GetLogEvents"
-        - "logs:FilterLogEvents"
-        - "logs:PutMetricFilter"
-        - "logs:DeleteMetricFilter"
-        - "logs:DescribeMetricFilters"
-        - "logs:TagLogGroup"
-        - "logs:UntagLogGroup"
-        - "logs:ListTagsLogGroup"
-        - "logs:ListTagsForResource"
-        - "logs:TagResource"
-        - "logs:UntagResource"
-      resources:
-        - "arn:aws:logs:*:*:log-group:*"
-        - "arn:aws:logs:*:*:log-group:*:log-stream:*"
-
-    # ===========================================
-    # CLOUDWATCH METRICS AND ALARMS (from both)
-    # ===========================================
-    - sid: "CloudWatchMetricsAndAlarms"
-      effect: "Allow"
-      actions:
-        - "cloudwatch:PutMetricData"
-        - "cloudwatch:GetMetricData"
-        - "cloudwatch:GetMetricStatistics"
-        - "cloudwatch:ListMetrics"
-        - "cloudwatch:PutMetricAlarm"
-        - "cloudwatch:DeleteAlarms"
-        - "cloudwatch:DescribeAlarms"
-        - "cloudwatch:DescribeAlarmsForMetric"
-        - "cloudwatch:DescribeAlarmHistory"
-        - "cloudwatch:SetAlarmState"
-        - "cloudwatch:EnableAlarmActions"
-        - "cloudwatch:DisableAlarmActions"
-        - "cloudwatch:TagResource"
-        - "cloudwatch:UntagResource"
-        - "cloudwatch:ListTagsForResource"
-      resources:
-        - "arn:aws:cloudwatch:*:*:alarm:*"
-        - "*"
-
-    # ===========================================
-    # CLOUDWATCH DASHBOARDS (from both)
-    # ===========================================
-    - sid: "CloudWatchDashboards"
-      effect: "Allow"
-      actions:
-        - "cloudwatch:PutDashboard"
-        - "cloudwatch:GetDashboard"
-        - "cloudwatch:DeleteDashboards"
-        - "cloudwatch:ListDashboards"
-      resources: ["*"]
-
-    # ===========================================
-    # SNS MANAGEMENT (from both)
-    # ===========================================
-    - sid: "SNSManagement"
-      effect: "Allow"
-      actions:
-        - "sns:CreateTopic"
-        - "sns:DeleteTopic"
-        - "sns:GetTopicAttributes"
-        - "sns:SetTopicAttributes"
-        - "sns:ListTopics"
-        - "sns:Subscribe"
-        - "sns:Unsubscribe"
-        - "sns:ListSubscriptions"
-        - "sns:ListSubscriptionsByTopic"
-        - "sns:GetSubscriptionAttributes"
-        - "sns:SetSubscriptionAttributes"
-        - "sns:Publish"
-        - "sns:AddPermission"
-        - "sns:RemovePermission"
-        - "sns:TagResource"
-        - "sns:UntagResource"
-        - "sns:ListTagsForResource"
-        - "sns:CreatePlatformApplication"
-        - "sns:DeletePlatformApplication"
-        - "sns:GetPlatformApplicationAttributes"
-        - "sns:SetPlatformApplicationAttributes"
-        - "sns:ListPlatformApplications"
-        - "sns:CreatePlatformEndpoint"
-        - "sns:DeleteEndpoint"
-        - "sns:GetEndpointAttributes"
-        - "sns:SetEndpointAttributes"
-      resources:
-        - "arn:aws:sns:*:*:*"
-        - "arn:aws:sns:*:*:app/*"
-        - "arn:aws:sns:*:*:endpoint/*"
-        - "arn:aws:sns:*:*:sgsi-*"
-        - "arn:aws:sns:*:*:security-*"
-        - "arn:aws:sns:*:*:compliance-*"
-
-    # ===========================================
-    # CLOUDTRAIL MANAGEMENT (from monitoring)
+    # CLOUDTRAIL MANAGEMENT
     # ===========================================
     - sid: "CloudTrailManagement"
       effect: "Allow"
@@ -139,7 +32,7 @@ policy:
       resources: ["*"]
 
     # ===========================================
-    # AWS CONFIG MANAGEMENT (from monitoring)
+    # AWS CONFIG MANAGEMENT
     # ===========================================
     - sid: "ConfigManagement"
       effect: "Allow"
@@ -165,7 +58,7 @@ policy:
       resources: ["*"]
 
     # ===========================================
-    # SECURITY MONITORING (from monitoring)
+    # SECURITY MONITORING SERVICES
     # ===========================================
     - sid: "SecurityMonitoring"
       effect: "Allow"
@@ -213,22 +106,15 @@ policy:
         - "securityhub:EnableImportFindingsForProduct"
         - "securityhub:DisableImportFindingsForProduct"
         - "securityhub:ListEnabledProductsForImport"
-        - "securityhub:GetMasterAccount"
-        - "securityhub:AcceptInvitation"
-        - "securityhub:DeclineInvitations"
-        - "securityhub:CreateMembers"
-        - "securityhub:DeleteMembers"
-        - "securityhub:GetMembers"
-        - "securityhub:InviteMembers"
       resources: ["*"]
 
     # ===========================================
-    # INSPECTOR AND COMPLIANCE (from monitoring)
+    # COMPLIANCE AND ASSESSMENT TOOLS
     # ===========================================
-    - sid: "InspectorAndCompliance"
+    - sid: "ComplianceTools"
       effect: "Allow"
       actions:
-        # Inspector v2 & v1
+        # Inspector
         - "inspector2:EnableInspector"
         - "inspector2:DisableInspector"
         - "inspector2:GetConfiguration"
@@ -278,7 +164,7 @@ policy:
       resources: ["*"]
 
     # ===========================================
-    # EVENT MANAGEMENT (from monitoring)
+    # EVENT MANAGEMENT
     # ===========================================
     - sid: "EventBridgeManagement"
       effect: "Allow"
@@ -302,7 +188,7 @@ tags:
   "Area": "DevOps"
   "Ambiente": "DEV"
   "Direccion": "TICENAM"
-  "Modulo": "Observability"
+  "Modulo": "Monitoring"
   
   # Compliance and governance
   "AlcanceSOX": "No"
@@ -310,13 +196,13 @@ tags:
   "Proveedor": "InHouse"
   
   # Technical classification
-  "Layer": "Observability"
+  "Layer": "Security"
   "Dominio": "BusinessIntelligence"
   "Subdominio": "Analytics"
   "Aplicacion": "CICD"
   
   # Resource identification
-  "Name": "github-deployment-observability"
+  "Name": "github-deployment-monitoring"
   "Tipo de Recurso": "IAMPolicy"
   
   # Contact and support information
@@ -325,8 +211,7 @@ tags:
   "Creado Por": "DarwinLopez"
   
   # Lifecycle management
-  "Ciclo de Vida": "Consolidacion"
+  "Ciclo de Vida": "Optimizacion"
   "Version": "v2.0.0"
   "Fecha de Creacion": "2025-10-19"
-  "Consolidates": "CloudWatch-Monitoring"
-  "ComplianceScope": "ISO27001-NIST-CSF-SOX"
+  "OptimizedFor": "AWS-Size-Limits"

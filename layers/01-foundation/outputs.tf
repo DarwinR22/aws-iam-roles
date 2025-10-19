@@ -19,19 +19,20 @@ output "github_deployment_role_unique_id" {
   value       = data.aws_iam_role.github_actions_deployment_role.unique_id
 }
 
-# Policy ARNs (9 Consolidated Policies - Within AWS 10-Policy Limit)
+# Policy ARNs (10 Optimized Policies - Exactly at AWS Limit!)
 output "policy_arns" {
-  description = "ARNs of all attached consolidated policies"
+  description = "ARNs of all attached optimized policies"
   value = {
-    iam            = module.github_deployment_iam.policy_arn
-    sts            = module.github_deployment_sts.policy_arn
-    infrastructure = module.github_deployment_infrastructure.policy_arn  # network + compute consolidated
-    deployment     = module.github_deployment_deployment.policy_arn      # cloudformation + tfstate consolidated
-    observability  = module.github_deployment_observability.policy_arn   # cloudwatch + monitoring consolidated
-    application    = module.github_deployment_application.policy_arn
-    database       = module.github_deployment_database.policy_arn
-    storage        = module.github_deployment_storage.policy_arn
-    glue           = module.github_deployment_glue.policy_arn
+    iam         = module.github_deployment_iam.policy_arn         # IAM + STS consolidated
+    network     = module.github_deployment_network.policy_arn     # VPC infrastructure
+    compute     = module.github_deployment_compute.policy_arn     # EC2, ALB, Auto Scaling
+    cloudwatch  = module.github_deployment_cloudwatch.policy_arn  # Logs, metrics, SNS
+    monitoring  = module.github_deployment_monitoring.policy_arn  # Security monitoring
+    deployment  = module.github_deployment_deployment.policy_arn  # CloudFormation + tfstate
+    application = module.github_deployment_application.policy_arn
+    database    = module.github_deployment_database.policy_arn
+    storage     = module.github_deployment_storage.policy_arn
+    glue        = module.github_deployment_glue.policy_arn
   }
 }
 

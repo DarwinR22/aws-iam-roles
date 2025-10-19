@@ -1,0 +1,138 @@
+policy:
+  name: "github-deployment-cloudwatch"
+  description: "Gestión de CloudWatch Logs, Métricas, Dashboards y SNS del SGSI"
+  service: "cloudwatch"
+  version: "2.0.0"
+  
+  statements:
+    # ===========================================
+    # CLOUDWATCH LOGS MANAGEMENT
+    # ===========================================
+    - sid: "CloudWatchLogsManagement"
+      effect: "Allow"
+      actions:
+        - "logs:CreateLogGroup"
+        - "logs:DeleteLogGroup"
+        - "logs:DescribeLogGroups"
+        - "logs:PutRetentionPolicy"
+        - "logs:DeleteRetentionPolicy"
+        - "logs:CreateLogStream"
+        - "logs:DeleteLogStream"
+        - "logs:DescribeLogStreams"
+        - "logs:PutLogEvents"
+        - "logs:GetLogEvents"
+        - "logs:FilterLogEvents"
+        - "logs:PutMetricFilter"
+        - "logs:DeleteMetricFilter"
+        - "logs:DescribeMetricFilters"
+        - "logs:TagLogGroup"
+        - "logs:UntagLogGroup"
+        - "logs:ListTagsLogGroup"
+        - "logs:ListTagsForResource"
+        - "logs:TagResource"
+        - "logs:UntagResource"
+      resources:
+        - "arn:aws:logs:*:*:log-group:*"
+        - "arn:aws:logs:*:*:log-group:*:log-stream:*"
+
+    # ===========================================
+    # CLOUDWATCH METRICS AND ALARMS
+    # ===========================================
+    - sid: "CloudWatchMetricsAndAlarms"
+      effect: "Allow"
+      actions:
+        - "cloudwatch:PutMetricData"
+        - "cloudwatch:GetMetricData"
+        - "cloudwatch:GetMetricStatistics"
+        - "cloudwatch:ListMetrics"
+        - "cloudwatch:PutMetricAlarm"
+        - "cloudwatch:DeleteAlarms"
+        - "cloudwatch:DescribeAlarms"
+        - "cloudwatch:DescribeAlarmsForMetric"
+        - "cloudwatch:DescribeAlarmHistory"
+        - "cloudwatch:SetAlarmState"
+        - "cloudwatch:EnableAlarmActions"
+        - "cloudwatch:DisableAlarmActions"
+        - "cloudwatch:TagResource"
+        - "cloudwatch:UntagResource"
+        - "cloudwatch:ListTagsForResource"
+      resources:
+        - "arn:aws:cloudwatch:*:*:alarm:*"
+        - "*"
+
+    # ===========================================
+    # CLOUDWATCH DASHBOARDS
+    # ===========================================
+    - sid: "CloudWatchDashboards"
+      effect: "Allow"
+      actions:
+        - "cloudwatch:PutDashboard"
+        - "cloudwatch:GetDashboard"
+        - "cloudwatch:DeleteDashboards"
+        - "cloudwatch:ListDashboards"
+      resources: ["*"]
+
+    # ===========================================
+    # SNS MANAGEMENT
+    # ===========================================
+    - sid: "SNSManagement"
+      effect: "Allow"
+      actions:
+        - "sns:CreateTopic"
+        - "sns:DeleteTopic"
+        - "sns:GetTopicAttributes"
+        - "sns:SetTopicAttributes"
+        - "sns:ListTopics"
+        - "sns:Subscribe"
+        - "sns:Unsubscribe"
+        - "sns:ListSubscriptions"
+        - "sns:ListSubscriptionsByTopic"
+        - "sns:GetSubscriptionAttributes"
+        - "sns:SetSubscriptionAttributes"
+        - "sns:Publish"
+        - "sns:AddPermission"
+        - "sns:RemovePermission"
+        - "sns:TagResource"
+        - "sns:UntagResource"
+        - "sns:ListTagsForResource"
+      resources:
+        - "arn:aws:sns:*:*:*"
+        - "arn:aws:sns:*:*:sgsi-*"
+        - "arn:aws:sns:*:*:security-*"
+        - "arn:aws:sns:*:*:compliance-*"
+
+# Organizational tags for compliance and governance
+tags:
+  # Core organizational tags
+  "Pais": "RG"
+  "Gerencia": "MejoraContinuaEInformacion"
+  "Area": "DevOps"
+  "Ambiente": "DEV"
+  "Direccion": "TICENAM"
+  "Modulo": "CloudWatch"
+  
+  # Compliance and governance
+  "AlcanceSOX": "No"
+  "Propietario": "DarwinLopez"
+  "Proveedor": "InHouse"
+  
+  # Technical classification
+  "Layer": "Observability"
+  "Dominio": "BusinessIntelligence"
+  "Subdominio": "Analytics"
+  "Aplicacion": "CICD"
+  
+  # Resource identification
+  "Name": "github-deployment-cloudwatch"
+  "Tipo de Recurso": "IAMPolicy"
+  
+  # Contact and support information
+  "Soporte": "darwin.lopez@claro.com.gt"
+  "Contacto": "darwin.lopez@claro.com.gt"
+  "Creado Por": "DarwinLopez"
+  
+  # Lifecycle management
+  "Ciclo de Vida": "Optimizacion"
+  "Version": "v2.0.0"
+  "Fecha de Creacion": "2025-10-19"
+  "OptimizedFor": "AWS-Size-Limits"
