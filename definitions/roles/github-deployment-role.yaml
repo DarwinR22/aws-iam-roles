@@ -10,13 +10,19 @@ role:
   
   # Metadata for role management
   metadata:
-    version: "2.5.0"
+    version: "2.6.0"
     created_by: "DevOps Team"
     created_date: "2025-09-16"
-    last_updated: "2025-10-14T23:30:00"
+    last_updated: "2025-10-18T20:45:00"
     purpose: "GitHub Actions CI/CD deployment con políticas ABAC modulares basadas en tags"
     risk_level: "high"
-    security_improvements: "v2.5.0 - Restricción a 3 repos con wildcards. Inline protection policy removida"
+    security_improvements: "v2.6.0 - Consolidación de políticas para respetar límite AWS (Lambda+S3+DynamoDB+EventBridge → Application)"
+    policy_consolidation:
+      - action: "consolidated"
+        policies: ["lambda", "s3", "dynamodb", "eventbridge"] 
+        into: "github-deployment-application"
+        reason: "AWS 10-policy limit per role"
+        date: "2025-10-18"
     
   # OIDC Trust Policy Configuration
   trust_policy:
@@ -53,25 +59,13 @@ role:
       file: "github-deployment-tfstate.yaml"
       description: "S3 y DynamoDB para gestión de estado de Terraform (solo GitHub Actions)"
     
-    - name: "github-deployment-lambda"
-      file: "github-deployment-lambda.yaml"
-      description: "Lambda con control ABAC basado en tags (solo deployment)"
-      
-    - name: "github-deployment-s3"
-      file: "github-deployment-s3.yaml"
-      description: "S3 con control ABAC basado en tags (solo deployment)"
-      
-    - name: "github-deployment-dynamodb"
-      file: "github-deployment-dynamodb.yaml"
-      description: "DynamoDB con control ABAC basado en tags (solo deployment)"
-      
-    - name: "github-deployment-eventbridge"
-      file: "github-deployment-eventbridge.yaml"
-      description: "EventBridge y Step Functions con control ABAC (solo deployment)"
+    - name: "github-deployment-application"
+      file: "github-deployment-application.yaml"
+      description: "Política consolidada de servicios de aplicación (Lambda, S3, DynamoDB, EventBridge) para optimizar límites de AWS"
       
     - name: "github-deployment-cloudwatch"
       file: "github-deployment-cloudwatch.yaml"
-      description: "CloudWatch y SNS con control ABAC (solo deployment)"
+      description: "CloudWatch y SNS con control ABAC basado en tags (solo deployment)"
       
     - name: "github-deployment-glue"
       file: "github-deployment-glue.yaml"
@@ -120,10 +114,11 @@ role:
     "Creado Por": "DarwinLopez"
     
     # Lifecycle management
-    "Ciclo de Vida": "Actualizacion"
-    "Version": "v2.5.0"  # ABAC + 3 repos con wildcards, sin inline protection policy
+    "Ciclo de Vida": "Consolidacion"
+    "Version": "v2.6.0"  # Política consolidada Application (Lambda+S3+DynamoDB+EventBridge)
     "Fecha de Creacion": "2025-09-16"
-    "Ultima Actualizacion": "2025-10-14"
+    "Ultima Actualizacion": "2025-10-18"
+    "Politicas Consolidadas": "8/10"  # Respetamos límite AWS de 10 políticas por rol
 
 # Environment variables for multi-environment deployment
 variables:
