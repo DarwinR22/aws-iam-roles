@@ -3,7 +3,7 @@
 # Defines OIDC trust policy and references component policies
 
 role:
-  name: "github-actions-deployment-role"
+  name: "github-actions-iam-deployment-role"
   description: "Rol para GitHub Actions deployment con permisos amplios para IAM management"
   path: "/"
   max_session_duration: 3600
