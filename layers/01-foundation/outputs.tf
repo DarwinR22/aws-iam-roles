@@ -2,21 +2,21 @@
 # LAYER 1: FOUNDATION - OUTPUTS
 # ==============================================================================
 
-# IAM Role Outputs
+# IAM Role Outputs (using existing role)
 output "github_deployment_role_arn" {
   description = "ARN of the GitHub Actions deployment role"
-  value       = aws_iam_role.github_actions_iam_deployment_role.arn
+  value       = data.aws_iam_role.github_actions_deployment_role.arn
   sensitive   = false
 }
 
 output "github_deployment_role_name" {
   description = "Name of the GitHub Actions deployment role"
-  value       = aws_iam_role.github_actions_iam_deployment_role.name
+  value       = data.aws_iam_role.github_actions_deployment_role.name
 }
 
 output "github_deployment_role_unique_id" {
   description = "Unique ID of the GitHub Actions deployment role"
-  value       = aws_iam_role.github_actions_iam_deployment_role.unique_id
+  value       = data.aws_iam_role.github_actions_deployment_role.unique_id
 }
 
 # Policy ARNs (for reference in other layers)
