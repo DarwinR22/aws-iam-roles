@@ -353,10 +353,10 @@ EOF
   tags = merge(
     var.common_tags,
     {
-      Name                = "${var.environment}-github-deployment-compute"
-      PolicyType         = "Custom"
-      Scope              = "Service"
-      GeneratedFrom      = "github_deployment_compute.yaml"
+      Name          = "${var.environment}-github-deployment-compute"
+      PolicyType    = "Custom"
+      Scope         = "Service"
+      GeneratedFrom = "github_deployment_compute.yaml"
     }
   )
 }
