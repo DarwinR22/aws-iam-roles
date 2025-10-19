@@ -212,6 +212,10 @@ def generate_policy_main_tf(policy_data, module_dir, module_name):
             "Action": stmt.get('actions', []),
         }
         
+        # Add Sid if present
+        if 'sid' in stmt:
+            tf_stmt["Sid"] = stmt['sid']
+        
         # Add resources if present
         if 'resources' in stmt:
             tf_stmt["Resource"] = stmt['resources']
