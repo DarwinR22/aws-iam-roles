@@ -1,0 +1,227 @@
+alb:
+  name: "sgsi-main-alb"
+  description: "Application Load Balancer principal para Layer 3 del SGSI con alta disponibilidad"
+  version: "1.0.0"
+  
+  configuration:
+    # =========================================
+    # LOAD BALANCER CONFIGURATION
+    # =========================================
+    name: "sgsi-main-alb"
+    load_balancer_type: "application"
+    scheme: "internet-facing"
+    ip_address_type: "ipv4"
+    
+    # Subnets DMZ públicas (desde Layer 2)
+    subnets:
+      - name: "sgsi-dmz-subnet-us-east-1a"
+        availability_zone: "us-east-1a"
+        vpc_name: "sgsi-vpc-main"
+      - name: "sgsi-dmz-subnet-us-east-1b" 
+        availability_zone: "us-east-1b"
+        vpc_name: "sgsi-vpc-main"
+      - name: "sgsi-dmz-subnet-us-east-1c"
+        availability_zone: "us-east-1c"
+        vpc_name: "sgsi-vpc-main"
+    
+    # Security Groups
+    security_groups:
+      - name: "sgsi-alb-sg"
+        vpc_name: "sgsi-vpc-main"
+    
+    # =========================================
+    # ALB ATTRIBUTES
+    # =========================================
+    attributes:
+      # Performance and timeouts
+      idle_timeout: 60
+      deletion_protection: false  # Para dev, en prod sería true
+      
+      # Access logs (importante para SGSI)
+      access_logs_enabled: true
+      access_logs_bucket: "sgsi-alb-logs-051963532279"
+      access_logs_prefix: "alb-logs"
+      
+      # Connection draining
+      connection_logs_enabled: false
+      
+      # IPv6
+      enable_cross_zone_load_balancing: true
+      enable_deletion_protection: false
+      enable_http2: true
+      
+      # WAF integration (para Layer 4)
+      enable_waf_fail_open: false
+
+  # =========================================
+  # TARGET GROUPS
+  # =========================================
+  target_groups:
+    - name: "sgsi-web-targets"
+      port: 80
+      protocol: "HTTP"
+      vpc_name: "sgsi-vpc-main"
+      target_type: "instance"
+      
+      # Health checks
+      health_check:
+        enabled: true
+        healthy_threshold: 2
+        unhealthy_threshold: 2
+        timeout: 5
+        interval: 30
+        path: "/health"
+        matcher: "200"
+        port: "traffic-port"
+        protocol: "HTTP"
+      
+      # Advanced settings
+      attributes:
+        deregistration_delay: 300
+        slow_start_duration: 0
+        stickiness_enabled: false
+        stickiness_type: "lb_cookie"
+        stickiness_duration: 86400
+        
+        # Connection settings
+        connection_termination: false
+        preserve_client_ip: true
+        
+        # Load balancing algorithm
+        load_balancing_algorithm: "round_robin"
+    
+    - name: "sgsi-api-targets"
+      port: 8080
+      protocol: "HTTP"
+      vpc_name: "sgsi-vpc-main" 
+      target_type: "instance"
+      
+      health_check:
+        enabled: true
+        healthy_threshold: 2
+        unhealthy_threshold: 3
+        timeout: 5
+        interval: 30
+        path: "/api/health"
+        matcher: "200,202"
+        port: "8080"
+        protocol: "HTTP"
+
+  # =========================================
+  # LISTENERS
+  # =========================================
+  listeners:
+    # HTTP Listener (redirect a HTTPS)
+    - port: 80
+      protocol: "HTTP"
+      default_actions:
+        - type: "redirect"
+          redirect:
+            protocol: "HTTPS"
+            port: "443"
+            status_code: "HTTP_301"
+    
+    # HTTPS Listener principal
+    - port: 443
+      protocol: "HTTPS"
+      ssl_policy: "ELBSecurityPolicy-TLS-1-2-2017-01"
+      certificate_arn: "arn:aws:acm:us-east-1:051963532279:certificate/sgsi-cert"
+      
+      default_actions:
+        - type: "forward"
+          target_group: "sgsi-web-targets"
+      
+      # Rules de routing
+      rules:
+        - priority: 100
+          conditions:
+            - field: "path-pattern" 
+              values: ["/api/*"]
+          actions:
+            - type: "forward"
+              target_group: "sgsi-api-targets"
+        
+        - priority: 200
+          conditions:
+            - field: "host-header"
+              values: ["admin.sgsi.local"]
+          actions:
+            - type: "forward"
+              target_group: "sgsi-web-targets"
+
+  # =========================================
+  # MONITORING Y ALERTAS
+  # =========================================
+  monitoring:
+    cloudwatch_metrics:
+      - metric_name: "RequestCount"
+        statistic: "Sum"
+        period: 300
+      - metric_name: "TargetResponseTime"
+        statistic: "Average"  
+        period: 300
+      - metric_name: "HTTPCode_Target_2XX_Count"
+        statistic: "Sum"
+        period: 300
+      - metric_name: "UnHealthyHostCount"
+        statistic: "Average"
+        period: 300
+    
+    alarms:
+      - name: "sgsi-alb-high-response-time"
+        metric: "TargetResponseTime"
+        threshold: 1.0
+        comparison: "GreaterThanThreshold"
+        evaluation_periods: 2
+        period: 300
+        
+      - name: "sgsi-alb-unhealthy-hosts"
+        metric: "UnHealthyHostCount"
+        threshold: 1
+        comparison: "GreaterThanOrEqualToThreshold"
+        evaluation_periods: 2
+        period: 300
+
+  # =========================================
+  # TAGS ORGANIZACIONALES
+  # =========================================
+  tags:
+    # Core organizational tags
+    "Pais": "RG"
+    "Gerencia": "MejoraContinuaEInformacion"
+    "Area": "DevOps"
+    "Ambiente": "DEV"
+    "Direccion": "TICENAM"
+    "Modulo": "LoadBalancer"
+    
+    # Compliance and governance
+    "AlcanceSOX": "No"
+    "Propietario": "DarwinLopez"
+    "Proveedor": "InHouse"
+    
+    # Technical classification
+    "Layer": "Compute"
+    "Dominio": "BusinessIntelligence"
+    "Subdominio": "WebServices"
+    "Aplicacion": "SGSI"
+    
+    # Resource identification  
+    "Name": "sgsi-main-alb"
+    "Tipo de Recurso": "ApplicationLoadBalancer"
+    
+    # Contact and support information
+    "Soporte": "darwin.lopez@claro.com.gt"
+    "Contacto": "darwin.lopez@claro.com.gt"
+    "Creado Por": "DarwinLopez"
+    
+    # Lifecycle management
+    "Ciclo de Vida": "Desarrollo"
+    "Version": "v1.0.0"
+    "Fecha de Creacion": "2025-10-18"
+    "Layer": "SGSI-Layer3-Compute"
+    
+    # Security and compliance
+    "Confidencialidad": "Interno"
+    "Criticidad": "Alta"
+    "BackupRequired": "Yes"
+    "MonitoringLevel": "Enhanced"

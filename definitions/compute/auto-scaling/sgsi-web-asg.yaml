@@ -1,0 +1,332 @@
+auto_scaling:
+  name: "sgsi-web-asg"
+  description: "Auto Scaling Group para servidores web SGSI con escalado automático basado en métricas"
+  version: "1.0.0"
+  
+  # =========================================
+  # AUTO SCALING GROUP CONFIGURATION
+  # =========================================
+  auto_scaling_group:
+    name: "sgsi-web-asg"
+    
+    # Launch template reference
+    launch_template:
+      name: "sgsi-web-server-template"
+      version: "$Latest"
+    
+    # Capacity configuration
+    min_size: 2
+    max_size: 6
+    desired_capacity: 2
+    
+    # Network configuration
+    vpc_zone_identifiers:
+      - name: "sgsi-app-subnet-us-east-1a"
+        vpc_name: "sgsi-vpc-main"
+      - name: "sgsi-app-subnet-us-east-1b"
+        vpc_name: "sgsi-vpc-main"
+      - name: "sgsi-app-subnet-us-east-1c"
+        vpc_name: "sgsi-vpc-main"
+    
+    # Load balancer integration
+    target_group_arns:
+      - "arn:aws:elasticloadbalancing:us-east-1:051963532279:targetgroup/sgsi-web-targets/*"
+      - "arn:aws:elasticloadbalancing:us-east-1:051963532279:targetgroup/sgsi-api-targets/*"
+    
+    # Health check configuration
+    health_check_type: "ELB"  # ALB health checks
+    health_check_grace_period: 300
+    
+    # Instance management
+    default_cooldown: 300
+    termination_policies:
+      - "OldestInstance"
+      - "Default"
+    
+    # Availability Zones
+    availability_zones:
+      - "us-east-1a"
+      - "us-east-1b" 
+      - "us-east-1c"
+    
+    # Instance refresh configuration
+    instance_refresh:
+      strategy: "Rolling"
+      preferences:
+        min_healthy_percentage: 50
+        instance_warmup: 300
+        checkpoint_percentages: [20, 50, 100]
+    
+    # Capacity rebalancing
+    capacity_rebalance: true
+    
+    # Service-linked role
+    service_linked_role_arn: "arn:aws:iam::051963532279:role/aws-service-role/autoscaling.amazonaws.com/AWSServiceRoleForAutoScaling"
+
+  # =========================================
+  # SCALING POLICIES
+  # =========================================
+  scaling_policies:
+    # Scale UP policy
+    - name: "sgsi-web-scale-up"
+      policy_type: "TargetTrackingScaling"
+      target_tracking_configuration:
+        predefined_metric_specification:
+          predefined_metric_type: "ASGAverageCPUUtilization"
+        target_value: 70.0
+        scale_out_cooldown: 300
+        scale_in_cooldown: 300
+        disable_scale_in: false
+      
+      # Estimación de capacidad
+      estimated_instance_warmup: 300
+    
+    # Scale UP por peticiones ALB
+    - name: "sgsi-web-scale-up-requests"
+      policy_type: "TargetTrackingScaling"
+      target_tracking_configuration:
+        predefined_metric_specification:
+          predefined_metric_type: "ALBRequestCountPerTarget"
+          resource_label: "app/sgsi-main-alb/*/targetgroup/sgsi-web-targets/*"
+        target_value: 1000.0  # 1000 requests per target
+        scale_out_cooldown: 300
+        scale_in_cooldown: 300
+    
+    # Step scaling policy personalizada
+    - name: "sgsi-web-step-scaling-up"
+      policy_type: "StepScaling"
+      adjustment_type: "ChangeInCapacity"
+      metric_aggregation_type: "Average"
+      step_adjustments:
+        - metric_interval_lower_bound: 0
+          metric_interval_upper_bound: 10
+          scaling_adjustment: 1
+        - metric_interval_lower_bound: 10
+          metric_interval_upper_bound: 20
+          scaling_adjustment: 2
+        - metric_interval_lower_bound: 20
+          scaling_adjustment: 3
+      cooldown: 300
+
+  # =========================================
+  # CLOUDWATCH ALARMS
+  # =========================================
+  cloudwatch_alarms:
+    # CPU High alarm
+    - name: "sgsi-asg-cpu-high"
+      alarm_description: "Triggered when average CPU exceeds 80%"
+      metric_name: "CPUUtilization"
+      namespace: "AWS/EC2"
+      statistic: "Average"
+      period: 300
+      evaluation_periods: 2
+      threshold: 80
+      comparison_operator: "GreaterThanThreshold"
+      
+      # Dimensions
+      dimensions:
+        AutoScalingGroupName: "sgsi-web-asg"
+      
+      # Actions
+      alarm_actions:
+        - "arn:aws:autoscaling:us-east-1:051963532279:scalingPolicy:*:autoScalingGroupName/sgsi-web-asg:policyName/sgsi-web-step-scaling-up"
+    
+    # CPU Low alarm
+    - name: "sgsi-asg-cpu-low"
+      alarm_description: "Triggered when average CPU is below 30%"
+      metric_name: "CPUUtilization"
+      namespace: "AWS/EC2"
+      statistic: "Average"
+      period: 300
+      evaluation_periods: 3
+      threshold: 30
+      comparison_operator: "LessThanThreshold"
+      
+      dimensions:
+        AutoScalingGroupName: "sgsi-web-asg"
+    
+    # Network In High
+    - name: "sgsi-asg-network-in-high"
+      alarm_description: "Triggered when network input exceeds threshold"
+      metric_name: "NetworkIn"
+      namespace: "AWS/EC2"
+      statistic: "Average"
+      period: 300
+      evaluation_periods: 2
+      threshold: 100000000  # 100MB
+      comparison_operator: "GreaterThanThreshold"
+      
+      dimensions:
+        AutoScalingGroupName: "sgsi-web-asg"
+
+  # =========================================
+  # LIFECYCLE HOOKS
+  # =========================================
+  lifecycle_hooks:
+    # Hook al lanzar instancia
+    - name: "sgsi-instance-launch-hook"
+      lifecycle_transition: "autoscaling:EC2_INSTANCE_LAUNCHING"
+      heartbeat_timeout: 900  # 15 minutes
+      default_result: "CONTINUE"
+      
+      # SNS notification
+      notification_target_arn: "arn:aws:sns:us-east-1:051963532279:sgsi-asg-notifications"
+      role_arn: "arn:aws:iam::051963532279:role/sgsi-asg-lifecycle-role"
+      
+      # Notification metadata
+      notification_metadata: |
+        {
+          "layer": "SGSI-Layer3",
+          "action": "instance-launching",
+          "environment": "development"
+        }
+    
+    # Hook al terminar instancia
+    - name: "sgsi-instance-terminate-hook"
+      lifecycle_transition: "autoscaling:EC2_INSTANCE_TERMINATING"
+      heartbeat_timeout: 300  # 5 minutes
+      default_result: "CONTINUE"
+      
+      notification_target_arn: "arn:aws:sns:us-east-1:051963532279:sgsi-asg-notifications"
+      role_arn: "arn:aws:iam::051963532279:role/sgsi-asg-lifecycle-role"
+      
+      notification_metadata: |
+        {
+          "layer": "SGSI-Layer3",
+          "action": "instance-terminating",
+          "environment": "development"
+        }
+
+  # =========================================
+  # SCHEDULED SCALING
+  # =========================================
+  scheduled_actions:
+    # Scale up durante horario laboral
+    - name: "sgsi-scale-up-business-hours"
+      recurrence: "0 8 * * MON-FRI"  # 8 AM, Lunes a Viernes
+      min_size: 3
+      max_size: 6
+      desired_capacity: 3
+      timezone: "America/Guatemala"
+    
+    # Scale down fuera de horario
+    - name: "sgsi-scale-down-after-hours"
+      recurrence: "0 20 * * *"  # 8 PM, todos los días
+      min_size: 2
+      max_size: 4
+      desired_capacity: 2
+      timezone: "America/Guatemala"
+    
+    # Scale down weekend
+    - name: "sgsi-scale-down-weekend"
+      recurrence: "0 22 * * SAT"  # 10 PM Sábado
+      min_size: 1
+      max_size: 2
+      desired_capacity: 1
+      timezone: "America/Guatemala"
+
+  # =========================================
+  # NOTIFICATIONS
+  # =========================================
+  notifications:
+    # SNS Topic para notificaciones
+    sns_topic:
+      name: "sgsi-asg-notifications"
+      display_name: "SGSI Auto Scaling Notifications"
+    
+    # Tipos de notificaciones
+    notification_types:
+      - "autoscaling:EC2_INSTANCE_LAUNCH"
+      - "autoscaling:EC2_INSTANCE_LAUNCH_ERROR"
+      - "autoscaling:EC2_INSTANCE_TERMINATE"
+      - "autoscaling:EC2_INSTANCE_TERMINATE_ERROR"
+
+  # =========================================
+  # INSTANCE PROTECTION
+  # =========================================
+  instance_protection:
+    # Proteger instancias específicas de scale-in
+    protected_from_scale_in: false
+    
+    # Reglas de protección automática
+    protection_rules:
+      - condition: "new_instance_protection_period"
+        duration: 3600  # 1 hora de protección para nuevas instancias
+      - condition: "maintenance_window"
+        duration: 7200  # 2 horas durante ventanas de mantenimiento
+
+  # =========================================
+  # MONITORING Y MÉTRICAS
+  # =========================================
+  monitoring:
+    # Métricas personalizadas de Auto Scaling
+    enabled_metrics:
+      - "GroupMinSize"
+      - "GroupMaxSize"
+      - "GroupDesiredCapacity"
+      - "GroupInServiceInstances"
+      - "GroupTotalInstances"
+      - "GroupStandbyInstances"
+      - "GroupPendingInstances"
+      - "GroupTerminatingInstances"
+    
+    # Dashboard personalizado
+    cloudwatch_dashboard:
+      name: "SGSI-Layer3-AutoScaling"
+      widgets:
+        - type: "metric"
+          properties:
+            metrics:
+              - ["AWS/AutoScaling", "GroupDesiredCapacity", "AutoScalingGroupName", "sgsi-web-asg"]
+              - [".", "GroupInServiceInstances", ".", "."]
+            period: 300
+            stat: "Average"
+            region: "us-east-1"
+            title: "ASG Capacity"
+
+  # =========================================
+  # TAGS ORGANIZACIONALES
+  # =========================================
+  tags:
+    # Core organizational tags
+    "Pais": "RG"
+    "Gerencia": "MejoraContinuaEInformacion"
+    "Area": "DevOps"
+    "Ambiente": "DEV"
+    "Direccion": "TICENAM"
+    "Modulo": "AutoScaling"
+    
+    # Compliance and governance
+    "AlcanceSOX": "No"
+    "Propietario": "DarwinLopez"
+    "Proveedor": "InHouse"
+    
+    # Technical classification
+    "Layer": "Compute"
+    "Dominio": "BusinessIntelligence"
+    "Subdominio": "AutoScaling"
+    "Aplicacion": "SGSI"
+    
+    # Resource identification
+    "Name": "sgsi-web-asg"
+    "Tipo de Recurso": "AutoScalingGroup"
+    
+    # Contact and support information
+    "Soporte": "darwin.lopez@claro.com.gt"
+    "Contacto": "darwin.lopez@claro.com.gt"
+    "Creado Por": "DarwinLopez"
+    
+    # Lifecycle management
+    "Ciclo de Vida": "Desarrollo"
+    "Version": "v1.0.0"
+    "Fecha de Creacion": "2025-10-18"
+    "Layer": "SGSI-Layer3-AutoScaling"
+    
+    # Auto Scaling specific tags
+    "ScalingPolicy": "TargetTracking"
+    "MinSize": "2"
+    "MaxSize": "6"
+    "TargetUtilization": "70%"
+    
+    # Propagate tags to EC2 instances
+    propagate_at_launch: true

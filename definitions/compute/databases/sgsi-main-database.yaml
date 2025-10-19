@@ -1,0 +1,269 @@
+rds:
+  name: "sgsi-main-database"
+  description: "Base de datos principal MySQL para Layer 3 del SGSI con alta disponibilidad"
+  version: "1.0.0"
+  
+  # =========================================
+  # DATABASE INSTANCE CONFIGURATION
+  # =========================================
+  instance:
+    identifier: "sgsi-main-db"
+    engine: "mysql"
+    engine_version: "8.0.35"
+    instance_class: "db.t3.medium"  # Balance costo/performance
+    
+    # Storage configuration
+    allocated_storage: 100  # GB
+    max_allocated_storage: 500  # Auto scaling hasta 500GB
+    storage_type: "gp3"
+    storage_encrypted: true
+    kms_key_id: "alias/aws/rds"
+    
+    # Multi-AZ for high availability
+    multi_az: true
+    availability_zone: "us-east-1a"  # Primary AZ
+    
+    # Network configuration
+    db_subnet_group_name: "sgsi-db-subnet-group"
+    vpc_security_group_ids:
+      - name: "sgsi-db-sg"
+        vpc_name: "sgsi-vpc-main"
+    
+    # Database configuration
+    database_name: "sgsidb"
+    username: "sgsi_admin"
+    manage_master_user_password: true  # AWS Secrets Manager
+    
+    # Port configuration
+    port: 3306
+    
+    # Parameter group
+    parameter_group_name: "sgsi-mysql-params"
+    option_group_name: "sgsi-mysql-options"
+    
+    # Backup configuration
+    backup_retention_period: 7  # 7 días para dev, 30 para prod
+    backup_window: "03:00-04:00"  # UTC
+    copy_tags_to_snapshot: true
+    delete_automated_backups: false
+    deletion_protection: false  # Para dev, true para prod
+    
+    # Maintenance configuration  
+    maintenance_window: "sun:04:00-sun:05:00"  # UTC
+    auto_minor_version_upgrade: true
+    
+    # Performance and monitoring
+    monitoring_interval: 60
+    monitoring_role_arn: "arn:aws:iam::051963532279:role/rds-monitoring-role"
+    performance_insights_enabled: true
+    performance_insights_retention_period: 7
+    
+    # Enhanced monitoring
+    enabled_cloudwatch_logs_exports:
+      - "error"
+      - "general"
+      - "slow-query"
+
+  # =========================================
+  # DB SUBNET GROUP
+  # =========================================
+  subnet_group:
+    name: "sgsi-db-subnet-group"
+    description: "Subnet group para base de datos SGSI en tier aislado"
+    subnet_ids:
+      - name: "sgsi-db-subnet-us-east-1a"
+        vpc_name: "sgsi-vpc-main"
+      - name: "sgsi-db-subnet-us-east-1b"
+        vpc_name: "sgsi-vpc-main"
+      - name: "sgsi-db-subnet-us-east-1c"
+        vpc_name: "sgsi-vpc-main"
+
+  # =========================================
+  # PARAMETER GROUP
+  # =========================================
+  parameter_group:
+    name: "sgsi-mysql-params"
+    family: "mysql8.0"
+    description: "Parámetros optimizados para SGSI MySQL 8.0"
+    
+    parameters:
+      # Performance tuning
+      - name: "innodb_buffer_pool_size"
+        value: "2147483648"  # 2GB for t3.medium
+      - name: "max_connections"
+        value: "200"
+      - name: "query_cache_type"
+        value: "0"  # Disabled in MySQL 8.0
+      
+      # Security settings
+      - name: "log_bin_trust_function_creators"
+        value: "1"
+      - name: "slow_query_log"
+        value: "1"
+      - name: "long_query_time"
+        value: "2"
+      - name: "general_log"
+        value: "0"  # Disabled for performance
+      
+      # Character set
+      - name: "character_set_server"
+        value: "utf8mb4"
+      - name: "collation_server" 
+        value: "utf8mb4_unicode_ci"
+
+  # =========================================
+  # OPTION GROUP
+  # =========================================
+  option_group:
+    name: "sgsi-mysql-options"
+    engine_name: "mysql"
+    major_engine_version: "8.0"
+    description: "Opciones para MySQL SGSI"
+    
+    options: []  # MySQL 8.0 generalmente no necesita opciones adicionales
+
+  # =========================================
+  # READ REPLICA (Opcional para escalabilidad)
+  # =========================================
+  read_replicas:
+    - identifier: "sgsi-main-db-replica-1"
+      source_db_identifier: "sgsi-main-db"
+      instance_class: "db.t3.medium"
+      availability_zone: "us-east-1b"
+      
+      # Configuración específica del replica
+      publicly_accessible: false
+      auto_minor_version_upgrade: true
+      
+      # Monitoring
+      monitoring_interval: 60
+      performance_insights_enabled: true
+
+  # =========================================
+  # SNAPSHOTS Y BACKUPS
+  # =========================================
+  backup_strategy:
+    # Manual snapshots
+    manual_snapshots:
+      - name: "sgsi-db-baseline-snapshot"
+        description: "Snapshot inicial después de configuración"
+      
+    # Cross-region backup (para DR)
+    cross_region_backup:
+      enabled: false  # Para dev, true para prod
+      destination_region: "us-west-2"
+    
+    # Point-in-time recovery
+    point_in_time_recovery:
+      enabled: true
+      recovery_window_days: 7
+
+  # =========================================
+  # MONITORING Y ALERTAS
+  # =========================================
+  monitoring:
+    cloudwatch_alarms:
+      # CPU utilization
+      - name: "sgsi-db-cpu-high"
+        metric_name: "CPUUtilization"
+        namespace: "AWS/RDS"
+        statistic: "Average"
+        threshold: 80
+        comparison_operator: "GreaterThanThreshold"
+        evaluation_periods: 2
+        period: 300
+        
+      # Database connections
+      - name: "sgsi-db-connections-high"
+        metric_name: "DatabaseConnections"
+        namespace: "AWS/RDS"
+        statistic: "Average"
+        threshold: 150
+        comparison_operator: "GreaterThanThreshold"
+        evaluation_periods: 2
+        period: 300
+        
+      # Free storage space
+      - name: "sgsi-db-free-storage-low"
+        metric_name: "FreeStorageSpace"
+        namespace: "AWS/RDS"
+        statistic: "Average"
+        threshold: 10737418240  # 10GB in bytes
+        comparison_operator: "LessThanThreshold"
+        evaluation_periods: 1
+        period: 300
+        
+      # Read latency
+      - name: "sgsi-db-read-latency-high"
+        metric_name: "ReadLatency"
+        namespace: "AWS/RDS"
+        statistic: "Average"
+        threshold: 0.2
+        comparison_operator: "GreaterThanThreshold"
+        evaluation_periods: 2
+        period: 300
+
+  # =========================================
+  # SECURITY CONFIGURATION
+  # =========================================
+  security:
+    # Network security
+    publicly_accessible: false
+    
+    # Encryption
+    storage_encrypted: true
+    
+    # SSL/TLS
+    ca_cert_identifier: "rds-ca-2019"
+    
+    # IAM database authentication
+    iam_database_authentication_enabled: true
+    
+    # Security groups (referencia)
+    security_groups:
+      - "sgsi-db-sg"  # Permite acceso solo desde subnets App
+
+  # =========================================
+  # TAGS ORGANIZACIONALES
+  # =========================================
+  tags:
+    # Core organizational tags
+    "Pais": "RG"
+    "Gerencia": "MejoraContinuaEInformacion"
+    "Area": "DevOps"
+    "Ambiente": "DEV"
+    "Direccion": "TICENAM"
+    "Modulo": "Database"
+    
+    # Compliance and governance
+    "AlcanceSOX": "No"
+    "Propietario": "DarwinLopez"
+    "Proveedor": "InHouse"
+    
+    # Technical classification
+    "Layer": "Compute"
+    "Dominio": "BusinessIntelligence"
+    "Subdominio": "DataPersistence"
+    "Aplicacion": "SGSI"
+    
+    # Resource identification
+    "Name": "sgsi-main-database"
+    "Tipo de Recurso": "RDSInstance"
+    
+    # Contact and support information
+    "Soporte": "darwin.lopez@claro.com.gt"
+    "Contacto": "darwin.lopez@claro.com.gt"
+    "Creado Por": "DarwinLopez"
+    
+    # Lifecycle management
+    "Ciclo de Vida": "Desarrollo"
+    "Version": "v1.0.0"
+    "Fecha de Creacion": "2025-10-18"
+    "Layer": "SGSI-Layer3-Database"
+    
+    # Security and compliance
+    "Confidencialidad": "Confidencial"
+    "Criticidad": "Critica"
+    "BackupRequired": "Yes"
+    "EncryptionRequired": "Yes"
+    "DataClassification": "Internal"

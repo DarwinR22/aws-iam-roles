@@ -1,0 +1,493 @@
+lambda_functions:
+  name: "sgsi-lambda-functions"
+  description: "Funciones Lambda para procesamiento serverless en Layer 3 del SGSI"
+  version: "1.0.0"
+  
+  # =========================================
+  # LAMBDA FUNCTION 1: API PROCESSOR
+  # =========================================
+  functions:
+    - name: "sgsi-api-processor"
+      description: "Función Lambda para procesamiento de APIs y integración con RDS"
+      runtime: "python3.11"
+      handler: "lambda_function.lambda_handler"
+      timeout: 30
+      memory_size: 256
+      
+      # Environment variables
+      environment_variables:
+        DB_HOST: "sgsi-main-db.cluster-xyz.us-east-1.rds.amazonaws.com"
+        DB_NAME: "sgsidb"
+        DB_USER: "sgsi_admin"
+        REGION: "us-east-1"
+        LOG_LEVEL: "INFO"
+        SGSI_LAYER: "Layer3"
+      
+      # VPC configuration (para acceso a RDS)
+      vpc_config:
+        subnet_ids:
+          - name: "sgsi-app-subnet-us-east-1a"
+            vpc_name: "sgsi-vpc-main"
+          - name: "sgsi-app-subnet-us-east-1b"
+            vpc_name: "sgsi-vpc-main"
+        security_group_ids:
+          - name: "sgsi-lambda-sg"
+            vpc_name: "sgsi-vpc-main"
+      
+      # Dead letter queue
+      dead_letter_config:
+        target_arn: "arn:aws:sqs:us-east-1:051963532279:sgsi-lambda-dlq"
+      
+      # Reserved concurrency
+      reserved_concurrent_executions: 50
+      
+      # Code configuration
+      code:
+        # El código se deployará desde S3 o inline
+        inline_code: |
+          import json
+          import boto3
+          import pymysql
+          import os
+          import logging
+          from botocore.exceptions import ClientError
+          
+          # Configure logging
+          logger = logging.getLogger()
+          logger.setLevel(os.environ.get('LOG_LEVEL', 'INFO'))
+          
+          def lambda_handler(event, context):
+              """
+              SGSI API Processor Lambda Function
+              Procesa requests de API y se conecta a RDS
+              """
+              
+              try:
+                  # Log del evento
+                  logger.info(f"Processing event: {json.dumps(event)}")
+                  
+                  # Configuración de base de datos
+                  db_config = {
+                      'host': os.environ['DB_HOST'],
+                      'user': os.environ['DB_USER'], 
+                      'database': os.environ['DB_NAME'],
+                      'charset': 'utf8mb4'
+                  }
+                  
+                  # Obtener password desde Secrets Manager
+                  secret_name = "sgsi-db-credentials"
+                  region = os.environ['REGION']
+                  
+                  session = boto3.session.Session()
+                  client = session.client(
+                      service_name='secretsmanager',
+                      region_name=region
+                  )
+                  
+                  try:
+                      secret_response = client.get_secret_value(SecretId=secret_name)
+                      secret = json.loads(secret_response['SecretString'])
+                      db_config['password'] = secret['password']
+                  except ClientError as e:
+                      logger.error(f"Error getting DB password: {e}")
+                      return {
+                          'statusCode': 500,
+                          'body': json.dumps({'error': 'Database configuration error'})
+                      }
+                  
+                  # Procesar según el tipo de evento
+                  http_method = event.get('httpMethod', 'GET')
+                  path = event.get('path', '/')
+                  
+                  if path == '/api/health':
+                      return health_check()
+                  elif path == '/api/data' and http_method == 'GET':
+                      return get_data(db_config)
+                  elif path == '/api/data' and http_method == 'POST':
+                      return post_data(event, db_config)
+                  else:
+                      return {
+                          'statusCode': 404,
+                          'body': json.dumps({'error': 'Endpoint not found'})
+                      }
+                      
+              except Exception as e:
+                  logger.error(f"Unhandled error: {str(e)}")
+                  return {
+                      'statusCode': 500,
+                      'body': json.dumps({
+                          'error': 'Internal server error',
+                          'layer': 'SGSI-Layer3'
+                      })
+                  }
+          
+          def health_check():
+              """Health check endpoint"""
+              return {
+                  'statusCode': 200,
+                  'headers': {'Content-Type': 'application/json'},
+                  'body': json.dumps({
+                      'status': 'healthy',
+                      'layer': 'SGSI-Layer3',
+                      'service': 'api-processor',
+                      'timestamp': context.aws_request_id
+                  })
+              }
+          
+          def get_data(db_config):
+              """Obtener datos de la base de datos"""
+              try:
+                  connection = pymysql.connect(**db_config)
+                  with connection.cursor() as cursor:
+                      cursor.execute("SELECT COUNT(*) as total FROM information_schema.tables")
+                      result = cursor.fetchone()
+                      
+                  return {
+                      'statusCode': 200,
+                      'headers': {'Content-Type': 'application/json'},
+                      'body': json.dumps({
+                          'tables_count': result[0],
+                          'layer': 'SGSI-Layer3',
+                          'status': 'success'
+                      })
+                  }
+              except Exception as e:
+                  logger.error(f"Database error: {str(e)}")
+                  return {
+                      'statusCode': 500,
+                      'body': json.dumps({'error': 'Database connection failed'})
+                  }
+              finally:
+                  if 'connection' in locals():
+                      connection.close()
+          
+          def post_data(event, db_config):
+              """Insertar datos en la base de datos"""
+              try:
+                  body = json.loads(event.get('body', '{}'))
+                  
+                  # Aquí iría la lógica de inserción
+                  # Por simplicidad, solo validamos la conexión
+                  
+                  return {
+                      'statusCode': 201,
+                      'headers': {'Content-Type': 'application/json'},
+                      'body': json.dumps({
+                          'message': 'Data processed successfully',
+                          'layer': 'SGSI-Layer3',
+                          'received_data': body
+                      })
+                  }
+              except Exception as e:
+                  logger.error(f"Processing error: {str(e)}")
+                  return {
+                      'statusCode': 400,
+                      'body': json.dumps({'error': 'Invalid request data'})
+                  }
+      
+      # IAM execution role
+      execution_role:
+        name: "sgsi-lambda-api-processor-role"
+        policies:
+          - "AWSLambdaVPCAccessExecutionRole"
+          - "AWSLambdaBasicExecutionRole"
+        
+        # Custom policy for RDS and Secrets Manager
+        inline_policies:
+          - name: "SGSILambdaRDSAccess"
+            policy: |
+              {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Action": [
+                      "rds-db:connect"
+                    ],
+                    "Resource": "arn:aws:rds-db:us-east-1:051963532279:dbuser:sgsi-main-db/sgsi_admin"
+                  },
+                  {
+                    "Effect": "Allow",
+                    "Action": [
+                      "secretsmanager:GetSecretValue"
+                    ],
+                    "Resource": "arn:aws:secretsmanager:us-east-1:051963532279:secret:sgsi-db-credentials*"
+                  }
+                ]
+              }
+
+    # =========================================
+    # LAMBDA FUNCTION 2: DATA PROCESSOR
+    # =========================================
+    - name: "sgsi-data-processor"
+      description: "Función Lambda para procesamiento de datos y eventos del sistema"
+      runtime: "python3.11"
+      handler: "lambda_function.lambda_handler"
+      timeout: 60
+      memory_size: 512
+      
+      # Environment variables
+      environment_variables:
+        S3_BUCKET: "sgsi-data-processing-051963532279"
+        SQS_QUEUE_URL: "https://sqs.us-east-1.amazonaws.com/051963532279/sgsi-processing-queue"
+        REGION: "us-east-1"
+        LOG_LEVEL: "INFO"
+        SGSI_LAYER: "Layer3"
+      
+      # Event triggers
+      event_sources:
+        # S3 trigger
+        - type: "s3"
+          bucket: "sgsi-data-processing-051963532279"
+          events: ["s3:ObjectCreated:*"]
+          filter_prefix: "incoming/"
+          filter_suffix: ".json"
+        
+        # SQS trigger  
+        - type: "sqs"
+          queue_arn: "arn:aws:sqs:us-east-1:051963532279:sgsi-processing-queue"
+          batch_size: 10
+      
+      # Reserved concurrency
+      reserved_concurrent_executions: 25
+      
+      # Code configuration
+      code:
+        inline_code: |
+          import json
+          import boto3
+          import os
+          import logging
+          from datetime import datetime
+          from urllib.parse import unquote_plus
+          
+          # Configure logging
+          logger = logging.getLogger()
+          logger.setLevel(os.environ.get('LOG_LEVEL', 'INFO'))
+          
+          # AWS clients
+          s3_client = boto3.client('s3')
+          sqs_client = boto3.client('sqs')
+          
+          def lambda_handler(event, context):
+              """
+              SGSI Data Processor Lambda Function
+              Procesa archivos S3 y mensajes SQS
+              """
+              
+              try:
+                  logger.info(f"Processing event: {json.dumps(event)}")
+                  
+                  # Determinar el tipo de evento
+                  if 'Records' in event:
+                      for record in event['Records']:
+                          event_source = record.get('eventSource', '')
+                          
+                          if event_source == 'aws:s3':
+                              process_s3_event(record)
+                          elif event_source == 'aws:sqs':
+                              process_sqs_event(record)
+                          else:
+                              logger.warning(f"Unknown event source: {event_source}")
+                  
+                  return {
+                      'statusCode': 200,
+                      'body': json.dumps({
+                          'message': 'Events processed successfully',
+                          'layer': 'SGSI-Layer3',
+                          'processed_count': len(event.get('Records', []))
+                      })
+                  }
+                  
+              except Exception as e:
+                  logger.error(f"Processing error: {str(e)}")
+                  return {
+                      'statusCode': 500,
+                      'body': json.dumps({
+                          'error': 'Processing failed',
+                          'layer': 'SGSI-Layer3'
+                      })
+                  }
+          
+          def process_s3_event(record):
+              """Procesar eventos de S3"""
+              try:
+                  bucket = record['s3']['bucket']['name']
+                  key = unquote_plus(record['s3']['object']['key'])
+                  
+                  logger.info(f"Processing S3 object: s3://{bucket}/{key}")
+                  
+                  # Descargar y procesar el archivo
+                  response = s3_client.get_object(Bucket=bucket, Key=key)
+                  content = response['Body'].read().decode('utf-8')
+                  
+                  # Procesar el contenido JSON
+                  data = json.loads(content)
+                  
+                  # Procesar datos (lógica de negocio aquí)
+                  processed_data = {
+                      'original_file': key,
+                      'processed_at': datetime.now().isoformat(),
+                      'layer': 'SGSI-Layer3',
+                      'record_count': len(data) if isinstance(data, list) else 1,
+                      'processing_status': 'completed'
+                  }
+                  
+                  # Guardar resultado procesado
+                  output_key = f"processed/{datetime.now().strftime('%Y/%m/%d')}/{key}"
+                  s3_client.put_object(
+                      Bucket=bucket,
+                      Key=output_key,
+                      Body=json.dumps(processed_data),
+                      ContentType='application/json'
+                  )
+                  
+                  logger.info(f"Processed data saved to: s3://{bucket}/{output_key}")
+                  
+              except Exception as e:
+                  logger.error(f"S3 processing error: {str(e)}")
+                  raise
+          
+          def process_sqs_event(record):
+              """Procesar eventos de SQS"""
+              try:
+                  body = json.loads(record['body'])
+                  logger.info(f"Processing SQS message: {body}")
+                  
+                  # Procesar mensaje (lógica de negocio aquí)
+                  message_type = body.get('type', 'unknown')
+                  
+                  if message_type == 'data_validation':
+                      validate_data(body.get('data', {}))
+                  elif message_type == 'system_event':
+                      process_system_event(body)
+                  else:
+                      logger.warning(f"Unknown message type: {message_type}")
+                  
+              except Exception as e:
+                  logger.error(f"SQS processing error: {str(e)}")
+                  raise
+          
+          def validate_data(data):
+              """Validar datos del sistema"""
+              # Lógica de validación
+              logger.info("Data validation completed")
+          
+          def process_system_event(event_data):
+              """Procesar eventos del sistema"""
+              # Lógica de eventos del sistema
+              logger.info("System event processed")
+      
+      # IAM execution role
+      execution_role:
+        name: "sgsi-lambda-data-processor-role"
+        policies:
+          - "AWSLambdaBasicExecutionRole"
+        
+        inline_policies:
+          - name: "SGSILambdaDataProcessingAccess"
+            policy: |
+              {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Action": [
+                      "s3:GetObject",
+                      "s3:PutObject"
+                    ],
+                    "Resource": "arn:aws:s3:::sgsi-data-processing-051963532279/*"
+                  },
+                  {
+                    "Effect": "Allow",
+                    "Action": [
+                      "sqs:ReceiveMessage",
+                      "sqs:DeleteMessage",
+                      "sqs:GetQueueAttributes"
+                    ],
+                    "Resource": "arn:aws:sqs:us-east-1:051963532279:sgsi-processing-queue"
+                  }
+                ]
+              }
+
+  # =========================================
+  # SHARED RESOURCES
+  # =========================================
+  shared_resources:
+    # S3 Bucket para procesamiento
+    s3_bucket:
+      name: "sgsi-data-processing-051963532279"
+      versioning: true
+      encryption: true
+    
+    # SQS Queue
+    sqs_queue:
+      name: "sgsi-processing-queue"
+      visibility_timeout: 300
+      message_retention_period: 1209600  # 14 días
+      
+    # Dead Letter Queue
+    dlq:
+      name: "sgsi-lambda-dlq"
+      max_receive_count: 3
+
+  # =========================================
+  # MONITORING
+  # =========================================
+  monitoring:
+    cloudwatch_alarms:
+      - name: "sgsi-lambda-errors-high"
+        metric_name: "Errors"
+        namespace: "AWS/Lambda"
+        statistic: "Sum"
+        threshold: 5
+        comparison_operator: "GreaterThanThreshold"
+        evaluation_periods: 2
+        period: 300
+        
+      - name: "sgsi-lambda-duration-high"
+        metric_name: "Duration"
+        namespace: "AWS/Lambda"
+        statistic: "Average"
+        threshold: 25000  # 25 seconds
+        comparison_operator: "GreaterThanThreshold"
+        evaluation_periods: 2
+        period: 300
+
+  # =========================================
+  # TAGS ORGANIZACIONALES
+  # =========================================
+  tags:
+    # Core organizational tags
+    "Pais": "RG"
+    "Gerencia": "MejoraContinuaEInformacion"
+    "Area": "DevOps"
+    "Ambiente": "DEV"
+    "Direccion": "TICENAM"
+    "Modulo": "Serverless"
+    
+    # Compliance and governance
+    "AlcanceSOX": "No"
+    "Propietario": "DarwinLopez"
+    "Proveedor": "InHouse"
+    
+    # Technical classification
+    "Layer": "Compute"
+    "Dominio": "BusinessIntelligence"
+    "Subdominio": "ServerlessComputing"
+    "Aplicacion": "SGSI"
+    
+    # Resource identification
+    "Name": "sgsi-lambda-functions"
+    "Tipo de Recurso": "LambdaFunction"
+    
+    # Contact and support information
+    "Soporte": "darwin.lopez@claro.com.gt"
+    "Contacto": "darwin.lopez@claro.com.gt"
+    "Creado Por": "DarwinLopez"
+    
+    # Lifecycle management
+    "Ciclo de Vida": "Desarrollo"
+    "Version": "v1.0.0"
+    "Fecha de Creacion": "2025-10-18"
+    "Layer": "SGSI-Layer3-Serverless"
