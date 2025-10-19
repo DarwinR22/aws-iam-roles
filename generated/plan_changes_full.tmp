@@ -2,11 +2,6 @@ aws_eip.sgsi_nat_1a_eip will be created
 aws_eip.sgsi_nat_1b_eip will be created
 aws_iam_role.github_actions_iam_deployment_role will be updated in-place
 aws_iam_role_policy_attachment.github_actions_iam_deployment_role_github_deployment_application will be created
-aws_iam_role_policy_attachment.github_actions_iam_deployment_role_github_deployment_dynamodb will be destroyed
-aws_iam_role_policy_attachment.github_actions_iam_deployment_role_github_deployment_ec2 will be created
-aws_iam_role_policy_attachment.github_actions_iam_deployment_role_github_deployment_eventbridge will be destroyed
-aws_iam_role_policy_attachment.github_actions_iam_deployment_role_github_deployment_lambda will be destroyed
-aws_iam_role_policy_attachment.github_actions_iam_deployment_role_github_deployment_s3 will be destroyed
 aws_internet_gateway.sgsi_igw will be created
 aws_nat_gateway.sgsi_nat_1a will be created
 aws_nat_gateway.sgsi_nat_1b will be created
@@ -42,7 +37,3 @@ aws_subnet.mgmt_private_1a will be created
 aws_subnet.mgmt_private_1b will be created
 aws_vpc.sgsi_vpc_main will be created
 module.github_deployment_application.aws_iam_policy.main will be created
-module.github_deployment_dynamodb.aws_iam_policy.main will be destroyed
-module.github_deployment_eventbridge.aws_iam_policy.main will be destroyed
-module.github_deployment_lambda.aws_iam_policy.main will be destroyed
-module.github_deployment_s3.aws_iam_policy.main will be destroyed
