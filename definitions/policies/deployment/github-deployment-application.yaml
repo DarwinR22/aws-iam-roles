@@ -41,7 +41,7 @@ policy:
         - "lambda:TagResource"
         - "lambda:UntagResource"
         - "lambda:ListTags"
-      resource: "*"
+      resources: ["*"]
 
     # ===========================================
     # S3 PERMISSIONS (from github-deployment-s3)
@@ -73,7 +73,7 @@ policy:
         # Bucket tags
         - "s3:GetBucketTagging"
         - "s3:PutBucketTagging"
-      resource: 
+      resources: 
         - "arn:aws:s3:::mci-*"
         - "arn:aws:s3:::github-*"  
         - "arn:aws:s3:::sgsi-*"
@@ -98,7 +98,7 @@ policy:
         - "s3:GetObjectTagging"
         - "s3:PutObjectTagging"
         - "s3:DeleteObjectTagging"
-      resource:
+      resources:
         - "arn:aws:s3:::mci-*/*"
         - "arn:aws:s3:::github-*/*"
         - "arn:aws:s3:::sgsi-*/*"
@@ -138,7 +138,7 @@ policy:
         - "dynamodb:UpdateGlobalTable"
         - "dynamodb:DescribeGlobalTable"
         - "dynamodb:ListGlobalTables"
-      resource: "*"
+      resources: ["*"]
       conditions:
         StringEquals:
           "aws:RequestedRegion": "us-east-1"
@@ -182,7 +182,7 @@ policy:
         - "events:TagResource"
         - "events:UntagResource"
         - "events:ListTagsForResource"
-      resource: "*"
+      resources: ["*"]
       conditions:
         StringEquals:
           "aws:RequestedRegion": "us-east-1"
@@ -212,7 +212,7 @@ policy:
         - "states:TagResource"
         - "states:UntagResource"
         - "states:ListTagsForResource"
-      resource: "*"
+      resources: ["*"]
       conditions:
         StringEquals:
           "aws:RequestedRegion": "us-east-1"
