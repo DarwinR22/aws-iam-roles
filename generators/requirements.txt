@@ -1,0 +1,28 @@
+# Python requirements for SGSI Infrastructure Generators
+# =======================================================
+
+# YAML Processing
+PyYAML>=6.0
+ruamel.yaml>=0.17.0
+
+# Jinja2 Templates
+Jinja2>=3.1.0
+MarkupSafe>=2.1.0
+
+# JSON/Data Processing
+jsonschema>=4.17.0
+pydantic>=2.0.0
+
+# AWS SDK
+boto3>=1.28.0
+botocore>=1.31.0
+
+# CLI Tools
+click>=8.1.0
+rich>=13.0.0
+
+# Terraform Tools
+python-hcl2>=4.3.0
+
+# Security & Validation
+cryptography>=41.0.0

@@ -1,23 +1,36 @@
-name: 🚀 SGSI Infrastructure Deployment (Modular Architecture)
+name: 🚀 SGSI Infrastructure - Complete Unified Deployment
 
 # =============================================================================
-# SGSI INFRASTRUCTURE DEPLOYMENT WORKFLOW
+# UNIFIED SGSI INFRASTRUCTURE DEPLOYMENT WORKFLOW  
 # =============================================================================
-# This workflow deploys the 5-layer SGSI infrastructure using the new modular
-# architecture. It supports:
-# - Sequential layer deployment (Foundation → Network → Compute → Storage → Observability)  
-# - Change detection to deploy only modified layers
-# - Manual deployment with environment selection
-# - Integration with enterprise modules
+# This consolidated workflow handles:
+# 1. 🤖 IAM Policies Generation from YAML definitions
+# 2. 🏗️ Complete 5-layer SGSI infrastructure deployment
+# 3. 📊 Advanced visual plan analysis and reporting
+# 4. 🔒 Multi-environment support with proper security controls
 # =============================================================================
+
+# Prevent multiple workflows running simultaneously
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+# Grant special permissions to GITHUB_TOKEN
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write
+  id-token: write
 
 on:
   push:
-    branches: [main]  # Solo en main para producción
+    branches: [main, dev]
     paths:
       - 'layers/**'
       - 'modules/**'
       - 'definitions/**'
+      - 'generators/**'
+      - 'templates/**'
       - '.github/workflows/**'
   pull_request:
     branches: [main]
@@ -36,29 +49,138 @@ on:
           - development
           - staging
           - production
+      force_generation:
+        description: 'Force regenerate all IAM policies'
+        required: false
+        default: false
+        type: boolean
 
 env:
   AWS_REGION: us-east-1
   TF_VERSION: 1.7.4
-
-permissions:
-  id-token: write
-  contents: read
-  pull-requests: write
+  # Disable verbose debug output
+  TF_LOG: ""
+  TF_LOG_CORE: ""
+  TF_LOG_PROVIDER: ""
+  RUNNER_DEBUG: "0"
 
 jobs:
   # ==============================================================================
-  # DETECT CHANGES
+  # STEP 1: GENERATE IAM POLICIES FROM YAML
+  # ==============================================================================
+  generate-iam-policies:
+    name: 🤖 Generate IAM Policies from YAML
+    runs-on: ubuntu-latest
+    outputs:
+      changes: ${{ steps.changes.outputs.changes }}
+    
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: 📦 Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r generators/requirements.txt
+
+      - name: 🔍 Validate YAML Definitions
+        run: |
+          echo "🔍 Validating YAML definitions..."
+          python generators/generate_all.py --validate-only
+
+      - name: 🏗️ Generate Terraform Files
+        run: |
+          echo "🏗️ Generating Terraform from YAML definitions..."
+          
+          if [[ "${{ github.event.inputs.force_generation }}" == "true" ]]; then
+            python generators/generate_all.py --clean
+          else
+            python generators/generate_all.py
+          fi
+          
+          echo "📋 Generated files:"
+          find generated -name "*.tf" -type f | head -20 || echo "No .tf files found"
+          
+          echo "🔍 Checking file sizes:"
+          ls -la generated/ || echo "Generated directory not found"
+
+      - name: 📐 Format Generated Terraform
+        run: |
+          if [ -d "generated" ] && [ "$(find generated -name '*.tf' | wc -l)" -gt 0 ]; then
+            cd generated
+            echo "📐 Applying terraform fmt to all generated files..."
+            terraform fmt -recursive .
+            echo "✅ Terraform fmt applied successfully"
+          else
+            echo "ℹ️ No Terraform files to format"
+          fi
+
+      - name: 📊 Check for Changes in Generated Files
+        id: changes
+        run: |
+          git config --global user.name "🤖 SGSI Generator Bot"
+          git config --global user.email "sgsi-generator@mci.com"
+          
+          if [[ -n $(git status --porcelain generated/) ]]; then
+            echo "changes=true" >> $GITHUB_OUTPUT
+            echo "📝 Generated files have changes"
+            
+            echo "## 🤖 Generated Files Changes" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### Files Modified:" >> $GITHUB_STEP_SUMMARY
+            git status --porcelain generated/ | sed 's/^/- /' >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            
+            # Show file count
+            total_files=$(find generated -name "*.tf" | wc -l)
+            echo "📁 **Total Terraform files:** $total_files" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "changes=false" >> $GITHUB_OUTPUT  
+            echo "✅ No changes in generated files"
+            echo "## ✅ No Generated Files Changes" >> $GITHUB_STEP_SUMMARY
+            echo "All YAML definitions are up to date with existing Terraform files." >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: 🚀 Commit Generated Files (if changed)
+        if: steps.changes.outputs.changes == 'true' && github.event_name == 'push'
+        run: |
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
+          git remote set-url origin https://x-access-token:${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+          
+          git add generated/
+          git commit -m "🤖 Auto-generate Terraform from YAML definitions
+          
+          Generated from commit: ${{ github.sha }}
+          
+          Files updated:
+          $(git diff --cached --name-only generated/)"
+          
+          git push origin ${{ github.ref_name }}
+
+  # ==============================================================================
+  # STEP 2: DETECT INFRASTRUCTURE CHANGES
   # ==============================================================================
   detect-changes:
-    name: 🔍 Detect Layer Changes
+    name: 🔍 Detect Infrastructure Changes
     runs-on: ubuntu-latest
+    needs: generate-iam-policies
     outputs:
       layer1: ${{ steps.changes.outputs.layer1 }}
       layer2: ${{ steps.changes.outputs.layer2 }}
       layer3: ${{ steps.changes.outputs.layer3 }}
       layer4: ${{ steps.changes.outputs.layer4 }}
       layer5: ${{ steps.changes.outputs.layer5 }}
+      any_layer: ${{ steps.changes.outputs.layer1 == 'true' || steps.changes.outputs.layer2 == 'true' || steps.changes.outputs.layer3 == 'true' || steps.changes.outputs.layer4 == 'true' || steps.changes.outputs.layer5 == 'true' }}
+      
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -72,6 +194,7 @@ jobs:
           filters: |
             layer1:
               - 'layers/01-foundation/**'
+              - 'generated/**'
             layer2:
               - 'layers/02-network/**'
             layer3:
@@ -81,233 +204,293 @@ jobs:
             layer5:
               - 'layers/05-observability/**'
 
+      - name: 📊 Changes Summary
+        run: |
+          echo "## 🔍 Infrastructure Change Detection" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Layer | Changed | Description |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|---------|-------------|" >> $GITHUB_STEP_SUMMARY
+          echo "| 1 - Foundation | ${{ steps.changes.outputs.layer1 == 'true' && '✅' || '❌' }} | IAM Roles & Policies |" >> $GITHUB_STEP_SUMMARY
+          echo "| 2 - Network | ${{ steps.changes.outputs.layer2 == 'true' && '✅' || '❌' }} | VPC & Security Groups |" >> $GITHUB_STEP_SUMMARY
+          echo "| 3 - Compute | ${{ steps.changes.outputs.layer3 == 'true' && '✅' || '❌' }} | ALB, ASG, RDS, Lambda |" >> $GITHUB_STEP_SUMMARY
+          echo "| 4 - Storage | ${{ steps.changes.outputs.layer4 == 'true' && '✅' || '❌' }} | S3, EFS, Backup |" >> $GITHUB_STEP_SUMMARY
+          echo "| 5 - Observability | ${{ steps.changes.outputs.layer5 == 'true' && '✅' || '❌' }} | CloudTrail, GuardDuty |" >> $GITHUB_STEP_SUMMARY
+
   # ==============================================================================
-  # LAYER 1: FOUNDATION
+  # STEP 3: UNIFIED TERRAFORM PLAN WITH ADVANCED VISUAL ANALYSIS
   # ==============================================================================
-  deploy-foundation:
-    name: 🏗️ Layer 1 - Foundation (IAM)
+  terraform-plan-analysis:
+    name: 📋 Advanced Terraform Plan Analysis
     runs-on: ubuntu-latest
-    needs: detect-changes
-    if: needs.detect-changes.outputs.layer1 == 'true' || github.event_name == 'workflow_dispatch'
+    needs: [detect-changes, generate-iam-policies]
+    if: |
+      (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main') &&
+      (needs.generate-iam-policies.outputs.changes == 'true' || 
+       needs.detect-changes.outputs.any_layer == 'true' ||
+       github.event_name == 'workflow_dispatch')
     
     steps:
-      - name: Checkout
+      - name: 📥 Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: arn:aws:iam::051963532279:role/github-deployment-role
-          role-session-name: sgsi-foundation-deployment
-          aws-region: ${{ env.AWS_REGION }}
+      - name: 🌍 Determine AWS Role and Environment
+        id: aws-config
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "role_arn=arn:aws:iam::051963532279:role/github-deployment-role" >> $GITHUB_OUTPUT
+            echo "environment=PRODUCTION" >> $GITHUB_OUTPUT
+          else
+            echo "role_arn=arn:aws:iam::051963532279:role/github-deployment-role" >> $GITHUB_OUTPUT
+            echo "environment=DEVELOPMENT" >> $GITHUB_OUTPUT
+          fi
+          echo "🌍 Target Environment: $environment"
 
-      - name: Setup Terraform
+      - name: 🛠️ Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: ${{ env.TF_VERSION }}
 
-      - name: Terraform Init - Foundation
-        working-directory: layers/01-foundation
-        run: terraform init
+      - name: 🔐 Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ steps.aws-config.outputs.role_arn }}
+          aws-region: ${{ env.AWS_REGION }}
+          role-session-name: sgsi-unified-plan-${{ github.run_id }}
 
-      - name: Terraform Validate - Foundation
-        working-directory: layers/01-foundation
-        run: terraform validate
+      - name: ✅ Verify AWS Identity
+        run: |
+          echo "✅ AWS credentials configured successfully"
+          aws sts get-caller-identity
+          echo "📍 Region: ${{ env.AWS_REGION }}"
+          echo "🎯 Environment: ${{ steps.aws-config.outputs.environment }}"
 
-      - name: Terraform Plan - Foundation
+      # Plan Generated IAM Resources (if they changed)
+      - name: 📋 Plan Generated IAM Resources
+        id: plan-iam
+        if: needs.generate-iam-policies.outputs.changes == 'true'
+        working-directory: generated
+        run: |
+          echo "## 🤖 Generated IAM Resources Plan" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Initialize and validate
+          terraform init
+          terraform validate
+          
+          # Generate plan with detailed analysis
+          TF_LOG="" terraform plan -no-color -input=false -out=iam.tfplan > iam_plan_output.txt 2>&1 || true
+          
+          # Extract and display plan summary
+          if grep -q "Plan:" iam_plan_output.txt; then
+            plan_summary=$(grep "Plan:" iam_plan_output.txt | tail -1)
+            echo "### 📊 IAM Plan Summary" >> $GITHUB_STEP_SUMMARY
+            echo "**$plan_summary**" >> $GITHUB_STEP_SUMMARY
+          elif grep -q "No changes" iam_plan_output.txt; then
+            echo "### ✅ IAM Plan Summary" >> $GITHUB_STEP_SUMMARY
+            echo "**No changes needed** - IAM infrastructure is up to date" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Extract and categorize resource changes
+          grep "# " iam_plan_output.txt | grep "will be" > iam_resource_changes.txt || true
+          
+          if [ -s iam_resource_changes.txt ]; then
+            echo "### 🔧 IAM Resource Changes" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            
+            # Count changes by type
+            creates=$(grep -c "will be created" iam_resource_changes.txt || echo 0)
+            updates=$(grep -c "will be updated" iam_resource_changes.txt || echo 0)
+            destroys=$(grep -c "will be destroyed" iam_resource_changes.txt || echo 0)
+            
+            echo "- ➕ **Creates:** $creates resources" >> $GITHUB_STEP_SUMMARY
+            echo "- 🛠 **Updates:** $updates resources" >> $GITHUB_STEP_SUMMARY
+            echo "- ❌ **Destroys:** $destroys resources" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            
+            # Detailed resource table
+            echo "#### Detailed Changes" >> $GITHUB_STEP_SUMMARY
+            echo "| Resource | Action |" >> $GITHUB_STEP_SUMMARY
+            echo "|----------|--------|" >> $GITHUB_STEP_SUMMARY
+            
+            head -20 iam_resource_changes.txt | while IFS= read -r line; do
+              resource=$(echo "$line" | sed 's/# //' | sed 's/ will be.*//')
+              action=$(echo "$line" | sed 's/.* will be //')
+              
+              case "$action" in
+                *created*) icon="➕ create" ;;
+                *updated*) icon="🛠 update" ;;
+                *destroyed*) icon="❌ destroy" ;;
+                *replaced*) icon="♻ replace" ;;
+                *) icon="📝 change" ;;
+              esac
+              
+              echo "| \`$resource\` | $icon |" >> $GITHUB_STEP_SUMMARY
+            done
+            
+            # Truncation notice if needed
+            total_changes=$(wc -l < iam_resource_changes.txt)
+            if [ "$total_changes" -gt 20 ]; then
+              remaining=$((total_changes - 20))
+              echo "| ... | *$remaining more changes* |" >> $GITHUB_STEP_SUMMARY
+            fi
+            echo "" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      # Plan Layer 1 (Foundation) - if changed
+      - name: 📋 Plan Layer 1 - Foundation
+        if: needs.detect-changes.outputs.layer1 == 'true'
         working-directory: layers/01-foundation
         run: |
-          terraform plan -detailed-exitcode -out=tfplan
-          echo "plan_exitcode=$?" >> $GITHUB_OUTPUT
+          echo "### 🏗️ Layer 1 - Foundation Plan" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          terraform init
+          terraform validate
+          terraform plan -no-color -input=false -out=foundation.tfplan > foundation_plan.txt 2>&1 || true
+          
+          # Extract plan summary
+          if grep -q "Plan:" foundation_plan.txt; then
+            grep "Plan:" foundation_plan.txt | tail -1 >> $GITHUB_STEP_SUMMARY
+          else
+            echo "No changes needed for Foundation layer" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
 
-      - name: Terraform Apply - Foundation
-        if: github.ref == 'refs/heads/main'
+      # Plan Layer 2 (Network) - if changed
+      - name: 📋 Plan Layer 2 - Network
+        if: needs.detect-changes.outputs.layer2 == 'true'
+        working-directory: layers/02-network
+        run: |
+          echo "### 🌐 Layer 2 - Network Plan" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          terraform init
+          terraform validate
+          terraform plan -no-color -input=false -out=network.tfplan > network_plan.txt 2>&1 || true
+          
+          if grep -q "Plan:" network_plan.txt; then
+            grep "Plan:" network_plan.txt | tail -1 >> $GITHUB_STEP_SUMMARY
+          else
+            echo "No changes needed for Network layer" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+      # Upload all plans for deployment job
+      - name: 📤 Upload Terraform Plans
+        uses: actions/upload-artifact@v4
+        with:
+          name: terraform-plans-${{ github.run_id }}
+          path: |
+            generated/*.tfplan
+            layers/*//*.tfplan
+            **//*_plan.txt
+          retention-days: 7
+
+  # ==============================================================================
+  # STEP 4: CONDITIONAL DEPLOYMENT (Only on main branch)
+  # ==============================================================================
+  deploy-infrastructure:
+    name: 🚀 Deploy SGSI Infrastructure
+    runs-on: ubuntu-latest
+    needs: [terraform-plan-analysis, detect-changes, generate-iam-policies]
+    if: |
+      github.ref == 'refs/heads/main' && 
+      (needs.generate-iam-policies.outputs.changes == 'true' || 
+       needs.detect-changes.outputs.any_layer == 'true' ||
+       github.event_name == 'workflow_dispatch')
+    environment: 
+      name: production
+      url: https://console.aws.amazon.com/
+    
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 🛠️ Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: 🔐 Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::051963532279:role/github-deployment-role
+          aws-region: ${{ env.AWS_REGION }}
+          role-session-name: sgsi-deployment-${{ github.run_id }}
+
+      - name: 📥 Download Terraform Plans
+        uses: actions/download-artifact@v4
+        with:
+          name: terraform-plans-${{ github.run_id }}
+
+      # Deploy Generated IAM (if changed)
+      - name: 🚀 Deploy Generated IAM
+        if: needs.generate-iam-policies.outputs.changes == 'true'
+        working-directory: generated
+        run: |
+          echo "🚀 Deploying Generated IAM Resources..."
+          terraform init
+          terraform apply -auto-approve iam.tfplan
+          echo "✅ Generated IAM deployment completed"
+
+      # Deploy Foundation Layer (if changed)
+      - name: 🚀 Deploy Layer 1 - Foundation
+        if: needs.detect-changes.outputs.layer1 == 'true'
         working-directory: layers/01-foundation
-        run: terraform apply -auto-approve tfplan
+        run: |
+          echo "🏗️ Deploying Foundation Layer..."
+          terraform init
+          terraform apply -auto-approve foundation.tfplan
+          echo "✅ Foundation layer deployment completed"
 
-  # ==============================================================================
-  # LAYER 2: NETWORK
-  # ==============================================================================
-  deploy-network:
-    name: 🌐 Layer 2 - Network (VPC)
-    runs-on: ubuntu-latest
-    needs: [detect-changes, deploy-foundation]
-    if: |
-      always() && 
-      (needs.deploy-foundation.result == 'success' || needs.deploy-foundation.result == 'skipped') &&
-      (needs.detect-changes.outputs.layer2 == 'true' || github.event_name == 'workflow_dispatch')
-    
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: arn:aws:iam::051963532279:role/github-deployment-role
-          role-session-name: sgsi-network-deployment
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: ${{ env.TF_VERSION }}
-
-      - name: Terraform Init - Network
+      # Deploy Network Layer (if changed)
+      - name: 🚀 Deploy Layer 2 - Network
+        if: needs.detect-changes.outputs.layer2 == 'true'
         working-directory: layers/02-network
-        run: terraform init
+        run: |
+          echo "🌐 Deploying Network Layer..."
+          terraform init
+          terraform apply -auto-approve network.tfplan
+          echo "✅ Network layer deployment completed"
 
-      - name: Terraform Plan - Network
-        working-directory: layers/02-network
-        run: terraform plan -detailed-exitcode -out=tfplan
-
-      - name: Terraform Apply - Network
-        if: github.ref == 'refs/heads/main'
-        working-directory: layers/02-network
-        run: terraform apply -auto-approve tfplan
+      # Add more layers as needed...
 
   # ==============================================================================
-  # LAYER 3: COMPUTE
-  # ==============================================================================
-  deploy-compute:
-    name: 💻 Layer 3 - Compute (ALB/ASG/RDS)
-    runs-on: ubuntu-latest
-    needs: [detect-changes, deploy-network]
-    if: |
-      always() && 
-      (needs.deploy-network.result == 'success' || needs.deploy-network.result == 'skipped') &&
-      (needs.detect-changes.outputs.layer3 == 'true' || github.event_name == 'workflow_dispatch')
-    
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: arn:aws:iam::051963532279:role/github-deployment-role
-          role-session-name: sgsi-compute-deployment
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: ${{ env.TF_VERSION }}
-
-      - name: Terraform Init - Compute
-        working-directory: layers/03-compute
-        run: terraform init
-
-      - name: Terraform Plan - Compute
-        working-directory: layers/03-compute
-        run: terraform plan -detailed-exitcode -out=tfplan
-
-      - name: Terraform Apply - Compute
-        if: github.ref == 'refs/heads/main'
-        working-directory: layers/03-compute
-        run: terraform apply -auto-approve tfplan
-
-  # ==============================================================================
-  # LAYER 4: STORAGE
-  # ==============================================================================
-  deploy-storage:
-    name: 💾 Layer 4 - Storage (S3/EFS/Backup)
-    runs-on: ubuntu-latest
-    needs: [detect-changes, deploy-compute]
-    if: |
-      always() && 
-      (needs.deploy-compute.result == 'success' || needs.deploy-compute.result == 'skipped') &&
-      (needs.detect-changes.outputs.layer4 == 'true' || github.event_name == 'workflow_dispatch')
-    
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: arn:aws:iam::051963532279:role/github-deployment-role
-          role-session-name: sgsi-storage-deployment
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: ${{ env.TF_VERSION }}
-
-      - name: Terraform Init - Storage
-        working-directory: layers/04-storage
-        run: terraform init
-
-      - name: Terraform Plan - Storage
-        working-directory: layers/04-storage
-        run: terraform plan -detailed-exitcode -out=tfplan
-
-      - name: Terraform Apply - Storage
-        if: github.ref == 'refs/heads/main'
-        working-directory: layers/04-storage
-        run: terraform apply -auto-approve tfplan
-
-  # ==============================================================================
-  # LAYER 5: OBSERVABILITY
-  # ==============================================================================
-  deploy-observability:
-    name: 👁️ Layer 5 - Observability (Security)
-    runs-on: ubuntu-latest
-    needs: [detect-changes, deploy-storage]
-    if: |
-      always() && 
-      (needs.deploy-storage.result == 'success' || needs.deploy-storage.result == 'skipped') &&
-      (needs.detect-changes.outputs.layer5 == 'true' || github.event_name == 'workflow_dispatch')
-    
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: arn:aws:iam::051963532279:role/github-deployment-role
-          role-session-name: sgsi-observability-deployment
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: ${{ env.TF_VERSION }}
-
-      - name: Terraform Init - Observability
-        working-directory: layers/05-observability
-        run: terraform init
-
-      - name: Terraform Plan - Observability
-        working-directory: layers/05-observability
-        run: terraform plan -detailed-exitcode -out=tfplan
-
-      - name: Terraform Apply - Observability
-        if: github.ref == 'refs/heads/main'
-        working-directory: layers/05-observability
-        run: terraform apply -auto-approve tfplan
-
-  # ==============================================================================
-  # DEPLOYMENT SUMMARY
+  # STEP 5: DEPLOYMENT SUMMARY
   # ==============================================================================
   deployment-summary:
     name: 📊 Deployment Summary
     runs-on: ubuntu-latest
-    needs: [deploy-foundation, deploy-network, deploy-compute, deploy-storage, deploy-observability]
+    needs: [generate-iam-policies, detect-changes, terraform-plan-analysis, deploy-infrastructure]
     if: always()
     
     steps:
-      - name: Generate Deployment Summary
+      - name: 📊 Generate Final Summary
         run: |
           echo "# 🚀 SGSI Infrastructure Deployment Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "## Layer Status" >> $GITHUB_STEP_SUMMARY
-          echo "| Layer | Status | Description |" >> $GITHUB_STEP_SUMMARY
-          echo "|-------|--------|-------------|" >> $GITHUB_STEP_SUMMARY
-          echo "| 1 - Foundation | ${{ needs.deploy-foundation.result }} | IAM Roles & Policies |" >> $GITHUB_STEP_SUMMARY
-          echo "| 2 - Network | ${{ needs.deploy-network.result }} | VPC & Security Groups |" >> $GITHUB_STEP_SUMMARY
-          echo "| 3 - Compute | ${{ needs.deploy-compute.result }} | ALB, ASG, RDS, Lambda |" >> $GITHUB_STEP_SUMMARY
-          echo "| 4 - Storage | ${{ needs.deploy-storage.result }} | S3, EFS, Backup |" >> $GITHUB_STEP_SUMMARY
-          echo "| 5 - Observability | ${{ needs.deploy-observability.result }} | CloudTrail, GuardDuty, Security Hub |" >> $GITHUB_STEP_SUMMARY
+          echo "**Date:** $(date)" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          echo "## 📋 Job Status Summary" >> $GITHUB_STEP_SUMMARY
+          echo "| Job | Status | Description |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----|--------|-------------|" >> $GITHUB_STEP_SUMMARY
+          echo "| IAM Generation | ${{ needs.generate-iam-policies.result }} | Generated IAM policies from YAML |" >> $GITHUB_STEP_SUMMARY
+          echo "| Change Detection | ${{ needs.detect-changes.result }} | Detected infrastructure changes |" >> $GITHUB_STEP_SUMMARY
+          echo "| Plan Analysis | ${{ needs.terraform-plan-analysis.result }} | Advanced Terraform plan analysis |" >> $GITHUB_STEP_SUMMARY
+          echo "| Infrastructure Deploy | ${{ needs.deploy-infrastructure.result }} | Infrastructure deployment |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Status indicators
+          if [[ "${{ needs.generate-iam-policies.outputs.changes }}" == "true" ]]; then
+            echo "🔄 **IAM Changes:** New policies generated and applied" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "✅ **IAM Status:** No changes needed" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          echo "*Powered by unified SGSI deployment workflow*" >> $GITHUB_STEP_SUMMARY

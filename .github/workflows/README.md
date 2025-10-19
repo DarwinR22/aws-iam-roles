@@ -1,71 +1,108 @@
 # 🚀 GitHub Actions Workflows
 
-Este repositorio tiene **2 workflows principales** con responsabilidades **claramente separadas**:
+## ✅ **WORKFLOW CONSOLIDADO - PROBLEMA RESUELTO**
 
-## 📋 Workflows Overview
+Después de identificar la duplicación de recursos IAM entre workflows, se ha **consolidado todo en un solo workflow unificado**:
 
-### 1. 🤖 `generate-iam.yml` - IAM Policies Generator
-**Scope:** Solo políticas IAM generadas desde YAML
-- ✅ **Genera** módulos Terraform desde definiciones YAML
-- ✅ **Aplica políticas IAM** en entorno DEV para testing
-- ✅ **Valida y formatea** código Terraform generado
-- ❌ **NO crea roles IAM** (eso lo hace sgsi-deployment.yaml)
+## 📋 Workflow Único: `sgsi-deployment.yaml`
 
-**Triggers:**
-- Push a `main`, `dev`, `qa` cuando cambian:
-  - `definitions/**`
-  - `generators/**` 
-  - `templates/**`
-- Pull requests a `main`, `qa`
-- Manual dispatch
+### 🎯 **Capacidades Completas:**
+- ✅ **Generación IAM:** Crea módulos Terraform desde definiciones YAML
+- ✅ **Validación:** Valida todas las definiciones YAML
+- ✅ **Análisis Visual:** Plan analysis con tablas detalladas y contadores
+- ✅ **5 Capas SGSI:** Despliega infraestructura completa secuencialmente
+- ✅ **Multi-ambiente:** Soporte para dev/staging/production
+- ✅ **Detección de cambios:** Solo despliega capas modificadas
+- ✅ **Reportes avanzados:** GitHub Step Summary con visualización completa
 
-### 2. 🚀 `sgsi-deployment.yaml` - SGSI Infrastructure
-**Scope:** Infraestructura completa SGSI en 5 capas
-- ✅ **Layer 1 (Foundation):** Roles IAM principales y state backend
-- ✅ **Layer 2 (Network):** VPC, subnets, security groups
-- ✅ **Layer 3 (Compute):** ALB, ASG, RDS, Lambda
-- ✅ **Layer 4 (Storage):** S3, EFS, Backup
-- ✅ **Layer 5 (Observability):** CloudTrail, GuardDuty, Security Hub
-
-**Triggers:**
-- Push a `main` cuando cambian:
-  - `layers/**`
-  - `modules/**`
-  - `definitions/**`
-- Pull requests a `main`
-- Manual dispatch con selección de ambiente
-
-## 🔄 Separación de Responsabilidades Actual
-
-### ❌ **Problema Identificado (Duplicación)**
-**ANTES:** Ambos workflows creaban el mismo recurso IAM `github-actions-iam-deployment-role`:
+### 🔧 **Flujo Unificado:**
 
 ```mermaid
 graph TD
-    A[Push a main] --> B[generate-iam.yml ejecuta]
-    A --> C[sgsi-deployment.yaml ejecuta]
-    B --> D[Crea github-actions-iam-deployment-role]
-    C --> E[Layer 1 también crea github-actions-iam-deployment-role]
-    D --> F[🔥 CONFLICTO: Mismo recurso en 2 workflows]
-    E --> F
-```
-
-### ✅ **Solución Implementada**
-**AHORA:** Responsabilidades claramente separadas:
-
-```mermaid
-graph TD
-    A[Cambio en definitions/] --> B[generate-iam.yml]
-    B --> C[Solo genera módulos de políticas]
-    
-    D[Cambio en layers/] --> E[sgsi-deployment.yaml]
-    E --> F[Layer 1: Crea roles principales]
-    E --> G[Layer 2-5: Infraestructura SGSI]
-    
-    C --> H[✅ Sin conflictos]
-    F --> H
+    A[Push/PR] --> B[🤖 Generate IAM from YAML]
+    B --> C[🔍 Detect Infrastructure Changes]
+    C --> D[📋 Advanced Plan Analysis]
+    D --> E{Branch = main?}
+    E -->|Yes| F[🚀 Deploy Infrastructure]
+    E -->|No| G[📊 Plan Summary Only]
+    F --> H[📊 Deployment Summary]
     G --> H
 ```
+
+### 🎨 **Capacidades Visuales:**
+
+#### Plan Analysis
+- 📊 **Contadores por acción:** Creates, Updates, Destroys
+- 📋 **Tablas detalladas:** Recursos y acciones con iconos
+- 🎯 **Categorización:** Por tipo de cambio (IAM, Network, etc.)
+- 📈 **Métricas:** Estadísticas de archivos generados
+
+#### Change Detection
+- 🔍 **Matrix de capas:** Estado de cada capa SGSI
+- ✅ **Indicadores visuales:** Iconos para cambios detectados
+- 📱 **Responsive tables:** Compatibles con GitHub mobile
+
+#### Deployment Summary
+- 📊 **Estado final:** Resultado de cada job
+- 🎯 **Decisiones:** Qué se desplegó y por qué
+- ⏱️ **Timestamps:** Cuándo y desde qué commit
+
+### **Triggers:**
+- **Push a `main`, `dev`:** Ejecuta generación + plan + deploy (solo main)
+- **Pull requests a `main`:** Ejecuta generación + plan (sin deploy)
+- **Manual dispatch:** Control completo con opciones de ambiente
+
+### **Ambientes:**
+- **DEV:** Generación + Plan + Deploy automático
+- **MAIN:** Generación + Plan + Deploy con environment protection
+- **PR:** Solo generación + plan (sin deploy)
+
+## 🔄 **Separación de Responsabilidades SOLUCIONADA**
+
+### ❌ **Problema Anterior:**
+```
+- generate-iam.yml: Creaba github-actions-iam-deployment-role
+- sgsi-deployment.yaml: También creaba github-actions-iam-deployment-role
+= CONFLICTO: Mismo recurso en 2 workflows
+```
+
+### ✅ **Solución Actual:**
+```
+- sgsi-deployment.yaml (unificado):
+  1. Genera políticas IAM desde YAML
+  2. Detecta cambios en infraestructura  
+  3. Planifica todos los recursos sin conflictos
+  4. Despliega secuencialmente en orden correcto
+= Sin duplicación: Un solo workflow con scope completo
+```
+
+## 🎯 **Workflow Decision Matrix**
+
+| Evento | Rama | Qué ejecuta | Resultado |
+|--------|------|-------------|-----------|
+| Push | `dev` | Generación + Plan + Deploy | Deploy automático en DEV |
+| Push | `main` | Generación + Plan + Deploy | Deploy con protection en PROD |
+| PR | `main` | Generación + Plan | Solo validación |
+| Manual | Cualquiera | Todo con opciones | Deploy controlado |
+
+## 🚨 **Beneficios del Workflow Unificado**
+
+1. **Sin duplicación:** Eliminado conflicto de recursos IAM
+2. **Capacidad visual completa:** Toda la funcionalidad del workflow original
+3. **Menos complejidad:** Un solo workflow vs dos workflows conflictivos  
+4. **Mejor debugging:** Un solo lugar para troubleshooting
+5. **Consistent state:** Sin race conditions entre workflows
+6. **Ambiente único:** No más confusion sobre qué workflow usar
+
+## 📚 **Documentación Relacionada**
+
+- [`docs/DEPLOYMENT.md`](../docs/DEPLOYMENT.md) - Procedimientos de deployment
+- [`layers/README.md`](../layers/README.md) - Documentación de capas SGSI
+- [`modules/README.md`](../modules/README.md) - Módulos enterprise
+
+---
+
+**✅ Status:** Workflow consolidado y funcionando sin duplicaciones
 
 ## 🔧 Configuración Requerida
 

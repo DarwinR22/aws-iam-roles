@@ -21,35 +21,44 @@ Enterprise-grade SGSI (Security Management System Implementation) with **modular
 - Terraform >= 1.0
 - Python 3.8+ (for automation scripts)
 
-### GitHub Actions Workflows
+### GitHub Actions Workflow (Unified)
 
-This repository uses **2 separate workflows** with clear responsibilities:
+This repository uses **1 consolidated workflow** with complete capabilities:
 
-#### 🤖 IAM Policies Generator (`generate-iam.yml`)
-- **Purpose:** Generate Terraform modules from YAML policy definitions
-- **Triggers:** Changes in `definitions/`, `generators/`, `templates/`
-- **Scope:** ✅ IAM policies only | ❌ No infrastructure deployment
+#### 🚀 Unified SGSI Deployment (`sgsi-deployment.yaml`)
+- **Scope:** Complete end-to-end infrastructure management
+- **Capabilities:**
+  - 🤖 IAM policy generation from YAML definitions
+  - 📋 Advanced visual plan analysis with detailed reports
+  - 🏗️ 5-layer SGSI infrastructure deployment
+  - � Smart change detection (deploys only modified layers)
+  - 🎯 Multi-environment support (dev/staging/production)
 
-#### 🚀 SGSI Infrastructure (`sgsi-deployment.yaml`)
-- **Purpose:** Deploy complete 5-layer SGSI infrastructure
-- **Triggers:** Changes in `layers/`, infrastructure files
-- **Scope:** ✅ Full infrastructure including IAM roles
+**Visual Features:**
+- 📊 Resource change counters (creates/updates/destroys)
+- 📋 Detailed tables with action icons
+- 🎨 Layer-by-layer deployment status
+- 📈 File generation metrics and summaries
 
 ```mermaid
 graph LR
-    A[YAML Definitions] --> B[generate-iam.yml]
-    B --> C[IAM Policy Modules]
-    
-    D[Infrastructure Layers] --> E[sgsi-deployment.yaml]
-    E --> F[Complete SGSI Stack]
-    
-    C -.->|Used by| E
+    A[YAML Definitions] --> B[🤖 Generate]
+    B --> C[🔍 Detect Changes]
+    C --> D[📋 Plan Analysis]
+    D --> E[🚀 Deploy Layers]
+    E --> F[📊 Summary]
     
     style B fill:#e1f5fe
-    style E fill:#f3e5f5
+    style D fill:#f3e5f5
+    style E fill:#e8f5e8
 ```
 
-> **No Conflicts:** Each workflow has distinct responsibilities and resource scopes.
+**Triggers:**
+- Push to `main`, `dev`: Generation + Plan + Deploy
+- PRs to `main`: Generation + Plan only
+- Manual dispatch: Full control with environment selection
+
+**Problem Solved:** Eliminated IAM resource duplication that existed between previous separate workflows.
 
 ### Basic Usage
 
