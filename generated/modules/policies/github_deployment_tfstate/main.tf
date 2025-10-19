@@ -48,10 +48,10 @@ EOF
   tags = merge(
     var.common_tags,
     {
-      Name                = "${var.environment}-github-deployment-tfstate"
-      PolicyType         = "Custom"
-      Scope              = "Service"
-      GeneratedFrom      = "github_deployment_tfstate.yaml"
+      Name          = "${var.environment}-github-deployment-tfstate"
+      PolicyType    = "Custom"
+      Scope         = "Service"
+      GeneratedFrom = "github_deployment_tfstate.yaml"
     }
   )
 }
