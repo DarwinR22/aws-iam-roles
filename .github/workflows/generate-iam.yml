@@ -108,7 +108,7 @@ jobs:
         echo "Ref: ${{ github.ref }}"
         echo "SHA: ${{ github.sha }}"
         echo "Run ID: ${{ github.run_id }}"
-        echo "Expected sub: repo:ClaroCENAM/mci-aws-iam:ref:refs/heads/dev"
+        echo "Expected sub: repo:DarwinR22/aws-iam-roles:ref:refs/heads/dev"
         echo "Actual sub would be: repo:${{ github.repository }}:ref:${{ github.ref }}"
 
     - name: 🔐 Configure AWS Credentials

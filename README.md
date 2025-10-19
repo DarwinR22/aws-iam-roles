@@ -1,19 +1,19 @@
 <div align="center">
 
-# 🚀 MCI AWS IAM - Arquitectura Empresarial
+# 🚀 AWS IAM Roles - Personal Fork
 
-### *Gestión empresarial de IAM con Control de Acceso Basado en Atributos (ABAC)*
-<!-- v2.3.0 - ABAC Glue Service Role + State recovery -->
+### *Gestión personal de IAM con Control de Acceso Basado en Atributos (ABAC)*
+<!-- Fork personalizado para uso individual -->
 
 [![Terraform](https://img.shields.io/badge/Terraform-1.6+-623CE4?style=for-the-badge&logo=terraform&logoColor=white)](https://www.terraform.io/)
 [![AWS](https://img.shields.io/badge/AWS-IAM-FF9900?style=for-the-badge&logo=amazon-aws&logoColor=white)](https://aws.amazon.com/iam/)
 [![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-CI%2FCD-2088FF?style=for-the-badge&logo=github-actions&logoColor=white)](https://github.com/features/actions)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
-[![IAM CI/CD](https://img.shields.io/github/actions/workflow/status/ClaroCENAM/mci-aws-iam/generate-iam.yml?branch=dev&label=IAM%20CI%2FCD&style=flat-square&logo=terraform&logoColor=white)](https://github.com/ClaroCENAM/mci-aws-iam/actions/workflows/generate-iam.yml)
-[![Last Commit](https://img.shields.io/github/last-commit/ClaroCENAM/mci-aws-iam/dev?style=flat-square&logo=github)](https://github.com/ClaroCENAM/mci-aws-iam/commits/dev)
-[![Repo Size](https://img.shields.io/github/repo-size/ClaroCENAM/mci-aws-iam?style=flat-square&logo=github)](https://github.com/ClaroCENAM/mci-aws-iam)
-[![Code Quality](https://img.shields.io/badge/code%20quality-enterprise-brightgreen?style=flat-square&logo=codacy)](https://github.com/ClaroCENAM/mci-aws-iam)
+[![IAM CI/CD](https://img.shields.io/github/actions/workflow/status/DarwinR22/aws-iam-roles/generate-iam.yml?branch=dev&label=IAM%20CI%2FCD&style=flat-square&logo=terraform&logoColor=white)](https://github.com/DarwinR22/aws-iam-roles/actions/workflows/generate-iam.yml)
+[![Last Commit](https://img.shields.io/github/last-commit/DarwinR22/aws-iam-roles/dev?style=flat-square&logo=github)](https://github.com/DarwinR22/aws-iam-roles/commits/dev)
+[![Repo Size](https://img.shields.io/github/repo-size/DarwinR22/aws-iam-roles?style=flat-square&logo=github)](https://github.com/DarwinR22/aws-iam-roles)
+[![Code Quality](https://img.shields.io/badge/code%20quality-enterprise-brightgreen?style=flat-square&logo=codacy)](https://github.com/DarwinR22/aws-iam-roles)
 
 
 ---
@@ -62,7 +62,7 @@
 ### 📦 Estructura del Repositorio
 
 ```
-📦 mci-aws-iam/
+📦 aws-iam-roles/
 ├── 🧱 policy_lib/          # Bloques de construcción ABAC (S3, DynamoDB, Lambda)
 ├── 📋 catalog/             # Fuente única de verdad (roles.yaml, policies.yaml)
 ├── 🏢 gerencias/           # Estructura organizacional con roles
@@ -334,8 +334,8 @@ catalog/v2/services/
 
 ### 1. Clonar y configurar
 ```bash
-git clone https://github.com/ClaroCENAM/mci-aws-iam.git
-cd mci-aws-iam
+git clone https://github.com/DarwinR22/aws-iam-roles.git
+cd aws-iam-roles
 ```
 
 ### 2. Configurar credenciales AWS

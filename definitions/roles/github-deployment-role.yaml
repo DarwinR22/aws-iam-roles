@@ -29,7 +29,7 @@ role:
       
       # Repository access configuration
       repositories:
-        - "repo:ClaroCENAM/mci-aws-iam"
+        - "repo:DarwinR22/aws-iam-roles"
         - "repo:ClaroCENAM/DataOps_infra_meta_services"
         - "repo:ClaroCENAM/DataOps_code_meta_services"
         
@@ -42,7 +42,7 @@ role:
         - test: "StringLike"
           variable: "token.actions.githubusercontent.com:sub"
           values: 
-            - "repo:ClaroCENAM/mci-aws-iam:*"                      # ✅ MEJORA 1: IAM Infrastructure
+            - "repo:DarwinR22/aws-iam-roles:*"                      # ✅ MEJORA 1: IAM Infrastructure
             - "repo:ClaroCENAM/DataOps_infra_meta_services:*"      # ✅ MEJORA 1: DataOps Infrastructure
             - "repo:ClaroCENAM/DataOps_code_meta_services:*"       # ✅ MEJORA 1: DataOps Code
 

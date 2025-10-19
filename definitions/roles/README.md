@@ -38,7 +38,7 @@ Este directorio contiene las definiciones de roles IAM para GitHub Actions deplo
 Todos los roles **solo** aceptan el repositorio específico:
 ```yaml
 repositories:
-  - "repo:ClaroCENAM/mci-aws-iam"  # ✅ Solo este repo
+  - "repo:DarwinR22/aws-iam-roles"  # ✅ Solo este repo
 ```
 
 ### 2. Restricción por Rama (Branch)
@@ -46,21 +46,21 @@ repositories:
 #### DEV
 ```yaml
 values: 
-  - "repo:ClaroCENAM/mci-aws-iam:ref:refs/heads/dev"
-  - "repo:ClaroCENAM/mci-aws-iam:pull_request"
+  - "repo:DarwinR22/aws-iam-roles:ref:refs/heads/dev"
+  - "repo:DarwinR22/aws-iam-roles:pull_request"
 ```
 
 #### QA
 ```yaml
 values: 
-  - "repo:ClaroCENAM/mci-aws-iam:ref:refs/heads/qa"
-  - "repo:ClaroCENAM/mci-aws-iam:pull_request"
+  - "repo:DarwinR22/aws-iam-roles:ref:refs/heads/qa"
+  - "repo:DarwinR22/aws-iam-roles:pull_request"
 ```
 
 #### PROD
 ```yaml
 values: 
-  - "repo:ClaroCENAM/mci-aws-iam:ref:refs/heads/main"
+  - "repo:DarwinR22/aws-iam-roles:ref:refs/heads/main"
   # ⚠️ NO incluye pull_request por seguridad
 ```
 

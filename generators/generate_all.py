@@ -405,12 +405,12 @@ class IAMGenerator:
             #     for condition in conditions:
             #         if condition['variable'] == 'token.actions.githubusercontent.com:sub':
             #             # Replace branch restriction
-            #             branch_restriction = f"repo:ClaroCENAM/mci-aws-iam:ref:refs/heads/{self.current_branch}"
+            #             branch_restriction = f"repo:DarwinR22/aws-iam-roles:ref:refs/heads/{self.current_branch}"
             #             condition['values'] = [branch_restriction]
             #             
             #             # Add pull_request only for dev/qa
             #             if self._allow_pull_requests():
-            #                 condition['values'].append("repo:ClaroCENAM/mci-aws-iam:pull_request")
+            #                 condition['values'].append("repo:DarwinR22/aws-iam-roles:pull_request")
             
             # Categorize by role type (deployment vs application)
             role_name = definition['role']['name'].lower()

@@ -49,19 +49,19 @@ repositories:
 
 # Después
 repositories:
-  - "repo:ClaroCENAM/mci-aws-iam"  # ✅ Solo este repo
+  - "repo:DarwinR22/aws-iam-roles"  # ✅ Solo este repo
 ```
 
 ### ✅ 2. Restricción por Branch
 ```yaml
 # DEV
-values: ["repo:ClaroCENAM/mci-aws-iam:ref:refs/heads/dev"]
+values: ["repo:DarwinR22/aws-iam-roles:ref:refs/heads/dev"]
 
 # QA
-values: ["repo:ClaroCENAM/mci-aws-iam:ref:refs/heads/qa"]
+values: ["repo:DarwinR22/aws-iam-roles:ref:refs/heads/qa"]
 
 # PROD
-values: ["repo:ClaroCENAM/mci-aws-iam:ref:refs/heads/main"]
+values: ["repo:DarwinR22/aws-iam-roles:ref:refs/heads/main"]
 ```
 
 ### ✅ 3. Protección Auto-Eliminación

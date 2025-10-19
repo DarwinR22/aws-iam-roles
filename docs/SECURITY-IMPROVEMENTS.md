@@ -14,7 +14,7 @@ repositories:
 **Después:**
 ```yaml
 repositories:
-  - "repo:ClaroCENAM/mci-aws-iam"  # ✅ Solo este repo
+  - "repo:DarwinR22/aws-iam-roles"  # ✅ Solo este repo
 ```
 
 **Impacto:** Previene que otros repositorios de la organización asuman este rol.
@@ -30,8 +30,8 @@ conditions:
   - test: "StringLike"
     variable: "token.actions.githubusercontent.com:sub"
     values: 
-      - "repo:ClaroCENAM/mci-aws-iam:ref:refs/heads/dev"
-      - "repo:ClaroCENAM/mci-aws-iam:pull_request"  # Para preview en PRs
+      - "repo:DarwinR22/aws-iam-roles:ref:refs/heads/dev"
+      - "repo:DarwinR22/aws-iam-roles:pull_request"  # Para preview en PRs
 ```
 
 #### 🟡 Cuenta QA (873152456645)
@@ -40,8 +40,8 @@ conditions:
   - test: "StringLike"
     variable: "token.actions.githubusercontent.com:sub"
     values: 
-      - "repo:ClaroCENAM/mci-aws-iam:ref:refs/heads/qa"
-      - "repo:ClaroCENAM/mci-aws-iam:pull_request"  # Para preview en PRs
+      - "repo:DarwinR22/aws-iam-roles:ref:refs/heads/qa"
+      - "repo:DarwinR22/aws-iam-roles:pull_request"  # Para preview en PRs
 ```
 
 #### 🔴 Cuenta PROD (331355389575)
@@ -50,7 +50,7 @@ conditions:
   - test: "StringLike"
     variable: "token.actions.githubusercontent.com:sub"
     values: 
-      - "repo:ClaroCENAM/mci-aws-iam:ref:refs/heads/main"
+      - "repo:DarwinR22/aws-iam-roles:ref:refs/heads/main"
       # ⚠️ NO incluir pull_request en producción
 ```
 
