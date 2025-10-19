@@ -111,8 +111,8 @@ class SGSIInfrastructureGenerator:
                 definition = self.load_yaml_definition(vpc_file)
                 if definition and 'vpc' in definition:
                     tf_content = self.generate_vpc_terraform(definition, vpc_file.name)
-                    output_file = self.generated_dir / "network" / f"{vpc_file.stem}.tf"
-                    output_file.parent.mkdir(parents=True, exist_ok=True)
+                    output_file = self.generated_dir / f"network-{vpc_file.stem}.tf"
+                    # No need to create subdirectory, put in root generated/
                     
                     with open(output_file, 'w', encoding='utf-8') as f:
                         f.write(tf_content)
@@ -128,8 +128,8 @@ class SGSIInfrastructureGenerator:
                 definition = self.load_yaml_definition(sg_file)
                 if definition and 'security_groups' in definition:
                     tf_content = self.generate_security_groups_terraform(definition, sg_file.name)
-                    output_file = self.generated_dir / "network" / f"security-groups-{sg_file.stem}.tf"
-                    output_file.parent.mkdir(parents=True, exist_ok=True)
+                    output_file = self.generated_dir / f"network-security-groups-{sg_file.stem}.tf"
+                    # Place in root generated/ directory for Terraform to find
                     
                     with open(output_file, 'w', encoding='utf-8') as f:
                         f.write(tf_content)
