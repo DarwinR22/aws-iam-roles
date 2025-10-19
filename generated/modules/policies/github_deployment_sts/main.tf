@@ -5,40 +5,40 @@ resource "aws_iam_policy" "github_deployment_sts" {
   description = "Permisos STS necesarios para GitHub Actions OIDC"
   path        = "/"
 
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-            "Effect": "Allow",
-            "Action": [
-                  "sts:AssumeRoleWithWebIdentity",
-                  "sts:GetCallerIdentity",
-                  "sts:TagSession"
-            ],
-            "Sid": "STSAssumeRoleWithWebIdentity",
-            "Resource": [
-                  "*"
-            ]
-      },
-      {
-            "Effect": "Allow",
-            "Action": [
-                  "sts:AssumeRole"
-            ],
-            "Sid": "AssumeOtherRoles",
-            "Resource": [
-                  "arn:aws:iam::*:role/*"
-            ],
-            "Condition": {
-                  "StringEquals": {
-                        "aws:RequestedRegion": [
-                              "us-east-1"
-                        ]
-                  }
-            }
+  policy = {
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "sts:AssumeRoleWithWebIdentity",
+        "sts:GetCallerIdentity",
+        "sts:TagSession"
+      ],
+      "Sid": "STSAssumeRoleWithWebIdentity",
+      "Resource": [
+        "*"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "sts:AssumeRole"
+      ],
+      "Sid": "AssumeOtherRoles",
+      "Resource": [
+        "arn:aws:iam::*:role/*"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": [
+            "us-east-1"
+          ]
+        }
       }
-]
-  })
+    }
+  ]
+}
 
   tags = merge(
     var.common_tags,
