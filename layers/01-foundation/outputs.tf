@@ -19,21 +19,18 @@ output "github_deployment_role_unique_id" {
   value       = data.aws_iam_role.github_actions_deployment_role.unique_id
 }
 
-# Policy ARNs (for reference in other layers)
+# Policy ARNs (9 Consolidated Policies - Within AWS 10-Policy Limit)
 output "policy_arns" {
-  description = "ARNs of all attached policies"
+  description = "ARNs of all attached consolidated policies"
   value = {
     iam            = module.github_deployment_iam.policy_arn
     sts            = module.github_deployment_sts.policy_arn
-    tfstate        = module.github_deployment_tfstate.policy_arn
-    network        = module.github_deployment_network.policy_arn
-    compute        = module.github_deployment_compute.policy_arn
+    infrastructure = module.github_deployment_infrastructure.policy_arn  # network + compute consolidated
+    deployment     = module.github_deployment_deployment.policy_arn      # cloudformation + tfstate consolidated
+    observability  = module.github_deployment_observability.policy_arn   # cloudwatch + monitoring consolidated
+    application    = module.github_deployment_application.policy_arn
     database       = module.github_deployment_database.policy_arn
     storage        = module.github_deployment_storage.policy_arn
-    monitoring     = module.github_deployment_monitoring.policy_arn
-    application    = module.github_deployment_application.policy_arn
-    cloudformation = module.github_deployment_cloudformation.policy_arn
-    cloudwatch     = module.github_deployment_cloudwatch.policy_arn
     glue           = module.github_deployment_glue.policy_arn
   }
 }
