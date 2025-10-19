@@ -38,7 +38,7 @@ provider "aws" {
       Environment          = var.environment
       ManagedBy           = "Terraform"
       SecurityLevel       = "Critical"
-      ComplianceScope     = "ISO27001+NIST-CSF"
+      ComplianceScope     = "ISO27001-NIST-CSF"
       CreatedBy           = "GitHub-Actions"
       MaintenanceWindow   = "Sunday-2AM-6AM"
     }
