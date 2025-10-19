@@ -230,6 +230,15 @@ class IAMGenerator:
         """Convert display name to terraform-safe name"""
         return display_name.lower().replace('-', '_').replace(' ', '_')
     
+    def load_yaml_definition(self, file_path: Path) -> dict:
+        """Load and parse YAML definition file"""
+        try:
+            with open(file_path, 'r', encoding='utf-8') as file:
+                return yaml.safe_load(file)
+        except Exception as e:
+            print(f"❌ Error loading YAML file {file_path}: {e}")
+            return {}
+    
     def generate_policies(self) -> list:
         """Generate all policy Terraform modules"""
         generated_files = []
@@ -523,8 +532,861 @@ data "aws_caller_identity" "current" {{}}
         role_files = self.generate_roles()
         print(f"Generated {len(role_files)} role files")
         
-        print(f"Generation complete! Total files: {len(policy_files) + len(role_files)}")
-        return policy_files + role_files
+        # Generate SGSI Infrastructure (Layer 3)
+        sgsi_files = self.generate_sgsi_infrastructure()
+        print(f"Generated {len(sgsi_files)} SGSI infrastructure files")
+        
+        print(f"Generation complete! Total files: {len(policy_files) + len(role_files) + len(sgsi_files)}")
+        return policy_files + role_files + sgsi_files
+
+    def generate_sgsi_infrastructure(self):
+        """Generate SGSI Infrastructure (Layer 3) from definitions"""
+        print("🖥️ Generating SGSI Layer 3 Infrastructure...")
+        generated_files = []
+        
+        # Generate shared data sources first
+        shared_data_sources = self.generate_shared_data_sources()
+        if shared_data_sources:
+            generated_files.append(shared_data_sources)
+        
+        # Generate compute infrastructure
+        compute_dir = self.definitions_dir / "compute"
+        if not compute_dir.exists():
+            print("⚠️  No compute definitions found, skipping SGSI infrastructure generation")
+            return generated_files
+        
+        # Generate ALB
+        alb_dir = compute_dir / "load-balancers"
+        if alb_dir.exists():
+            for alb_file in alb_dir.glob("*.yaml"):
+                print(f"🔄 Processing ALB: {alb_file.name}")
+                definition = self.load_yaml_definition(alb_file)
+                if definition and 'alb' in definition:
+                    tf_content = self.generate_alb_terraform(definition, alb_file.name)
+                    output_file = self.generated_dir / f"compute-alb-{alb_file.stem}.tf"
+                    
+                    with open(output_file, 'w', encoding='utf-8') as f:
+                        f.write(tf_content)
+                    
+                    generated_files.append(output_file)
+                    print(f"✅ Generated: {output_file}")
+
+        # Generate EC2
+        ec2_dir = compute_dir / "instances"
+        if ec2_dir.exists():
+            for ec2_file in ec2_dir.glob("*.yaml"):
+                print(f"🔄 Processing EC2: {ec2_file.name}")
+                definition = self.load_yaml_definition(ec2_file)
+                if definition and 'ec2_instances' in definition:
+                    tf_content = self.generate_ec2_terraform(definition, ec2_file.name)
+                    output_file = self.generated_dir / f"compute-ec2-{ec2_file.stem}.tf"
+                    
+                    with open(output_file, 'w', encoding='utf-8') as f:
+                        f.write(tf_content)
+                    
+                    generated_files.append(output_file)
+                    print(f"✅ Generated: {output_file}")
+
+        # Generate RDS
+        rds_dir = compute_dir / "databases"
+        if rds_dir.exists():
+            for rds_file in rds_dir.glob("*.yaml"):
+                print(f"🔄 Processing RDS: {rds_file.name}")
+                definition = self.load_yaml_definition(rds_file)
+                if definition and 'rds' in definition:
+                    tf_content = self.generate_rds_terraform(definition, rds_file.name)
+                    output_file = self.generated_dir / f"compute-rds-{rds_file.stem}.tf"
+                    
+                    with open(output_file, 'w', encoding='utf-8') as f:
+                        f.write(tf_content)
+                    
+                    generated_files.append(output_file)
+                    print(f"✅ Generated: {output_file}")
+
+        # Generate Lambda
+        lambda_dir = compute_dir / "lambda"
+        if lambda_dir.exists():
+            for lambda_file in lambda_dir.glob("*.yaml"):
+                print(f"🔄 Processing Lambda: {lambda_file.name}")
+                definition = self.load_yaml_definition(lambda_file)
+                if definition and 'lambda_functions' in definition:
+                    tf_content = self.generate_lambda_terraform(definition, lambda_file.name)
+                    output_file = self.generated_dir / f"compute-lambda-{lambda_file.stem}.tf"
+                    
+                    with open(output_file, 'w', encoding='utf-8') as f:
+                        f.write(tf_content)
+                    
+                    generated_files.append(output_file)
+                    print(f"✅ Generated: {output_file}")
+
+        # Generate Auto Scaling
+        asg_dir = compute_dir / "auto-scaling"
+        if asg_dir.exists():
+            for asg_file in asg_dir.glob("*.yaml"):
+                print(f"🔄 Processing ASG: {asg_file.name}")
+                definition = self.load_yaml_definition(asg_file)
+                if definition and 'auto_scaling' in definition:
+                    tf_content = self.generate_asg_terraform(definition, asg_file.name)
+                    output_file = self.generated_dir / f"compute-asg-{asg_file.stem}.tf"
+                    
+                    with open(output_file, 'w', encoding='utf-8') as f:
+                        f.write(tf_content)
+                    
+                    generated_files.append(output_file)
+                    print(f"✅ Generated: {output_file}")
+        
+        return generated_files
+
+    def generate_shared_data_sources(self):
+        """Generate shared data sources to avoid duplicates"""
+        output_file = self.generated_dir / "compute-shared-data-sources.tf"
+        
+        content = '''# Shared Data Sources for SGSI Layer 3
+# Generated: 2025-10-18
+# This file contains all shared data sources to avoid duplicates
+
+# VPC DATA SOURCE
+data "aws_vpc" "sgsi_vpc_main" {
+  filter {
+    name   = "tag:Name"
+    values = ["sgsi-vpc-main"]
+  }
+}
+
+# SUBNET DATA SOURCES - DMZ (Public)
+data "aws_subnet" "sgsi_dmz_subnet_us_east_1a" {
+  filter {
+    name   = "tag:Name"
+    values = ["sgsi-dmz-subnet-us-east-1a"]
+  }
+}
+
+data "aws_subnet" "sgsi_dmz_subnet_us_east_1b" {
+  filter {
+    name   = "tag:Name"
+    values = ["sgsi-dmz-subnet-us-east-1b"]
+  }
+}
+
+data "aws_subnet" "sgsi_dmz_subnet_us_east_1c" {
+  filter {
+    name   = "tag:Name"
+    values = ["sgsi-dmz-subnet-us-east-1c"]
+  }
+}
+
+# SUBNET DATA SOURCES - App (Private)
+data "aws_subnet" "sgsi_app_subnet_us_east_1a" {
+  filter {
+    name   = "tag:Name"
+    values = ["sgsi-app-subnet-us-east-1a"]
+  }
+}
+
+data "aws_subnet" "sgsi_app_subnet_us_east_1b" {
+  filter {
+    name   = "tag:Name"
+    values = ["sgsi-app-subnet-us-east-1b"]
+  }
+}
+
+data "aws_subnet" "sgsi_app_subnet_us_east_1c" {
+  filter {
+    name   = "tag:Name"
+    values = ["sgsi-app-subnet-us-east-1c"]
+  }
+}
+
+# SUBNET DATA SOURCES - DB (Isolated)
+data "aws_subnet" "sgsi_db_subnet_us_east_1a" {
+  filter {
+    name   = "tag:Name"
+    values = ["sgsi-db-subnet-us-east-1a"]
+  }
+}
+
+data "aws_subnet" "sgsi_db_subnet_us_east_1b" {
+  filter {
+    name   = "tag:Name"
+    values = ["sgsi-db-subnet-us-east-1b"]
+  }
+}
+
+data "aws_subnet" "sgsi_db_subnet_us_east_1c" {
+  filter {
+    name   = "tag:Name"
+    values = ["sgsi-db-subnet-us-east-1c"]
+  }
+}
+
+# SECURITY GROUP DATA SOURCES
+data "aws_security_group" "sgsi_alb_sg" {
+  filter {
+    name   = "tag:Name"
+    values = ["sgsi-alb-sg"]
+  }
+}
+
+data "aws_security_group" "sgsi_web_sg" {
+  filter {
+    name   = "tag:Name"
+    values = ["sgsi-web-sg"]
+  }
+}
+
+data "aws_security_group" "sgsi_app_sg" {
+  filter {
+    name   = "tag:Name"
+    values = ["sgsi-app-sg"]
+  }
+}
+
+data "aws_security_group" "sgsi_db_sg" {
+  filter {
+    name   = "tag:Name"
+    values = ["sgsi-db-sg"]
+  }
+}
+
+data "aws_security_group" "sgsi_lambda_sg" {
+  filter {
+    name   = "tag:Name"
+    values = ["sgsi-lambda-sg"]
+  }
+}
+
+# LAUNCH TEMPLATE DATA SOURCE
+data "aws_launch_template" "sgsi_web_server_template" {
+  name = "sgsi-web-server-template"
+}
+'''
+        
+        with open(output_file, 'w', encoding='utf-8') as f:
+            f.write(content)
+        
+        print(f"✅ Generated shared data sources: {output_file}")
+        return output_file
+
+    def generate_alb_terraform(self, definition, source_file):
+        """Generate Terraform for Application Load Balancer"""
+        alb_config = definition['alb']
+        name = alb_config['name']
+        spec = alb_config['configuration']
+        
+        content = f'''# ALB Terraform generated from {source_file}
+# Application Load Balancer for SGSI Layer 3
+
+resource "aws_lb" "{name.replace('-', '_')}" {{
+  name               = "{name}"
+  internal           = {str(spec.get('internal', False)).lower()}
+  load_balancer_type = "application"
+  security_groups    = [data.aws_security_group.sgsi_alb_sg.id]
+  subnets            = [
+    data.aws_subnet.sgsi_public_subnet_1.id,
+    data.aws_subnet.sgsi_public_subnet_2.id
+  ]
+
+  enable_deletion_protection = {str(spec.get('enable_deletion_protection', False)).lower()}
+
+  tags = {{
+    Name        = "{name}"
+    Environment = "{spec.get('environment', 'dev')}"
+    Layer       = "3-compute"
+    Component   = "alb"
+    Proposito   = "{spec.get('purpose', 'sgsi-web-load-balancer')}"
+  }}
+}}
+
+resource "aws_lb_target_group" "{name.replace('-', '_')}_tg" {{
+  name     = "{name}-tg"
+  port     = {spec.get('target_group', {}).get('port', 80)}
+  protocol = "{spec.get('target_group', {}).get('protocol', 'HTTP')}"
+  vpc_id   = data.aws_vpc.sgsi_main_vpc.id
+
+  health_check {{
+    enabled             = true
+    healthy_threshold   = {spec.get('health_check', {}).get('healthy_threshold', 3)}
+    interval            = {spec.get('health_check', {}).get('interval', 30)}
+    matcher             = "{spec.get('health_check', {}).get('matcher', '200')}"
+    path                = "{spec.get('health_check', {}).get('path', '/health')}"
+    port                = "traffic-port"
+    protocol            = "{spec.get('target_group', {}).get('protocol', 'HTTP')}"
+    timeout             = {spec.get('health_check', {}).get('timeout', 5)}
+    unhealthy_threshold = {spec.get('health_check', {}).get('unhealthy_threshold', 3)}
+  }}
+
+  tags = {{
+    Name        = "{name}-tg"
+    Environment = "{spec.get('environment', 'dev')}"
+    Layer       = "3-compute"
+    Component   = "alb-target-group"
+  }}
+}}
+
+resource "aws_lb_listener" "{name.replace('-', '_')}_listener" {{
+  load_balancer_arn = aws_lb.{name.replace('-', '_')}.arn
+  port              = "{spec.get('listeners', [{}])[0].get('port', 80)}"
+  protocol          = "{spec.get('listeners', [{}])[0].get('protocol', 'HTTP')}"
+
+  default_action {{
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.{name.replace('-', '_')}_tg.arn
+  }}
+
+  tags = {{
+    Name        = "{name}-listener"
+    Environment = "{spec.get('environment', 'dev')}"
+    Layer       = "3-compute"
+    Component   = "alb-listener"
+  }}
+}}
+'''
+
+        return content
+
+    def generate_ec2_terraform(self, definition, source_file):
+        """Generate Terraform for EC2 instances"""
+        ec2_config = definition['ec2_instances']
+        name = ec2_config['name']
+        spec = ec2_config
+        
+        content = f'''# EC2 Terraform generated from {source_file}
+# EC2 Web Servers for SGSI Layer 3
+
+# Launch Template for Web Servers
+resource "aws_launch_template" "sgsi_web_server_template" {{
+  name_prefix   = "sgsi-web-server-"
+  image_id      = "{spec.get('ami_id', 'ami-0abcdef1234567890')}"
+  instance_type = "{spec.get('instance_type', 't3.micro')}"
+  
+  vpc_security_group_ids = [data.aws_security_group.sgsi_web_sg.id]
+  
+  user_data = base64encode(<<-EOF
+    #!/bin/bash
+    yum update -y
+    yum install -y httpd
+    systemctl start httpd
+    systemctl enable httpd
+    
+    # Create health check endpoint
+    echo "<h1>SGSI Web Server</h1>" > /var/www/html/index.html
+    echo "OK" > /var/www/html/health
+    
+    # Install CloudWatch Agent
+    yum install -y amazon-cloudwatch-agent
+    
+    # Configure CloudWatch monitoring
+    cat > /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json <<EOL
+    {{
+      "metrics": {{
+        "namespace": "SGSI/EC2",
+        "metrics_collected": {{
+          "cpu": {{"measurement": ["cpu_usage_idle", "cpu_usage_iowait", "cpu_usage_user", "cpu_usage_system"]}},
+          "disk": {{"measurement": ["used_percent"], "resources": ["*"]}},
+          "mem": {{"measurement": ["mem_used_percent"]}}
+        }}
+      }}
+    }}
+EOL
+    
+    /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \\
+      -a fetch-config -m ec2 -c file:/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json -s
+  EOF
+  )
+
+  iam_instance_profile {{
+    name = aws_iam_instance_profile.sgsi_ec2_profile.name
+  }}
+
+  tag_specifications {{
+    resource_type = "instance"
+    tags = {{
+      Name        = "{name}"
+      Environment = "{spec.get('environment', 'dev')}"
+      Layer       = "3-compute"
+      Component   = "web-server"
+      Proposito   = "{spec.get('purpose', 'sgsi-web-application')}"
+    }}
+  }}
+
+  tags = {{
+    Name        = "sgsi-web-server-template"
+    Environment = "{spec.get('environment', 'dev')}"
+    Layer       = "3-compute"
+  }}
+}}
+
+# IAM Role for EC2 instances
+resource "aws_iam_role" "sgsi_ec2_role" {{
+  name = "sgsi-ec2-cloudwatch-role"
+
+  assume_role_policy = jsonencode({{
+    Version = "2012-10-17"
+    Statement = [
+      {{
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {{
+          Service = "ec2.amazonaws.com"
+        }}
+      }}
+    ]
+  }})
+
+  tags = {{
+    Name        = "sgsi-ec2-cloudwatch-role"
+    Environment = "{spec.get('environment', 'dev')}"
+    Layer       = "3-compute"
+  }}
+}}
+
+# IAM Policy for CloudWatch
+resource "aws_iam_role_policy_attachment" "sgsi_ec2_cloudwatch" {{
+  policy_arn = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+  role       = aws_iam_role.sgsi_ec2_role.name
+}}
+
+# Instance Profile
+resource "aws_iam_instance_profile" "sgsi_ec2_profile" {{
+  name = "sgsi-ec2-profile"
+  role = aws_iam_role.sgsi_ec2_role.name
+
+  tags = {{
+    Name        = "sgsi-ec2-profile"
+    Environment = "{spec.get('environment', 'dev')}"
+    Layer       = "3-compute"
+  }}
+}}
+'''
+
+        return content
+
+    def generate_rds_terraform(self, definition, source_file):
+        """Generate Terraform for RDS"""
+        rds_config = definition['rds']
+        name = rds_config['name']
+        spec = rds_config
+        
+        content = f'''# RDS Terraform generated from {source_file}
+# MySQL Database for SGSI Layer 3
+
+# DB Subnet Group
+resource "aws_db_subnet_group" "sgsi_db_subnet_group" {{
+  name       = "sgsi-db-subnet-group"
+  subnet_ids = [
+    data.aws_subnet.sgsi_private_subnet_1.id,
+    data.aws_subnet.sgsi_private_subnet_2.id
+  ]
+
+  tags = {{
+    Name        = "sgsi-db-subnet-group"
+    Environment = "{spec.get('environment', 'dev')}"
+    Layer       = "3-compute"
+    Component   = "database"
+  }}
+}}
+
+# DB Parameter Group
+resource "aws_db_parameter_group" "sgsi_mysql_params" {{
+  family = "mysql8.0"
+  name   = "sgsi-mysql-params"
+
+  parameter {{
+    name  = "innodb_buffer_pool_size"
+    value = "{{DBInstanceClassMemory*3/4}}"
+  }}
+
+  parameter {{
+    name  = "max_connections"
+    value = "1000"
+  }}
+
+  tags = {{
+    Name        = "sgsi-mysql-params"
+    Environment = "{spec.get('environment', 'dev')}"
+    Layer       = "3-compute"
+  }}
+}}
+
+# RDS Instance
+resource "aws_db_instance" "{name.replace('-', '_')}" {{
+  identifier     = "{name}"
+  engine         = "{spec.get('engine', 'mysql')}"
+  engine_version = "{spec.get('engine_version', '8.0')}"
+  instance_class = "{spec.get('instance_class', 'db.t3.micro')}"
+  
+  allocated_storage     = {spec.get('allocated_storage', 20)}
+  max_allocated_storage = {spec.get('max_allocated_storage', 100)}
+  storage_type          = "{spec.get('storage_type', 'gp2')}"
+  storage_encrypted     = {str(spec.get('storage_encrypted', True)).lower()}
+  
+  db_name  = "{spec.get('database_name', 'sgsidb')}"
+  username = "{spec.get('master_username', 'admin')}"
+  password = "{spec.get('master_password', 'ChangeMe123!')}"
+  
+  vpc_security_group_ids = [data.aws_security_group.sgsi_db_sg.id]
+  db_subnet_group_name   = aws_db_subnet_group.sgsi_db_subnet_group.name
+  parameter_group_name   = aws_db_parameter_group.sgsi_mysql_params.name
+  
+  multi_az               = {str(spec.get('multi_az', True)).lower()}
+  publicly_accessible    = {str(spec.get('publicly_accessible', False)).lower()}
+  backup_retention_period = {spec.get('backup_retention_period', 7)}
+  backup_window          = "{spec.get('backup_window', '03:00-04:00')}"
+  maintenance_window     = "{spec.get('maintenance_window', 'sun:04:00-sun:05:00')}"
+  
+  deletion_protection = {str(spec.get('deletion_protection', False)).lower()}
+  skip_final_snapshot = {str(spec.get('skip_final_snapshot', False)).lower()}
+  final_snapshot_identifier = "{name}-final-snapshot"
+  
+  # Performance Insights
+  performance_insights_enabled = {str(spec.get('performance_insights_enabled', True)).lower()}
+  performance_insights_retention_period = {spec.get('performance_insights_retention_period', 7)}
+  
+  # Enhanced monitoring
+  monitoring_interval = {spec.get('monitoring_interval', 60)}
+  monitoring_role_arn = aws_iam_role.sgsi_rds_monitoring_role.arn
+  
+  enabled_cloudwatch_logs_exports = {spec.get('enabled_cloudwatch_logs_exports', '["error", "general", "slow_query"]')}
+  
+  tags = {{
+    Name        = "{name}"
+    Environment = "{spec.get('environment', 'dev')}"
+    Layer       = "3-compute"
+    Component   = "database"
+    Proposito   = "{spec.get('purpose', 'sgsi-application-database')}"
+  }}
+}}
+
+# IAM Role for Enhanced Monitoring
+resource "aws_iam_role" "sgsi_rds_monitoring_role" {{
+  name = "sgsi-rds-monitoring-role"
+
+  assume_role_policy = jsonencode({{
+    Version = "2012-10-17"
+    Statement = [
+      {{
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {{
+          Service = "monitoring.rds.amazonaws.com"
+        }}
+      }}
+    ]
+  }})
+
+  tags = {{
+    Name        = "sgsi-rds-monitoring-role"
+    Environment = "{spec.get('environment', 'dev')}"
+    Layer       = "3-compute"
+  }}
+}}
+
+resource "aws_iam_role_policy_attachment" "sgsi_rds_monitoring" {{
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"
+  role       = aws_iam_role.sgsi_rds_monitoring_role.name
+}}
+'''
+
+        return content
+
+    def generate_lambda_terraform(self, definition, source_file):
+        """Generate Terraform for Lambda"""
+        lambda_config = definition['lambda_functions']
+        name = lambda_config['name']
+        spec = lambda_config
+        
+        content = f'''# Lambda Terraform generated from {source_file}
+# Lambda Functions for SGSI Layer 3
+
+# Lambda Function 1: API Handler
+resource "aws_lambda_function" "sgsi_api_handler" {{
+  filename         = "api_handler.zip"
+  function_name    = "sgsi-api-handler"
+  role            = aws_iam_role.sgsi_lambda_role.arn
+  handler         = "index.handler"
+  source_code_hash = filebase64sha256("api_handler.zip")
+  runtime         = "{spec.get('runtime', 'python3.9')}"
+  timeout         = {spec.get('timeout', 30)}
+  memory_size     = {spec.get('memory_size', 128)}
+
+  vpc_config {{
+    subnet_ids         = [
+      data.aws_subnet.sgsi_private_subnet_1.id,
+      data.aws_subnet.sgsi_private_subnet_2.id
+    ]
+    security_group_ids = [data.aws_security_group.sgsi_lambda_sg.id]
+  }}
+
+  environment {{
+    variables = {{
+      ENVIRONMENT = "{spec.get('environment', 'dev')}"
+      DB_HOST     = aws_db_instance.{spec.get('database_instance', 'sgsi_main_database').replace('-', '_')}.endpoint
+      DB_NAME     = "{spec.get('database_name', 'sgsidb')}"
+    }}
+  }}
+
+  tags = {{
+    Name        = "sgsi-api-handler"
+    Environment = "{spec.get('environment', 'dev')}"
+    Layer       = "3-compute"
+    Component   = "lambda"
+    Proposito   = "{spec.get('purpose', 'sgsi-api-processing')}"
+  }}
+}}
+
+# Lambda Function 2: Data Processor
+resource "aws_lambda_function" "sgsi_data_processor" {{
+  filename         = "data_processor.zip"
+  function_name    = "sgsi-data-processor"
+  role            = aws_iam_role.sgsi_lambda_role.arn
+  handler         = "processor.handler"
+  source_code_hash = filebase64sha256("data_processor.zip")
+  runtime         = "{spec.get('runtime', 'python3.9')}"
+  timeout         = {spec.get('timeout', 300)}
+  memory_size     = {spec.get('memory_size', 512)}
+
+  vpc_config {{
+    subnet_ids         = [
+      data.aws_subnet.sgsi_private_subnet_1.id,
+      data.aws_subnet.sgsi_private_subnet_2.id
+    ]
+    security_group_ids = [data.aws_security_group.sgsi_lambda_sg.id]
+  }}
+
+  environment {{
+    variables = {{
+      ENVIRONMENT = "{spec.get('environment', 'dev')}"
+      DB_HOST     = aws_db_instance.{spec.get('database_instance', 'sgsi_main_database').replace('-', '_')}.endpoint
+      DB_NAME     = "{spec.get('database_name', 'sgsidb')}"
+    }}
+  }}
+
+  tags = {{
+    Name        = "sgsi-data-processor"
+    Environment = "{spec.get('environment', 'dev')}"
+    Layer       = "3-compute"
+    Component   = "lambda"
+    Proposito   = "{spec.get('purpose', 'sgsi-data-processing')}"
+  }}
+}}
+
+# IAM Role for Lambda
+resource "aws_iam_role" "sgsi_lambda_role" {{
+  name = "sgsi-lambda-execution-role"
+
+  assume_role_policy = jsonencode({{
+    Version = "2012-10-17"
+    Statement = [
+      {{
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {{
+          Service = "lambda.amazonaws.com"
+        }}
+      }}
+    ]
+  }})
+
+  tags = {{
+    Name        = "sgsi-lambda-execution-role"
+    Environment = "{spec.get('environment', 'dev')}"
+    Layer       = "3-compute"
+  }}
+}}
+
+# Lambda VPC Execution Policy
+resource "aws_iam_role_policy_attachment" "sgsi_lambda_vpc_execution" {{
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+  role       = aws_iam_role.sgsi_lambda_role.name
+}}
+
+# CloudWatch Logs Policy
+resource "aws_iam_role_policy_attachment" "sgsi_lambda_logs" {{
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+  role       = aws_iam_role.sgsi_lambda_role.name
+}}
+
+# CloudWatch Log Groups
+resource "aws_cloudwatch_log_group" "sgsi_api_handler_logs" {{
+  name              = "/aws/lambda/sgsi-api-handler"
+  retention_in_days = {spec.get('log_retention_days', 14)}
+
+  tags = {{
+    Name        = "sgsi-api-handler-logs"
+    Environment = "{spec.get('environment', 'dev')}"
+    Layer       = "3-compute"
+  }}
+}}
+
+resource "aws_cloudwatch_log_group" "sgsi_data_processor_logs" {{
+  name              = "/aws/lambda/sgsi-data-processor"
+  retention_in_days = {spec.get('log_retention_days', 14)}
+
+  tags = {{
+    Name        = "sgsi-data-processor-logs"
+    Environment = "{spec.get('environment', 'dev')}"
+    Layer       = "3-compute"
+  }}
+}}
+'''
+
+        return content
+
+    def generate_asg_terraform(self, definition, source_file):
+        """Generate Terraform for Auto Scaling Group"""
+        asg_config = definition['auto_scaling']
+        name = asg_config['name']
+        spec = asg_config
+        
+        content = f'''# ASG Terraform generated from {source_file}
+# Auto Scaling Group for SGSI Layer 3
+
+resource "aws_autoscaling_group" "{name.replace('-', '_')}" {{
+  name                = "{name}"
+  vpc_zone_identifier = [
+    data.aws_subnet.sgsi_private_subnet_1.id,
+    data.aws_subnet.sgsi_private_subnet_2.id
+  ]
+  target_group_arns   = [aws_lb_target_group.sgsi_main_alb_tg.arn]
+  health_check_type   = "ELB"
+  health_check_grace_period = {spec.get('health_check_grace_period', 300)}
+
+  min_size         = {spec.get('min_size', 2)}
+  max_size         = {spec.get('max_size', 6)}
+  desired_capacity = {spec.get('desired_capacity', 2)}
+
+  launch_template {{
+    id      = data.aws_launch_template.sgsi_web_server_template.id
+    version = "$Latest"
+  }}
+
+  # Instance refresh settings
+  instance_refresh {{
+    strategy = "Rolling"
+    preferences {{
+      min_healthy_percentage = 50
+    }}
+  }}
+
+  tag {{
+    key                 = "Name"
+    value               = "{name}"
+    propagate_at_launch = true
+  }}
+
+  tag {{
+    key                 = "Environment"
+    value               = "{spec.get('environment', 'dev')}"
+    propagate_at_launch = true
+  }}
+
+  tag {{
+    key                 = "Layer"
+    value               = "3-compute"
+    propagate_at_launch = true
+  }}
+
+  tag {{
+    key                 = "Component"
+    value               = "web-server"
+    propagate_at_launch = true
+  }}
+
+  tag {{
+    key                 = "Proposito"
+    value               = "{spec.get('purpose', 'sgsi-web-application')}"
+    propagate_at_launch = true
+  }}
+}}
+
+# Auto Scaling Policy - Scale Up
+resource "aws_autoscaling_policy" "sgsi_scale_up" {{
+  name                   = "sgsi-scale-up"
+  scaling_adjustment     = {spec.get('scale_up_adjustment', 1)}
+  adjustment_type        = "ChangeInCapacity"
+  cooldown               = {spec.get('cooldown', 300)}
+  autoscaling_group_name = aws_autoscaling_group.{name.replace('-', '_')}.name
+}}
+
+# Auto Scaling Policy - Scale Down
+resource "aws_autoscaling_policy" "sgsi_scale_down" {{
+  name                   = "sgsi-scale-down"
+  scaling_adjustment     = {spec.get('scale_down_adjustment', -1)}
+  adjustment_type        = "ChangeInCapacity"
+  cooldown               = {spec.get('cooldown', 300)}
+  autoscaling_group_name = aws_autoscaling_group.{name.replace('-', '_')}.name
+}}
+
+# CloudWatch Alarm - High CPU
+resource "aws_cloudwatch_metric_alarm" "sgsi_high_cpu" {{
+  alarm_name          = "sgsi-high-cpu"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = "2"
+  metric_name         = "CPUUtilization"
+  namespace           = "AWS/EC2"
+  period              = "120"
+  statistic           = "Average"
+  threshold           = "{spec.get('high_cpu_threshold', 70)}"
+  alarm_description   = "This metric monitors ec2 cpu utilization"
+  alarm_actions       = [aws_autoscaling_policy.sgsi_scale_up.arn]
+
+  dimensions = {{
+    AutoScalingGroupName = aws_autoscaling_group.{name.replace('-', '_')}.name
+  }}
+
+  tags = {{
+    Name        = "sgsi-high-cpu-alarm"
+    Environment = "{spec.get('environment', 'dev')}"
+    Layer       = "3-compute"
+  }}
+}}
+
+# CloudWatch Alarm - Low CPU
+resource "aws_cloudwatch_metric_alarm" "sgsi_low_cpu" {{
+  alarm_name          = "sgsi-low-cpu"
+  comparison_operator = "LessThanThreshold"
+  evaluation_periods  = "2"
+  metric_name         = "CPUUtilization"
+  namespace           = "AWS/EC2"
+  period              = "120"
+  statistic           = "Average"
+  threshold           = "{spec.get('low_cpu_threshold', 30)}"
+  alarm_description   = "This metric monitors ec2 cpu utilization"
+  alarm_actions       = [aws_autoscaling_policy.sgsi_scale_down.arn]
+
+  dimensions = {{
+    AutoScalingGroupName = aws_autoscaling_group.{name.replace('-', '_')}.name
+  }}
+
+  tags = {{
+    Name        = "sgsi-low-cpu-alarm"
+    Environment = "{spec.get('environment', 'dev')}"
+    Layer       = "3-compute"
+  }}
+}}
+
+# Scheduled Scaling - Business Hours Scale Up
+resource "aws_autoscaling_schedule" "sgsi_business_hours_scale_up" {{
+  scheduled_action_name  = "sgsi-business-hours-scale-up"
+  min_size               = {spec.get('business_hours_min_size', 3)}
+  max_size               = {spec.get('max_size', 6)}
+  desired_capacity       = {spec.get('business_hours_desired_capacity', 3)}
+  recurrence             = "{spec.get('business_hours_start_cron', '0 8 * * MON-FRI')}"
+  autoscaling_group_name = aws_autoscaling_group.{name.replace('-', '_')}.name
+}}
+
+# Scheduled Scaling - Off Hours Scale Down
+resource "aws_autoscaling_schedule" "sgsi_off_hours_scale_down" {{
+  scheduled_action_name  = "sgsi-off-hours-scale-down"
+  min_size               = {spec.get('min_size', 2)}
+  max_size               = {spec.get('max_size', 6)}
+  desired_capacity       = {spec.get('desired_capacity', 2)}
+  recurrence             = "{spec.get('off_hours_start_cron', '0 18 * * MON-FRI')}"
+  autoscaling_group_name = aws_autoscaling_group.{name.replace('-', '_')}.name
+}}
+'''
+
+        return content
 
 def main():
     parser = argparse.ArgumentParser(description='Generate IAM Terraform from YAML definitions')

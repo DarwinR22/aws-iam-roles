@@ -2,9 +2,7 @@
 # Generated: 2025-10-18
 # This file contains all shared data sources to avoid duplicates
 
-# =========================================
 # VPC DATA SOURCE
-# =========================================
 data "aws_vpc" "sgsi_vpc_main" {
   filter {
     name   = "tag:Name"
@@ -12,10 +10,7 @@ data "aws_vpc" "sgsi_vpc_main" {
   }
 }
 
-# =========================================
-# SUBNET DATA SOURCES
-# =========================================
-# DMZ Subnets (Public)
+# SUBNET DATA SOURCES - DMZ (Public)
 data "aws_subnet" "sgsi_dmz_subnet_us_east_1a" {
   filter {
     name   = "tag:Name"
@@ -37,7 +32,7 @@ data "aws_subnet" "sgsi_dmz_subnet_us_east_1c" {
   }
 }
 
-# App Subnets (Private)
+# SUBNET DATA SOURCES - App (Private)
 data "aws_subnet" "sgsi_app_subnet_us_east_1a" {
   filter {
     name   = "tag:Name"
@@ -59,7 +54,7 @@ data "aws_subnet" "sgsi_app_subnet_us_east_1c" {
   }
 }
 
-# DB Subnets (Isolated)
+# SUBNET DATA SOURCES - DB (Isolated)
 data "aws_subnet" "sgsi_db_subnet_us_east_1a" {
   filter {
     name   = "tag:Name"
@@ -81,9 +76,7 @@ data "aws_subnet" "sgsi_db_subnet_us_east_1c" {
   }
 }
 
-# =========================================
 # SECURITY GROUP DATA SOURCES
-# =========================================
 data "aws_security_group" "sgsi_alb_sg" {
   filter {
     name   = "tag:Name"
@@ -119,9 +112,7 @@ data "aws_security_group" "sgsi_lambda_sg" {
   }
 }
 
-# =========================================
 # LAUNCH TEMPLATE DATA SOURCE
-# =========================================
 data "aws_launch_template" "sgsi_web_server_template" {
   name = "sgsi-web-server-template"
 }

@@ -1,229 +1,107 @@
-# EC2 Instances generated from sgsi-web-servers.yaml
-# Generated: 2025-10-18
-# Updated: Force workflow triggerT22:18:12.464579
+# EC2 Terraform generated from sgsi-web-servers.yaml
+# EC2 Web Servers for SGSI Layer 3
 
-
-# Launch Template
+# Launch Template for Web Servers
 resource "aws_launch_template" "sgsi_web_server_template" {
-  name_prefix   = "sgsi-web-server-template-"
-  description   = "Template para servidores web SGSI con configuración estandarizada"
+  name_prefix   = "sgsi-web-server-"
+  image_id      = "ami-0abcdef1234567890"
+  instance_type = "t3.micro"
   
-  image_id      = "ami-0c55b159cbfafe1d0"
-  instance_type = "t3.medium"
-  key_name      = "sgsi-keypair"
-  
-  vpc_security_group_ids = [
-    data.aws_security_group.sgsi_web_sg.id,
-    data.aws_security_group.sgsi_app_sg.id,
-  ]
-  
-  iam_instance_profile {
-    name = "sgsi-web-instance-profile"
-  }
-  
-  block_device_mappings {
-    device_name = "/dev/xvda"
-    ebs {
-      volume_type = "gp3"
-      volume_size = 20
-      iops        = 3000
-      throughput  = 125
-      encrypted   = true
-      delete_on_termination = true
-    }
-  }
+  vpc_security_group_ids = [data.aws_security_group.sgsi_web_sg.id]
   
   user_data = base64encode(<<-EOF
-#!/bin/bash
-# SGSI Web Server Bootstrap Script
-yum update -y
-
-# Install web server and tools
-yum install -y httpd php mysql git htop awscli
-
-# Configure Apache
-systemctl enable httpd
-systemctl start httpd
-
-# Install CloudWatch agent
-wget https://s3.amazonaws.com/amazoncloudwatch-agent/amazon_linux/amd64/latest/amazon-cloudwatch-agent.rpm
-rpm -U ./amazon-cloudwatch-agent.rpm
-
-# Create web application
-cat > /var/www/html/index.php << 'EOF'
-<?php
-$instance_id = file_get_contents("http://169.254.169.254/latest/meta-data/instance-id");
-$availability_zone = file_get_contents("http://169.254.169.254/latest/meta-data/placement/availability-zone");
-?>
-<!DOCTYPE html>
-<html>
-<head>
-    <title>SGSI Layer 3 - Web Server</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 40px; }
-        .header { background-color: #4CAF50; color: white; padding: 20px; }
-        .info { background-color: #f1f1f1; padding: 15px; margin: 10px 0; }
-    </style>
-</head>
-<body>
-    <div class="header">
-        <h1>🛡️ SGSI Layer 3 - Compute Infrastructure</h1>
-    </div>
-    <div class="info">
-        <h2>Server Information</h2>
-        <p><strong>Instance ID:</strong> <?php echo $instance_id; ?></p>
-        <p><strong>Availability Zone:</strong> <?php echo $availability_zone; ?></p>
-        <p><strong>Server Time:</strong> <?php echo date('Y-m-d H:i:s'); ?></p>
-        <p><strong>Layer:</strong> Layer 3 - Compute</p>
-        <p><strong>Status:</strong> ✅ Active</p>
-    </div>
-    <div class="info">
-        <h2>Health Check Endpoint</h2>
-        <p><a href="/health">/health</a> - ALB Health Check</p>
-        <p><a href="/api/health">/api/health</a> - API Health Check</p>
-    </div>
-</body>
-</html>
-EOF
-
-# Create health check endpoints
-cat > /var/www/html/health << 'EOF'
-OK
-EOF
-
-mkdir -p /var/www/html/api
-cat > /var/www/html/api/health << 'EOF'
-{"status":"healthy","timestamp":"<?php echo time(); ?>","layer":"compute"}
-EOF
-
-# Set permissions
-chown -R apache:apache /var/www/html/
-chmod -R 644 /var/www/html/
-
-# Configure CloudWatch monitoring
-cat > /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json << 'EOF'
-{
-  "metrics": {
-    "namespace": "SGSI/Layer3",
-    "metrics_collected": {
-      "cpu": {
-        "measurement": ["cpu_usage_idle", "cpu_usage_iowait"],
-        "metrics_collection_interval": 60
-      },
-      "disk": {
-        "measurement": ["used_percent"],
-        "metrics_collection_interval": 60,
-        "resources": ["*"]
-      },
-      "mem": {
-        "measurement": ["mem_used_percent"],
-        "metrics_collection_interval": 60
+    #!/bin/bash
+    yum update -y
+    yum install -y httpd
+    systemctl start httpd
+    systemctl enable httpd
+    
+    # Create health check endpoint
+    echo "<h1>SGSI Web Server</h1>" > /var/www/html/index.html
+    echo "OK" > /var/www/html/health
+    
+    # Install CloudWatch Agent
+    yum install -y amazon-cloudwatch-agent
+    
+    # Configure CloudWatch monitoring
+    cat > /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json <<EOL
+    {
+      "metrics": {
+        "namespace": "SGSI/EC2",
+        "metrics_collected": {
+          "cpu": {"measurement": ["cpu_usage_idle", "cpu_usage_iowait", "cpu_usage_user", "cpu_usage_system"]},
+          "disk": {"measurement": ["used_percent"], "resources": ["*"]},
+          "mem": {"measurement": ["mem_used_percent"]}
+        }
       }
     }
-  },
-  "logs": {
-    "logs_collected": {
-      "files": {
-        "collect_list": [
-          {
-            "file_path": "/var/log/httpd/access_log",
-            "log_group_name": "/sgsi/layer3/web/access",
-            "log_stream_name": "{instance_id}"
-          },
-          {
-            "file_path": "/var/log/httpd/error_log", 
-            "log_group_name": "/sgsi/layer3/web/error",
-            "log_stream_name": "{instance_id}"
-          }
-        ]
-      }
-    }
-  }
-}
-EOF
-
-# Start CloudWatch agent
-/opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
-  -a fetch-config -m ec2 -c file:/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json -s
-
-# Send success signal
-echo "SGSI Web Server bootstrap completed successfully" > /var/log/sgsi-bootstrap.log
-
-EOF
+EOL
+    
+    /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
+      -a fetch-config -m ec2 -c file:/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json -s
+  EOF
   )
 
+  iam_instance_profile {
+    name = aws_iam_instance_profile.sgsi_ec2_profile.name
+  }
+
+  tag_specifications {
+    resource_type = "instance"
+    tags = {
+      Name        = "sgsi-web-servers"
+      Environment = "dev"
+      Layer       = "3-compute"
+      Component   = "web-server"
+      Proposito   = "sgsi-web-application"
+    }
+  }
+
   tags = {
-    "Pais" = "RG"
-    "Gerencia" = "MejoraContinuaEInformacion"
-    "Area" = "DevOps"
-    "Ambiente" = "DEV"
-    "Direccion" = "TICENAM"
-    "Modulo" = "WebServers"
-    "AlcanceSOX" = "No"
-    "Propietario" = "DarwinLopez"
-    "Proveedor" = "InHouse"
-    "Layer" = "SGSI-Layer3-Compute"
-    "Dominio" = "BusinessIntelligence"
-    "Subdominio" = "WebServices"
-    "Aplicacion" = "SGSI"
-    "Name" = "sgsi-web-servers"
-    "Tipo de Recurso" = "EC2Instance"
-    "Soporte" = "darwin.lopez@claro.com.gt"
-    "Contacto" = "darwin.lopez@claro.com.gt"
-    "Creado Por" = "DarwinLopez"
-    "Ciclo de Vida" = "Desarrollo"
-    "Version" = "v1.0.0"
-    "Fecha de Creacion" = "2025-10-18"
-    "Confidencialidad" = "Interno"
-    "Criticidad" = "Alta"
-    "BackupRequired" = "Yes"
-    "PatchGroup" = "WebServers"
+    Name        = "sgsi-web-server-template"
+    Environment = "dev"
+    Layer       = "3-compute"
   }
 }
 
+# IAM Role for EC2 instances
+resource "aws_iam_role" "sgsi_ec2_role" {
+  name = "sgsi-ec2-cloudwatch-role"
 
-# EC2 Instance: sgsi-web-server-1
-resource "aws_instance" "sgsi_web_server_1" {
-  launch_template {
-    id      = aws_launch_template.sgsi_web_server_template.id
-    version = "$Latest"
-  }
-  
-  subnet_id         = data.aws_subnet.sgsi_app_subnet_us_east_1a.id
-  availability_zone = "us-east-1a"
-  
-  instance_type = "t3.medium"
-  
-  tags = merge(aws_launch_template.sgsi_web_server_template.tags, {
-    "Server" = "Primary"
-    "AZ" = "us-east-1a"
-    "Role" = "WebServer"
-    "Environment" = "Development"
-    "Name" = "sgsi-web-server-1"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+      }
+    ]
   })
-}
 
-
-# EC2 Instance: sgsi-web-server-2
-resource "aws_instance" "sgsi_web_server_2" {
-  launch_template {
-    id      = aws_launch_template.sgsi_web_server_template.id
-    version = "$Latest"
+  tags = {
+    Name        = "sgsi-ec2-cloudwatch-role"
+    Environment = "dev"
+    Layer       = "3-compute"
   }
-  
-  subnet_id         = data.aws_subnet.sgsi_app_subnet_us_east_1b.id
-  availability_zone = "us-east-1b"
-  
-  instance_type = "t3.medium"
-  
-  tags = merge(aws_launch_template.sgsi_web_server_template.tags, {
-    "Server" = "Secondary"
-    "AZ" = "us-east-1b"
-    "Role" = "WebServer"
-    "Environment" = "Development"
-    "Name" = "sgsi-web-server-2"
-  })
 }
 
-# Data sources are defined in compute-shared-data-sources.tf
+# IAM Policy for CloudWatch
+resource "aws_iam_role_policy_attachment" "sgsi_ec2_cloudwatch" {
+  policy_arn = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+  role       = aws_iam_role.sgsi_ec2_role.name
+}
 
+# Instance Profile
+resource "aws_iam_instance_profile" "sgsi_ec2_profile" {
+  name = "sgsi-ec2-profile"
+  role = aws_iam_role.sgsi_ec2_role.name
+
+  tags = {
+    Name        = "sgsi-ec2-profile"
+    Environment = "dev"
+    Layer       = "3-compute"
+  }
+}
