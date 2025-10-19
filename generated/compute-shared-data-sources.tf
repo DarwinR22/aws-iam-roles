@@ -116,26 +116,26 @@ data "aws_security_group" "sgsi_lambda_sg" {
 locals {
   # VPC
   vpc_id = data.aws_vpc.sgsi_vpc_main.id
-  
+
   # Subnet Groups
   public_subnet_ids = [
     data.aws_subnet.sgsi_dmz_subnet_us_east_1a.id,
     data.aws_subnet.sgsi_dmz_subnet_us_east_1b.id,
     data.aws_subnet.sgsi_dmz_subnet_us_east_1c.id
   ]
-  
+
   private_subnet_ids = [
     data.aws_subnet.sgsi_app_subnet_us_east_1a.id,
     data.aws_subnet.sgsi_app_subnet_us_east_1b.id,
     data.aws_subnet.sgsi_app_subnet_us_east_1c.id
   ]
-  
+
   db_subnet_ids = [
     data.aws_subnet.sgsi_db_subnet_us_east_1a.id,
     data.aws_subnet.sgsi_db_subnet_us_east_1b.id,
     data.aws_subnet.sgsi_db_subnet_us_east_1c.id
   ]
-  
+
   # Security Groups
   alb_sg_id    = data.aws_security_group.sgsi_alb_sg.id
   web_sg_id    = data.aws_security_group.sgsi_web_sg.id

@@ -42,40 +42,40 @@ resource "aws_db_instance" "sgsi_main_database" {
   engine         = "mysql"
   engine_version = "8.0"
   instance_class = "db.t3.micro"
-  
+
   allocated_storage     = 20
   max_allocated_storage = 100
   storage_type          = "gp2"
   storage_encrypted     = true
-  
+
   db_name  = "sgsidb"
   username = "admin"
   password = "ChangeMe123!"
-  
+
   vpc_security_group_ids = [local.db_sg_id]
   db_subnet_group_name   = aws_db_subnet_group.sgsi_db_subnet_group.name
   parameter_group_name   = aws_db_parameter_group.sgsi_mysql_params.name
-  
-  multi_az               = true
-  publicly_accessible    = false
+
+  multi_az                = true
+  publicly_accessible     = false
   backup_retention_period = 7
-  backup_window          = "03:00-04:00"
-  maintenance_window     = "sun:04:00-sun:05:00"
-  
-  deletion_protection = false
-  skip_final_snapshot = false
+  backup_window           = "03:00-04:00"
+  maintenance_window      = "sun:04:00-sun:05:00"
+
+  deletion_protection       = false
+  skip_final_snapshot       = false
   final_snapshot_identifier = "sgsi-main-database-final-snapshot"
-  
+
   # Performance Insights
-  performance_insights_enabled = true
+  performance_insights_enabled          = true
   performance_insights_retention_period = 7
-  
+
   # Enhanced monitoring
   monitoring_interval = 60
   monitoring_role_arn = aws_iam_role.sgsi_rds_monitoring_role.arn
-  
+
   enabled_cloudwatch_logs_exports = ["error", "general", "slowquery"]
-  
+
   tags = {
     Name        = "sgsi-main-database"
     Environment = "dev"
