@@ -787,3 +787,5 @@ Este proyecto está bajo la Licencia MIT - ver [LICENSE](LICENSE) para detalles.
 - ✅ **Políticas ABAC Reales**: Tag-based access control funcional
 - ✅ **Limpieza Legacy**: Eliminadas referencias a policies.yaml V1
 - ✅ **Scripts Modernizados**: Solo soportan catálogo V2
+#   D e p l o y m e n t   t e s t   w i t h   i n l i n e   p o l i c y   -   1 0 / 1 8 / 2 0 2 5   2 0 : 5 3 : 3 1  
+ 

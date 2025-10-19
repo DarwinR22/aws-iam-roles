@@ -42,14 +42,6 @@ policy:
         - "lambda:UntagResource"
         - "lambda:ListTags"
       resource: "*"
-      conditions:
-        StringEquals:
-          "aws:RequestedRegion": "us-east-1"
-        StringLike:
-          "lambda:FunctionName": 
-            - "mci-*"
-            - "github-*"
-            - "sgsi-*"
 
     # ===========================================
     # S3 PERMISSIONS (from github-deployment-s3)
