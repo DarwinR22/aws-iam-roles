@@ -1,7 +1,11 @@
 # ==============================================================================
 # VPC Module: main-vpc
 # ==============================================================================
+<<<<<<< HEAD:generated/network-main-vpc.tf
 # Generated: 2025-10-18T20:24:33.706388
+=======
+# Generated: 2025-10-19T02:21:22.239162
+>>>>>>> fa720ecd0ece8054553aa20e31aa53c1ba52877d:generated/network/main-vpc.tf
 # Source: main-vpc.yaml
 # ==============================================================================
 
@@ -14,13 +18,13 @@ resource "aws_vpc" "main_vpc" {
 
   tags = merge(
     {
-      Name = "main-vpc"
-"Environment" = "dev"
-"Project" = "aws-iam-roles"
-"ManagedBy" = "Terraform"
-"Owner" = "DarwinLopez"
-"Purpose" = "NetworkInfrastructure"
-},
+      Name          = "main-vpc"
+      "Environment" = "dev"
+      "Project"     = "aws-iam-roles"
+      "ManagedBy"   = "Terraform"
+      "Owner"       = "DarwinLopez"
+      "Purpose"     = "NetworkInfrastructure"
+    },
     var.additional_tags
   )
 }
@@ -31,13 +35,13 @@ resource "aws_internet_gateway" "main_igw" {
 
   tags = merge(
     {
-      Name = "main-igw"
-"Environment" = "dev"
-"Project" = "aws-iam-roles"
-"ManagedBy" = "Terraform"
-"Owner" = "DarwinLopez"
-"Purpose" = "NetworkInfrastructure"
-},
+      Name          = "main-igw"
+      "Environment" = "dev"
+      "Project"     = "aws-iam-roles"
+      "ManagedBy"   = "Terraform"
+      "Owner"       = "DarwinLopez"
+      "Purpose"     = "NetworkInfrastructure"
+    },
     var.additional_tags
   )
 }
@@ -51,14 +55,14 @@ resource "aws_subnet" "public_subnet_1a" {
 
   tags = merge(
     {
-      Name = "public-subnet-1a"
-      Type = "public"
-"Environment" = "dev"
-"Project" = "aws-iam-roles"
-"ManagedBy" = "Terraform"
-"Owner" = "DarwinLopez"
-"Purpose" = "NetworkInfrastructure"
-},
+      Name          = "public-subnet-1a"
+      Type          = "public"
+      "Environment" = "dev"
+      "Project"     = "aws-iam-roles"
+      "ManagedBy"   = "Terraform"
+      "Owner"       = "DarwinLopez"
+      "Purpose"     = "NetworkInfrastructure"
+    },
     var.additional_tags
   )
 }
@@ -71,14 +75,14 @@ resource "aws_subnet" "public_subnet_1b" {
 
   tags = merge(
     {
-      Name = "public-subnet-1b"
-      Type = "public"
-"Environment" = "dev"
-"Project" = "aws-iam-roles"
-"ManagedBy" = "Terraform"
-"Owner" = "DarwinLopez"
-"Purpose" = "NetworkInfrastructure"
-},
+      Name          = "public-subnet-1b"
+      Type          = "public"
+      "Environment" = "dev"
+      "Project"     = "aws-iam-roles"
+      "ManagedBy"   = "Terraform"
+      "Owner"       = "DarwinLopez"
+      "Purpose"     = "NetworkInfrastructure"
+    },
     var.additional_tags
   )
 }
@@ -91,14 +95,14 @@ resource "aws_subnet" "private_subnet_1a" {
 
   tags = merge(
     {
-      Name = "private-subnet-1a"
-      Type = "private"
-"Environment" = "dev"
-"Project" = "aws-iam-roles"
-"ManagedBy" = "Terraform"
-"Owner" = "DarwinLopez"
-"Purpose" = "NetworkInfrastructure"
-},
+      Name          = "private-subnet-1a"
+      Type          = "private"
+      "Environment" = "dev"
+      "Project"     = "aws-iam-roles"
+      "ManagedBy"   = "Terraform"
+      "Owner"       = "DarwinLopez"
+      "Purpose"     = "NetworkInfrastructure"
+    },
     var.additional_tags
   )
 }
@@ -111,14 +115,14 @@ resource "aws_subnet" "private_subnet_1b" {
 
   tags = merge(
     {
-      Name = "private-subnet-1b"
-      Type = "private"
-"Environment" = "dev"
-"Project" = "aws-iam-roles"
-"ManagedBy" = "Terraform"
-"Owner" = "DarwinLopez"
-"Purpose" = "NetworkInfrastructure"
-},
+      Name          = "private-subnet-1b"
+      Type          = "private"
+      "Environment" = "dev"
+      "Project"     = "aws-iam-roles"
+      "ManagedBy"   = "Terraform"
+      "Owner"       = "DarwinLopez"
+      "Purpose"     = "NetworkInfrastructure"
+    },
     var.additional_tags
   )
 }
@@ -131,14 +135,14 @@ resource "aws_subnet" "db_subnet_1a" {
 
   tags = merge(
     {
-      Name = "db-subnet-1a"
-      Type = "database"
-"Environment" = "dev"
-"Project" = "aws-iam-roles"
-"ManagedBy" = "Terraform"
-"Owner" = "DarwinLopez"
-"Purpose" = "NetworkInfrastructure"
-},
+      Name          = "db-subnet-1a"
+      Type          = "database"
+      "Environment" = "dev"
+      "Project"     = "aws-iam-roles"
+      "ManagedBy"   = "Terraform"
+      "Owner"       = "DarwinLopez"
+      "Purpose"     = "NetworkInfrastructure"
+    },
     var.additional_tags
   )
 }
@@ -151,14 +155,14 @@ resource "aws_subnet" "db_subnet_1b" {
 
   tags = merge(
     {
-      Name = "db-subnet-1b"
-      Type = "database"
-"Environment" = "dev"
-"Project" = "aws-iam-roles"
-"ManagedBy" = "Terraform"
-"Owner" = "DarwinLopez"
-"Purpose" = "NetworkInfrastructure"
-},
+      Name          = "db-subnet-1b"
+      Type          = "database"
+      "Environment" = "dev"
+      "Project"     = "aws-iam-roles"
+      "ManagedBy"   = "Terraform"
+      "Owner"       = "DarwinLopez"
+      "Purpose"     = "NetworkInfrastructure"
+    },
     var.additional_tags
   )
 }
@@ -167,19 +171,19 @@ resource "aws_subnet" "db_subnet_1b" {
 # Elastic IPs for NAT Gateways
 resource "aws_eip" "nat_gw_1a_eip" {
   domain = "vpc"
-  
+
   tags = merge(
     {
-      Name = "nat-gw-1a-eip"
-"Environment" = "dev"
-"Project" = "aws-iam-roles"
-"ManagedBy" = "Terraform"
-"Owner" = "DarwinLopez"
-"Purpose" = "NetworkInfrastructure"
-},
+      Name          = "nat-gw-1a-eip"
+      "Environment" = "dev"
+      "Project"     = "aws-iam-roles"
+      "ManagedBy"   = "Terraform"
+      "Owner"       = "DarwinLopez"
+      "Purpose"     = "NetworkInfrastructure"
+    },
     var.additional_tags
   )
-  
+
   depends_on = [aws_internet_gateway.main_igw]
 }
 
@@ -190,13 +194,13 @@ resource "aws_nat_gateway" "nat_gw_1a" {
 
   tags = merge(
     {
-      Name = "nat-gw-1a"
-"Environment" = "dev"
-"Project" = "aws-iam-roles"
-"ManagedBy" = "Terraform"
-"Owner" = "DarwinLopez"
-"Purpose" = "NetworkInfrastructure"
-},
+      Name          = "nat-gw-1a"
+      "Environment" = "dev"
+      "Project"     = "aws-iam-roles"
+      "ManagedBy"   = "Terraform"
+      "Owner"       = "DarwinLopez"
+      "Purpose"     = "NetworkInfrastructure"
+    },
     var.additional_tags
   )
 
@@ -210,19 +214,19 @@ resource "aws_route_table" "public_rt" {
 
   route {
     cidr_block = "0.0.0.0/0"
-gateway_id = aws_internet_gateway.main_igw.id
-}
+    gateway_id = aws_internet_gateway.main_igw.id
+  }
 
   tags = merge(
     {
-      Name = "public-rt"
-      Type = "public"
-"Environment" = "dev"
-"Project" = "aws-iam-roles"
-"ManagedBy" = "Terraform"
-"Owner" = "DarwinLopez"
-"Purpose" = "NetworkInfrastructure"
-},
+      Name          = "public-rt"
+      Type          = "public"
+      "Environment" = "dev"
+      "Project"     = "aws-iam-roles"
+      "ManagedBy"   = "Terraform"
+      "Owner"       = "DarwinLopez"
+      "Purpose"     = "NetworkInfrastructure"
+    },
     var.additional_tags
   )
 }
@@ -241,20 +245,20 @@ resource "aws_route_table" "private_rt_1a" {
   vpc_id = aws_vpc.main_vpc.id
 
   route {
-    cidr_block = "0.0.0.0/0"
-nat_gateway_id = aws_nat_gateway.nat_gw_1a.id
-}
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.nat_gw_1a.id
+  }
 
   tags = merge(
     {
-      Name = "private-rt-1a"
-      Type = "private"
-"Environment" = "dev"
-"Project" = "aws-iam-roles"
-"ManagedBy" = "Terraform"
-"Owner" = "DarwinLopez"
-"Purpose" = "NetworkInfrastructure"
-},
+      Name          = "private-rt-1a"
+      Type          = "private"
+      "Environment" = "dev"
+      "Project"     = "aws-iam-roles"
+      "ManagedBy"   = "Terraform"
+      "Owner"       = "DarwinLopez"
+      "Purpose"     = "NetworkInfrastructure"
+    },
     var.additional_tags
   )
 }
