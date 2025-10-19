@@ -3,7 +3,7 @@
 import sys
 import io
 
-# Force UTF-8 encoding for Windows console - Updated for workflow trigger
+# Force UTF-8 encoding for Windows console - Fix launch template references
 if sys.platform == 'win32':
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
     sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
@@ -755,11 +755,6 @@ data "aws_security_group" "sgsi_lambda_sg" {
   }
 }
 
-# LAUNCH TEMPLATE DATA SOURCE
-data "aws_launch_template" "sgsi_web_server_template" {
-  name = "sgsi-web-server-template"
-}
-
 # LOCAL VALUES for easy reference
 locals {
   # VPC
@@ -1286,7 +1281,7 @@ resource "aws_autoscaling_group" "{name.replace('-', '_')}" {{
   desired_capacity = {spec.get('desired_capacity', 2)}
 
   launch_template {{
-    id      = data.aws_launch_template.sgsi_web_server_template.id
+    id      = aws_launch_template.sgsi_web_server_template.id
     version = "$Latest"
   }}
 
