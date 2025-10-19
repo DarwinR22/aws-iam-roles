@@ -84,6 +84,10 @@ role:
     - name: "github-deployment-cloudformation"
       file: "github-deployment-cloudformation.yaml"
       description: "CloudFormation stacks y KMS encryption con ViaService conditions"
+      
+    - name: "github-deployment-ec2"
+      file: "github-deployment-ec2.yaml"
+      description: "Permisos EC2 y VPC para desplegar infraestructura de red SGSI (VPC, Security Groups, Subnets, etc.)"
 
   # Organizational tags for compliance and governance
   tags:
