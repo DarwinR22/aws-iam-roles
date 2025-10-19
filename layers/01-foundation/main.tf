@@ -81,8 +81,10 @@ data "aws_iam_role" "github_actions_deployment_role" {
 # }
 
 # ==============================================================================
-# IAM POLICY MODULES (Import from existing modules)
+# IAM POLICY MODULES (9 Consolidated Policies - Within AWS 10-Policy Limit)
 # ==============================================================================
+
+# Core IAM Management
 module "github_deployment_iam" {
   source = "../../generated/modules/policies/github_deployment_iam"
   
@@ -91,6 +93,7 @@ module "github_deployment_iam" {
   common_tags     = var.common_tags
 }
 
+# STS Role Assumptions
 module "github_deployment_sts" {
   source = "../../generated/modules/policies/github_deployment_sts"
   
@@ -99,54 +102,34 @@ module "github_deployment_sts" {
   common_tags     = var.common_tags
 }
 
-module "github_deployment_tfstate" {
-  source = "../../generated/modules/policies/github_deployment_tfstate"
+# Consolidated: Infrastructure (Network + Compute)
+module "github_deployment_infrastructure" {
+  source = "../../generated/modules/policies/github_deployment_infrastructure"
   
   environment      = var.environment
   abac_conditions  = var.abac_conditions
   common_tags     = var.common_tags
 }
 
-module "github_deployment_network" {
-  source = "../../generated/modules/policies/github_deployment_network"
+# Consolidated: Deployment (CloudFormation + Terraform State)
+module "github_deployment_deployment" {
+  source = "../../generated/modules/policies/github_deployment_deployment"
   
   environment      = var.environment
   abac_conditions  = var.abac_conditions
   common_tags     = var.common_tags
 }
 
-module "github_deployment_compute" {
-  source = "../../generated/modules/policies/github_deployment_compute"
+# Consolidated: Observability (CloudWatch + Monitoring)
+module "github_deployment_observability" {
+  source = "../../generated/modules/policies/github_deployment_observability"
   
   environment      = var.environment
   abac_conditions  = var.abac_conditions
   common_tags     = var.common_tags
 }
 
-module "github_deployment_database" {
-  source = "../../generated/modules/policies/github_deployment_database"
-  
-  environment      = var.environment
-  abac_conditions  = var.abac_conditions
-  common_tags     = var.common_tags
-}
-
-module "github_deployment_storage" {
-  source = "../../generated/modules/policies/github_deployment_storage"
-  
-  environment      = var.environment
-  abac_conditions  = var.abac_conditions
-  common_tags     = var.common_tags
-}
-
-module "github_deployment_monitoring" {
-  source = "../../generated/modules/policies/github_deployment_monitoring"
-  
-  environment      = var.environment
-  abac_conditions  = var.abac_conditions
-  common_tags     = var.common_tags
-}
-
+# Application Services (Lambda, EventBridge, etc.)
 module "github_deployment_application" {
   source = "../../generated/modules/policies/github_deployment_application"
   
@@ -155,22 +138,25 @@ module "github_deployment_application" {
   common_tags     = var.common_tags
 }
 
-module "github_deployment_cloudformation" {
-  source = "../../generated/modules/policies/github_deployment_cloudformation"
+# Database Services
+module "github_deployment_database" {
+  source = "../../generated/modules/policies/github_deployment_database"
   
   environment      = var.environment
   abac_conditions  = var.abac_conditions
   common_tags     = var.common_tags
 }
 
-module "github_deployment_cloudwatch" {
-  source = "../../generated/modules/policies/github_deployment_cloudwatch"
+# Storage Services
+module "github_deployment_storage" {
+  source = "../../generated/modules/policies/github_deployment_storage"
   
   environment      = var.environment
   abac_conditions  = var.abac_conditions
   common_tags     = var.common_tags
 }
 
+# Glue/ETL Services
 module "github_deployment_glue" {
   source = "../../generated/modules/policies/github_deployment_glue"
   
@@ -180,22 +166,19 @@ module "github_deployment_glue" {
 }
 
 # ==============================================================================
-# POLICY ATTACHMENTS
+# POLICY ATTACHMENTS (9 Consolidated Policies)
 # ==============================================================================
 # Commented out - using existing role with existing permissions for this deployment
 # resource "aws_iam_role_policy_attachment" "github_deployment_policies" {
 #   for_each = {
 #     iam            = module.github_deployment_iam.policy_arn
 #     sts            = module.github_deployment_sts.policy_arn
-#     tfstate        = module.github_deployment_tfstate.policy_arn
-#     network        = module.github_deployment_network.policy_arn
-#     compute        = module.github_deployment_compute.policy_arn
+#     infrastructure = module.github_deployment_infrastructure.policy_arn  # network + compute
+#     deployment     = module.github_deployment_deployment.policy_arn      # cloudformation + tfstate
+#     observability  = module.github_deployment_observability.policy_arn   # cloudwatch + monitoring
+#     application    = module.github_deployment_application.policy_arn
 #     database       = module.github_deployment_database.policy_arn
 #     storage        = module.github_deployment_storage.policy_arn
-#     monitoring     = module.github_deployment_monitoring.policy_arn
-#     application    = module.github_deployment_application.policy_arn
-#     cloudformation = module.github_deployment_cloudformation.policy_arn
-#     cloudwatch     = module.github_deployment_cloudwatch.policy_arn
 #     glue           = module.github_deployment_glue.policy_arn
 #   }
 #
