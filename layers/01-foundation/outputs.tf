@@ -25,7 +25,7 @@ output "policy_arns" {
   value = {
     iam         = module.github_deployment_iam.policy_arn         # IAM + STS consolidated
     network     = module.github_deployment_network.policy_arn     # VPC infrastructure
-    compute     = module.github_deployment_compute.policy_arn     # EC2, ALB, Auto Scaling
+    # compute - temporarily removed (will add as 10th policy later)
     cloudwatch  = module.github_deployment_cloudwatch.policy_arn  # Logs, metrics, SNS
     monitoring  = module.github_deployment_monitoring.policy_arn  # Security monitoring
     deployment  = module.github_deployment_deployment.policy_arn  # CloudFormation + tfstate

@@ -102,15 +102,6 @@ module "github_deployment_network" {
   common_tags     = var.common_tags
 }
 
-# Compute Infrastructure (EC2, ALB, Auto Scaling)
-module "github_deployment_compute" {
-  source = "../../generated/modules/policies/github_deployment_compute"
-  
-  environment      = var.environment
-  abac_conditions  = var.abac_conditions
-  common_tags     = var.common_tags
-}
-
 # CloudWatch (Logs, Metrics, SNS)
 module "github_deployment_cloudwatch" {
   source = "../../generated/modules/policies/github_deployment_cloudwatch"
