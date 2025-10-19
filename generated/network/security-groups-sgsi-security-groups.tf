@@ -1,11 +1,11 @@
 # Security Groups generated from sgsi-security-groups.yaml
-# Generated: 2025-10-18T20:18:36.408138
+# Generated: 2025-10-19T02:21:22.254487
 
 
 resource "aws_security_group" "sgsi_alb_sg" {
   name        = "sgsi-alb-sg"
   description = "Security Group for Application Load Balancer (DMZ Tier)"
-  
+
   # Ingress rules
   ingress {
     from_port   = 80
@@ -31,9 +31,9 @@ resource "aws_security_group" "sgsi_alb_sg" {
   }
 
   tags = {
-    Name = "sgsi-alb-sg"
-    Tier = "dmz"
-    SecurityLevel = "High"
+    Name            = "sgsi-alb-sg"
+    Tier            = "dmz"
+    SecurityLevel   = "High"
     ComplianceScope = "ISO27001"
   }
 }
@@ -42,21 +42,21 @@ resource "aws_security_group" "sgsi_alb_sg" {
 resource "aws_security_group" "sgsi_web_sg" {
   name        = "sgsi-web-sg"
   description = "Security Group for Web Servers (Application Tier)"
-  
+
   # Ingress rules
   ingress {
-    from_port   = 8080
-    to_port     = 8080
-    protocol    = "tcp"
+    from_port       = 8080
+    to_port         = 8080
+    protocol        = "tcp"
     security_groups = [aws_security_group.sgsi_alb_sg.id]
-    description = "HTTP from ALB only"
+    description     = "HTTP from ALB only"
   }
   ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
+    from_port       = 22
+    to_port         = 22
+    protocol        = "tcp"
     security_groups = [aws_security_group.sgsi_mgmt_sg.id]
-    description = "SSH from management subnet only"
+    description     = "SSH from management subnet only"
   }
 
   # Egress rules
@@ -81,9 +81,9 @@ resource "aws_security_group" "sgsi_web_sg" {
   }
 
   tags = {
-    Name = "sgsi-web-sg"
-    Tier = "application"
-    SecurityLevel = "High"
+    Name            = "sgsi-web-sg"
+    Tier            = "application"
+    SecurityLevel   = "High"
     ComplianceScope = "ISO27001"
   }
 }
@@ -92,21 +92,21 @@ resource "aws_security_group" "sgsi_web_sg" {
 resource "aws_security_group" "sgsi_app_sg" {
   name        = "sgsi-app-sg"
   description = "Security Group for Application Servers (Application Tier)"
-  
+
   # Ingress rules
   ingress {
-    from_port   = 8443
-    to_port     = 8443
-    protocol    = "tcp"
+    from_port       = 8443
+    to_port         = 8443
+    protocol        = "tcp"
     security_groups = [aws_security_group.sgsi_web_sg.id]
-    description = "HTTPS from web servers"
+    description     = "HTTPS from web servers"
   }
   ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
+    from_port       = 22
+    to_port         = 22
+    protocol        = "tcp"
     security_groups = [aws_security_group.sgsi_mgmt_sg.id]
-    description = "SSH from management only"
+    description     = "SSH from management only"
   }
 
   # Egress rules
@@ -125,9 +125,9 @@ resource "aws_security_group" "sgsi_app_sg" {
   }
 
   tags = {
-    Name = "sgsi-app-sg"
-    Tier = "application"
-    SecurityLevel = "High"
+    Name            = "sgsi-app-sg"
+    Tier            = "application"
+    SecurityLevel   = "High"
     ComplianceScope = "ISO27001"
   }
 }
@@ -136,42 +136,42 @@ resource "aws_security_group" "sgsi_app_sg" {
 resource "aws_security_group" "sgsi_db_sg" {
   name        = "sgsi-db-sg"
   description = "Security Group for Database Servers (Database Tier)"
-  
+
   # Ingress rules
   ingress {
-    from_port   = 3306
-    to_port     = 3306
-    protocol    = "tcp"
+    from_port       = 3306
+    to_port         = 3306
+    protocol        = "tcp"
     security_groups = [aws_security_group.sgsi_web_sg.id]
-    description = "MySQL from web servers"
+    description     = "MySQL from web servers"
   }
   ingress {
-    from_port   = 3306
-    to_port     = 3306
-    protocol    = "tcp"
+    from_port       = 3306
+    to_port         = 3306
+    protocol        = "tcp"
     security_groups = [aws_security_group.sgsi_app_sg.id]
-    description = "MySQL from app servers"
+    description     = "MySQL from app servers"
   }
   ingress {
-    from_port   = 5432
-    to_port     = 5432
-    protocol    = "tcp"
+    from_port       = 5432
+    to_port         = 5432
+    protocol        = "tcp"
     security_groups = [aws_security_group.sgsi_web_sg.id]
-    description = "PostgreSQL from web servers"
+    description     = "PostgreSQL from web servers"
   }
   ingress {
-    from_port   = 5432
-    to_port     = 5432
-    protocol    = "tcp"
+    from_port       = 5432
+    to_port         = 5432
+    protocol        = "tcp"
     security_groups = [aws_security_group.sgsi_app_sg.id]
-    description = "PostgreSQL from app servers"
+    description     = "PostgreSQL from app servers"
   }
   ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
+    from_port       = 22
+    to_port         = 22
+    protocol        = "tcp"
     security_groups = [aws_security_group.sgsi_mgmt_sg.id]
-    description = "SSH from management only"
+    description     = "SSH from management only"
   }
 
   # Egress rules
@@ -184,9 +184,9 @@ resource "aws_security_group" "sgsi_db_sg" {
   }
 
   tags = {
-    Name = "sgsi-db-sg"
-    Tier = "database"
-    SecurityLevel = "High"
+    Name            = "sgsi-db-sg"
+    Tier            = "database"
+    SecurityLevel   = "High"
     ComplianceScope = "ISO27001"
   }
 }
@@ -195,7 +195,7 @@ resource "aws_security_group" "sgsi_db_sg" {
 resource "aws_security_group" "sgsi_mgmt_sg" {
   name        = "sgsi-mgmt-sg"
   description = "Security Group for Management and Monitoring (Management Tier)"
-  
+
   # Ingress rules
   ingress {
     from_port   = 22
@@ -250,9 +250,9 @@ resource "aws_security_group" "sgsi_mgmt_sg" {
   }
 
   tags = {
-    Name = "sgsi-mgmt-sg"
-    Tier = "management"
-    SecurityLevel = "High"
+    Name            = "sgsi-mgmt-sg"
+    Tier            = "management"
+    SecurityLevel   = "High"
     ComplianceScope = "ISO27001"
   }
 }
