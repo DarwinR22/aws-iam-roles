@@ -1,10 +1,5 @@
 aws_iam_role.github_actions_iam_deployment_role will be updated in-place
 aws_iam_role_policy_attachment.github_actions_iam_deployment_role_github_deployment_ec2 will be destroyed
-aws_nat_gateway.sgsi_nat_1a will be created
-aws_nat_gateway.sgsi_nat_1b will be created
-aws_route_table.app_route_table_1a will be updated in-place
-aws_route_table.app_route_table_1b will be updated in-place
-aws_route_table.mgmt_route_table will be updated in-place
 aws_security_group.sgsi_alb_sg will be updated in-place
 aws_security_group.sgsi_app_sg will be updated in-place
 aws_security_group.sgsi_web_sg will be updated in-place
