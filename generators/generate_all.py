@@ -1057,7 +1057,7 @@ resource "aws_db_instance" "{name.replace('-', '_')}" {{
   monitoring_interval = {spec.get('monitoring_interval', 60)}
   monitoring_role_arn = aws_iam_role.sgsi_rds_monitoring_role.arn
   
-  enabled_cloudwatch_logs_exports = {spec.get('enabled_cloudwatch_logs_exports', '["error", "general", "slow_query"]')}
+  enabled_cloudwatch_logs_exports = {spec.get('enabled_cloudwatch_logs_exports', '["error", "general", "slowquery"]')}
   
   tags = {{
     Name        = "{name}"
