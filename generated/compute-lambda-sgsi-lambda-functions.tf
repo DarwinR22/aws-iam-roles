@@ -13,11 +13,8 @@ resource "aws_lambda_function" "sgsi_api_handler" {
   memory_size     = 128
 
   vpc_config {
-    subnet_ids         = [
-      data.aws_subnet.sgsi_private_subnet_1.id,
-      data.aws_subnet.sgsi_private_subnet_2.id
-    ]
-    security_group_ids = [data.aws_security_group.sgsi_lambda_sg.id]
+    subnet_ids         = local.private_subnet_ids
+    security_group_ids = [local.lambda_sg_id]
   }
 
   environment {
@@ -49,11 +46,8 @@ resource "aws_lambda_function" "sgsi_data_processor" {
   memory_size     = 512
 
   vpc_config {
-    subnet_ids         = [
-      data.aws_subnet.sgsi_private_subnet_1.id,
-      data.aws_subnet.sgsi_private_subnet_2.id
-    ]
-    security_group_ids = [data.aws_security_group.sgsi_lambda_sg.id]
+    subnet_ids         = local.private_subnet_ids
+    security_group_ids = [local.lambda_sg_id]
   }
 
   environment {
