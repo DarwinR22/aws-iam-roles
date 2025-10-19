@@ -151,18 +151,18 @@ resource "aws_route_table_association" "{{ rt.name | replace('-', '_') }}_{{ sub
 # Outputs
 # ==============================================================================
 
-output "vpc_id" {
-  description = "ID of the VPC"
+output "{{ vpc.name | replace('-', '_') }}_id" {
+  description = "ID of the {{ vpc.name }} VPC"
   value       = aws_vpc.{{ vpc.name | replace('-', '_') }}.id
 }
 
-output "vpc_arn" {
-  description = "ARN of the VPC"
+output "{{ vpc.name | replace('-', '_') }}_arn" {
+  description = "ARN of the {{ vpc.name }} VPC"
   value       = aws_vpc.{{ vpc.name | replace('-', '_') }}.arn
 }
 
-output "vpc_cidr_block" {
-  description = "CIDR block of the VPC"
+output "{{ vpc.name | replace('-', '_') }}_cidr_block" {
+  description = "CIDR block of the {{ vpc.name }} VPC"
   value       = aws_vpc.{{ vpc.name | replace('-', '_') }}.cidr_block
 }
 
@@ -177,8 +177,8 @@ output "{{ subnet.name | replace('-', '_') }}_id" {
 {% endif %}
 
 {% if vpc.internet_gateway and vpc.internet_gateway.enabled %}
-output "internet_gateway_id" {
-  description = "ID of the Internet Gateway"
+output "{{ vpc.name | replace('-', '_') }}_internet_gateway_id" {
+  description = "ID of the Internet Gateway for {{ vpc.name }}"
   value       = aws_internet_gateway.{{ vpc.internet_gateway.name | replace('-', '_') }}.id
 }
 {% endif %}
