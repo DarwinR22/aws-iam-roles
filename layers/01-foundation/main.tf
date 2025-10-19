@@ -33,14 +33,14 @@ provider "aws" {
   
   default_tags {
     tags = {
-      Project              = "SGSI-Implementation"
+      Project              = "SGSI_Implementation"
       Layer                = "Foundation"
       Environment          = var.environment
       ManagedBy           = "Terraform"
       SecurityLevel       = "Critical"
-      ComplianceScope     = "ISO27001-NIST-CSF"
-      CreatedBy           = "GitHub-Actions"
-      MaintenanceWindow   = "Sunday-2AM-6AM"
+      ComplianceScope     = "ISO27001_NIST_CSF"
+      CreatedBy           = "GitHub_Actions"
+      MaintenanceWindow   = "Sunday_2AM_6AM"
     }
   }
 }

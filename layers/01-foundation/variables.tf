@@ -29,16 +29,16 @@ variable "common_tags" {
   description = "Common tags to be applied to all resources"
   type        = map(string)
   default     = {
-    Project              = "SGSI-Implementation"
+    Project              = "SGSI_Implementation"
     Layer                = "Foundation"
     SecurityLevel        = "Critical"
-    ComplianceScope      = "ISO27001-NIST-CSF"
-    CreatedBy            = "GitHub-Actions"
-    MaintenanceWindow    = "Sunday-2AM-6AM"
+    ComplianceScope      = "ISO27001_NIST_CSF"
+    CreatedBy            = "GitHub_Actions"
+    MaintenanceWindow    = "Sunday_2AM_6AM"
     BackupRequired       = "Yes"
     MonitoringEnabled    = "Yes"
     LoggingEnabled       = "Yes"
-    ChangeManagement     = "ITIL-v4"
+    ChangeManagement     = "ITIL_v4"
   }
 }
 
