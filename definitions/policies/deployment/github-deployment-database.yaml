@@ -1,0 +1,207 @@
+policy:
+  name: "github-deployment-database"
+  description: "Política consolidada para recursos de base de datos (RDS) del SGSI Layer 3"
+  service: "database"
+  version: "1.0.0"
+  
+  statements:
+    # ===========================================
+    # RDS DATABASE MANAGEMENT
+    # ===========================================
+    - sid: "RDSInstanceManagement"
+      effect: "Allow"
+      actions:
+        # DB Instance lifecycle
+        - "rds:CreateDBInstance"
+        - "rds:DeleteDBInstance"
+        - "rds:DescribeDBInstances"
+        - "rds:ModifyDBInstance"
+        - "rds:RebootDBInstance"
+        - "rds:StartDBInstance"
+        - "rds:StopDBInstance"
+        # DB Instance monitoring
+        - "rds:DescribeDBLogFiles"
+        - "rds:DownloadDBLogFilePortion"
+        # DB Instance maintenance
+        - "rds:ApplyPendingMaintenanceAction"
+        - "rds:DescribePendingMaintenanceActions"
+        # DB Instance backups
+        - "rds:CreateDBSnapshot"
+        - "rds:DeleteDBSnapshot"
+        - "rds:DescribeDBSnapshots"
+        - "rds:RestoreDBInstanceFromDBSnapshot"
+        - "rds:CopyDBSnapshot"
+        # DB Instance automated backups
+        - "rds:DescribeDBInstanceAutomatedBackups"
+        - "rds:DeleteDBInstanceAutomatedBackup"
+      resources: ["*"]
+      conditions:
+        StringEquals:
+          "aws:RequestedRegion": "us-east-1"
+
+    # ===========================================
+    # RDS SUBNET GROUPS
+    # ===========================================
+    - sid: "RDSSubnetGroupManagement"
+      effect: "Allow"
+      actions:
+        # Subnet Groups
+        - "rds:CreateDBSubnetGroup"
+        - "rds:DeleteDBSubnetGroup"
+        - "rds:DescribeDBSubnetGroups"
+        - "rds:ModifyDBSubnetGroup"
+      resources: ["*"]
+      conditions:
+        StringEquals:
+          "aws:RequestedRegion": "us-east-1"
+
+    # ===========================================
+    # RDS PARAMETER GROUPS
+    # ===========================================
+    - sid: "RDSParameterGroupManagement"
+      effect: "Allow"
+      actions:
+        # Parameter Groups
+        - "rds:CreateDBParameterGroup"
+        - "rds:DeleteDBParameterGroup"
+        - "rds:DescribeDBParameterGroups"
+        - "rds:ModifyDBParameterGroup"
+        - "rds:DescribeDBParameters"
+        - "rds:ResetDBParameterGroup"
+        # Engine specific parameters
+        - "rds:DescribeEngineDefaultParameters"
+        - "rds:DescribeEngineDefaultClusterParameters"
+      resources: ["*"]
+      conditions:
+        StringEquals:
+          "aws:RequestedRegion": "us-east-1"
+
+    # ===========================================
+    # RDS OPTION GROUPS
+    # ===========================================
+    - sid: "RDSOptionGroupManagement"
+      effect: "Allow"
+      actions:
+        # Option Groups
+        - "rds:CreateOptionGroup"
+        - "rds:DeleteOptionGroup"
+        - "rds:DescribeOptionGroups"
+        - "rds:ModifyOptionGroup"
+        - "rds:DescribeOptionGroupOptions"
+      resources: ["*"]
+      conditions:
+        StringEquals:
+          "aws:RequestedRegion": "us-east-1"
+
+    # ===========================================
+    # RDS SECURITY GROUPS (Classic)
+    # ===========================================
+    - sid: "RDSSecurityGroupManagement"
+      effect: "Allow"
+      actions:
+        # DB Security Groups (if using classic)
+        - "rds:CreateDBSecurityGroup"
+        - "rds:DeleteDBSecurityGroup"
+        - "rds:DescribeDBSecurityGroups"
+        - "rds:AuthorizeDBSecurityGroupIngress"
+        - "rds:RevokeDBSecurityGroupIngress"
+      resources: ["*"]
+      conditions:
+        StringEquals:
+          "aws:RequestedRegion": "us-east-1"
+
+    # ===========================================
+    # RDS MONITORING AND PERFORMANCE
+    # ===========================================
+    - sid: "RDSMonitoringAndPerformance"
+      effect: "Allow"
+      actions:
+        # Performance Insights
+        - "pi:DescribeDimensionKeys"
+        - "pi:GetDimensionKeyDetails"
+        - "pi:GetResourceMetrics"
+        # Enhanced Monitoring
+        - "logs:CreateLogGroup"
+        - "logs:CreateLogStream"
+        - "logs:PutLogEvents"
+        - "logs:DescribeLogGroups"
+        - "logs:DescribeLogStreams"
+        # CloudWatch integration
+        - "cloudwatch:PutMetricData"
+        - "cloudwatch:GetMetricStatistics"
+        - "cloudwatch:ListMetrics"
+      resources: ["*"]
+      conditions:
+        StringEquals:
+          "aws:RequestedRegion": "us-east-1"
+
+    # ===========================================
+    # RDS EVENTS AND NOTIFICATIONS
+    # ===========================================
+    - sid: "RDSEventsAndNotifications"
+      effect: "Allow"
+      actions:
+        # Event subscriptions
+        - "rds:CreateEventSubscription"
+        - "rds:DeleteEventSubscription"
+        - "rds:DescribeEventSubscriptions"
+        - "rds:ModifyEventSubscription"
+        # Events
+        - "rds:DescribeEvents"
+        - "rds:DescribeEventCategories"
+        - "rds:DescribeSourceRegions"
+      resources: ["*"]
+      conditions:
+        StringEquals:
+          "aws:RequestedRegion": "us-east-1"
+
+    # ===========================================
+    # RDS TAGS
+    # ===========================================
+    - sid: "RDSTagManagement"
+      effect: "Allow"
+      actions:
+        # Tags
+        - "rds:AddTagsToResource"
+        - "rds:RemoveTagsFromResource"
+        - "rds:ListTagsForResource"
+      resources: ["*"]
+      conditions:
+        StringEquals:
+          "aws:RequestedRegion": "us-east-1"
+
+  # Organizational tags for compliance and governance
+  tags:
+    # Core organizational tags
+    "Pais": "RG"
+    "Gerencia": "MejoraContinuaEInformacion"
+    "Area": "DevOps"
+    "Ambiente": "DEV"
+    "Direccion": "TICENAM"
+    "Modulo": "Database"
+    
+    # Compliance and governance
+    "AlcanceSOX": "No"
+    "Propietario": "DarwinLopez"
+    "Proveedor": "InHouse"
+    
+    # Technical classification
+    "Layer": "Database"
+    "Dominio": "BusinessIntelligence"
+    "Subdominio": "Analytics"
+    "Aplicacion": "CICD"
+    
+    # Resource identification
+    "Name": "github-deployment-database"
+    "Tipo de Recurso": "IAMPolicy"
+    
+    # Contact and support information
+    "Soporte": "darwin.lopez@claro.com.gt"
+    "Contacto": "darwin.lopez@claro.com.gt"
+    "Creado Por": "DarwinLopez"
+    
+    # Lifecycle management
+    "Ciclo de Vida": "Desarrollo"
+    "Version": "v1.0.0"
+    "Fecha de Creacion": "2025-10-18"
+    "Layer": "SGSI-Layer3-Database"
