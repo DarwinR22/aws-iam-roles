@@ -37,7 +37,7 @@ variable "common_tags" {
     Project              = "SGSI-Implementation"
     Layer                = "Network"
     SecurityLevel        = "High"
-    ComplianceScope      = "ISO27001,NIST-CSF"
+    ComplianceScope      = "ISO27001+NIST-CSF"
     CreatedBy            = "GitHub-Actions"
     MaintenanceWindow    = "Sunday-2AM-6AM"
     BackupRequired       = "No"

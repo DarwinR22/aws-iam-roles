@@ -50,7 +50,7 @@ provider "aws" {
       Environment          = var.environment
       ManagedBy           = "Terraform"
       SecurityLevel       = "High"
-      ComplianceScope     = "ISO27001,NIST-CSF"
+      ComplianceScope     = "ISO27001+NIST-CSF"
       CreatedBy           = "GitHub-Actions"
       MaintenanceWindow   = "Sunday-2AM-6AM"
     }
@@ -76,7 +76,7 @@ resource "aws_vpc" "sgsi_vpc_main" {
       DataClassification   = "Internal"
       ISO27001Control      = "A.13.1.1,A.13.1.2,A.13.2.1"
       SecurityLevel        = "High"
-      ComplianceScope      = "ISO27001,NIST-CSF,ZeroTrust"
+      ComplianceScope      = "ISO27001+NIST-CSF+ZeroTrust"
       BackupRequired       = "No"
       MonitoringEnabled    = "Yes"
       LoggingEnabled       = "Yes"
