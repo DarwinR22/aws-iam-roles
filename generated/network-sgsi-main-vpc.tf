@@ -1,7 +1,7 @@
 # ==============================================================================
 # VPC Module: sgsi-vpc-main
 # ==============================================================================
-# Generated: 2025-10-18T20:33:31.429228
+# Generated: 2025-10-19T02:34:40.516998
 # Source: sgsi-main-vpc.yaml
 # ==============================================================================
 
@@ -21,26 +21,26 @@ resource "aws_vpc" "sgsi_vpc_main" {
 
   tags = merge(
     {
-      Name = "sgsi-vpc-main"
-"AssetID" = "NET-VPC-001"
-"AssetType" = "Network-Infrastructure"
-"AssetOwner" = "DarwinLopez"
-"DataClassification" = "Internal"
-"ISO27001-Control" = "A.13.1.1,A.13.1.2,A.13.2.1"
-"SecurityLevel" = "High"
-"ComplianceScope" = "ISO27001,NIST-CSF,ZeroTrust"
-"Environment" = "Production"
-"Project" = "SGSI-Implementation"
-"CostCenter" = "Security-Infrastructure"
-"MaintenanceWindow" = "Sunday-2AM-6AM"
-"TechnicalContact" = "darwin.lopez@example.com"
-"SecurityContact" = "security@example.com"
-"BusinessOwner" = "SGSI-Team"
-"BackupRequired" = "Yes"
-"MonitoringEnabled" = "Yes"
-"LoggingEnabled" = "Yes"
-"ChangeManagement" = "ITIL-v4"
-},
+      Name                 = "sgsi-vpc-main"
+      "AssetID"            = "NET-VPC-001"
+      "AssetType"          = "Network-Infrastructure"
+      "AssetOwner"         = "DarwinLopez"
+      "DataClassification" = "Internal"
+      "ISO27001-Control"   = "A.13.1.1,A.13.1.2,A.13.2.1"
+      "SecurityLevel"      = "High"
+      "ComplianceScope"    = "ISO27001,NIST-CSF,ZeroTrust"
+      "Environment"        = "Production"
+      "Project"            = "SGSI-Implementation"
+      "CostCenter"         = "Security-Infrastructure"
+      "MaintenanceWindow"  = "Sunday-2AM-6AM"
+      "TechnicalContact"   = "darwin.lopez@example.com"
+      "SecurityContact"    = "security@example.com"
+      "BusinessOwner"      = "SGSI-Team"
+      "BackupRequired"     = "Yes"
+      "MonitoringEnabled"  = "Yes"
+      "LoggingEnabled"     = "Yes"
+      "ChangeManagement"   = "ITIL-v4"
+    },
     var.additional_tags
   )
 }
@@ -51,26 +51,26 @@ resource "aws_internet_gateway" "sgsi_igw" {
 
   tags = merge(
     {
-      Name = "sgsi-igw"
-"AssetID" = "NET-VPC-001"
-"AssetType" = "Network-Infrastructure"
-"AssetOwner" = "DarwinLopez"
-"DataClassification" = "Internal"
-"ISO27001-Control" = "A.13.1.1,A.13.1.2,A.13.2.1"
-"SecurityLevel" = "High"
-"ComplianceScope" = "ISO27001,NIST-CSF,ZeroTrust"
-"Environment" = "Production"
-"Project" = "SGSI-Implementation"
-"CostCenter" = "Security-Infrastructure"
-"MaintenanceWindow" = "Sunday-2AM-6AM"
-"TechnicalContact" = "darwin.lopez@example.com"
-"SecurityContact" = "security@example.com"
-"BusinessOwner" = "SGSI-Team"
-"BackupRequired" = "Yes"
-"MonitoringEnabled" = "Yes"
-"LoggingEnabled" = "Yes"
-"ChangeManagement" = "ITIL-v4"
-},
+      Name                 = "sgsi-igw"
+      "AssetID"            = "NET-VPC-001"
+      "AssetType"          = "Network-Infrastructure"
+      "AssetOwner"         = "DarwinLopez"
+      "DataClassification" = "Internal"
+      "ISO27001-Control"   = "A.13.1.1,A.13.1.2,A.13.2.1"
+      "SecurityLevel"      = "High"
+      "ComplianceScope"    = "ISO27001,NIST-CSF,ZeroTrust"
+      "Environment"        = "Production"
+      "Project"            = "SGSI-Implementation"
+      "CostCenter"         = "Security-Infrastructure"
+      "MaintenanceWindow"  = "Sunday-2AM-6AM"
+      "TechnicalContact"   = "darwin.lopez@example.com"
+      "SecurityContact"    = "security@example.com"
+      "BusinessOwner"      = "SGSI-Team"
+      "BackupRequired"     = "Yes"
+      "MonitoringEnabled"  = "Yes"
+      "LoggingEnabled"     = "Yes"
+      "ChangeManagement"   = "ITIL-v4"
+    },
     var.additional_tags
   )
 }
@@ -84,27 +84,27 @@ resource "aws_subnet" "dmz_public_1a" {
 
   tags = merge(
     {
-      Name = "dmz-public-1a"
-      Type = "public"
-"AssetID" = "NET-VPC-001"
-"AssetType" = "Network-Infrastructure"
-"AssetOwner" = "DarwinLopez"
-"DataClassification" = "Internal"
-"ISO27001-Control" = "A.13.1.1,A.13.1.2,A.13.2.1"
-"SecurityLevel" = "High"
-"ComplianceScope" = "ISO27001,NIST-CSF,ZeroTrust"
-"Environment" = "Production"
-"Project" = "SGSI-Implementation"
-"CostCenter" = "Security-Infrastructure"
-"MaintenanceWindow" = "Sunday-2AM-6AM"
-"TechnicalContact" = "darwin.lopez@example.com"
-"SecurityContact" = "security@example.com"
-"BusinessOwner" = "SGSI-Team"
-"BackupRequired" = "Yes"
-"MonitoringEnabled" = "Yes"
-"LoggingEnabled" = "Yes"
-"ChangeManagement" = "ITIL-v4"
-},
+      Name                 = "dmz-public-1a"
+      Type                 = "public"
+      "AssetID"            = "NET-VPC-001"
+      "AssetType"          = "Network-Infrastructure"
+      "AssetOwner"         = "DarwinLopez"
+      "DataClassification" = "Internal"
+      "ISO27001-Control"   = "A.13.1.1,A.13.1.2,A.13.2.1"
+      "SecurityLevel"      = "High"
+      "ComplianceScope"    = "ISO27001,NIST-CSF,ZeroTrust"
+      "Environment"        = "Production"
+      "Project"            = "SGSI-Implementation"
+      "CostCenter"         = "Security-Infrastructure"
+      "MaintenanceWindow"  = "Sunday-2AM-6AM"
+      "TechnicalContact"   = "darwin.lopez@example.com"
+      "SecurityContact"    = "security@example.com"
+      "BusinessOwner"      = "SGSI-Team"
+      "BackupRequired"     = "Yes"
+      "MonitoringEnabled"  = "Yes"
+      "LoggingEnabled"     = "Yes"
+      "ChangeManagement"   = "ITIL-v4"
+    },
     var.additional_tags
   )
 }
@@ -117,27 +117,27 @@ resource "aws_subnet" "dmz_public_1b" {
 
   tags = merge(
     {
-      Name = "dmz-public-1b"
-      Type = "public"
-"AssetID" = "NET-VPC-001"
-"AssetType" = "Network-Infrastructure"
-"AssetOwner" = "DarwinLopez"
-"DataClassification" = "Internal"
-"ISO27001-Control" = "A.13.1.1,A.13.1.2,A.13.2.1"
-"SecurityLevel" = "High"
-"ComplianceScope" = "ISO27001,NIST-CSF,ZeroTrust"
-"Environment" = "Production"
-"Project" = "SGSI-Implementation"
-"CostCenter" = "Security-Infrastructure"
-"MaintenanceWindow" = "Sunday-2AM-6AM"
-"TechnicalContact" = "darwin.lopez@example.com"
-"SecurityContact" = "security@example.com"
-"BusinessOwner" = "SGSI-Team"
-"BackupRequired" = "Yes"
-"MonitoringEnabled" = "Yes"
-"LoggingEnabled" = "Yes"
-"ChangeManagement" = "ITIL-v4"
-},
+      Name                 = "dmz-public-1b"
+      Type                 = "public"
+      "AssetID"            = "NET-VPC-001"
+      "AssetType"          = "Network-Infrastructure"
+      "AssetOwner"         = "DarwinLopez"
+      "DataClassification" = "Internal"
+      "ISO27001-Control"   = "A.13.1.1,A.13.1.2,A.13.2.1"
+      "SecurityLevel"      = "High"
+      "ComplianceScope"    = "ISO27001,NIST-CSF,ZeroTrust"
+      "Environment"        = "Production"
+      "Project"            = "SGSI-Implementation"
+      "CostCenter"         = "Security-Infrastructure"
+      "MaintenanceWindow"  = "Sunday-2AM-6AM"
+      "TechnicalContact"   = "darwin.lopez@example.com"
+      "SecurityContact"    = "security@example.com"
+      "BusinessOwner"      = "SGSI-Team"
+      "BackupRequired"     = "Yes"
+      "MonitoringEnabled"  = "Yes"
+      "LoggingEnabled"     = "Yes"
+      "ChangeManagement"   = "ITIL-v4"
+    },
     var.additional_tags
   )
 }
@@ -150,27 +150,27 @@ resource "aws_subnet" "dmz_public_1c" {
 
   tags = merge(
     {
-      Name = "dmz-public-1c"
-      Type = "public"
-"AssetID" = "NET-VPC-001"
-"AssetType" = "Network-Infrastructure"
-"AssetOwner" = "DarwinLopez"
-"DataClassification" = "Internal"
-"ISO27001-Control" = "A.13.1.1,A.13.1.2,A.13.2.1"
-"SecurityLevel" = "High"
-"ComplianceScope" = "ISO27001,NIST-CSF,ZeroTrust"
-"Environment" = "Production"
-"Project" = "SGSI-Implementation"
-"CostCenter" = "Security-Infrastructure"
-"MaintenanceWindow" = "Sunday-2AM-6AM"
-"TechnicalContact" = "darwin.lopez@example.com"
-"SecurityContact" = "security@example.com"
-"BusinessOwner" = "SGSI-Team"
-"BackupRequired" = "Yes"
-"MonitoringEnabled" = "Yes"
-"LoggingEnabled" = "Yes"
-"ChangeManagement" = "ITIL-v4"
-},
+      Name                 = "dmz-public-1c"
+      Type                 = "public"
+      "AssetID"            = "NET-VPC-001"
+      "AssetType"          = "Network-Infrastructure"
+      "AssetOwner"         = "DarwinLopez"
+      "DataClassification" = "Internal"
+      "ISO27001-Control"   = "A.13.1.1,A.13.1.2,A.13.2.1"
+      "SecurityLevel"      = "High"
+      "ComplianceScope"    = "ISO27001,NIST-CSF,ZeroTrust"
+      "Environment"        = "Production"
+      "Project"            = "SGSI-Implementation"
+      "CostCenter"         = "Security-Infrastructure"
+      "MaintenanceWindow"  = "Sunday-2AM-6AM"
+      "TechnicalContact"   = "darwin.lopez@example.com"
+      "SecurityContact"    = "security@example.com"
+      "BusinessOwner"      = "SGSI-Team"
+      "BackupRequired"     = "Yes"
+      "MonitoringEnabled"  = "Yes"
+      "LoggingEnabled"     = "Yes"
+      "ChangeManagement"   = "ITIL-v4"
+    },
     var.additional_tags
   )
 }
@@ -183,27 +183,27 @@ resource "aws_subnet" "app_private_1a" {
 
   tags = merge(
     {
-      Name = "app-private-1a"
-      Type = "private"
-"AssetID" = "NET-VPC-001"
-"AssetType" = "Network-Infrastructure"
-"AssetOwner" = "DarwinLopez"
-"DataClassification" = "Internal"
-"ISO27001-Control" = "A.13.1.1,A.13.1.2,A.13.2.1"
-"SecurityLevel" = "High"
-"ComplianceScope" = "ISO27001,NIST-CSF,ZeroTrust"
-"Environment" = "Production"
-"Project" = "SGSI-Implementation"
-"CostCenter" = "Security-Infrastructure"
-"MaintenanceWindow" = "Sunday-2AM-6AM"
-"TechnicalContact" = "darwin.lopez@example.com"
-"SecurityContact" = "security@example.com"
-"BusinessOwner" = "SGSI-Team"
-"BackupRequired" = "Yes"
-"MonitoringEnabled" = "Yes"
-"LoggingEnabled" = "Yes"
-"ChangeManagement" = "ITIL-v4"
-},
+      Name                 = "app-private-1a"
+      Type                 = "private"
+      "AssetID"            = "NET-VPC-001"
+      "AssetType"          = "Network-Infrastructure"
+      "AssetOwner"         = "DarwinLopez"
+      "DataClassification" = "Internal"
+      "ISO27001-Control"   = "A.13.1.1,A.13.1.2,A.13.2.1"
+      "SecurityLevel"      = "High"
+      "ComplianceScope"    = "ISO27001,NIST-CSF,ZeroTrust"
+      "Environment"        = "Production"
+      "Project"            = "SGSI-Implementation"
+      "CostCenter"         = "Security-Infrastructure"
+      "MaintenanceWindow"  = "Sunday-2AM-6AM"
+      "TechnicalContact"   = "darwin.lopez@example.com"
+      "SecurityContact"    = "security@example.com"
+      "BusinessOwner"      = "SGSI-Team"
+      "BackupRequired"     = "Yes"
+      "MonitoringEnabled"  = "Yes"
+      "LoggingEnabled"     = "Yes"
+      "ChangeManagement"   = "ITIL-v4"
+    },
     var.additional_tags
   )
 }
@@ -216,27 +216,27 @@ resource "aws_subnet" "app_private_1b" {
 
   tags = merge(
     {
-      Name = "app-private-1b"
-      Type = "private"
-"AssetID" = "NET-VPC-001"
-"AssetType" = "Network-Infrastructure"
-"AssetOwner" = "DarwinLopez"
-"DataClassification" = "Internal"
-"ISO27001-Control" = "A.13.1.1,A.13.1.2,A.13.2.1"
-"SecurityLevel" = "High"
-"ComplianceScope" = "ISO27001,NIST-CSF,ZeroTrust"
-"Environment" = "Production"
-"Project" = "SGSI-Implementation"
-"CostCenter" = "Security-Infrastructure"
-"MaintenanceWindow" = "Sunday-2AM-6AM"
-"TechnicalContact" = "darwin.lopez@example.com"
-"SecurityContact" = "security@example.com"
-"BusinessOwner" = "SGSI-Team"
-"BackupRequired" = "Yes"
-"MonitoringEnabled" = "Yes"
-"LoggingEnabled" = "Yes"
-"ChangeManagement" = "ITIL-v4"
-},
+      Name                 = "app-private-1b"
+      Type                 = "private"
+      "AssetID"            = "NET-VPC-001"
+      "AssetType"          = "Network-Infrastructure"
+      "AssetOwner"         = "DarwinLopez"
+      "DataClassification" = "Internal"
+      "ISO27001-Control"   = "A.13.1.1,A.13.1.2,A.13.2.1"
+      "SecurityLevel"      = "High"
+      "ComplianceScope"    = "ISO27001,NIST-CSF,ZeroTrust"
+      "Environment"        = "Production"
+      "Project"            = "SGSI-Implementation"
+      "CostCenter"         = "Security-Infrastructure"
+      "MaintenanceWindow"  = "Sunday-2AM-6AM"
+      "TechnicalContact"   = "darwin.lopez@example.com"
+      "SecurityContact"    = "security@example.com"
+      "BusinessOwner"      = "SGSI-Team"
+      "BackupRequired"     = "Yes"
+      "MonitoringEnabled"  = "Yes"
+      "LoggingEnabled"     = "Yes"
+      "ChangeManagement"   = "ITIL-v4"
+    },
     var.additional_tags
   )
 }
@@ -249,27 +249,27 @@ resource "aws_subnet" "app_private_1c" {
 
   tags = merge(
     {
-      Name = "app-private-1c"
-      Type = "private"
-"AssetID" = "NET-VPC-001"
-"AssetType" = "Network-Infrastructure"
-"AssetOwner" = "DarwinLopez"
-"DataClassification" = "Internal"
-"ISO27001-Control" = "A.13.1.1,A.13.1.2,A.13.2.1"
-"SecurityLevel" = "High"
-"ComplianceScope" = "ISO27001,NIST-CSF,ZeroTrust"
-"Environment" = "Production"
-"Project" = "SGSI-Implementation"
-"CostCenter" = "Security-Infrastructure"
-"MaintenanceWindow" = "Sunday-2AM-6AM"
-"TechnicalContact" = "darwin.lopez@example.com"
-"SecurityContact" = "security@example.com"
-"BusinessOwner" = "SGSI-Team"
-"BackupRequired" = "Yes"
-"MonitoringEnabled" = "Yes"
-"LoggingEnabled" = "Yes"
-"ChangeManagement" = "ITIL-v4"
-},
+      Name                 = "app-private-1c"
+      Type                 = "private"
+      "AssetID"            = "NET-VPC-001"
+      "AssetType"          = "Network-Infrastructure"
+      "AssetOwner"         = "DarwinLopez"
+      "DataClassification" = "Internal"
+      "ISO27001-Control"   = "A.13.1.1,A.13.1.2,A.13.2.1"
+      "SecurityLevel"      = "High"
+      "ComplianceScope"    = "ISO27001,NIST-CSF,ZeroTrust"
+      "Environment"        = "Production"
+      "Project"            = "SGSI-Implementation"
+      "CostCenter"         = "Security-Infrastructure"
+      "MaintenanceWindow"  = "Sunday-2AM-6AM"
+      "TechnicalContact"   = "darwin.lopez@example.com"
+      "SecurityContact"    = "security@example.com"
+      "BusinessOwner"      = "SGSI-Team"
+      "BackupRequired"     = "Yes"
+      "MonitoringEnabled"  = "Yes"
+      "LoggingEnabled"     = "Yes"
+      "ChangeManagement"   = "ITIL-v4"
+    },
     var.additional_tags
   )
 }
@@ -282,27 +282,27 @@ resource "aws_subnet" "db_private_1a" {
 
   tags = merge(
     {
-      Name = "db-private-1a"
-      Type = "private"
-"AssetID" = "NET-VPC-001"
-"AssetType" = "Network-Infrastructure"
-"AssetOwner" = "DarwinLopez"
-"DataClassification" = "Internal"
-"ISO27001-Control" = "A.13.1.1,A.13.1.2,A.13.2.1"
-"SecurityLevel" = "High"
-"ComplianceScope" = "ISO27001,NIST-CSF,ZeroTrust"
-"Environment" = "Production"
-"Project" = "SGSI-Implementation"
-"CostCenter" = "Security-Infrastructure"
-"MaintenanceWindow" = "Sunday-2AM-6AM"
-"TechnicalContact" = "darwin.lopez@example.com"
-"SecurityContact" = "security@example.com"
-"BusinessOwner" = "SGSI-Team"
-"BackupRequired" = "Yes"
-"MonitoringEnabled" = "Yes"
-"LoggingEnabled" = "Yes"
-"ChangeManagement" = "ITIL-v4"
-},
+      Name                 = "db-private-1a"
+      Type                 = "private"
+      "AssetID"            = "NET-VPC-001"
+      "AssetType"          = "Network-Infrastructure"
+      "AssetOwner"         = "DarwinLopez"
+      "DataClassification" = "Internal"
+      "ISO27001-Control"   = "A.13.1.1,A.13.1.2,A.13.2.1"
+      "SecurityLevel"      = "High"
+      "ComplianceScope"    = "ISO27001,NIST-CSF,ZeroTrust"
+      "Environment"        = "Production"
+      "Project"            = "SGSI-Implementation"
+      "CostCenter"         = "Security-Infrastructure"
+      "MaintenanceWindow"  = "Sunday-2AM-6AM"
+      "TechnicalContact"   = "darwin.lopez@example.com"
+      "SecurityContact"    = "security@example.com"
+      "BusinessOwner"      = "SGSI-Team"
+      "BackupRequired"     = "Yes"
+      "MonitoringEnabled"  = "Yes"
+      "LoggingEnabled"     = "Yes"
+      "ChangeManagement"   = "ITIL-v4"
+    },
     var.additional_tags
   )
 }
@@ -315,27 +315,27 @@ resource "aws_subnet" "db_private_1b" {
 
   tags = merge(
     {
-      Name = "db-private-1b"
-      Type = "private"
-"AssetID" = "NET-VPC-001"
-"AssetType" = "Network-Infrastructure"
-"AssetOwner" = "DarwinLopez"
-"DataClassification" = "Internal"
-"ISO27001-Control" = "A.13.1.1,A.13.1.2,A.13.2.1"
-"SecurityLevel" = "High"
-"ComplianceScope" = "ISO27001,NIST-CSF,ZeroTrust"
-"Environment" = "Production"
-"Project" = "SGSI-Implementation"
-"CostCenter" = "Security-Infrastructure"
-"MaintenanceWindow" = "Sunday-2AM-6AM"
-"TechnicalContact" = "darwin.lopez@example.com"
-"SecurityContact" = "security@example.com"
-"BusinessOwner" = "SGSI-Team"
-"BackupRequired" = "Yes"
-"MonitoringEnabled" = "Yes"
-"LoggingEnabled" = "Yes"
-"ChangeManagement" = "ITIL-v4"
-},
+      Name                 = "db-private-1b"
+      Type                 = "private"
+      "AssetID"            = "NET-VPC-001"
+      "AssetType"          = "Network-Infrastructure"
+      "AssetOwner"         = "DarwinLopez"
+      "DataClassification" = "Internal"
+      "ISO27001-Control"   = "A.13.1.1,A.13.1.2,A.13.2.1"
+      "SecurityLevel"      = "High"
+      "ComplianceScope"    = "ISO27001,NIST-CSF,ZeroTrust"
+      "Environment"        = "Production"
+      "Project"            = "SGSI-Implementation"
+      "CostCenter"         = "Security-Infrastructure"
+      "MaintenanceWindow"  = "Sunday-2AM-6AM"
+      "TechnicalContact"   = "darwin.lopez@example.com"
+      "SecurityContact"    = "security@example.com"
+      "BusinessOwner"      = "SGSI-Team"
+      "BackupRequired"     = "Yes"
+      "MonitoringEnabled"  = "Yes"
+      "LoggingEnabled"     = "Yes"
+      "ChangeManagement"   = "ITIL-v4"
+    },
     var.additional_tags
   )
 }
@@ -348,27 +348,27 @@ resource "aws_subnet" "db_private_1c" {
 
   tags = merge(
     {
-      Name = "db-private-1c"
-      Type = "private"
-"AssetID" = "NET-VPC-001"
-"AssetType" = "Network-Infrastructure"
-"AssetOwner" = "DarwinLopez"
-"DataClassification" = "Internal"
-"ISO27001-Control" = "A.13.1.1,A.13.1.2,A.13.2.1"
-"SecurityLevel" = "High"
-"ComplianceScope" = "ISO27001,NIST-CSF,ZeroTrust"
-"Environment" = "Production"
-"Project" = "SGSI-Implementation"
-"CostCenter" = "Security-Infrastructure"
-"MaintenanceWindow" = "Sunday-2AM-6AM"
-"TechnicalContact" = "darwin.lopez@example.com"
-"SecurityContact" = "security@example.com"
-"BusinessOwner" = "SGSI-Team"
-"BackupRequired" = "Yes"
-"MonitoringEnabled" = "Yes"
-"LoggingEnabled" = "Yes"
-"ChangeManagement" = "ITIL-v4"
-},
+      Name                 = "db-private-1c"
+      Type                 = "private"
+      "AssetID"            = "NET-VPC-001"
+      "AssetType"          = "Network-Infrastructure"
+      "AssetOwner"         = "DarwinLopez"
+      "DataClassification" = "Internal"
+      "ISO27001-Control"   = "A.13.1.1,A.13.1.2,A.13.2.1"
+      "SecurityLevel"      = "High"
+      "ComplianceScope"    = "ISO27001,NIST-CSF,ZeroTrust"
+      "Environment"        = "Production"
+      "Project"            = "SGSI-Implementation"
+      "CostCenter"         = "Security-Infrastructure"
+      "MaintenanceWindow"  = "Sunday-2AM-6AM"
+      "TechnicalContact"   = "darwin.lopez@example.com"
+      "SecurityContact"    = "security@example.com"
+      "BusinessOwner"      = "SGSI-Team"
+      "BackupRequired"     = "Yes"
+      "MonitoringEnabled"  = "Yes"
+      "LoggingEnabled"     = "Yes"
+      "ChangeManagement"   = "ITIL-v4"
+    },
     var.additional_tags
   )
 }
@@ -381,27 +381,27 @@ resource "aws_subnet" "mgmt_private_1a" {
 
   tags = merge(
     {
-      Name = "mgmt-private-1a"
-      Type = "private"
-"AssetID" = "NET-VPC-001"
-"AssetType" = "Network-Infrastructure"
-"AssetOwner" = "DarwinLopez"
-"DataClassification" = "Internal"
-"ISO27001-Control" = "A.13.1.1,A.13.1.2,A.13.2.1"
-"SecurityLevel" = "High"
-"ComplianceScope" = "ISO27001,NIST-CSF,ZeroTrust"
-"Environment" = "Production"
-"Project" = "SGSI-Implementation"
-"CostCenter" = "Security-Infrastructure"
-"MaintenanceWindow" = "Sunday-2AM-6AM"
-"TechnicalContact" = "darwin.lopez@example.com"
-"SecurityContact" = "security@example.com"
-"BusinessOwner" = "SGSI-Team"
-"BackupRequired" = "Yes"
-"MonitoringEnabled" = "Yes"
-"LoggingEnabled" = "Yes"
-"ChangeManagement" = "ITIL-v4"
-},
+      Name                 = "mgmt-private-1a"
+      Type                 = "private"
+      "AssetID"            = "NET-VPC-001"
+      "AssetType"          = "Network-Infrastructure"
+      "AssetOwner"         = "DarwinLopez"
+      "DataClassification" = "Internal"
+      "ISO27001-Control"   = "A.13.1.1,A.13.1.2,A.13.2.1"
+      "SecurityLevel"      = "High"
+      "ComplianceScope"    = "ISO27001,NIST-CSF,ZeroTrust"
+      "Environment"        = "Production"
+      "Project"            = "SGSI-Implementation"
+      "CostCenter"         = "Security-Infrastructure"
+      "MaintenanceWindow"  = "Sunday-2AM-6AM"
+      "TechnicalContact"   = "darwin.lopez@example.com"
+      "SecurityContact"    = "security@example.com"
+      "BusinessOwner"      = "SGSI-Team"
+      "BackupRequired"     = "Yes"
+      "MonitoringEnabled"  = "Yes"
+      "LoggingEnabled"     = "Yes"
+      "ChangeManagement"   = "ITIL-v4"
+    },
     var.additional_tags
   )
 }
@@ -414,27 +414,27 @@ resource "aws_subnet" "mgmt_private_1b" {
 
   tags = merge(
     {
-      Name = "mgmt-private-1b"
-      Type = "private"
-"AssetID" = "NET-VPC-001"
-"AssetType" = "Network-Infrastructure"
-"AssetOwner" = "DarwinLopez"
-"DataClassification" = "Internal"
-"ISO27001-Control" = "A.13.1.1,A.13.1.2,A.13.2.1"
-"SecurityLevel" = "High"
-"ComplianceScope" = "ISO27001,NIST-CSF,ZeroTrust"
-"Environment" = "Production"
-"Project" = "SGSI-Implementation"
-"CostCenter" = "Security-Infrastructure"
-"MaintenanceWindow" = "Sunday-2AM-6AM"
-"TechnicalContact" = "darwin.lopez@example.com"
-"SecurityContact" = "security@example.com"
-"BusinessOwner" = "SGSI-Team"
-"BackupRequired" = "Yes"
-"MonitoringEnabled" = "Yes"
-"LoggingEnabled" = "Yes"
-"ChangeManagement" = "ITIL-v4"
-},
+      Name                 = "mgmt-private-1b"
+      Type                 = "private"
+      "AssetID"            = "NET-VPC-001"
+      "AssetType"          = "Network-Infrastructure"
+      "AssetOwner"         = "DarwinLopez"
+      "DataClassification" = "Internal"
+      "ISO27001-Control"   = "A.13.1.1,A.13.1.2,A.13.2.1"
+      "SecurityLevel"      = "High"
+      "ComplianceScope"    = "ISO27001,NIST-CSF,ZeroTrust"
+      "Environment"        = "Production"
+      "Project"            = "SGSI-Implementation"
+      "CostCenter"         = "Security-Infrastructure"
+      "MaintenanceWindow"  = "Sunday-2AM-6AM"
+      "TechnicalContact"   = "darwin.lopez@example.com"
+      "SecurityContact"    = "security@example.com"
+      "BusinessOwner"      = "SGSI-Team"
+      "BackupRequired"     = "Yes"
+      "MonitoringEnabled"  = "Yes"
+      "LoggingEnabled"     = "Yes"
+      "ChangeManagement"   = "ITIL-v4"
+    },
     var.additional_tags
   )
 }
@@ -443,32 +443,32 @@ resource "aws_subnet" "mgmt_private_1b" {
 # Elastic IPs for NAT Gateways
 resource "aws_eip" "sgsi_nat_1a_eip" {
   domain = "vpc"
-  
+
   tags = merge(
     {
-      Name = "sgsi-nat-1a-eip"
-"AssetID" = "NET-VPC-001"
-"AssetType" = "Network-Infrastructure"
-"AssetOwner" = "DarwinLopez"
-"DataClassification" = "Internal"
-"ISO27001-Control" = "A.13.1.1,A.13.1.2,A.13.2.1"
-"SecurityLevel" = "High"
-"ComplianceScope" = "ISO27001,NIST-CSF,ZeroTrust"
-"Environment" = "Production"
-"Project" = "SGSI-Implementation"
-"CostCenter" = "Security-Infrastructure"
-"MaintenanceWindow" = "Sunday-2AM-6AM"
-"TechnicalContact" = "darwin.lopez@example.com"
-"SecurityContact" = "security@example.com"
-"BusinessOwner" = "SGSI-Team"
-"BackupRequired" = "Yes"
-"MonitoringEnabled" = "Yes"
-"LoggingEnabled" = "Yes"
-"ChangeManagement" = "ITIL-v4"
-},
+      Name                 = "sgsi-nat-1a-eip"
+      "AssetID"            = "NET-VPC-001"
+      "AssetType"          = "Network-Infrastructure"
+      "AssetOwner"         = "DarwinLopez"
+      "DataClassification" = "Internal"
+      "ISO27001-Control"   = "A.13.1.1,A.13.1.2,A.13.2.1"
+      "SecurityLevel"      = "High"
+      "ComplianceScope"    = "ISO27001,NIST-CSF,ZeroTrust"
+      "Environment"        = "Production"
+      "Project"            = "SGSI-Implementation"
+      "CostCenter"         = "Security-Infrastructure"
+      "MaintenanceWindow"  = "Sunday-2AM-6AM"
+      "TechnicalContact"   = "darwin.lopez@example.com"
+      "SecurityContact"    = "security@example.com"
+      "BusinessOwner"      = "SGSI-Team"
+      "BackupRequired"     = "Yes"
+      "MonitoringEnabled"  = "Yes"
+      "LoggingEnabled"     = "Yes"
+      "ChangeManagement"   = "ITIL-v4"
+    },
     var.additional_tags
   )
-  
+
   depends_on = [aws_internet_gateway.sgsi_igw]
 }
 
@@ -479,26 +479,26 @@ resource "aws_nat_gateway" "sgsi_nat_1a" {
 
   tags = merge(
     {
-      Name = "sgsi-nat-1a"
-"AssetID" = "NET-VPC-001"
-"AssetType" = "Network-Infrastructure"
-"AssetOwner" = "DarwinLopez"
-"DataClassification" = "Internal"
-"ISO27001-Control" = "A.13.1.1,A.13.1.2,A.13.2.1"
-"SecurityLevel" = "High"
-"ComplianceScope" = "ISO27001,NIST-CSF,ZeroTrust"
-"Environment" = "Production"
-"Project" = "SGSI-Implementation"
-"CostCenter" = "Security-Infrastructure"
-"MaintenanceWindow" = "Sunday-2AM-6AM"
-"TechnicalContact" = "darwin.lopez@example.com"
-"SecurityContact" = "security@example.com"
-"BusinessOwner" = "SGSI-Team"
-"BackupRequired" = "Yes"
-"MonitoringEnabled" = "Yes"
-"LoggingEnabled" = "Yes"
-"ChangeManagement" = "ITIL-v4"
-},
+      Name                 = "sgsi-nat-1a"
+      "AssetID"            = "NET-VPC-001"
+      "AssetType"          = "Network-Infrastructure"
+      "AssetOwner"         = "DarwinLopez"
+      "DataClassification" = "Internal"
+      "ISO27001-Control"   = "A.13.1.1,A.13.1.2,A.13.2.1"
+      "SecurityLevel"      = "High"
+      "ComplianceScope"    = "ISO27001,NIST-CSF,ZeroTrust"
+      "Environment"        = "Production"
+      "Project"            = "SGSI-Implementation"
+      "CostCenter"         = "Security-Infrastructure"
+      "MaintenanceWindow"  = "Sunday-2AM-6AM"
+      "TechnicalContact"   = "darwin.lopez@example.com"
+      "SecurityContact"    = "security@example.com"
+      "BusinessOwner"      = "SGSI-Team"
+      "BackupRequired"     = "Yes"
+      "MonitoringEnabled"  = "Yes"
+      "LoggingEnabled"     = "Yes"
+      "ChangeManagement"   = "ITIL-v4"
+    },
     var.additional_tags
   )
 
@@ -507,32 +507,32 @@ resource "aws_nat_gateway" "sgsi_nat_1a" {
 
 resource "aws_eip" "sgsi_nat_1b_eip" {
   domain = "vpc"
-  
+
   tags = merge(
     {
-      Name = "sgsi-nat-1b-eip"
-"AssetID" = "NET-VPC-001"
-"AssetType" = "Network-Infrastructure"
-"AssetOwner" = "DarwinLopez"
-"DataClassification" = "Internal"
-"ISO27001-Control" = "A.13.1.1,A.13.1.2,A.13.2.1"
-"SecurityLevel" = "High"
-"ComplianceScope" = "ISO27001,NIST-CSF,ZeroTrust"
-"Environment" = "Production"
-"Project" = "SGSI-Implementation"
-"CostCenter" = "Security-Infrastructure"
-"MaintenanceWindow" = "Sunday-2AM-6AM"
-"TechnicalContact" = "darwin.lopez@example.com"
-"SecurityContact" = "security@example.com"
-"BusinessOwner" = "SGSI-Team"
-"BackupRequired" = "Yes"
-"MonitoringEnabled" = "Yes"
-"LoggingEnabled" = "Yes"
-"ChangeManagement" = "ITIL-v4"
-},
+      Name                 = "sgsi-nat-1b-eip"
+      "AssetID"            = "NET-VPC-001"
+      "AssetType"          = "Network-Infrastructure"
+      "AssetOwner"         = "DarwinLopez"
+      "DataClassification" = "Internal"
+      "ISO27001-Control"   = "A.13.1.1,A.13.1.2,A.13.2.1"
+      "SecurityLevel"      = "High"
+      "ComplianceScope"    = "ISO27001,NIST-CSF,ZeroTrust"
+      "Environment"        = "Production"
+      "Project"            = "SGSI-Implementation"
+      "CostCenter"         = "Security-Infrastructure"
+      "MaintenanceWindow"  = "Sunday-2AM-6AM"
+      "TechnicalContact"   = "darwin.lopez@example.com"
+      "SecurityContact"    = "security@example.com"
+      "BusinessOwner"      = "SGSI-Team"
+      "BackupRequired"     = "Yes"
+      "MonitoringEnabled"  = "Yes"
+      "LoggingEnabled"     = "Yes"
+      "ChangeManagement"   = "ITIL-v4"
+    },
     var.additional_tags
   )
-  
+
   depends_on = [aws_internet_gateway.sgsi_igw]
 }
 
@@ -543,26 +543,26 @@ resource "aws_nat_gateway" "sgsi_nat_1b" {
 
   tags = merge(
     {
-      Name = "sgsi-nat-1b"
-"AssetID" = "NET-VPC-001"
-"AssetType" = "Network-Infrastructure"
-"AssetOwner" = "DarwinLopez"
-"DataClassification" = "Internal"
-"ISO27001-Control" = "A.13.1.1,A.13.1.2,A.13.2.1"
-"SecurityLevel" = "High"
-"ComplianceScope" = "ISO27001,NIST-CSF,ZeroTrust"
-"Environment" = "Production"
-"Project" = "SGSI-Implementation"
-"CostCenter" = "Security-Infrastructure"
-"MaintenanceWindow" = "Sunday-2AM-6AM"
-"TechnicalContact" = "darwin.lopez@example.com"
-"SecurityContact" = "security@example.com"
-"BusinessOwner" = "SGSI-Team"
-"BackupRequired" = "Yes"
-"MonitoringEnabled" = "Yes"
-"LoggingEnabled" = "Yes"
-"ChangeManagement" = "ITIL-v4"
-},
+      Name                 = "sgsi-nat-1b"
+      "AssetID"            = "NET-VPC-001"
+      "AssetType"          = "Network-Infrastructure"
+      "AssetOwner"         = "DarwinLopez"
+      "DataClassification" = "Internal"
+      "ISO27001-Control"   = "A.13.1.1,A.13.1.2,A.13.2.1"
+      "SecurityLevel"      = "High"
+      "ComplianceScope"    = "ISO27001,NIST-CSF,ZeroTrust"
+      "Environment"        = "Production"
+      "Project"            = "SGSI-Implementation"
+      "CostCenter"         = "Security-Infrastructure"
+      "MaintenanceWindow"  = "Sunday-2AM-6AM"
+      "TechnicalContact"   = "darwin.lopez@example.com"
+      "SecurityContact"    = "security@example.com"
+      "BusinessOwner"      = "SGSI-Team"
+      "BackupRequired"     = "Yes"
+      "MonitoringEnabled"  = "Yes"
+      "LoggingEnabled"     = "Yes"
+      "ChangeManagement"   = "ITIL-v4"
+    },
     var.additional_tags
   )
 
@@ -576,32 +576,32 @@ resource "aws_route_table" "dmz_route_table" {
 
   route {
     cidr_block = "0.0.0.0/0"
-gateway_id = aws_internet_gateway.sgsi_igw.id
-}
+    gateway_id = aws_internet_gateway.sgsi_igw.id
+  }
 
   tags = merge(
     {
-      Name = "dmz-route-table"
-      Type = "public"
-"AssetID" = "NET-VPC-001"
-"AssetType" = "Network-Infrastructure"
-"AssetOwner" = "DarwinLopez"
-"DataClassification" = "Internal"
-"ISO27001-Control" = "A.13.1.1,A.13.1.2,A.13.2.1"
-"SecurityLevel" = "High"
-"ComplianceScope" = "ISO27001,NIST-CSF,ZeroTrust"
-"Environment" = "Production"
-"Project" = "SGSI-Implementation"
-"CostCenter" = "Security-Infrastructure"
-"MaintenanceWindow" = "Sunday-2AM-6AM"
-"TechnicalContact" = "darwin.lopez@example.com"
-"SecurityContact" = "security@example.com"
-"BusinessOwner" = "SGSI-Team"
-"BackupRequired" = "Yes"
-"MonitoringEnabled" = "Yes"
-"LoggingEnabled" = "Yes"
-"ChangeManagement" = "ITIL-v4"
-},
+      Name                 = "dmz-route-table"
+      Type                 = "public"
+      "AssetID"            = "NET-VPC-001"
+      "AssetType"          = "Network-Infrastructure"
+      "AssetOwner"         = "DarwinLopez"
+      "DataClassification" = "Internal"
+      "ISO27001-Control"   = "A.13.1.1,A.13.1.2,A.13.2.1"
+      "SecurityLevel"      = "High"
+      "ComplianceScope"    = "ISO27001,NIST-CSF,ZeroTrust"
+      "Environment"        = "Production"
+      "Project"            = "SGSI-Implementation"
+      "CostCenter"         = "Security-Infrastructure"
+      "MaintenanceWindow"  = "Sunday-2AM-6AM"
+      "TechnicalContact"   = "darwin.lopez@example.com"
+      "SecurityContact"    = "security@example.com"
+      "BusinessOwner"      = "SGSI-Team"
+      "BackupRequired"     = "Yes"
+      "MonitoringEnabled"  = "Yes"
+      "LoggingEnabled"     = "Yes"
+      "ChangeManagement"   = "ITIL-v4"
+    },
     var.additional_tags
   )
 }
@@ -624,33 +624,33 @@ resource "aws_route_table" "app_route_table_1a" {
   vpc_id = aws_vpc.sgsi_vpc_main.id
 
   route {
-    cidr_block = "0.0.0.0/0"
-nat_gateway_id = aws_nat_gateway.sgsi_nat_1a.id
-}
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.sgsi_nat_1a.id
+  }
 
   tags = merge(
     {
-      Name = "app-route-table-1a"
-      Type = "private"
-"AssetID" = "NET-VPC-001"
-"AssetType" = "Network-Infrastructure"
-"AssetOwner" = "DarwinLopez"
-"DataClassification" = "Internal"
-"ISO27001-Control" = "A.13.1.1,A.13.1.2,A.13.2.1"
-"SecurityLevel" = "High"
-"ComplianceScope" = "ISO27001,NIST-CSF,ZeroTrust"
-"Environment" = "Production"
-"Project" = "SGSI-Implementation"
-"CostCenter" = "Security-Infrastructure"
-"MaintenanceWindow" = "Sunday-2AM-6AM"
-"TechnicalContact" = "darwin.lopez@example.com"
-"SecurityContact" = "security@example.com"
-"BusinessOwner" = "SGSI-Team"
-"BackupRequired" = "Yes"
-"MonitoringEnabled" = "Yes"
-"LoggingEnabled" = "Yes"
-"ChangeManagement" = "ITIL-v4"
-},
+      Name                 = "app-route-table-1a"
+      Type                 = "private"
+      "AssetID"            = "NET-VPC-001"
+      "AssetType"          = "Network-Infrastructure"
+      "AssetOwner"         = "DarwinLopez"
+      "DataClassification" = "Internal"
+      "ISO27001-Control"   = "A.13.1.1,A.13.1.2,A.13.2.1"
+      "SecurityLevel"      = "High"
+      "ComplianceScope"    = "ISO27001,NIST-CSF,ZeroTrust"
+      "Environment"        = "Production"
+      "Project"            = "SGSI-Implementation"
+      "CostCenter"         = "Security-Infrastructure"
+      "MaintenanceWindow"  = "Sunday-2AM-6AM"
+      "TechnicalContact"   = "darwin.lopez@example.com"
+      "SecurityContact"    = "security@example.com"
+      "BusinessOwner"      = "SGSI-Team"
+      "BackupRequired"     = "Yes"
+      "MonitoringEnabled"  = "Yes"
+      "LoggingEnabled"     = "Yes"
+      "ChangeManagement"   = "ITIL-v4"
+    },
     var.additional_tags
   )
 }
@@ -673,33 +673,33 @@ resource "aws_route_table" "app_route_table_1b" {
   vpc_id = aws_vpc.sgsi_vpc_main.id
 
   route {
-    cidr_block = "0.0.0.0/0"
-nat_gateway_id = aws_nat_gateway.sgsi_nat_1b.id
-}
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.sgsi_nat_1b.id
+  }
 
   tags = merge(
     {
-      Name = "app-route-table-1b"
-      Type = "private"
-"AssetID" = "NET-VPC-001"
-"AssetType" = "Network-Infrastructure"
-"AssetOwner" = "DarwinLopez"
-"DataClassification" = "Internal"
-"ISO27001-Control" = "A.13.1.1,A.13.1.2,A.13.2.1"
-"SecurityLevel" = "High"
-"ComplianceScope" = "ISO27001,NIST-CSF,ZeroTrust"
-"Environment" = "Production"
-"Project" = "SGSI-Implementation"
-"CostCenter" = "Security-Infrastructure"
-"MaintenanceWindow" = "Sunday-2AM-6AM"
-"TechnicalContact" = "darwin.lopez@example.com"
-"SecurityContact" = "security@example.com"
-"BusinessOwner" = "SGSI-Team"
-"BackupRequired" = "Yes"
-"MonitoringEnabled" = "Yes"
-"LoggingEnabled" = "Yes"
-"ChangeManagement" = "ITIL-v4"
-},
+      Name                 = "app-route-table-1b"
+      Type                 = "private"
+      "AssetID"            = "NET-VPC-001"
+      "AssetType"          = "Network-Infrastructure"
+      "AssetOwner"         = "DarwinLopez"
+      "DataClassification" = "Internal"
+      "ISO27001-Control"   = "A.13.1.1,A.13.1.2,A.13.2.1"
+      "SecurityLevel"      = "High"
+      "ComplianceScope"    = "ISO27001,NIST-CSF,ZeroTrust"
+      "Environment"        = "Production"
+      "Project"            = "SGSI-Implementation"
+      "CostCenter"         = "Security-Infrastructure"
+      "MaintenanceWindow"  = "Sunday-2AM-6AM"
+      "TechnicalContact"   = "darwin.lopez@example.com"
+      "SecurityContact"    = "security@example.com"
+      "BusinessOwner"      = "SGSI-Team"
+      "BackupRequired"     = "Yes"
+      "MonitoringEnabled"  = "Yes"
+      "LoggingEnabled"     = "Yes"
+      "ChangeManagement"   = "ITIL-v4"
+    },
     var.additional_tags
   )
 }
@@ -724,27 +724,27 @@ resource "aws_route_table" "db_route_table" {
 
   tags = merge(
     {
-      Name = "db-route-table"
-      Type = "isolated"
-"AssetID" = "NET-VPC-001"
-"AssetType" = "Network-Infrastructure"
-"AssetOwner" = "DarwinLopez"
-"DataClassification" = "Internal"
-"ISO27001-Control" = "A.13.1.1,A.13.1.2,A.13.2.1"
-"SecurityLevel" = "High"
-"ComplianceScope" = "ISO27001,NIST-CSF,ZeroTrust"
-"Environment" = "Production"
-"Project" = "SGSI-Implementation"
-"CostCenter" = "Security-Infrastructure"
-"MaintenanceWindow" = "Sunday-2AM-6AM"
-"TechnicalContact" = "darwin.lopez@example.com"
-"SecurityContact" = "security@example.com"
-"BusinessOwner" = "SGSI-Team"
-"BackupRequired" = "Yes"
-"MonitoringEnabled" = "Yes"
-"LoggingEnabled" = "Yes"
-"ChangeManagement" = "ITIL-v4"
-},
+      Name                 = "db-route-table"
+      Type                 = "isolated"
+      "AssetID"            = "NET-VPC-001"
+      "AssetType"          = "Network-Infrastructure"
+      "AssetOwner"         = "DarwinLopez"
+      "DataClassification" = "Internal"
+      "ISO27001-Control"   = "A.13.1.1,A.13.1.2,A.13.2.1"
+      "SecurityLevel"      = "High"
+      "ComplianceScope"    = "ISO27001,NIST-CSF,ZeroTrust"
+      "Environment"        = "Production"
+      "Project"            = "SGSI-Implementation"
+      "CostCenter"         = "Security-Infrastructure"
+      "MaintenanceWindow"  = "Sunday-2AM-6AM"
+      "TechnicalContact"   = "darwin.lopez@example.com"
+      "SecurityContact"    = "security@example.com"
+      "BusinessOwner"      = "SGSI-Team"
+      "BackupRequired"     = "Yes"
+      "MonitoringEnabled"  = "Yes"
+      "LoggingEnabled"     = "Yes"
+      "ChangeManagement"   = "ITIL-v4"
+    },
     var.additional_tags
   )
 }
@@ -755,33 +755,33 @@ resource "aws_route_table" "mgmt_route_table" {
   vpc_id = aws_vpc.sgsi_vpc_main.id
 
   route {
-    cidr_block = "0.0.0.0/0"
-nat_gateway_id = aws_nat_gateway.sgsi_nat_1a.id
-}
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.sgsi_nat_1a.id
+  }
 
   tags = merge(
     {
-      Name = "mgmt-route-table"
-      Type = "private"
-"AssetID" = "NET-VPC-001"
-"AssetType" = "Network-Infrastructure"
-"AssetOwner" = "DarwinLopez"
-"DataClassification" = "Internal"
-"ISO27001-Control" = "A.13.1.1,A.13.1.2,A.13.2.1"
-"SecurityLevel" = "High"
-"ComplianceScope" = "ISO27001,NIST-CSF,ZeroTrust"
-"Environment" = "Production"
-"Project" = "SGSI-Implementation"
-"CostCenter" = "Security-Infrastructure"
-"MaintenanceWindow" = "Sunday-2AM-6AM"
-"TechnicalContact" = "darwin.lopez@example.com"
-"SecurityContact" = "security@example.com"
-"BusinessOwner" = "SGSI-Team"
-"BackupRequired" = "Yes"
-"MonitoringEnabled" = "Yes"
-"LoggingEnabled" = "Yes"
-"ChangeManagement" = "ITIL-v4"
-},
+      Name                 = "mgmt-route-table"
+      Type                 = "private"
+      "AssetID"            = "NET-VPC-001"
+      "AssetType"          = "Network-Infrastructure"
+      "AssetOwner"         = "DarwinLopez"
+      "DataClassification" = "Internal"
+      "ISO27001-Control"   = "A.13.1.1,A.13.1.2,A.13.2.1"
+      "SecurityLevel"      = "High"
+      "ComplianceScope"    = "ISO27001,NIST-CSF,ZeroTrust"
+      "Environment"        = "Production"
+      "Project"            = "SGSI-Implementation"
+      "CostCenter"         = "Security-Infrastructure"
+      "MaintenanceWindow"  = "Sunday-2AM-6AM"
+      "TechnicalContact"   = "darwin.lopez@example.com"
+      "SecurityContact"    = "security@example.com"
+      "BusinessOwner"      = "SGSI-Team"
+      "BackupRequired"     = "Yes"
+      "MonitoringEnabled"  = "Yes"
+      "LoggingEnabled"     = "Yes"
+      "ChangeManagement"   = "ITIL-v4"
+    },
     var.additional_tags
   )
 }
