@@ -197,9 +197,12 @@ def process_policy_file(yaml_file, modules_dir):
 def generate_policy_main_tf(policy_data, module_dir, module_name):
     """Generate main.tf for a policy module"""
     
-    # Extract policy name and statements
-    policy_name = policy_data.get('name', module_name.replace('_', '-'))
-    statements = policy_data.get('statements', [])
+    # Extract policy section from YAML
+    policy_section = policy_data.get('policy', {})
+    
+    # Extract policy name and statements from policy section
+    policy_name = policy_section.get('name', module_name.replace('_', '-'))
+    statements = policy_section.get('statements', [])
     
     # Convert statements to Terraform format
     terraform_statements = []
@@ -223,7 +226,7 @@ def generate_policy_main_tf(policy_data, module_dir, module_name):
 
 resource "aws_iam_policy" "{module_name}" {{
   name        = "${{var.environment}}-{policy_name}"
-  description = "{policy_data.get('description', f'Policy for {policy_name}')}"
+  description = "{policy_section.get('description', f'Policy for {policy_name}')}"
   path        = "/"
 
   policy = jsonencode({{
