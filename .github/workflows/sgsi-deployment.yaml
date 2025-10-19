@@ -112,7 +112,12 @@ jobs:
           echo "🔍 Checking file sizes:"
           ls -la generated/ || echo "Generated directory not found"
 
-      - name: 📐 Format Generated Terraform
+      - name: �️ Setup Terraform (for formatting)
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: �📐 Format Generated Terraform
         run: |
           if [ -d "generated" ] && [ "$(find generated -name '*.tf' | wc -l)" -gt 0 ]; then
             cd generated
