@@ -66,16 +66,14 @@ resource "aws_iam_policy" "github_deployment_cloudformation" {
       "Resource": [
         "arn:aws:kms:*:*:key/*"
       ],
-      "Condition": [
-        {
-          "test": "StringEquals",
-          "variable": "kms:ViaService",
-          "values": [
+      "Condition": {
+        "StringEquals": {
+          "kms:ViaService": [
             "s3.us-east-1.amazonaws.com",
             "dynamodb.us-east-1.amazonaws.com"
           ]
         }
-      ]
+      }
     },
     {
       "Effect": "Allow",
@@ -105,10 +103,10 @@ EOF
   tags = merge(
     var.common_tags,
     {
-      Name          = "${var.environment}-github-deployment-cloudformation"
-      PolicyType    = "Custom"
-      Scope         = "Service"
-      GeneratedFrom = "github_deployment_cloudformation.yaml"
+      Name                = "${var.environment}-github-deployment-cloudformation"
+      PolicyType         = "Custom"
+      Scope              = "Service"
+      GeneratedFrom      = "github_deployment_cloudformation.yaml"
     }
   )
 }

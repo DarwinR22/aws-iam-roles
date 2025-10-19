@@ -222,7 +222,22 @@ def generate_policy_main_tf(policy_data, module_dir, module_name):
         
         # Add conditions if present
         if 'conditions' in stmt:
-            tf_stmt["Condition"] = stmt['conditions']
+            conditions_data = stmt['conditions']
+            if isinstance(conditions_data, list):
+                # New format: list of condition objects
+                tf_conditions = {}
+                for condition in conditions_data:
+                    if isinstance(condition, dict) and all(k in condition for k in ['test', 'variable', 'values']):
+                        test = condition['test']
+                        variable = condition['variable'] 
+                        values = condition['values']
+                        if test not in tf_conditions:
+                            tf_conditions[test] = {}
+                        tf_conditions[test][variable] = values
+                tf_stmt["Condition"] = tf_conditions
+            else:
+                # Old format: direct condition object
+                tf_stmt["Condition"] = conditions_data
             
         terraform_statements.append(tf_stmt)
     
