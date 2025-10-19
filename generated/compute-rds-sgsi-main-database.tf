@@ -132,32 +132,5 @@ resource "aws_db_instance" "sgsi_main_db" {
   }
 }
 
-# Data sources
-data "aws_subnet" "sgsi_db_subnet_us_east_1a" {
-  filter {
-    name   = "tag:Name"
-    values = ["sgsi-db-subnet-us-east-1a"]
-  }
-}
-
-data "aws_subnet" "sgsi_db_subnet_us_east_1b" {
-  filter {
-    name   = "tag:Name"
-    values = ["sgsi-db-subnet-us-east-1b"]
-  }
-}
-
-data "aws_subnet" "sgsi_db_subnet_us_east_1c" {
-  filter {
-    name   = "tag:Name"
-    values = ["sgsi-db-subnet-us-east-1c"]
-  }
-}
-
-data "aws_security_group" "sgsi_db_sg" {
-  filter {
-    name   = "tag:Name"
-    values = ["sgsi-db-sg"]
-  }
-}
+# Data sources are defined in compute-shared-data-sources.tf
 

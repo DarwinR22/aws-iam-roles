@@ -232,29 +232,5 @@ resource "aws_autoscaling_policy" "sgsi_web_scale_up_requests" {
   }
 }
 
-# Data sources
-data "aws_launch_template" "sgsi_web_server_template" {
-  name = "sgsi-web-server-template"
-}
-
-data "aws_subnet" "sgsi_app_subnet_us_east_1a" {
-  filter {
-    name   = "tag:Name"
-    values = ["sgsi-app-subnet-us-east-1a"]
-  }
-}
-
-data "aws_subnet" "sgsi_app_subnet_us_east_1b" {
-  filter {
-    name   = "tag:Name"
-    values = ["sgsi-app-subnet-us-east-1b"]
-  }
-}
-
-data "aws_subnet" "sgsi_app_subnet_us_east_1c" {
-  filter {
-    name   = "tag:Name"
-    values = ["sgsi-app-subnet-us-east-1c"]
-  }
-}
+# Data sources are defined in compute-shared-data-sources.tf
 

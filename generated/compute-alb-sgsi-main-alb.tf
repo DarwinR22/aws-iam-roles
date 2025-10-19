@@ -160,39 +160,5 @@ resource "aws_lb_listener" "sgsi_main_alb_listener_443" {
 }
 
 
-# Data sources for existing VPC resources
-data "aws_subnet" "sgsi_dmz_subnet_us_east_1a" {
-  filter {
-    name   = "tag:Name"
-    values = ["sgsi-dmz-subnet-us-east-1a"]
-  }
-}
-
-data "aws_subnet" "sgsi_dmz_subnet_us_east_1b" {
-  filter {
-    name   = "tag:Name"
-    values = ["sgsi-dmz-subnet-us-east-1b"]
-  }
-}
-
-data "aws_subnet" "sgsi_dmz_subnet_us_east_1c" {
-  filter {
-    name   = "tag:Name"
-    values = ["sgsi-dmz-subnet-us-east-1c"]
-  }
-}
-
-data "aws_security_group" "sgsi_alb_sg" {
-  filter {
-    name   = "tag:Name"
-    values = ["sgsi-alb-sg"]
-  }
-}
-
-data "aws_vpc" "sgsi_vpc_main" {
-  filter {
-    name   = "tag:Name"
-    values = ["sgsi-vpc-main"]
-  }
-}
+# Data sources are defined in compute-shared-data-sources.tf
 

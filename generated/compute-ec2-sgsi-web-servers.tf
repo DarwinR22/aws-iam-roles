@@ -224,32 +224,5 @@ resource "aws_instance" "sgsi_web_server_2" {
   })
 }
 
-# Data sources for subnets and security groups
-data "aws_subnet" "sgsi_app_subnet_us_east_1a" {
-  filter {
-    name   = "tag:Name"
-    values = ["sgsi-app-subnet-us-east-1a"]
-  }
-}
-
-data "aws_subnet" "sgsi_app_subnet_us_east_1b" {
-  filter {
-    name   = "tag:Name"
-    values = ["sgsi-app-subnet-us-east-1b"]
-  }
-}
-
-data "aws_security_group" "sgsi_web_sg" {
-  filter {
-    name   = "tag:Name"
-    values = ["sgsi-web-sg"]
-  }
-}
-
-data "aws_security_group" "sgsi_app_sg" {
-  filter {
-    name   = "tag:Name"
-    values = ["sgsi-app-sg"]
-  }
-}
+# Data sources are defined in compute-shared-data-sources.tf
 
