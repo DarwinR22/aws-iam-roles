@@ -1,0 +1,287 @@
+name: 🚀 SGSI Infrastructure Deployment
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'layers/**'
+      - '.github/workflows/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'layers/**'
+
+env:
+  AWS_REGION: us-east-1
+  TF_VERSION: 1.7.4
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
+jobs:
+  # ==============================================================================
+  # DETECT CHANGES
+  # ==============================================================================
+  detect-changes:
+    name: 🔍 Detect Layer Changes
+    runs-on: ubuntu-latest
+    outputs:
+      layer1: ${{ steps.changes.outputs.layer1 }}
+      layer2: ${{ steps.changes.outputs.layer2 }}
+      layer3: ${{ steps.changes.outputs.layer3 }}
+      layer4: ${{ steps.changes.outputs.layer4 }}
+      layer5: ${{ steps.changes.outputs.layer5 }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect changes
+        uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            layer1:
+              - 'layers/01-foundation/**'
+            layer2:
+              - 'layers/02-network/**'
+            layer3:
+              - 'layers/03-compute/**'
+            layer4:
+              - 'layers/04-storage/**'
+            layer5:
+              - 'layers/05-observability/**'
+
+  # ==============================================================================
+  # LAYER 1: FOUNDATION
+  # ==============================================================================
+  deploy-foundation:
+    name: 🏗️ Layer 1 - Foundation (IAM)
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: needs.detect-changes.outputs.layer1 == 'true' || github.event_name == 'workflow_dispatch'
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::051963532279:role/github-deployment-role
+          role-session-name: sgsi-foundation-deployment
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Terraform Init - Foundation
+        working-directory: layers/01-foundation
+        run: terraform init
+
+      - name: Terraform Validate - Foundation
+        working-directory: layers/01-foundation
+        run: terraform validate
+
+      - name: Terraform Plan - Foundation
+        working-directory: layers/01-foundation
+        run: |
+          terraform plan -detailed-exitcode -out=tfplan
+          echo "plan_exitcode=$?" >> $GITHUB_OUTPUT
+
+      - name: Terraform Apply - Foundation
+        if: github.ref == 'refs/heads/main'
+        working-directory: layers/01-foundation
+        run: terraform apply -auto-approve tfplan
+
+  # ==============================================================================
+  # LAYER 2: NETWORK
+  # ==============================================================================
+  deploy-network:
+    name: 🌐 Layer 2 - Network (VPC)
+    runs-on: ubuntu-latest
+    needs: [detect-changes, deploy-foundation]
+    if: |
+      always() && 
+      (needs.deploy-foundation.result == 'success' || needs.deploy-foundation.result == 'skipped') &&
+      (needs.detect-changes.outputs.layer2 == 'true' || github.event_name == 'workflow_dispatch')
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::051963532279:role/github-deployment-role
+          role-session-name: sgsi-network-deployment
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Terraform Init - Network
+        working-directory: layers/02-network
+        run: terraform init
+
+      - name: Terraform Plan - Network
+        working-directory: layers/02-network
+        run: terraform plan -detailed-exitcode -out=tfplan
+
+      - name: Terraform Apply - Network
+        if: github.ref == 'refs/heads/main'
+        working-directory: layers/02-network
+        run: terraform apply -auto-approve tfplan
+
+  # ==============================================================================
+  # LAYER 3: COMPUTE
+  # ==============================================================================
+  deploy-compute:
+    name: 💻 Layer 3 - Compute (ALB/ASG/RDS)
+    runs-on: ubuntu-latest
+    needs: [detect-changes, deploy-network]
+    if: |
+      always() && 
+      (needs.deploy-network.result == 'success' || needs.deploy-network.result == 'skipped') &&
+      (needs.detect-changes.outputs.layer3 == 'true' || github.event_name == 'workflow_dispatch')
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::051963532279:role/github-deployment-role
+          role-session-name: sgsi-compute-deployment
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Terraform Init - Compute
+        working-directory: layers/03-compute
+        run: terraform init
+
+      - name: Terraform Plan - Compute
+        working-directory: layers/03-compute
+        run: terraform plan -detailed-exitcode -out=tfplan
+
+      - name: Terraform Apply - Compute
+        if: github.ref == 'refs/heads/main'
+        working-directory: layers/03-compute
+        run: terraform apply -auto-approve tfplan
+
+  # ==============================================================================
+  # LAYER 4: STORAGE
+  # ==============================================================================
+  deploy-storage:
+    name: 💾 Layer 4 - Storage (S3/EFS/Backup)
+    runs-on: ubuntu-latest
+    needs: [detect-changes, deploy-compute]
+    if: |
+      always() && 
+      (needs.deploy-compute.result == 'success' || needs.deploy-compute.result == 'skipped') &&
+      (needs.detect-changes.outputs.layer4 == 'true' || github.event_name == 'workflow_dispatch')
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::051963532279:role/github-deployment-role
+          role-session-name: sgsi-storage-deployment
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Terraform Init - Storage
+        working-directory: layers/04-storage
+        run: terraform init
+
+      - name: Terraform Plan - Storage
+        working-directory: layers/04-storage
+        run: terraform plan -detailed-exitcode -out=tfplan
+
+      - name: Terraform Apply - Storage
+        if: github.ref == 'refs/heads/main'
+        working-directory: layers/04-storage
+        run: terraform apply -auto-approve tfplan
+
+  # ==============================================================================
+  # LAYER 5: OBSERVABILITY
+  # ==============================================================================
+  deploy-observability:
+    name: 👁️ Layer 5 - Observability (Security)
+    runs-on: ubuntu-latest
+    needs: [detect-changes, deploy-storage]
+    if: |
+      always() && 
+      (needs.deploy-storage.result == 'success' || needs.deploy-storage.result == 'skipped') &&
+      (needs.detect-changes.outputs.layer5 == 'true' || github.event_name == 'workflow_dispatch')
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::051963532279:role/github-deployment-role
+          role-session-name: sgsi-observability-deployment
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Terraform Init - Observability
+        working-directory: layers/05-observability
+        run: terraform init
+
+      - name: Terraform Plan - Observability
+        working-directory: layers/05-observability
+        run: terraform plan -detailed-exitcode -out=tfplan
+
+      - name: Terraform Apply - Observability
+        if: github.ref == 'refs/heads/main'
+        working-directory: layers/05-observability
+        run: terraform apply -auto-approve tfplan
+
+  # ==============================================================================
+  # DEPLOYMENT SUMMARY
+  # ==============================================================================
+  deployment-summary:
+    name: 📊 Deployment Summary
+    runs-on: ubuntu-latest
+    needs: [deploy-foundation, deploy-network, deploy-compute, deploy-storage, deploy-observability]
+    if: always()
+    
+    steps:
+      - name: Generate Deployment Summary
+        run: |
+          echo "# 🚀 SGSI Infrastructure Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Layer Status" >> $GITHUB_STEP_SUMMARY
+          echo "| Layer | Status | Description |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|--------|-------------|" >> $GITHUB_STEP_SUMMARY
+          echo "| 1 - Foundation | ${{ needs.deploy-foundation.result }} | IAM Roles & Policies |" >> $GITHUB_STEP_SUMMARY
+          echo "| 2 - Network | ${{ needs.deploy-network.result }} | VPC & Security Groups |" >> $GITHUB_STEP_SUMMARY
+          echo "| 3 - Compute | ${{ needs.deploy-compute.result }} | ALB, ASG, RDS, Lambda |" >> $GITHUB_STEP_SUMMARY
+          echo "| 4 - Storage | ${{ needs.deploy-storage.result }} | S3, EFS, Backup |" >> $GITHUB_STEP_SUMMARY
+          echo "| 5 - Observability | ${{ needs.deploy-observability.result }} | CloudTrail, GuardDuty, Security Hub |" >> $GITHUB_STEP_SUMMARY

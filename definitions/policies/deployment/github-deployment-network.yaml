@@ -1,0 +1,174 @@
+policy:
+  name: github-deployment-network
+  description: "GitHub Actions deployment policy for Network infrastructure (VPC, Subnets, Security Groups, NACLs)"
+  policy_type: deployment
+  layer: Network
+  scope: global
+  version: "1.0.0"
+
+  statements:
+  # VPC Management
+  - sid: VPCManagement
+    effect: Allow
+    actions:
+      # VPC Operations
+      - "ec2:CreateVpc"
+      - "ec2:DeleteVpc"
+      - "ec2:DescribeVpcs"
+      - "ec2:ModifyVpcAttribute"
+      - "ec2:AssociateVpcCidrBlock"
+      - "ec2:DisassociateVpcCidrBlock"
+      
+      # Internet Gateway Operations
+      - "ec2:CreateInternetGateway"
+      - "ec2:DeleteInternetGateway"
+      - "ec2:DescribeInternetGateways"
+      - "ec2:AttachInternetGateway"
+      - "ec2:DetachInternetGateway"
+      
+      # NAT Gateway Operations
+      - "ec2:CreateNatGateway"
+      - "ec2:DeleteNatGateway"
+      - "ec2:DescribeNatGateways"
+      
+      # Elastic IP Operations
+      - "ec2:AllocateAddress"
+      - "ec2:ReleaseAddress"
+      - "ec2:DescribeAddresses"
+      - "ec2:AssociateAddress"
+      - "ec2:DisassociateAddress"
+    resources:
+      - "*"
+
+  # Subnet Management
+  - sid: SubnetManagement
+    effect: Allow
+    actions:
+      - "ec2:CreateSubnet"
+      - "ec2:DeleteSubnet"
+      - "ec2:DescribeSubnets"
+      - "ec2:ModifySubnetAttribute"
+      - "ec2:AssociateSubnetCidrBlock"
+      - "ec2:DisassociateSubnetCidrBlock"
+    resources:
+      - "*"
+
+  # Route Table Management
+  - sid: RouteTableManagement
+    effect: Allow
+    actions:
+      - "ec2:CreateRouteTable"
+      - "ec2:DeleteRouteTable"
+      - "ec2:DescribeRouteTables"
+      - "ec2:CreateRoute"
+      - "ec2:DeleteRoute"
+      - "ec2:ReplaceRoute"
+      - "ec2:AssociateRouteTable"
+      - "ec2:DisassociateRouteTable"
+      - "ec2:ReplaceRouteTableAssociation"
+    resources:
+      - "*"
+
+  # Security Groups Management
+  - sid: SecurityGroupManagement
+    effect: Allow
+    actions:
+      - "ec2:CreateSecurityGroup"
+      - "ec2:DeleteSecurityGroup"
+      - "ec2:DescribeSecurityGroups"
+      - "ec2:DescribeSecurityGroupRules"
+      - "ec2:AuthorizeSecurityGroupIngress"
+      - "ec2:AuthorizeSecurityGroupEgress"
+      - "ec2:RevokeSecurityGroupIngress"
+      - "ec2:RevokeSecurityGroupEgress"
+      - "ec2:ModifySecurityGroupRules"
+    resources:
+      - "*"
+
+  # Network ACLs Management
+  - sid: NetworkACLManagement
+    effect: Allow
+    actions:
+      - "ec2:CreateNetworkAcl"
+      - "ec2:DeleteNetworkAcl"
+      - "ec2:DescribeNetworkAcls"
+      - "ec2:CreateNetworkAclEntry"
+      - "ec2:DeleteNetworkAclEntry"
+      - "ec2:ReplaceNetworkAclEntry"
+      - "ec2:ReplaceNetworkAclAssociation"
+    resources:
+      - "*"
+
+  # VPC Endpoints Management
+  - sid: VPCEndpointManagement
+    effect: Allow
+    actions:
+      - "ec2:CreateVpcEndpoint"
+      - "ec2:DeleteVpcEndpoints"
+      - "ec2:DescribeVpcEndpoints"
+      - "ec2:DescribeVpcEndpointServices"
+      - "ec2:ModifyVpcEndpoint"
+      - "ec2:CreateVpcEndpointServiceConfiguration"
+      - "ec2:DeleteVpcEndpointServiceConfigurations"
+    resources:
+      - "*"
+
+  # VPC Flow Logs
+  - sid: VPCFlowLogs
+    effect: Allow
+    actions:
+      - "ec2:CreateFlowLogs"
+      - "ec2:DeleteFlowLogs"
+      - "ec2:DescribeFlowLogs"
+      - "logs:CreateLogGroup"
+      - "logs:CreateLogStream"
+      - "logs:DescribeLogGroups"
+      - "logs:DescribeLogStreams"
+    resources:
+      - "*"
+
+  # Route53 DNS Management
+  - sid: Route53Management
+    effect: Allow
+    actions:
+      - "route53:CreateHostedZone"
+      - "route53:DeleteHostedZone"
+      - "route53:GetHostedZone"
+      - "route53:ListHostedZones"
+      - "route53:ChangeResourceRecordSets"
+      - "route53:GetChange"
+      - "route53:ListResourceRecordSets"
+      - "route53:CreateVPCAssociationAuthorization"
+      - "route53:DeleteVPCAssociationAuthorization"
+      - "route53:AssociateVPCWithHostedZone"
+      - "route53:DisassociateVPCFromHostedZone"
+    resources:
+      - "*"
+
+  # Tags Management
+  - sid: NetworkTagging
+    effect: Allow
+    actions:
+      - "ec2:CreateTags"
+      - "ec2:DeleteTags"
+      - "ec2:DescribeTags"
+    resources:
+      - "*"
+
+  # Resource access based on tags
+  conditions:
+    - condition_key: "ec2:ResourceTag/Project"
+      condition_operator: StringEquals
+      condition_values: ["SGSI-Implementation"]
+    
+    - condition_key: "ec2:ResourceTag/Environment"
+      condition_operator: StringEquals
+      condition_values: ["Development", "QA", "Production"]
+
+  tags:
+    PolicyType: "Deployment"
+    Layer: "Network"
+    SecurityLevel: "High"
+    ComplianceScope: "ISO27001,NIST-CSF"
+    ReviewDate: "2025-01-19"
+    CreatedBy: "SGSI-Team"

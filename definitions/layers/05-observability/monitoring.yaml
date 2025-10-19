@@ -1,0 +1,214 @@
+# ==============================================================================
+# LAYER 5: OBSERVABILITY - DEFINITIONS
+# ==============================================================================
+
+# CloudTrail Configuration
+cloudtrail:
+  name: "sgsi-audit-trail"
+  s3_bucket_name: "sgsi-logs"
+  include_global_service_events: true
+  is_multi_region_trail: true
+  enable_logging: true
+  
+  event_selectors:
+    - read_write_type: "All"
+      include_management_events: true
+      data_resources:
+        - type: "AWS::S3::Object"
+          values: ["arn:aws:s3:::*/*"]
+        - type: "AWS::Lambda::Function"
+          values: ["arn:aws:lambda:*"]
+
+# AWS Config Configuration
+aws_config:
+  configuration_recorder:
+    name: "sgsi-config-recorder"
+    recording_group:
+      all_supported: true
+      include_global_resource_types: true
+      resource_types: []
+  
+  delivery_channel:
+    name: "sgsi-config-delivery-channel"
+    s3_bucket_name: "sgsi-logs"
+    s3_key_prefix: "config"
+    snapshot_delivery_properties:
+      delivery_frequency: "TwentyFour_Hours"
+
+  # Config Rules
+  config_rules:
+    - name: "encrypted-volumes"
+      source:
+        owner: "AWS"
+        source_identifier: "ENCRYPTED_VOLUMES"
+      description: "Checks if EBS volumes are encrypted"
+    
+    - name: "rds-encrypted"
+      source:
+        owner: "AWS"
+        source_identifier: "RDS_STORAGE_ENCRYPTED"
+      description: "Checks if RDS instances are encrypted"
+    
+    - name: "s3-bucket-ssl-requests-only"
+      source:
+        owner: "AWS"
+        source_identifier: "S3_BUCKET_SSL_REQUESTS_ONLY"
+      description: "Checks if S3 buckets have SSL-only policies"
+
+# GuardDuty Configuration
+guardduty:
+  detector:
+    enable: true
+    finding_publishing_frequency: "FIFTEEN_MINUTES"
+    
+    datasources:
+      s3_logs:
+        enable: true
+      kubernetes:
+        audit_logs:
+          enable: false  # No EKS en este setup
+      malware_protection:
+        scan_ec2_instance_with_findings:
+          ebs_volumes:
+            enable: true
+
+# Security Hub Configuration
+security_hub:
+  enable_default_standards: true
+  control_finding_generator: "SECURITY_CONTROL"
+  
+  standards_subscriptions:
+    - "arn:aws:securityhub:::ruleset/finding-format/aws-foundational-security-best-practices/v/1.0.0"
+    - "arn:aws:securityhub:us-east-1::standard/aws-config-conformance-pack/1.0.0"
+
+# CloudWatch Configuration
+cloudwatch:
+  # Log Groups
+  log_groups:
+    - name: "/aws/lambda/sgsi-api-processor"
+      retention_in_days: 30
+      kms_key_id: null
+    
+    - name: "/aws/rds/instance/sgsi-db-primary/error"
+      retention_in_days: 90
+    
+    - name: "/aws/applicationelb/sgsi-alb"
+      retention_in_days: 30
+
+  # Dashboards
+  dashboards:
+    - name: "SGSI-Security-Dashboard"
+      body:
+        widgets:
+          - type: "metric"
+            properties:
+              metrics:
+                - ["AWS/ApplicationELB", "RequestCount", "LoadBalancer", "sgsi-alb"]
+                - ["AWS/RDS", "DatabaseConnections", "DBInstanceIdentifier", "sgsi-db-primary"]
+                - ["AWS/Lambda", "Invocations", "FunctionName", "sgsi-api-processor"]
+              view: "timeSeries"
+              region: "us-east-1"
+              title: "Application Metrics"
+              period: 300
+
+  # Metric Alarms
+  metric_alarms:
+    - name: "sgsi-high-cpu-utilization"
+      comparison_operator: "GreaterThanThreshold"
+      evaluation_periods: 2
+      metric_name: "CPUUtilization"
+      namespace: "AWS/EC2"
+      period: 300
+      statistic: "Average"
+      threshold: 80
+      alarm_description: "High CPU utilization detected"
+      alarm_actions:
+        - "arn:aws:sns:us-east-1:051963532279:sgsi-security-alerts"
+    
+    - name: "sgsi-rds-high-connections"
+      comparison_operator: "GreaterThanThreshold"
+      evaluation_periods: 2
+      metric_name: "DatabaseConnections"
+      namespace: "AWS/RDS"
+      period: 300
+      statistic: "Average"
+      threshold: 50
+      alarm_description: "High database connections"
+      dimensions:
+        DBInstanceIdentifier: "sgsi-db-primary"
+    
+    - name: "sgsi-guardduty-finding"
+      comparison_operator: "GreaterThanThreshold"
+      evaluation_periods: 1
+      metric_name: "FindingCount"
+      namespace: "AWS/GuardDuty"
+      period: 300
+      statistic: "Sum"
+      threshold: 0
+      alarm_description: "GuardDuty finding detected"
+
+# SNS Topics
+sns_topics:
+  - name: "sgsi-security-alerts"
+    display_name: "SGSI Security Alerts"
+    delivery_policy:
+      http:
+        default_healthy_retry_policy:
+          min_delay_target: 20
+          max_delay_target: 20
+          num_retries: 3
+    
+    subscriptions:
+      - protocol: "email"
+        endpoint: "security-team@company.com"
+
+# EventBridge Rules
+eventbridge_rules:
+  - name: "sgsi-guardduty-findings"
+    description: "Capture GuardDuty findings"
+    event_pattern:
+      source: ["aws.guardduty"]
+      detail-type: ["GuardDuty Finding"]
+    targets:
+      - arn: "arn:aws:sns:us-east-1:051963532279:sgsi-security-alerts"
+        id: "SGSISecurityAlerts"
+  
+  - name: "sgsi-config-compliance"
+    description: "Capture Config compliance changes"
+    event_pattern:
+      source: ["aws.config"]
+      detail-type: ["Config Rules Compliance Change"]
+    targets:
+      - arn: "arn:aws:sns:us-east-1:051963532279:sgsi-security-alerts"
+        id: "SGSIComplianceAlerts"
+
+# Compliance y Seguridad
+metadata:
+  layer: "05-observability"
+  iso27001_controls:
+    - "A.12.4.1"  # Event logging
+    - "A.12.4.2"  # Protection of log information
+    - "A.12.4.3"  # Administrator and operator logs
+    - "A.16.1.4"  # Assessment of security events
+  
+  nist_csf_functions:
+    - "Detect (DE.AE)"  # Anomalies and Events
+    - "Detect (DE.CM)"  # Continuous Monitoring
+    - "Respond (RS.AN)"  # Analysis
+  
+  monitoring_coverage:
+    - "Infrastructure monitoring"
+    - "Security monitoring"
+    - "Compliance monitoring"
+    - "Performance monitoring"
+
+# Tags por defecto
+default_tags:
+  Project: "SGSI-Implementation"
+  Layer: "Observability"
+  SecurityLevel: "Critical"
+  ComplianceScope: "ISO27001-A.12,A.16"
+  AssetType: "Monitoring-Infrastructure"
+  DataClassification: "Internal"
+  AlertingEnabled: "true"
+  MaintenanceWindow: "Sunday-2AM-6AM"

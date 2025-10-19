@@ -1,0 +1,154 @@
+# ==============================================================================
+# LAYER 2: NETWORK - VPC DEFINITIONS
+# ==============================================================================
+
+vpc_configuration:
+  name: "sgsi-vpc-main"
+  cidr_block: "10.0.0.0/16"
+  enable_dns_hostnames: true
+  enable_dns_support: true
+  
+  # Multi-AZ para alta disponibilidad
+  availability_zones:
+    - "us-east-1a"
+    - "us-east-1b" 
+    - "us-east-1c"
+
+  # Subnets organizadas por tier y AZ
+  subnets:
+    # DMZ TIER (Public Subnets)
+    public:
+      - name: "sgsi-public-1a"
+        cidr_block: "10.0.1.0/24"
+        availability_zone: "us-east-1a"
+        map_public_ip_on_launch: true
+        
+      - name: "sgsi-public-1b"
+        cidr_block: "10.0.2.0/24"
+        availability_zone: "us-east-1b"
+        map_public_ip_on_launch: true
+        
+      - name: "sgsi-public-1c"
+        cidr_block: "10.0.3.0/24"
+        availability_zone: "us-east-1c"
+        map_public_ip_on_launch: true
+
+    # APPLICATION TIER (Private Subnets)
+    private_app:
+      - name: "sgsi-app-1a"
+        cidr_block: "10.0.11.0/24"
+        availability_zone: "us-east-1a"
+        
+      - name: "sgsi-app-1b"
+        cidr_block: "10.0.12.0/24"
+        availability_zone: "us-east-1b"
+        
+      - name: "sgsi-app-1c"
+        cidr_block: "10.0.13.0/24"
+        availability_zone: "us-east-1c"
+
+    # DATABASE TIER (Private Subnets)
+    private_db:
+      - name: "sgsi-db-1a"
+        cidr_block: "10.0.21.0/24"
+        availability_zone: "us-east-1a"
+        
+      - name: "sgsi-db-1b"
+        cidr_block: "10.0.22.0/24"
+        availability_zone: "us-east-1b"
+        
+      - name: "sgsi-db-1c"
+        cidr_block: "10.0.23.0/24"
+        availability_zone: "us-east-1c"
+
+    # MANAGEMENT TIER (Private Subnets)
+    private_mgmt:
+      - name: "sgsi-mgmt-1a"
+        cidr_block: "10.0.31.0/24"
+        availability_zone: "us-east-1a"
+
+  # Internet Gateway
+  internet_gateway:
+    name: "sgsi-igw"
+
+  # NAT Gateways (uno por AZ para HA)
+  nat_gateways:
+    - name: "sgsi-nat-1a"
+      subnet: "sgsi-public-1a"
+      
+    - name: "sgsi-nat-1b"
+      subnet: "sgsi-public-1b"
+      
+    - name: "sgsi-nat-1c"
+      subnet: "sgsi-public-1c"
+
+  # Route Tables
+  route_tables:
+    # Public Route Table
+    public:
+      name: "sgsi-rt-public"
+      routes:
+        - destination: "0.0.0.0/0"
+          target_type: "internet_gateway"
+          target: "sgsi-igw"
+      
+      subnet_associations:
+        - "sgsi-public-1a"
+        - "sgsi-public-1b"
+        - "sgsi-public-1c"
+
+    # Private Route Tables (una por AZ)
+    private:
+      - name: "sgsi-rt-private-1a"
+        routes:
+          - destination: "0.0.0.0/0"
+            target_type: "nat_gateway"
+            target: "sgsi-nat-1a"
+        subnet_associations:
+          - "sgsi-app-1a"
+          - "sgsi-db-1a"
+          - "sgsi-mgmt-1a"
+          
+      - name: "sgsi-rt-private-1b"
+        routes:
+          - destination: "0.0.0.0/0"
+            target_type: "nat_gateway"
+            target: "sgsi-nat-1b"
+        subnet_associations:
+          - "sgsi-app-1b"
+          - "sgsi-db-1b"
+          
+      - name: "sgsi-rt-private-1c"
+        routes:
+          - destination: "0.0.0.0/0"
+            target_type: "nat_gateway"
+            target: "sgsi-nat-1c"
+        subnet_associations:
+          - "sgsi-app-1c"
+          - "sgsi-db-1c"
+
+# Compliance y Seguridad
+metadata:
+  layer: "02-network"
+  iso27001_controls:
+    - "A.13.1.1"  # Network controls
+    - "A.13.1.3"  # Segregation in networks
+  
+  nist_csf_functions:
+    - "Protect (PR.AC)"  # Access Control
+  
+  zero_trust_principles:
+    - "Network segmentation"
+    - "Micro-segmentation"
+    - "Least privilege access"
+
+# Tags comunes
+default_tags:
+  Project: "SGSI-Implementation"
+  Layer: "Network"
+  SecurityLevel: "High"
+  ComplianceScope: "ISO27001-A.13"
+  AssetType: "Network-Infrastructure"
+  ZeroTrustLayer: "Network-Foundation"
+  DataClassification: "Internal"
+  MaintenanceWindow: "Sunday-2AM-6AM"

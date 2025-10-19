@@ -1,0 +1,136 @@
+# ==============================================================================
+# LAYER 1: FOUNDATION - IAM DEFINITIONS
+# ==============================================================================
+
+# IAM Roles Configuration
+iam_roles:
+  - name: "github-deployment-role"
+    description: "Role for GitHub Actions OIDC deployment"
+    assume_role_policy_document:
+      Version: "2012-10-17"
+      Statement:
+        - Effect: "Allow"
+          Principal:
+            Federated: "arn:aws:iam::051963532279:oidc-provider/token.actions.githubusercontent.com"
+          Action: "sts:AssumeRoleWithWebIdentity"
+          Condition:
+            StringEquals:
+              "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
+            StringLike:
+              "token.actions.githubusercontent.com:sub": "repo:DarwinR22/aws-iam-roles:*"
+    
+    managed_policy_arns:
+      - "arn:aws:iam::aws:policy/PowerUserAccess"
+    
+    inline_policies:
+      - name: "IAMManagement"
+        policy_document:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "iam:*"
+              Resource: "*"
+
+  - name: "sgsi-lambda-role"
+    description: "Execution role for SGSI Lambda functions"
+    assume_role_policy_document:
+      Version: "2012-10-17"
+      Statement:
+        - Effect: "Allow"
+          Principal:
+            Service: "lambda.amazonaws.com"
+          Action: "sts:AssumeRole"
+    
+    managed_policy_arns:
+      - "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+
+# OIDC Provider Configuration
+oidc_providers:
+  - url: "https://token.actions.githubusercontent.com"
+    client_id_list:
+      - "sts.amazonaws.com"
+    thumbprint_list:
+      - "6938fd4d98bab03faadb97b34396831e3780aea1"
+
+# IAM Policies Configuration (referencias a políticas existentes)
+iam_policies:
+  deployment_policies:
+    - "github-deployment-cloudformation"
+    - "github-deployment-cloudwatch" 
+    - "github-deployment-dynamodb"
+    - "github-deployment-eventbridge"
+    - "github-deployment-glue"
+    - "github-deployment-iam"
+    - "github-deployment-lambda"
+    - "github-deployment-s3"
+    - "github-deployment-tfstate"
+  
+  execution_policies:
+    - "mci-aws-cloudwatch-logs"
+    - "mci-aws-dynamodb-read"
+    - "mci-aws-glue-catalog-read"
+    - "mci-aws-glue-catalog-write"
+    - "mci-aws-kms-decrypt"
+    - "mci-aws-s3-read"
+    - "mci-aws-s3-write"
+
+# Terraform Backend Configuration
+terraform_backend:
+  bucket: "terraform-state-bucket-051963532279"
+  region: "us-east-1"
+  dynamodb_table: "terraform-state-lock"
+  encrypt: true
+  
+  state_keys:
+    foundation: "sgsi/layer1-foundation/terraform.tfstate"
+    network: "sgsi/layer2-network/terraform.tfstate"
+    compute: "sgsi/layer3-compute/terraform.tfstate"
+    storage: "sgsi/layer4-storage/terraform.tfstate"
+    observability: "sgsi/layer5-observability/terraform.tfstate"
+
+# Compliance y Seguridad
+metadata:
+  layer: "01-foundation"
+  iso27001_controls:
+    - "A.9.1.1"   # Access control policy
+    - "A.9.2.1"   # User registration
+    - "A.9.2.2"   # User access provisioning
+    - "A.9.4.2"   # Secure log-on procedures
+  
+  nist_csf_functions:
+    - "Protect (PR.AC)"  # Access Control
+    - "Protect (PR.AT)"  # Awareness Training
+  
+  security_principles:
+    - "Least privilege access"
+    - "Zero trust authentication"
+    - "ABAC (Attribute-Based Access Control)"
+    - "Multi-factor authentication"
+
+# Variables de configuración
+variables:
+  aws_account_id:
+    description: "AWS Account ID"
+    type: "string"
+    default: "051963532279"
+  
+  github_repository:
+    description: "GitHub repository for OIDC trust"
+    type: "string"
+    default: "DarwinR22/aws-iam-roles"
+  
+  environment:
+    description: "Environment name"
+    type: "string"
+    default: "production"
+
+# Tags por defecto
+default_tags:
+  Project: "SGSI-Implementation"
+  Layer: "Foundation"
+  SecurityLevel: "Critical"
+  ComplianceScope: "ISO27001-A.9"
+  AssetType: "IAM-Infrastructure"
+  DataClassification: "Restricted"
+  MaintenanceWindow: "Sunday-2AM-6AM"

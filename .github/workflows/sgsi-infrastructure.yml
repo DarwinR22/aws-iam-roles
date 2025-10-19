@@ -1,0 +1,566 @@
+name: 🏗️ SGSI Multi-Layer Infrastructure Deployment
+
+# Prevent multiple workflows running simultaneously to avoid state lock conflicts
+concurrency:
+  group: sgsi-infrastructure-${{ github.ref }}
+  cancel-in-progress: false
+
+# Enhanced permissions for comprehensive infrastructure deployment
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write
+  id-token: write
+
+on:
+  push:
+    branches: [main, dev, qa]
+    paths: 
+      - 'definitions/**'
+      - 'generators/**'
+      - 'templates/**'
+      - '.github/workflows/**'
+      - 'modules/**'
+  
+  pull_request:
+    branches: [main, qa]
+    paths:
+      - 'definitions/**'
+  
+  workflow_dispatch:
+    inputs:
+      target_layer:
+        description: 'Target layer to deploy (all, layer1, layer2, layer3, layer4, layer5)'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - layer1
+          - layer2
+          - layer3
+          - layer4
+          - layer5
+      force_deploy:
+        description: 'Force deployment even if no changes detected'
+        required: false
+        default: false
+        type: boolean
+      skip_validation:
+        description: 'Skip validation steps (emergency deployment)'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  TF_LOG: ""
+  TF_LOG_CORE: ""
+  TF_LOG_PROVIDER: ""
+  RUNNER_DEBUG: "0"
+  ACTIONS_RUNNER_DEBUG: "0"
+  ACTIONS_STEP_DEBUG: "0"
+
+jobs:
+  # ========================================================================
+  # JOB 1: DETECT CHANGES AND PLAN DEPLOYMENT STRATEGY
+  # ========================================================================
+  detect-changes:
+    name: 🔍 Detect Changes & Plan Deployment
+    runs-on: ubuntu-latest
+    outputs:
+      deploy_layer1: ${{ steps.changes.outputs.layer1 }}
+      deploy_layer2: ${{ steps.changes.outputs.layer2 }}
+      deploy_layer3: ${{ steps.changes.outputs.layer3 }}
+      deploy_layer4: ${{ steps.changes.outputs.layer4 }}
+      deploy_layer5: ${{ steps.changes.outputs.layer5 }}
+      deployment_strategy: ${{ steps.strategy.outputs.strategy }}
+      target_layers: ${{ steps.strategy.outputs.target_layers }}
+      environment: ${{ steps.env.outputs.environment }}
+      
+    steps:
+    - name: 📥 Checkout Repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: 🌍 Determine Environment
+      id: env
+      run: |
+        if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+          echo "environment=PROD" >> $GITHUB_OUTPUT
+          echo "aws_region=us-east-1" >> $GITHUB_OUTPUT
+        elif [[ "${{ github.ref }}" == "refs/heads/qa" ]]; then
+          echo "environment=QA" >> $GITHUB_OUTPUT
+          echo "aws_region=us-east-1" >> $GITHUB_OUTPUT
+        else
+          echo "environment=DEV" >> $GITHUB_OUTPUT
+          echo "aws_region=us-east-1" >> $GITHUB_OUTPUT
+        fi
+
+    - name: 🔍 Detect Layer Changes
+      id: changes
+      run: |
+        # Initialize all layers as false
+        echo "layer1=false" >> $GITHUB_OUTPUT
+        echo "layer2=false" >> $GITHUB_OUTPUT
+        echo "layer3=false" >> $GITHUB_OUTPUT
+        echo "layer4=false" >> $GITHUB_OUTPUT
+        echo "layer5=false" >> $GITHUB_OUTPUT
+        
+        # Check for manual override
+        if [[ "${{ github.event.inputs.target_layer }}" != "" && "${{ github.event.inputs.target_layer }}" != "all" ]]; then
+          case "${{ github.event.inputs.target_layer }}" in
+            "layer1") echo "layer1=true" >> $GITHUB_OUTPUT ;;
+            "layer2") echo "layer2=true" >> $GITHUB_OUTPUT ;;
+            "layer3") echo "layer3=true" >> $GITHUB_OUTPUT ;;
+            "layer4") echo "layer4=true" >> $GITHUB_OUTPUT ;;
+            "layer5") echo "layer5=true" >> $GITHUB_OUTPUT ;;
+          esac
+          echo "🎯 Manual deployment requested for: ${{ github.event.inputs.target_layer }}"
+          exit 0
+        fi
+        
+        # Auto-detect changes based on modified files
+        if git diff --name-only HEAD~1 HEAD | grep -E "(definitions/policies|definitions/roles|templates/)" > /dev/null; then
+          echo "layer1=true" >> $GITHUB_OUTPUT
+          echo "🔄 Layer 1 (IAM) changes detected"
+        fi
+        
+        if git diff --name-only HEAD~1 HEAD | grep -E "(definitions/network|github-deployment-network)" > /dev/null; then
+          echo "layer2=true" >> $GITHUB_OUTPUT
+          echo "🔄 Layer 2 (Network) changes detected"
+        fi
+        
+        if git diff --name-only HEAD~1 HEAD | grep -E "(definitions/compute|github-deployment-compute|github-deployment-database)" > /dev/null; then
+          echo "layer3=true" >> $GITHUB_OUTPUT
+          echo "🔄 Layer 3 (Compute) changes detected"
+        fi
+        
+        if git diff --name-only HEAD~1 HEAD | grep -E "(definitions/storage|github-deployment-storage)" > /dev/null; then
+          echo "layer4=true" >> $GITHUB_OUTPUT
+          echo "🔄 Layer 4 (Storage) changes detected"
+        fi
+        
+        if git diff --name-only HEAD~1 HEAD | grep -E "(definitions/monitoring|github-deployment-monitoring)" > /dev/null; then
+          echo "layer5=true" >> $GITHUB_OUTPUT
+          echo "🔄 Layer 5 (Monitoring) changes detected"
+        fi
+        
+        # Force deploy all if requested
+        if [[ "${{ github.event.inputs.force_deploy }}" == "true" ]]; then
+          echo "layer1=true" >> $GITHUB_OUTPUT
+          echo "layer2=true" >> $GITHUB_OUTPUT
+          echo "layer3=true" >> $GITHUB_OUTPUT
+          echo "layer4=true" >> $GITHUB_OUTPUT
+          echo "layer5=true" >> $GITHUB_OUTPUT
+          echo "🚀 Force deployment requested - all layers enabled"
+        fi
+
+    - name: 📋 Plan Deployment Strategy
+      id: strategy
+      run: |
+        layers=""
+        if [[ "${{ steps.changes.outputs.layer1 }}" == "true" ]]; then
+          layers="${layers}1,"
+        fi
+        if [[ "${{ steps.changes.outputs.layer2 }}" == "true" ]]; then
+          layers="${layers}2,"
+        fi
+        if [[ "${{ steps.changes.outputs.layer3 }}" == "true" ]]; then
+          layers="${layers}3,"
+        fi
+        if [[ "${{ steps.changes.outputs.layer4 }}" == "true" ]]; then
+          layers="${layers}4,"
+        fi
+        if [[ "${{ steps.changes.outputs.layer5 }}" == "true" ]]; then
+          layers="${layers}5,"
+        fi
+        
+        layers=${layers%,}  # Remove trailing comma
+        echo "target_layers=${layers}" >> $GITHUB_OUTPUT
+        
+        if [[ -z "$layers" ]]; then
+          echo "strategy=none" >> $GITHUB_OUTPUT
+          echo "📝 No deployment needed - no changes detected"
+        else
+          echo "strategy=sequential" >> $GITHUB_OUTPUT
+          echo "📝 Sequential deployment planned for layers: ${layers}"
+        fi
+
+  # ========================================================================
+  # JOB 2: GENERATE TERRAFORM CONFIGURATION
+  # ========================================================================
+  generate-terraform:
+    name: 🔄 Generate Terraform
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: needs.detect-changes.outputs.deployment_strategy != 'none'
+    
+    steps:
+    - name: 📥 Checkout Repository
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
+        fetch-depth: 0
+
+    - name: 🐍 Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: 📦 Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r generators/requirements.txt
+
+    - name: 🔍 Validate YAML Definitions
+      if: github.event.inputs.skip_validation != 'true'
+      run: |
+        echo "🔍 Validating YAML definitions..."
+        python generators/generate_all.py --validate-only
+
+    - name: 🏗️ Generate All Infrastructure
+      run: |
+        echo "🏗️ Generating Terraform configuration..."
+        python generators/generate_all.py
+        
+        echo "📊 Generation Summary:"
+        find generated/ -name "*.tf" | wc -l | xargs echo "Total .tf files:"
+        find generated/modules/ -name "*.tf" 2>/dev/null | wc -l | xargs echo "Module files:"
+
+    - name: 📤 Upload Generated Terraform
+      uses: actions/upload-artifact@v3
+      with:
+        name: terraform-config-${{ needs.detect-changes.outputs.environment }}
+        path: generated/
+        retention-days: 30
+
+  # ========================================================================
+  # JOB 3: LAYER 1 - IAM INFRASTRUCTURE
+  # ========================================================================
+  deploy-layer1-iam:
+    name: 🔐 Layer 1 - IAM
+    runs-on: ubuntu-latest
+    needs: [detect-changes, generate-terraform]
+    if: needs.detect-changes.outputs.deploy_layer1 == 'true'
+    environment: ${{ needs.detect-changes.outputs.environment }}
+    
+    steps:
+    - name: 📥 Download Terraform Config
+      uses: actions/download-artifact@v3
+      with:
+        name: terraform-config-${{ needs.detect-changes.outputs.environment }}
+        path: generated/
+
+    - name: 🛠️ Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: "1.5.7"
+
+    - name: 🔐 Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+        aws-region: us-east-1
+        role-session-name: GitHubActions-Layer1-IAM
+
+    - name: 🏗️ Deploy Layer 1 (IAM)
+      working-directory: generated
+      run: |
+        echo "🔐 Deploying Layer 1 - IAM Infrastructure"
+        
+        # Initialize Terraform
+        terraform init -reconfigure
+        
+        # Plan only IAM resources
+        terraform plan -target="aws_iam_role.github_actions_iam_deployment_role" \
+                       -target="module.github_deployment_application" \
+                       -target="module.github_deployment_iam" \
+                       -target="module.github_deployment_network" \
+                       -target="module.github_deployment_storage" \
+                       -target="module.github_deployment_monitoring" \
+                       -out=layer1.tfplan
+        
+        # Apply Layer 1
+        terraform apply -auto-approve layer1.tfplan
+        
+        echo "✅ Layer 1 (IAM) deployed successfully"
+
+  # ========================================================================
+  # JOB 4: LAYER 2 - NETWORK INFRASTRUCTURE
+  # ========================================================================
+  deploy-layer2-network:
+    name: 🌐 Layer 2 - Network
+    runs-on: ubuntu-latest
+    needs: [detect-changes, generate-terraform, deploy-layer1-iam]
+    if: |
+      always() && 
+      needs.detect-changes.outputs.deploy_layer2 == 'true' && 
+      (needs.deploy-layer1-iam.result == 'success' || needs.deploy-layer1-iam.result == 'skipped')
+    environment: ${{ needs.detect-changes.outputs.environment }}
+    
+    steps:
+    - name: 📥 Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: 📥 Download Terraform Config
+      uses: actions/download-artifact@v3
+      with:
+        name: terraform-config-${{ needs.detect-changes.outputs.environment }}
+        path: generated/
+
+    - name: 🛠️ Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: "1.5.7"
+
+    - name: 🔐 Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+        aws-region: us-east-1
+        role-session-name: GitHubActions-Layer2-Network
+
+    - name: 🐍 Setup Python for Network Generation
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: 📦 Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r generators/requirements.txt
+
+    - name: 🌐 Generate Network Infrastructure
+      run: |
+        echo "🌐 Generating Layer 2 - Network Infrastructure"
+        # Create a temporary script to generate only network resources
+        cat > generate_network.py << 'EOF'
+        import sys, os
+        sys.path.append('generators')
+        from generate_all import InfrastructureGenerator
+        
+        generator = InfrastructureGenerator('definitions', 'generated')
+        generator.generate_network_infrastructure()
+        print("✅ Network infrastructure generated")
+        EOF
+        
+        python generate_network.py
+
+    - name: 🏗️ Deploy Layer 2 (Network)
+      working-directory: generated
+      run: |
+        echo "🌐 Deploying Layer 2 - Network Infrastructure"
+        
+        # Initialize Terraform
+        terraform init -reconfigure
+        
+        # Plan network resources
+        terraform plan -target="aws_vpc.sgsi_vpc_main" \
+                       -target="aws_subnet.*" \
+                       -target="aws_internet_gateway.*" \
+                       -target="aws_security_group.*" \
+                       -out=layer2.tfplan
+        
+        # Apply Layer 2
+        terraform apply -auto-approve layer2.tfplan
+        
+        echo "✅ Layer 2 (Network) deployed successfully"
+
+  # ========================================================================
+  # JOB 5: LAYER 3 - COMPUTE INFRASTRUCTURE
+  # ========================================================================
+  deploy-layer3-compute:
+    name: 💻 Layer 3 - Compute
+    runs-on: ubuntu-latest
+    needs: [detect-changes, generate-terraform, deploy-layer2-network]
+    if: |
+      always() && 
+      needs.detect-changes.outputs.deploy_layer3 == 'true' && 
+      needs.deploy-layer2-network.result == 'success'
+    environment: ${{ needs.detect-changes.outputs.environment }}
+    
+    steps:
+    - name: 📥 Download Terraform Config
+      uses: actions/download-artifact@v3
+      with:
+        name: terraform-config-${{ needs.detect-changes.outputs.environment }}
+        path: generated/
+
+    - name: 🛠️ Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: "1.5.7"
+
+    - name: 🔐 Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+        aws-region: us-east-1
+        role-session-name: GitHubActions-Layer3-Compute
+
+    - name: 🏗️ Deploy Layer 3 (Compute)
+      working-directory: generated
+      run: |
+        echo "💻 Deploying Layer 3 - Compute Infrastructure"
+        
+        # Initialize Terraform
+        terraform init -reconfigure
+        
+        # Plan compute resources
+        terraform plan -target="aws_lb.*" \
+                       -target="aws_instance.*" \
+                       -target="aws_launch_template.*" \
+                       -target="aws_autoscaling_group.*" \
+                       -target="aws_lambda_function.*" \
+                       -target="aws_db_instance.*" \
+                       -out=layer3.tfplan
+        
+        # Apply Layer 3
+        terraform apply -auto-approve layer3.tfplan
+        
+        echo "✅ Layer 3 (Compute) deployed successfully"
+
+  # ========================================================================
+  # JOB 6: LAYER 4 - STORAGE INFRASTRUCTURE
+  # ========================================================================
+  deploy-layer4-storage:
+    name: 💾 Layer 4 - Storage
+    runs-on: ubuntu-latest
+    needs: [detect-changes, generate-terraform, deploy-layer3-compute]
+    if: |
+      always() && 
+      needs.detect-changes.outputs.deploy_layer4 == 'true' && 
+      needs.deploy-layer3-compute.result == 'success'
+    environment: ${{ needs.detect-changes.outputs.environment }}
+    
+    steps:
+    - name: 📥 Download Terraform Config
+      uses: actions/download-artifact@v3
+      with:
+        name: terraform-config-${{ needs.detect-changes.outputs.environment }}
+        path: generated/
+
+    - name: 🛠️ Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: "1.5.7"
+
+    - name: 🔐 Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+        aws-region: us-east-1
+        role-session-name: GitHubActions-Layer4-Storage
+
+    - name: 🏗️ Deploy Layer 4 (Storage)
+      working-directory: generated
+      run: |
+        echo "💾 Deploying Layer 4 - Storage Infrastructure"
+        
+        # Initialize Terraform
+        terraform init -reconfigure
+        
+        # Plan storage resources
+        terraform plan -target="aws_s3_bucket.*" \
+                       -target="aws_ebs_volume.*" \
+                       -target="aws_efs_file_system.*" \
+                       -target="aws_backup_plan.*" \
+                       -out=layer4.tfplan
+        
+        # Apply Layer 4
+        terraform apply -auto-approve layer4.tfplan
+        
+        echo "✅ Layer 4 (Storage) deployed successfully"
+
+  # ========================================================================
+  # JOB 7: LAYER 5 - MONITORING & COMPLIANCE
+  # ========================================================================
+  deploy-layer5-monitoring:
+    name: 📊 Layer 5 - Monitoring
+    runs-on: ubuntu-latest
+    needs: [detect-changes, generate-terraform, deploy-layer4-storage]
+    if: |
+      always() && 
+      needs.detect-changes.outputs.deploy_layer5 == 'true' && 
+      needs.deploy-layer4-storage.result == 'success'
+    environment: ${{ needs.detect-changes.outputs.environment }}
+    
+    steps:
+    - name: 📥 Download Terraform Config
+      uses: actions/download-artifact@v3
+      with:
+        name: terraform-config-${{ needs.detect-changes.outputs.environment }}
+        path: generated/
+
+    - name: 🛠️ Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: "1.5.7"
+
+    - name: 🔐 Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+        aws-region: us-east-1
+        role-session-name: GitHubActions-Layer5-Monitoring
+
+    - name: 🏗️ Deploy Layer 5 (Monitoring)
+      working-directory: generated
+      run: |
+        echo "📊 Deploying Layer 5 - Monitoring & Compliance"
+        
+        # Initialize Terraform
+        terraform init -reconfigure
+        
+        # Plan monitoring resources
+        terraform plan -target="aws_cloudtrail.*" \
+                       -target="aws_config_*" \
+                       -target="aws_guardduty_detector.*" \
+                       -target="aws_securityhub_account.*" \
+                       -target="aws_cloudwatch_*" \
+                       -out=layer5.tfplan
+        
+        # Apply Layer 5
+        terraform apply -auto-approve layer5.tfplan
+        
+        echo "✅ Layer 5 (Monitoring) deployed successfully"
+
+  # ========================================================================
+  # JOB 8: DEPLOYMENT SUMMARY
+  # ========================================================================
+  deployment-summary:
+    name: 📋 Deployment Summary
+    runs-on: ubuntu-latest
+    needs: [detect-changes, deploy-layer1-iam, deploy-layer2-network, deploy-layer3-compute, deploy-layer4-storage, deploy-layer5-monitoring]
+    if: always()
+    
+    steps:
+    - name: 📋 Generate Deployment Report
+      run: |
+        echo "# 🏗️ SGSI Infrastructure Deployment Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "## 🎯 Deployment Strategy" >> $GITHUB_STEP_SUMMARY
+        echo "- **Environment**: ${{ needs.detect-changes.outputs.environment }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Target Layers**: ${{ needs.detect-changes.outputs.target_layers }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Strategy**: ${{ needs.detect-changes.outputs.deployment_strategy }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        echo "## 🏗️ Layer Deployment Results" >> $GITHUB_STEP_SUMMARY
+        echo "| Layer | Component | Status |" >> $GITHUB_STEP_SUMMARY
+        echo "|-------|-----------|--------|" >> $GITHUB_STEP_SUMMARY
+        echo "| 1 | IAM | ${{ needs.deploy-layer1-iam.result }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| 2 | Network | ${{ needs.deploy-layer2-network.result }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| 3 | Compute | ${{ needs.deploy-layer3-compute.result }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| 4 | Storage | ${{ needs.deploy-layer4-storage.result }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| 5 | Monitoring | ${{ needs.deploy-layer5-monitoring.result }} |" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        echo "## 🔄 Next Steps" >> $GITHUB_STEP_SUMMARY
+        if [[ "${{ needs.detect-changes.outputs.deployment_strategy }}" == "none" ]]; then
+          echo "- ✅ No changes detected - infrastructure is up to date" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "- 🔍 Verify deployed resources in AWS Console" >> $GITHUB_STEP_SUMMARY
+          echo "- 📊 Review CloudWatch metrics and logs" >> $GITHUB_STEP_SUMMARY
+          echo "- 🔒 Validate security controls" >> $GITHUB_STEP_SUMMARY
+        fi

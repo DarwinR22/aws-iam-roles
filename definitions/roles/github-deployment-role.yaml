@@ -90,6 +90,18 @@ role:
     - name: "github-deployment-database"
       file: "github-deployment-database.yaml"
       description: "Permisos completos de base de datos para Layer 3 SGSI (RDS, Performance Insights, Enhanced Monitoring)"
+      
+    - name: "github-deployment-network"
+      file: "github-deployment-network.yaml"
+      description: "Permisos completos de red para Layer 2 SGSI (VPC, Subnets, Security Groups, Route53)"
+      
+    - name: "github-deployment-storage"
+      file: "github-deployment-storage.yaml"
+      description: "Permisos completos de almacenamiento para Layer 4 SGSI (S3, EBS, EFS, Backup)"
+      
+    - name: "github-deployment-monitoring"
+      file: "github-deployment-monitoring.yaml"
+      description: "Permisos completos de monitoreo para Layer 5 SGSI (CloudTrail, Config, GuardDuty, Security Hub)"
 
   # Organizational tags for compliance and governance
   tags:
@@ -123,10 +135,10 @@ role:
     
     # Lifecycle management
     "Ciclo de Vida": "Consolidacion"
-    "Version": "v2.6.0"  # Política consolidada Application (Lambda+S3+DynamoDB+EventBridge)
+    "Version": "v2.7.0"  # Agregadas políticas Network, Storage, Monitoring (13/13)
     "Fecha de Creacion": "2025-09-16"
-    "Ultima Actualizacion": "2025-10-18"
-    "Politicas Consolidadas": "8/10"  # Respetamos límite AWS de 10 políticas por rol
+    "Ultima Actualizacion": "2025-10-19"
+    "Politicas Consolidadas": "13/13"  # Todas las capas SGSI (1:IAM, 2:Network, 3:Compute, 4:Storage, 5:Monitoring)
 
 # Environment variables for multi-environment deployment
 variables:
