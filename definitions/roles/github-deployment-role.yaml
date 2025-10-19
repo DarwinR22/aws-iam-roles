@@ -82,6 +82,14 @@ role:
     - name: "github-deployment-ec2"
       file: "github-deployment-ec2.yaml"
       description: "Permisos EC2 y VPC para desplegar infraestructura de red SGSI (VPC, Security Groups, Subnets, etc.)"
+      
+    - name: "github-deployment-compute"
+      file: "github-deployment-compute.yaml"
+      description: "Permisos completos de cómputo para Layer 3 SGSI (EC2, ALB, Auto Scaling, Launch Templates)"
+      
+    - name: "github-deployment-database"
+      file: "github-deployment-database.yaml"
+      description: "Permisos completos de base de datos para Layer 3 SGSI (RDS, Performance Insights, Enhanced Monitoring)"
 
   # Organizational tags for compliance and governance
   tags:

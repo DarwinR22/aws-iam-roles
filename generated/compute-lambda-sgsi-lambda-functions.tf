@@ -18,12 +18,12 @@ data "archive_file" "data_processor_zip" {
 resource "aws_lambda_function" "sgsi_api_handler" {
   filename         = data.archive_file.api_handler_zip.output_path
   function_name    = "sgsi-api-handler"
-  role             = aws_iam_role.sgsi_lambda_role.arn
-  handler          = "index.handler"
+  role            = aws_iam_role.sgsi_lambda_role.arn
+  handler         = "index.handler"
   source_code_hash = data.archive_file.api_handler_zip.output_base64sha256
-  runtime          = "python3.9"
-  timeout          = 30
-  memory_size      = 128
+  runtime         = "python3.9"
+  timeout         = 30
+  memory_size     = 128
 
   vpc_config {
     subnet_ids         = local.private_subnet_ids
@@ -51,12 +51,12 @@ resource "aws_lambda_function" "sgsi_api_handler" {
 resource "aws_lambda_function" "sgsi_data_processor" {
   filename         = data.archive_file.data_processor_zip.output_path
   function_name    = "sgsi-data-processor"
-  role             = aws_iam_role.sgsi_lambda_role.arn
-  handler          = "processor.handler"
+  role            = aws_iam_role.sgsi_lambda_role.arn
+  handler         = "processor.handler"
   source_code_hash = data.archive_file.data_processor_zip.output_base64sha256
-  runtime          = "python3.9"
-  timeout          = 300
-  memory_size      = 512
+  runtime         = "python3.9"
+  timeout         = 300
+  memory_size     = 512
 
   vpc_config {
     subnet_ids         = local.private_subnet_ids
