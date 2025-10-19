@@ -241,13 +241,18 @@ resource "aws_security_group" "{sg_name}" {{
         return generated_files
 
     def clean_generated(self):
-        """Remove all generated files"""
-        print("🧹 Cleaning generated files...")
+        """Remove only SGSI-specific generated files (networking, compute, security, etc.)"""
+        print("🧹 Cleaning SGSI generated files...")
         if self.generated_dir.exists():
+            # Only clean files that start with prefixes we generate
+            sgsi_prefixes = ['network-', 'compute-', 'security-', 'monitoring-']
             for tf_file in self.generated_dir.rglob("*.tf"):
-                if tf_file.name != "backend.tf":  # Preserve backend configuration
-                    tf_file.unlink()
-                    print(f"Removed: {tf_file}")
+                # Keep backend.tf and IAM files (deployment-roles.tf, modules/)
+                if tf_file.name != "backend.tf" and not tf_file.name.startswith("deployment-"):
+                    # Only remove files with SGSI prefixes or in network/ subdirectories
+                    if any(tf_file.name.startswith(prefix) for prefix in sgsi_prefixes) or 'network' in str(tf_file.parent):
+                        tf_file.unlink()
+                        print(f"Removed: {tf_file}")
 
 def main():
     parser = argparse.ArgumentParser(description='Generate SGSI Infrastructure from YAML definitions')

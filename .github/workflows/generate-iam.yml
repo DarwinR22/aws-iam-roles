@@ -132,7 +132,7 @@ jobs:
         python generators/generate_all.py --clean
         
         echo "🌐 Generating SGSI Infrastructure (Networking, Security, etc.)..."
-        python generators/generate_sgsi_all.py --clean
+        python generators/generate_sgsi_all.py
         
         echo "📋 Generated files:"
         find generated -name "*.tf" -type f | head -20
