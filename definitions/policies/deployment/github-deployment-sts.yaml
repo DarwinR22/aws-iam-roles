@@ -1,37 +1,37 @@
 policy:
-  name: "github-deployment-sts-permissions"
+  name: "github-deployment-sts"
   description: "Permisos STS necesarios para GitHub Actions OIDC"
+  service: "sts"
+  version: "1.0.0"
   
-  # Metadata
-  metadata:
-    version: "1.0.0" 
-    created_by: "DevOps Team"
-    created_date: "2025-10-18"
-    purpose: "STS permissions for GitHub Actions OIDC authentication"
-    
-  # Policy document
-  policy_document:
-    Version: "2012-10-17"
-    Statement:
-      - Sid: "STSAssumeRoleWithWebIdentity"
-        Effect: "Allow"
-        Action:
-          - "sts:AssumeRoleWithWebIdentity"
-          - "sts:GetCallerIdentity"
-          - "sts:TagSession"
-        Resource: "*"
+  statements:
+    - sid: "STSAssumeRoleWithWebIdentity"
+      effect: "Allow"
+      actions:
+        - "sts:AssumeRoleWithWebIdentity"
+        - "sts:GetCallerIdentity"
+        - "sts:TagSession"
+      resources:
+        - "*"
         
-      - Sid: "AssumeOtherRoles"
-        Effect: "Allow"
-        Action:
-          - "sts:AssumeRole"
-        Resource: "arn:aws:iam::${account_id}:role/*"
-        Condition:
-          StringEquals:
-            "aws:RequestedRegion": ["us-east-1"]
-  
-  # Common tags
-  tags:
-    Purpose: "GitHub Actions STS"
-    Component: "OIDC Authentication"
-    ManagedBy: "Terraform"
+    - sid: "AssumeOtherRoles"
+      effect: "Allow"
+      actions:
+        - "sts:AssumeRole"
+      resources:
+        - "arn:aws:iam::*:role/*"
+      conditions:
+        StringEquals:
+          "aws:RequestedRegion": ["us-east-1"]
+
+# Metadata
+environments: ["dev", "qa", "prod"]
+owner: "Infrastructure Team"
+critical: true
+
+tags:
+  Service: "STS"
+  AccessLevel: "AssumeRole"
+  PolicyType: "Standard"
+  ManagedBy: "aws-iam-roles"
+  Purpose: "GitHubActions"
