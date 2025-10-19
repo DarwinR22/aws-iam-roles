@@ -22,11 +22,11 @@ $policyPatterns = @(
     "githubactions-terraformbackend-*"
 )
 
-# Políticas nuevas que deben mantenerse
+# Políticas nuevas que deben mantenerse (ahora usando AWS managed policies)
 $keepPolicies = @(
-    "mci-githubactions-basepermissions",
-    "mci-githubactions-iammanagement",
-    "mci-githubactions-terraformbackend"
+    "custom-app-permissions",
+    "custom-deployment-permissions",
+    "custom-backend-permissions"
 )
 
 Write-Host "🔍 Buscando políticas con nomenclatura anterior..." -ForegroundColor Blue

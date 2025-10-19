@@ -40,25 +40,25 @@ variable "aws_region" {
 variable "role_prefix" {
   description = "Prefix for IAM roles"
   type        = string
-  default     = "MCI-"
+  default     = "APP-"
 }
 
 variable "policy_prefix" {
   description = "Prefix for IAM policies"
   type        = string
-  default     = "MCI-"
+  default     = "APP-"
 }
 
 variable "s3_bucket_name" {
   description = "S3 bucket name for Terraform backend"
   type        = string
-  default     = "mci-terraform-state"
+  default     = "terraform-state-bucket-051963532279"
 }
 
 variable "dynamodb_table_name" {
   description = "DynamoDB table name for Terraform state locking"
   type        = string
-  default     = "mci-terraform-locks"
+  default     = "terraform-locks"
 }
 
 variable "kms_key_id" {

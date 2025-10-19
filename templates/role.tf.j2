@@ -123,10 +123,10 @@ module "{{ terraform_name }}" {
   
   # AWS Configuration
   aws_region            = "us-east-1"
-  role_prefix          = "MCI-"
-  policy_prefix        = "MCI-"
-  s3_bucket_name       = "mci-terraform-state"
-  dynamodb_table_name  = "mci-terraform-locks"
+  role_prefix          = "APP-"
+  policy_prefix        = "APP-"
+  s3_bucket_name       = "terraform-state-bucket-051963532279"
+  dynamodb_table_name  = "terraform-locks"
   kms_key_id          = "*"
   
   common_tags = {

@@ -3,8 +3,8 @@
 # Defines OIDC trust policy and references component policies
 
 role:
-  name: "github-actions-iam-deployment-role"
-  description: "Rol IAM para despliegues automaticos desde GitHub Actions (repos: mci-aws-iam, DataOps_infra_meta_services, DataOps_code_meta_services) utilizando OIDC. Permite unicamente la creacion y administracion de recursos IAM a traves de la canalizacion (pipeline) de Terraform"
+  name: "github-actions-deployment-role"
+  description: "Rol para GitHub Actions deployment con permisos amplios para IAM management"
   path: "/"
   max_session_duration: 3600
   
@@ -30,8 +30,6 @@ role:
       # Repository access configuration
       repositories:
         - "repo:DarwinR22/aws-iam-roles"
-        - "repo:ClaroCENAM/DataOps_infra_meta_services"
-        - "repo:ClaroCENAM/DataOps_code_meta_services"
         
       # Additional OIDC conditions for security
       conditions:
@@ -39,12 +37,10 @@ role:
           variable: "token.actions.githubusercontent.com:aud"
           values: ["sts.amazonaws.com"]
           
-        - test: "StringLike"
+        - test: "StringEquals"
           variable: "token.actions.githubusercontent.com:sub"
           values: 
-            - "repo:DarwinR22/aws-iam-roles:*"                      # ✅ MEJORA 1: IAM Infrastructure
-            - "repo:ClaroCENAM/DataOps_infra_meta_services:*"      # ✅ MEJORA 1: DataOps Infrastructure
-            - "repo:ClaroCENAM/DataOps_code_meta_services:*"       # ✅ MEJORA 1: DataOps Code
+            - "repo:DarwinR22/aws-iam-roles:ref:refs/heads/dev"
 
   # Referenced policy modules - these will be combined into the role
   policy_modules:
@@ -131,7 +127,7 @@ variables:
   account_id:
     description: "AWS account ID where role will be created"
     type: "string"
-    default: "393209814297"
+    default: "051963532279"
 
 # Deployment configuration
 deployment:

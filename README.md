@@ -278,51 +278,51 @@ MCI/                        # Estructura principal
 
 ---
 
-## 🎯 Políticas Genéricas Reutilizables (Sistema MCI-*)
+## 🎯 Políticas Personalizadas y AWS Managed
 
-### ✨ **POLÍTICAS V2**: Catálogo Modular ABAC
+### ✨ **Enfoque Simplificado**: AWS Managed Policies + Custom cuando sea necesario
 
-El repositorio implementa **políticas ABAC** con control basado en tags desde el catálogo V2:
+El repositorio utiliza un enfoque pragmático:
 
 ```
-catalog/v2/services/
-├── s3.yaml                        # Políticas S3 ABAC
-│   ├── MCI-S3-TagBased-ReadOnly   # ✅ Acceso por tags coincidentes
-│   ├── MCI-S3-TagBased-Write      # ✅ Escritura por tags coincidentes
-│   ├── MCI-S3-ReadOnly            # ✅ Lectura básica S3
-│   └── MCI-S3-Write               # ✅ Escritura básica S3
-└── deployment.yaml                # Políticas deployment
-    ├── MCI-Deployment-TerraformCore
-    ├── MCI-Deployment-S3Analytics
-    └── MCI-Deployment-CloudFormation
+policies/custom/
+├── s3-policies/                    # Políticas S3 personalizadas
+│   ├── s3-read-only.yaml          # ✅ Lectura básica S3
+│   ├── s3-read-write.yaml         # ✅ Lectura y escritura S3
+│   └── s3-admin.yaml              # ✅ Administración completa S3
+└── compute-policies/               # Políticas de compute
+    ├── lambda-basic.yaml          # ✅ Permisos básicos Lambda
+    ├── ec2-basic.yaml             # ✅ Permisos básicos EC2
+    └── glue-basic.yaml            # ✅ Permisos básicos Glue
 ```
 
 ### 🚀 Uso en Roles
 
-**Referencia las políticas del catálogo V2**:
+**Combina AWS Managed Policies con custom cuando sea necesario**:
 
 ```json
 {
   "role_name": "rol-lambda-api-dev-processor",
   "policies": {
     "aws_managed": [
-      "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+      "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+      "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
     ],
     "custom": [
-      "MCI-S3-TagBased-ReadOnly",
-      "MCI-Deployment-TerraformCore"
+      "s3-read-write",
+      "lambda-custom-permissions"
     ]
   }
 }
 ```
 
-### ✅ Ventajas del Sistema V2 ABAC
+### ✅ Ventajas del Enfoque Simplificado
 
-- **🏷️ Tag-Based Security**: Solo acceso a recursos con tags coincidentes
-- **� Catálogo Modular**: Políticas organizadas por servicio
-- **🛡️ Zero-Trust**: Principio de menor privilegio automático
-- **⚡ Escalabilidad**: Agregar servicios sin modificar código
-- **🔧 Governance**: Tags obligatorios para compliance
+- **🏷️ AWS Best Practices**: Usa políticas AWS probadas y mantenidas
+- **📦 Modular**: Políticas custom organizadas por servicio
+- **🛡️ Principio de menor privilegio**: Solo permisos necesarios
+- **⚡ Mantenible**: Menos políticas custom = menos mantenimiento
+- **🔧 Flexibilidad**: Combina managed + custom según necesidad
 
 ---
 
@@ -568,7 +568,7 @@ rol-[servicio]-[layer]-[ambiente]-[nombre]
 
 ### Políticas Personalizadas
 
-**RECOMENDADO**: Usar las políticas genéricas `MCI-*` (ver sección anterior)
+**RECOMENDADO**: Usar AWS Managed Policies cuando sea posible, custom solo cuando sea necesario
 
 **Para casos especiales**, crear políticas custom:
 ```json
@@ -657,7 +657,7 @@ ls politicas/policy-s3-read.json
 
 ## 🎯 Casos de Uso Comunes
 
-### Lambda Function con MCI-* Policies
+### Lambda Function con AWS Managed Policies
 ```json
 {
   "role_name": "rol-lambda-api-dev-auth",
@@ -668,17 +668,17 @@ ls politicas/policy-s3-read.json
   },
   "policies": {
     "aws_managed": [
-      "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+      "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+      "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
     ],
     "custom": [
-      "MCI-S3-TagBased-ReadOnly",
-      "MCI-Deployment-TerraformCore"
+      "custom-dynamodb-access"
     ]
   }
 }
 ```
 
-### EC2 Instance con Políticas Genéricas
+### EC2 Instance con Políticas AWS Managed
 ```json
 {
   "role_name": "rol-ec2-web-prod-server",
@@ -689,17 +689,17 @@ ls politicas/policy-s3-read.json
   },
   "policies": {
     "aws_managed": [
-      "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+      "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy",
+      "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
     ],
     "custom": [
-      "MCI-S3-TagBased-Write",
-      "MCI-Deployment-TerraformCore"
+      "s3-app-bucket-access"
     ]
   }
 }
 ```
 
-### Glue ETL Job con DynamoDB
+### Glue ETL Job con AWS Managed Policies
 ```json
 {
   "role_name": "rol-glue-etl-dev-processor",
@@ -710,11 +710,11 @@ ls politicas/policy-s3-read.json
   },
   "policies": {
     "aws_managed": [
-      "arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole"
+      "arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole",
+      "arn:aws:iam::aws:policy/AmazonS3FullAccess"
     ],
     "custom": [
-      "MCI-S3-TagBased-Write",
-      "MCI-Deployment-S3Analytics"
+      "glue-custom-database-access"
     ]
   }
 }

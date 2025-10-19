@@ -1,2 +1,0 @@
-aws_iam_role.github_actions_iam_deployment_role will be updated in-place
-aws_iam_role.mci_glue_service_role will be updated in-place
