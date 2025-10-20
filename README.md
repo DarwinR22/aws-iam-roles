@@ -9,6 +9,8 @@
 
 Enterprise-grade SGSI (Security Management System Implementation) with **modular Terraform architecture** designed to scale from prototype to production with hundreds of AWS resources while maintaining security, compliance, and operational excellence.
 
+> **Latest Update:** Layer 3 (Compute) con ALB, ASG y RDS Multi-AZ desplegado con permisos IAM completos.
+
 ### 🏗️ Architecture Transformation
 
 **Before (Monolithic):** Single `main.tf` files with 400+ lines managing dozens of resources
