@@ -133,7 +133,7 @@ module "s3_logs" {
   
   bucket_name             = "${var.project_name}-${var.environment}-logs"
   data_classification     = "Internal"
-  enable_versioning       = false
+  enable_versioning       = true  # REQUERIDO para Object Lock
   enable_lifecycle        = true
   lifecycle_ia_days       = 30
   lifecycle_glacier_days  = 90
