@@ -527,9 +527,9 @@ jobs:
           terraform output -json > compute_outputs.json
           
           if [ -f compute_outputs.json ]; then
-            echo "🌐 ALB DNS: $(terraform output -raw alb_dns_name || echo 'N/A')"
             echo "🖥️ ASG Name: $(terraform output -raw asg_name || echo 'N/A')"
-            echo "🗄️ RDS Endpoint: $(terraform output -raw db_instance_endpoint || echo 'N/A')"
+            echo "�️ RDS Endpoint: $(terraform output -raw db_instance_endpoint || echo 'N/A')"
+            echo "� Acceso: Usar AWS Systems Manager Session Manager para conectar a instancias"
           fi
 
       # Add more layers as needed...
