@@ -1,6 +1,7 @@
 # ==============================================================================
-# LAYER 4: STORAGE
-# S3, EFS, EBS, Backup Services
+# LAYER 4: STORAGE - MODULAR ARCHITECTURE
+# Propósito: Capa de almacenamiento con S3 Enhanced, EFS, AWS Backup
+# Compliance: ISO 27001 A.12.3.1, A.18.1.3, A.17.1.2 | NIST CSF PR.DS-1, PR.IP-4
 # ==============================================================================
 
 terraform {
@@ -23,7 +24,7 @@ terraform {
 }
 
 # ==============================================================================
-# DATA SOURCES (Read from previous layers)
+# DATA SOURCES - PREVIOUS LAYERS
 # ==============================================================================
 data "terraform_remote_state" "foundation" {
   backend = "s3"
@@ -63,224 +64,241 @@ provider "aws" {
   
   default_tags {
     tags = {
-      Project              = "SGSI-Implementation"
-      Layer                = "Storage"
-      Environment          = var.environment
-      ManagedBy           = "Terraform"
-      SecurityLevel       = "High"
-      ComplianceScope     = "ISO27001+NIST-CSF"
-      CreatedBy           = "GitHub-Actions"
-      MaintenanceWindow   = "Sunday-2AM-6AM"
+      Project     = var.project_name
+      Environment = var.environment
+      ManagedBy   = "Terraform"
+      Layer       = "Storage"
+      Compliance  = "ISO27001,NIST-CSF"
+      Owner       = var.owner
     }
   }
 }
 
 # ==============================================================================
-# S3 BUCKETS
+# LOCAL VARIABLES
 # ==============================================================================
-# Application Data Bucket
-resource "aws_s3_bucket" "sgsi_app_data" {
-  bucket = "sgsi-app-data-${var.environment}-${random_string.bucket_suffix.result}"
+locals {
+  common_tags = {
+    Project     = var.project_name
+    Environment = var.environment
+    Layer       = "Storage"
+    Compliance  = "ISO27001,NIST-CSF"
+  }
+  
+  # Subnets privadas de Layer 2 para EFS mount targets
+  app_private_subnet_ids = data.terraform_remote_state.network.outputs.app_private_subnet_ids
+  
+  # Security Group para EFS
+  app_sg_id = data.terraform_remote_state.network.outputs.app_sg_id
+  
+  # Información de RDS para backup
+  rds_instance_arn = try(data.terraform_remote_state.compute.outputs.db_instance_arn, null)
+}
 
-  tags = merge(
-    var.common_tags,
+# ==============================================================================
+# MODULE: S3 APPLICATION BUCKET
+# ==============================================================================
+module "s3_app_data" {
+  source = "../../modules/storage/s3"
+  
+  bucket_name             = "${var.project_name}-${var.environment}-app-data"
+  data_classification     = "Internal"
+  enable_versioning       = true
+  enable_mfa_delete       = false
+  enable_lifecycle        = true
+  lifecycle_ia_days       = 30
+  lifecycle_glacier_days  = 90
+  version_expiration_days = 365
+  enable_logging          = true
+  enable_object_lock      = false
+  enable_replication      = var.enable_s3_replication
+  enable_metrics          = true
+  enable_inventory        = true
+  
+  common_tags = merge(
+    local.common_tags,
     {
-      Name                = "sgsi-app-data"
-      AssetID             = "STOR-S3-001"
-      AssetType           = "S3-Bucket"
-      DataClassification  = "Internal"
-      BackupRequired      = "Yes"
+      Name      = "${var.project_name}-${var.environment}-app-data"
+      Purpose   = "Application data storage"
+      DataClass = "Internal"
     }
   )
 }
 
-# Log Storage Bucket
-resource "aws_s3_bucket" "sgsi_logs" {
-  bucket = "sgsi-logs-${var.environment}-${random_string.bucket_suffix.result}"
-
-  tags = merge(
-    var.common_tags,
+# ==============================================================================
+# MODULE: S3 LOGS BUCKET
+# ==============================================================================
+module "s3_logs" {
+  source = "../../modules/storage/s3"
+  
+  bucket_name             = "${var.project_name}-${var.environment}-logs"
+  data_classification     = "Internal"
+  enable_versioning       = false
+  enable_lifecycle        = true
+  lifecycle_ia_days       = 30
+  lifecycle_glacier_days  = 90
+  version_expiration_days = 90
+  enable_logging          = false # Los logs no necesitan logs recursivos
+  enable_object_lock      = true  # WORM para cumplir auditoría
+  object_lock_retention_days = 90
+  enable_metrics          = true
+  
+  common_tags = merge(
+    local.common_tags,
     {
-      Name                = "sgsi-logs"
-      AssetID             = "STOR-S3-002"
-      AssetType           = "S3-Bucket"
-      DataClassification  = "Internal"
-      BackupRequired      = "Yes"
+      Name      = "${var.project_name}-${var.environment}-logs"
+      Purpose   = "Centralized logging"
+      DataClass = "Internal"
     }
   )
 }
 
-# Backup Storage Bucket
-resource "aws_s3_bucket" "sgsi_backups" {
-  bucket = "sgsi-backups-${var.environment}-${random_string.bucket_suffix.result}"
-
-  tags = merge(
-    var.common_tags,
+# ==============================================================================
+# MODULE: S3 BACKUP BUCKET (OPCIONAL)
+# ==============================================================================
+module "s3_backup" {
+  count  = var.enable_s3_backup_bucket ? 1 : 0
+  source = "../../modules/storage/s3"
+  
+  bucket_name             = "${var.project_name}-${var.environment}-backup"
+  data_classification     = "Confidential"
+  enable_versioning       = true
+  enable_lifecycle        = true
+  lifecycle_ia_days       = 30
+  lifecycle_glacier_days  = 90
+  version_expiration_days = 730 # 2 años
+  enable_logging          = true
+  enable_object_lock      = true
+  object_lock_retention_days = 365
+  enable_metrics          = true
+  
+  common_tags = merge(
+    local.common_tags,
     {
-      Name                = "sgsi-backups"
-      AssetID             = "STOR-S3-003"
-      AssetType           = "S3-Bucket"
-      DataClassification  = "Critical"
-      BackupRequired      = "No"  # This IS the backup
+      Name      = "${var.project_name}-${var.environment}-backup"
+      Purpose   = "Backup archives"
+      DataClass = "Confidential"
     }
   )
 }
 
-resource "random_string" "bucket_suffix" {
-  length  = 8
-  special = false
-  upper   = false
+# ==============================================================================
+# MODULE: EFS - SHARED FILE SYSTEM
+# ==============================================================================
+module "efs" {
+  source = "../../modules/storage/efs"
+  
+  efs_name                               = "${var.project_name}-${var.environment}-efs"
+  enable_encryption                      = true
+  performance_mode                       = var.efs_performance_mode
+  throughput_mode                        = var.efs_throughput_mode
+  provisioned_throughput                 = var.efs_provisioned_throughput
+  lifecycle_policy_transition_to_ia      = var.efs_lifecycle_transition_to_ia
+  lifecycle_policy_transition_to_primary = var.efs_lifecycle_transition_to_primary
+  
+  # Network
+  subnet_ids         = local.app_private_subnet_ids
+  security_group_ids = [local.app_sg_id]
+  
+  # Features
+  enable_backup            = true
+  create_access_points     = true
+  enable_cloudwatch_alarms = true
+  max_client_connections   = 50
+  
+  common_tags = merge(
+    local.common_tags,
+    {
+      Name    = "${var.project_name}-${var.environment}-efs"
+      Purpose = "Shared application file storage"
+      Backup  = "true" # Tag para AWS Backup
+    }
+  )
 }
 
-# S3 Bucket Configurations
-resource "aws_s3_bucket_encryption" "sgsi_app_data" {
-  bucket = aws_s3_bucket.sgsi_app_data.id
-
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm = "AES256"
+# ==============================================================================
+# IAM ROLE: AWS BACKUP SERVICE
+# ==============================================================================
+resource "aws_iam_role" "backup" {
+  name = "${var.project_name}-${var.environment}-backup-role"
+  
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Service = "backup.amazonaws.com"
+        }
+        Action = "sts:AssumeRole"
       }
-    }
-  }
-}
-
-resource "aws_s3_bucket_versioning" "sgsi_app_data" {
-  bucket = aws_s3_bucket.sgsi_app_data.id
-  versioning_configuration {
-    status = "Enabled"
-  }
-}
-
-resource "aws_s3_bucket_public_access_block" "sgsi_app_data" {
-  bucket = aws_s3_bucket.sgsi_app_data.id
-
-  block_public_acls       = true
-  block_public_policy     = true
-  ignore_public_acls      = true
-  restrict_public_buckets = true
-}
-
-# ==============================================================================
-# EFS FILE SYSTEM
-# ==============================================================================
-resource "aws_efs_file_system" "sgsi_shared" {
-  creation_token   = "sgsi-shared-fs"
-  performance_mode = "generalPurpose"
-  throughput_mode  = "provisioned"
-  provisioned_throughput_in_mibps = 100
-
-  encrypted = true
-
+    ]
+  })
+  
   tags = merge(
-    var.common_tags,
+    local.common_tags,
     {
-      Name                = "sgsi-shared-fs"
-      AssetID             = "STOR-EFS-001"
-      AssetType           = "EFS-FileSystem"
-      BackupRequired      = "Yes"
+      Name = "${var.project_name}-${var.environment}-backup-role"
     }
   )
 }
 
-# EFS Mount Targets
-resource "aws_efs_mount_target" "sgsi_shared" {
-  count           = length(data.terraform_remote_state.network.outputs.app_private_subnet_ids)
-  file_system_id  = aws_efs_file_system.sgsi_shared.id
-  subnet_id       = data.terraform_remote_state.network.outputs.app_private_subnet_ids[count.index]
-  security_groups = [aws_security_group.efs.id]
+# Attach AWS managed policy para backup
+resource "aws_iam_role_policy_attachment" "backup_service" {
+  role       = aws_iam_role.backup.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSBackupServiceRolePolicyForBackup"
 }
 
-# EFS Security Group
-resource "aws_security_group" "efs" {
-  name        = "sgsi-efs-sg"
-  description = "Security group for EFS mount targets"
-  vpc_id      = data.terraform_remote_state.network.outputs.vpc_id
-
-  ingress {
-    from_port   = 2049
-    to_port     = 2049
-    protocol    = "tcp"
-    cidr_blocks = [data.terraform_remote_state.network.outputs.vpc_cidr_block]
-    description = "NFS access from VPC"
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-    description = "All outbound traffic"
-  }
-
-  tags = merge(
-    var.common_tags,
-    {
-      Name                = "sgsi-efs-sg"
-      AssetType           = "Security-Group"
-    }
-  )
+resource "aws_iam_role_policy_attachment" "backup_restore" {
+  role       = aws_iam_role.backup.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSBackupServiceRolePolicyForRestores"
 }
 
 # ==============================================================================
-# AWS BACKUP
+# MODULE: AWS BACKUP
 # ==============================================================================
-resource "aws_backup_vault" "sgsi_vault" {
-  name        = "sgsi-backup-vault"
-  kms_key_arn = aws_kms_key.backup.arn
-
-  tags = merge(
-    var.common_tags,
-    {
-      Name                = "sgsi-backup-vault"
-      AssetID             = "STOR-BACKUP-001"
-      AssetType           = "Backup-Vault"
-    }
-  )
-}
-
-resource "aws_backup_plan" "sgsi_plan" {
-  name = "sgsi-backup-plan"
-
-  rule {
-    rule_name         = "daily_backups"
-    target_vault_name = aws_backup_vault.sgsi_vault.name
-    schedule          = "cron(0 2 ? * * *)"  # Daily at 2 AM
-
-    recovery_point_tags = var.common_tags
-
-    lifecycle {
-      cold_storage_after = 30
-      delete_after       = 365
-    }
-  }
-
-  tags = merge(
-    var.common_tags,
-    {
-      Name                = "sgsi-backup-plan"
-      AssetType           = "Backup-Plan"
-    }
-  )
-}
-
-# ==============================================================================
-# KMS KEY FOR BACKUP ENCRYPTION
-# ==============================================================================
-resource "aws_kms_key" "backup" {
-  description             = "KMS key for SGSI backup encryption"
-  deletion_window_in_days = 7
-
-  tags = merge(
-    var.common_tags,
-    {
-      Name                = "sgsi-backup-key"
-      AssetType           = "KMS-Key"
-    }
-  )
-}
-
-resource "aws_kms_alias" "backup" {
-  name          = "alias/sgsi-backup-key"
-  target_key_id = aws_kms_key.backup.key_id
+module "backup" {
+  source = "../../modules/storage/backup"
+  
+  vault_name = "${var.project_name}-${var.environment}-vault"
+  plan_name  = "${var.project_name}-${var.environment}-plan"
+  
+  # Encryption
+  kms_key_arn = null # Usar AWS managed key
+  
+  # Vault Lock (WORM)
+  enable_vault_lock             = var.enable_backup_vault_lock
+  vault_lock_changeable_days    = 3
+  vault_lock_min_retention_days = 30
+  vault_lock_max_retention_days = 365
+  
+  # Schedules
+  daily_backup_schedule   = "cron(0 2 * * ? *)"   # 02:00 AM UTC diario
+  weekly_backup_schedule  = "cron(0 3 ? * SUN *)" # 03:00 AM UTC domingos
+  monthly_backup_schedule = "cron(0 4 1 * ? *)"   # 04:00 AM UTC día 1
+  
+  # Retention
+  daily_retention_days   = var.backup_daily_retention_days
+  weekly_retention_days  = var.backup_weekly_retention_days
+  monthly_retention_days = var.backup_monthly_retention_days
+  
+  # Cross-region backup
+  enable_cross_region_backup = var.enable_cross_region_backup
+  destination_vault_arn      = var.backup_destination_vault_arn
+  
+  # Resource selection
+  backup_role_arn  = aws_iam_role.backup.arn
+  backup_tag_key   = "Backup"
+  backup_tag_value = "true"
+  
+  # Notifications
+  create_sns_topic         = true
+  enable_cloudwatch_alarms = true
+  
+  common_tags = local.common_tags
+  
+  depends_on = [
+    aws_iam_role_policy_attachment.backup_service,
+    aws_iam_role_policy_attachment.backup_restore
+  ]
 }

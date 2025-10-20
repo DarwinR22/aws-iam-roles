@@ -421,6 +421,34 @@ jobs:
           fi
           echo "" >> $GITHUB_STEP_SUMMARY
 
+      # Plan Layer 4 (Storage) - if changed
+      - name: 📋 Plan Layer 4 - Storage
+        if: needs.detect-changes.outputs.layer4 == 'true'
+        working-directory: layers/04-storage
+        run: |
+          echo "### 📦 Layer 4 - Storage Plan" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          terraform init
+          terraform validate
+          terraform plan -no-color -input=false -out=storage.tfplan > storage_plan.txt 2>&1 || true
+          
+          if grep -q "Plan:" storage_plan.txt; then
+            grep "Plan:" storage_plan.txt | tail -1 >> $GITHUB_STEP_SUMMARY
+            
+            # Extract resource counts
+            creates=$(grep -c "will be created" storage_plan.txt || echo 0)
+            updates=$(grep -c "will be updated" storage_plan.txt || echo 0)
+            destroys=$(grep -c "will be destroyed" storage_plan.txt || echo 0)
+            
+            echo "- ➕ **Creates:** $creates resources (S3, EFS, Backup, etc)" >> $GITHUB_STEP_SUMMARY
+            echo "- 🛠 **Updates:** $updates resources" >> $GITHUB_STEP_SUMMARY
+            echo "- ❌ **Destroys:** $destroys resources" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "No changes needed for Storage layer" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+
       # Upload all plans for deployment job
       - name: 📤 Upload Terraform Plans
         uses: actions/upload-artifact@v4
@@ -528,8 +556,35 @@ jobs:
           
           if [ -f compute_outputs.json ]; then
             echo "🖥️ ASG Name: $(terraform output -raw asg_name || echo 'N/A')"
-            echo "�️ RDS Endpoint: $(terraform output -raw db_instance_endpoint || echo 'N/A')"
-            echo "� Acceso: Usar AWS Systems Manager Session Manager para conectar a instancias"
+            echo "📊 RDS Endpoint: $(terraform output -raw db_instance_endpoint || echo 'N/A')"
+            echo "🔐 Acceso: Usar AWS Systems Manager Session Manager para conectar a instancias"
+          fi
+
+      # Deploy Storage Layer (if changed)
+      - name: 🚀 Deploy Layer 4 - Storage (S3 + EFS + Backup)
+        if: needs.detect-changes.outputs.layer4 == 'true'
+        working-directory: layers/04-storage
+        run: |
+          echo "📦 Deploying Storage Layer (S3, EFS, AWS Backup)..."
+          terraform init
+          echo "📋 Creating storage plan..."
+          terraform plan -out=storage.tfplan
+          echo "🚀 Applying storage plan (esto puede tomar 5-10 minutos)..."
+          terraform apply -auto-approve storage.tfplan
+          echo "✅ Storage layer deployment completed"
+          
+          # Show outputs
+          echo ""
+          echo "📊 Deployment Outputs:"
+          terraform output -json > storage_outputs.json
+          
+          if [ -f storage_outputs.json ]; then
+            echo "📦 S3 App Data: $(terraform output -raw s3_app_data_bucket_id || echo 'N/A')"
+            echo "📋 S3 Logs: $(terraform output -raw s3_logs_bucket_id || echo 'N/A')"
+            echo "💾 S3 Backup: $(terraform output -raw s3_backup_bucket_id || echo 'N/A')"
+            echo "📂 EFS ID: $(terraform output -raw efs_file_system_id || echo 'N/A')"
+            echo "🔄 Backup Vault: $(terraform output -raw backup_vault_id || echo 'N/A')"
+            echo "📅 Backup Schedule: Daily (2AM), Weekly (Sun 3AM), Monthly (1st 4AM)"
           fi
 
       # Add more layers as needed...
