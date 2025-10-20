@@ -29,7 +29,7 @@ asg_desired_capacity = 2
 # RDS CONFIGURATION
 # ==============================================================================
 rds_engine                  = "postgres"
-rds_engine_version          = "14.9"
+rds_engine_version          = "14.19"  # Cambiado de 14.9 a 14.19 (disponible)
 rds_instance_class          = "db.t3.micro"
 rds_parameter_group_family  = "postgres14"
 rds_db_name                 = "sgsi_db"
