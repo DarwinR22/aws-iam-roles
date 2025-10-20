@@ -1,6 +1,7 @@
 # ==============================================================================
 # LAYER 1: FOUNDATION - TERRAFORM VARIABLES
 # Environment: Development
+# Updated: 2025-10-19 - IAM Policies regeneradas con permisos ELB/ALB/ASG
 # ==============================================================================
 
 # AWS Configuration
