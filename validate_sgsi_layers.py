@@ -100,16 +100,19 @@ class SGSIValidator:
             return False
 
     def validate_layer1_foundation(self) -> Dict[str, Any]:
-        """Valida Layer 1: Foundation (IAM)"""
-        self.print_header("LAYER 1 - FOUNDATION (IAM)")
+        """Valida Layer 1: Foundation (IAM) - ACTUALIZADO PARA 100% COMPLIANCE"""
+        self.print_header("LAYER 1 - FOUNDATION (IAM) - Enhanced Security")
         
         layer1 = {
             "name": "Foundation",
             "resources": {},
+            "compliance": {},
             "status": "unknown"
         }
         
-        # Verificar rol principal
+        # ====================================================================
+        # 1. VERIFICAR ROL PRINCIPAL
+        # ====================================================================
         role_data = self.run_aws_command([
             'aws', 'iam', 'get-role', 
             '--role-name', 'github-actions-deployment-role'
@@ -134,7 +137,9 @@ class SGSIValidator:
         
         self.total_resources += 1
         
-        # Verificar políticas IAM (9 políticas consolidadas)
+        # ====================================================================
+        # 2. VERIFICAR POLÍTICAS IAM (9 políticas consolidadas)
+        # ====================================================================
         policies = [
             "dev-github-deployment-iam",
             "dev-github-deployment-network", 
@@ -172,7 +177,151 @@ class SGSIValidator:
             
             self.total_resources += 1
         
-        # Verificar backend Terraform (S3)
+        # ====================================================================
+        # 3. VERIFICAR IAM ACCESS ANALYZER (NUEVO - 100% COMPLIANCE)
+        # ====================================================================
+        self.print_info("Verificando IAM Access Analyzer...")
+        analyzers_data = self.run_aws_command([
+            'aws', 'accessanalyzer', 'list-analyzers'
+        ])
+        
+        if analyzers_data and analyzers_data.get('analyzers'):
+            # Buscar analyzer de este environment
+            env_analyzer = None
+            for analyzer in analyzers_data['analyzers']:
+                if 'sgsi' in analyzer['name'].lower() or 'dev' in analyzer['name'].lower():
+                    env_analyzer = analyzer
+                    break
+            
+            if env_analyzer:
+                layer1['resources']['iam_access_analyzer'] = {
+                    "name": env_analyzer['name'],
+                    "arn": env_analyzer['arn'],
+                    "type": env_analyzer['type'],
+                    "status": "✅ Configurado",
+                    "created": env_analyzer['createdAt']
+                }
+                self.print_success(f"Access Analyzer: {env_analyzer['name']} ({env_analyzer['type']})")
+                self.valid_resources += 1
+                
+                # Compliance ISO 27001 A.9.1.1
+                layer1['compliance']['ISO_27001_A911'] = "✅ Access control policy (Access Analyzer)"
+            else:
+                layer1['resources']['iam_access_analyzer'] = {
+                    "status": "⚠️ Analyzer genérico encontrado, no específico de SGSI"
+                }
+                self.print_warning("Access Analyzer: No hay analyzer específico de SGSI")
+                layer1['compliance']['ISO_27001_A911'] = "⚠️ Parcial"
+        else:
+            layer1['resources']['iam_access_analyzer'] = {
+                "status": "❌ No configurado"
+            }
+            self.print_error("IAM Access Analyzer: No configurado")
+            layer1['compliance']['ISO_27001_A911'] = "❌ No cumple"
+        
+        self.total_resources += 1
+        
+        # ====================================================================
+        # 4. VERIFICAR PASSWORD POLICY (NUEVO - 100% COMPLIANCE)
+        # ====================================================================
+        self.print_info("Verificando Password Policy...")
+        password_policy = self.run_aws_command([
+            'aws', 'iam', 'get-account-password-policy'
+        ])
+        
+        if password_policy and 'PasswordPolicy' in password_policy:
+            policy = password_policy['PasswordPolicy']
+            
+            # Validar compliance NIST 800-63B
+            compliant = (
+                policy.get('MinimumPasswordLength', 0) >= 14 and
+                policy.get('RequireUppercaseCharacters', False) and
+                policy.get('RequireLowercaseCharacters', False) and
+                policy.get('RequireNumbers', False) and
+                policy.get('RequireSymbols', False) and
+                policy.get('MaxPasswordAge', 0) <= 90 and
+                policy.get('PasswordReusePrevention', 0) >= 12
+            )
+            
+            layer1['resources']['password_policy'] = {
+                "min_length": policy.get('MinimumPasswordLength'),
+                "complexity": "✅ Completa" if all([
+                    policy.get('RequireUppercaseCharacters'),
+                    policy.get('RequireLowercaseCharacters'),
+                    policy.get('RequireNumbers'),
+                    policy.get('RequireSymbols')
+                ]) else "⚠️ Parcial",
+                "max_age_days": policy.get('MaxPasswordAge'),
+                "reuse_prevention": policy.get('PasswordReusePrevention'),
+                "status": "✅ NIST 800-63B Compliant" if compliant else "⚠️ Requiere ajustes",
+                "compliance_score": 100 if compliant else 70
+            }
+            
+            if compliant:
+                self.print_success(f"Password Policy: NIST 800-63B compliant ({policy.get('MinimumPasswordLength')} chars, {policy.get('MaxPasswordAge')} días)")
+                self.valid_resources += 1
+                layer1['compliance']['ISO_27001_A943'] = "✅ Password management (NIST compliant)"
+                layer1['compliance']['NIST_PR_AC1'] = "✅ Identity and credentials management"
+            else:
+                self.print_warning("Password Policy: Configurada pero no completamente conforme a NIST")
+                layer1['compliance']['ISO_27001_A943'] = "⚠️ Password management (Requiere ajustes)"
+                layer1['compliance']['NIST_PR_AC1'] = "⚠️ Parcial"
+        else:
+            layer1['resources']['password_policy'] = {
+                "status": "❌ No configurada"
+            }
+            self.print_error("Password Policy: No configurada")
+            layer1['compliance']['ISO_27001_A943'] = "❌ No cumple"
+            layer1['compliance']['NIST_PR_AC1'] = "❌ No cumple"
+        
+        self.total_resources += 1
+        
+        # ====================================================================
+        # 5. VERIFICAR KMS KEYS (Encryption Management)
+        # ====================================================================
+        self.print_info("Verificando KMS Keys...")
+        kms_keys = self.run_aws_command([
+            'aws', 'kms', 'list-keys'
+        ])
+        
+        if kms_keys and kms_keys.get('Keys'):
+            customer_keys = []
+            for key in kms_keys['Keys'][:10]:  # Limitar a primeras 10 keys
+                key_metadata = self.run_aws_command([
+                    'aws', 'kms', 'describe-key',
+                    '--key-id', key['KeyId']
+                ])
+                if key_metadata and key_metadata['KeyMetadata'].get('KeyManager') == 'CUSTOMER':
+                    customer_keys.append(key_metadata['KeyMetadata'])
+            
+            if customer_keys:
+                layer1['resources']['kms_keys'] = {
+                    "count": len(customer_keys),
+                    "status": f"✅ {len(customer_keys)} Customer Managed Keys",
+                    "keys": [{"KeyId": k['KeyId'], "State": k['KeyState']} for k in customer_keys[:3]]
+                }
+                self.print_success(f"KMS Keys: {len(customer_keys)} Customer Managed Keys encontradas")
+                self.valid_resources += 1
+                layer1['compliance']['ISO_27001_A101'] = "✅ Cryptography (KMS)"
+            else:
+                layer1['resources']['kms_keys'] = {
+                    "count": 0,
+                    "status": "⚠️ Solo AWS Managed Keys"
+                }
+                self.print_warning("KMS Keys: Solo AWS Managed Keys (considerar Customer Managed)")
+                layer1['compliance']['ISO_27001_A101'] = "⚠️ Usar CMKs"
+        else:
+            layer1['resources']['kms_keys'] = {
+                "status": "❌ No accesible"
+            }
+            self.print_error("KMS Keys: No se pudieron listar")
+            layer1['compliance']['ISO_27001_A101'] = "❌ No verificado"
+        
+        self.total_resources += 1
+        
+        # ====================================================================
+        # 6. VERIFICAR BACKEND TERRAFORM (S3)
+        # ====================================================================
         bucket_check = subprocess.run(
             ['aws', 's3', 'ls', 's3://terraform-state-bucket-051963532279/'],
             capture_output=True, text=True
@@ -193,7 +342,9 @@ class SGSIValidator:
         
         self.total_resources += 1
         
-        # Verificar DynamoDB locks
+        # ====================================================================
+        # 7. VERIFICAR DYNAMODB LOCKS
+        # ====================================================================
         table_data = self.run_aws_command([
             'aws', 'dynamodb', 'describe-table',
             '--table-name', 'terraform-locks',
@@ -216,6 +367,18 @@ class SGSIValidator:
             self.print_error("Tabla DynamoDB locks no encontrada")
         
         self.total_resources += 1
+        
+        # ====================================================================
+        # CALCULAR COMPLIANCE GENERAL DE LAYER 1
+        # ====================================================================
+        compliance_count = sum(1 for v in layer1['compliance'].values() if "✅" in v)
+        total_compliance = len(layer1['compliance'])
+        if total_compliance > 0:
+            layer1['compliance_score'] = f"{(compliance_count / total_compliance) * 100:.0f}%"
+        else:
+            layer1['compliance_score'] = "0%"
+        
+        self.print_info(f"Compliance Score Layer 1: {layer1['compliance_score']}")
         
         return layer1
 
