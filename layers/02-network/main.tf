@@ -222,7 +222,7 @@ resource "aws_subnet" "db_private_1b" {
 }
 
 # ==============================================================================
-# ROUTE TABLES
+# ROUTE TABLES - PUBLIC ONLY
 # ==============================================================================
 # Public Route Table
 resource "aws_route_table" "public" {
@@ -243,22 +243,10 @@ resource "aws_route_table" "public" {
   )
 }
 
-# Private Route Table
-resource "aws_route_table" "private" {
-  vpc_id = aws_vpc.sgsi_vpc_main.id
-
-  tags = merge(
-    var.common_tags,
-    {
-      Name                = "sgsi-private-rt"
-      Type                = "private"
-      AssetID             = "NET-RT-002"
-    }
-  )
-}
+# Note: Private route tables are now managed by the nat-gateway-ha module
 
 # ==============================================================================
-# ROUTE TABLE ASSOCIATIONS
+# ROUTE TABLE ASSOCIATIONS - PUBLIC SUBNETS
 # ==============================================================================
 resource "aws_route_table_association" "public_1a" {
   subnet_id      = aws_subnet.dmz_public_1a.id
@@ -270,22 +258,113 @@ resource "aws_route_table_association" "public_1b" {
   route_table_id = aws_route_table.public.id
 }
 
-resource "aws_route_table_association" "private_1a" {
-  subnet_id      = aws_subnet.app_private_1a.id
-  route_table_id = aws_route_table.private.id
+# ==============================================================================
+# ENHANCED NETWORK SECURITY MODULES
+# ==============================================================================
+
+# Module: VPC Flow Logs for network traffic monitoring
+module "vpc_flow_logs" {
+  source = "../../modules/network/vpc-flow-logs"
+
+  vpc_id     = aws_vpc.sgsi_vpc_main.id
+  vpc_name   = "sgsi-vpc-main"
+
+  traffic_type       = "ALL"
+  log_retention_days = 90
+
+  enable_rejected_traffic_alarm = true
+  rejected_traffic_threshold    = 100
+
+  enable_ssh_monitoring = true
+  alarm_actions         = [] # Add SNS topic ARNs here if needed
+
+  tags = var.common_tags
 }
 
-resource "aws_route_table_association" "private_1b" {
-  subnet_id      = aws_subnet.app_private_1b.id
-  route_table_id = aws_route_table.private.id
+# Module: NAT Gateways High Availability
+module "nat_gateway_ha" {
+  source = "../../modules/network/nat-gateway-ha"
+
+  vpc_id               = aws_vpc.sgsi_vpc_main.id
+  name_prefix          = "sgsi"
+  internet_gateway_id  = aws_internet_gateway.sgsi_igw.id
+  
+  availability_zones = ["us-east-1a", "us-east-1b"]
+  public_subnet_ids  = [
+    aws_subnet.dmz_public_1a.id,
+    aws_subnet.dmz_public_1b.id
+  ]
+
+  app_subnet_ids_az1 = [aws_subnet.app_private_1a.id]
+  app_subnet_ids_az2 = [aws_subnet.app_private_1b.id]
+  db_subnet_ids_az1  = [aws_subnet.db_private_1a.id]
+  db_subnet_ids_az2  = [aws_subnet.db_private_1b.id]
+
+  enable_monitoring     = true
+  min_bytes_threshold   = 1000
+  alarm_actions         = [] # Add SNS topic ARNs here if needed
+
+  tags = var.common_tags
 }
 
-resource "aws_route_table_association" "db_private_1a" {
-  subnet_id      = aws_subnet.db_private_1a.id
-  route_table_id = aws_route_table.private.id
+# Module: Network ACLs (Defense in Depth)
+module "network_acls" {
+  source = "../../modules/network/network-acls"
+
+  vpc_id      = aws_vpc.sgsi_vpc_main.id
+  vpc_cidr    = var.vpc_cidr
+  name_prefix = "sgsi"
+
+  dmz_subnet_ids = [
+    aws_subnet.dmz_public_1a.id,
+    aws_subnet.dmz_public_1b.id
+  ]
+
+  app_subnet_ids = [
+    aws_subnet.app_private_1a.id,
+    aws_subnet.app_private_1b.id
+  ]
+
+  db_subnet_ids = [
+    aws_subnet.db_private_1a.id,
+    aws_subnet.db_private_1b.id
+  ]
+
+  tags = var.common_tags
 }
 
-resource "aws_route_table_association" "db_private_1b" {
-  subnet_id      = aws_subnet.db_private_1b.id
-  route_table_id = aws_route_table.private.id
+# Module: VPC Endpoints for cost and security optimization
+module "vpc_endpoints" {
+  source = "../../modules/network/vpc-endpoints"
+
+  vpc_id      = aws_vpc.sgsi_vpc_main.id
+  vpc_cidr    = var.vpc_cidr
+  region      = var.aws_region
+  name_prefix = "sgsi"
+
+  route_table_ids = [
+    aws_route_table.public.id,
+    module.nat_gateway_ha.private_route_table_ids["az1"],
+    module.nat_gateway_ha.private_route_table_ids["az2"]
+  ]
+
+  private_subnet_ids = [
+    aws_subnet.app_private_1a.id,
+    aws_subnet.app_private_1b.id
+  ]
+
+  # Restrict access to specific buckets (empty = all buckets)
+  allowed_s3_buckets = [
+    "terraform-state-bucket-051963532279"
+  ]
+
+  # Restrict access to specific tables (empty = all tables)
+  allowed_dynamodb_tables = [
+    "terraform-locks"
+  ]
+
+  enable_secrets_manager_endpoint = false
+  enable_kms_endpoint             = false
+
+  tags = var.common_tags
 }

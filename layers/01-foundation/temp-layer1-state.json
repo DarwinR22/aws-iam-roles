@@ -1,0 +1,1014 @@
+{
+  "version": 4,
+  "terraform_version": "1.7.4",
+  "serial": 14,
+  "lineage": "82e6ba88-3534-08ae-15d4-ce953aa2b902",
+  "outputs": {
+    "aws_account_id": {
+      "value": "051963532279",
+      "type": "string"
+    },
+    "aws_region": {
+      "value": "us-east-1",
+      "type": "string"
+    },
+    "environment": {
+      "value": "dev",
+      "type": "string"
+    },
+    "github_deployment_role_arn": {
+      "value": "arn:aws:iam::051963532279:role/github-actions-deployment-role",
+      "type": "string"
+    },
+    "github_deployment_role_name": {
+      "value": "github-actions-deployment-role",
+      "type": "string"
+    },
+    "github_deployment_role_unique_id": {
+      "value": "AROAQYGKESP35F34BPCLX",
+      "type": "string"
+    },
+    "layer_info": {
+      "value": {
+        "deployed_at": "2025-10-19T22:43:11Z",
+        "layer_name": "foundation",
+        "layer_number": "01",
+        "state_key": "sgsi/layer1-foundation/terraform.tfstate"
+      },
+      "type": [
+        "object",
+        {
+          "deployed_at": "string",
+          "layer_name": "string",
+          "layer_number": "string",
+          "state_key": "string"
+        }
+      ]
+    },
+    "policy_arns": {
+      "value": {
+        "application": "arn:aws:iam::051963532279:policy/dev-github-deployment-application",
+        "cloudwatch": "arn:aws:iam::051963532279:policy/dev-github-deployment-cloudwatch",
+        "database": "arn:aws:iam::051963532279:policy/dev-github-deployment-database",
+        "deployment": "arn:aws:iam::051963532279:policy/dev-github-deployment-deployment",
+        "glue": "arn:aws:iam::051963532279:policy/dev-github-deployment-glue",
+        "iam": "arn:aws:iam::051963532279:policy/dev-github-deployment-iam",
+        "monitoring": "arn:aws:iam::051963532279:policy/dev-github-deployment-monitoring",
+        "network": "arn:aws:iam::051963532279:policy/dev-github-deployment-network",
+        "storage": "arn:aws:iam::051963532279:policy/dev-github-deployment-storage"
+      },
+      "type": [
+        "object",
+        {
+          "application": "string",
+          "cloudwatch": "string",
+          "database": "string",
+          "deployment": "string",
+          "glue": "string",
+          "iam": "string",
+          "monitoring": "string",
+          "network": "string",
+          "storage": "string"
+        }
+      ]
+    }
+  },
+  "resources": [
+    {
+      "mode": "data",
+      "type": "aws_caller_identity",
+      "name": "current",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "account_id": "051963532279",
+            "arn": "arn:aws:sts::051963532279:assumed-role/github-actions-deployment-role/sgsi-deployment-18637137508",
+            "id": "051963532279",
+            "user_id": "AROAQYGKESP35F34BPCLX:sgsi-deployment-18637137508"
+          },
+          "sensitive_attributes": []
+        }
+      ]
+    },
+    {
+      "mode": "data",
+      "type": "aws_iam_role",
+      "name": "github_actions_deployment_role",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:iam::051963532279:role/github-actions-deployment-role",
+            "assume_role_policy": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"Federated\":\"arn:aws:iam::051963532279:oidc-provider/token.actions.githubusercontent.com\"},\"Action\":\"sts:AssumeRoleWithWebIdentity\",\"Condition\":{\"StringEquals\":{\"token.actions.githubusercontent.com:aud\":\"sts.amazonaws.com\"},\"StringLike\":{\"token.actions.githubusercontent.com:sub\":\"repo:DarwinR22/aws-iam-roles:*\"}}}]}",
+            "create_date": "2025-10-19T01:55:53Z",
+            "description": "Rol corregido para GitHub Actions deployment con OIDC",
+            "id": "github-actions-deployment-role",
+            "max_session_duration": 3600,
+            "name": "github-actions-deployment-role",
+            "path": "/",
+            "permissions_boundary": "",
+            "role_last_used": [
+              {
+                "last_used_date": "2025-10-19T22:20:47Z",
+                "region": "us-east-1"
+              }
+            ],
+            "tags": {},
+            "unique_id": "AROAQYGKESP35F34BPCLX"
+          },
+          "sensitive_attributes": []
+        }
+      ]
+    },
+    {
+      "mode": "data",
+      "type": "aws_region",
+      "name": "current",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "description": "US East (N. Virginia)",
+            "endpoint": "ec2.us-east-1.amazonaws.com",
+            "id": "us-east-1",
+            "name": "us-east-1"
+          },
+          "sensitive_attributes": []
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_iam_role_policy_attachment",
+      "name": "github_deployment_policies",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "index_key": "application",
+          "schema_version": 0,
+          "attributes": {
+            "id": "github-actions-deployment-role-20251019224313061300000006",
+            "policy_arn": "arn:aws:iam::051963532279:policy/dev-github-deployment-application",
+            "role": "github-actions-deployment-role"
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "data.aws_iam_role.github_actions_deployment_role",
+            "module.github_deployment_application.aws_iam_policy.github_deployment_application",
+            "module.github_deployment_cloudwatch.aws_iam_policy.github_deployment_cloudwatch",
+            "module.github_deployment_database.aws_iam_policy.github_deployment_database",
+            "module.github_deployment_deployment.aws_iam_policy.github_deployment_deployment",
+            "module.github_deployment_glue.aws_iam_policy.github_deployment_glue",
+            "module.github_deployment_iam.aws_iam_policy.github_deployment_iam",
+            "module.github_deployment_monitoring.aws_iam_policy.github_deployment_monitoring",
+            "module.github_deployment_network.aws_iam_policy.github_deployment_network",
+            "module.github_deployment_storage.aws_iam_policy.github_deployment_storage"
+          ]
+        },
+        {
+          "index_key": "cloudwatch",
+          "schema_version": 0,
+          "attributes": {
+            "id": "github-actions-deployment-role-20251019224313083100000008",
+            "policy_arn": "arn:aws:iam::051963532279:policy/dev-github-deployment-cloudwatch",
+            "role": "github-actions-deployment-role"
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "data.aws_iam_role.github_actions_deployment_role",
+            "module.github_deployment_application.aws_iam_policy.github_deployment_application",
+            "module.github_deployment_cloudwatch.aws_iam_policy.github_deployment_cloudwatch",
+            "module.github_deployment_database.aws_iam_policy.github_deployment_database",
+            "module.github_deployment_deployment.aws_iam_policy.github_deployment_deployment",
+            "module.github_deployment_glue.aws_iam_policy.github_deployment_glue",
+            "module.github_deployment_iam.aws_iam_policy.github_deployment_iam",
+            "module.github_deployment_monitoring.aws_iam_policy.github_deployment_monitoring",
+            "module.github_deployment_network.aws_iam_policy.github_deployment_network",
+            "module.github_deployment_storage.aws_iam_policy.github_deployment_storage"
+          ]
+        },
+        {
+          "index_key": "database",
+          "schema_version": 0,
+          "attributes": {
+            "id": "github-actions-deployment-role-20251019224313065500000007",
+            "policy_arn": "arn:aws:iam::051963532279:policy/dev-github-deployment-database",
+            "role": "github-actions-deployment-role"
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "data.aws_iam_role.github_actions_deployment_role",
+            "module.github_deployment_application.aws_iam_policy.github_deployment_application",
+            "module.github_deployment_cloudwatch.aws_iam_policy.github_deployment_cloudwatch",
+            "module.github_deployment_database.aws_iam_policy.github_deployment_database",
+            "module.github_deployment_deployment.aws_iam_policy.github_deployment_deployment",
+            "module.github_deployment_glue.aws_iam_policy.github_deployment_glue",
+            "module.github_deployment_iam.aws_iam_policy.github_deployment_iam",
+            "module.github_deployment_monitoring.aws_iam_policy.github_deployment_monitoring",
+            "module.github_deployment_network.aws_iam_policy.github_deployment_network",
+            "module.github_deployment_storage.aws_iam_policy.github_deployment_storage"
+          ]
+        },
+        {
+          "index_key": "deployment",
+          "schema_version": 0,
+          "attributes": {
+            "id": "github-actions-deployment-role-20251019224313047200000004",
+            "policy_arn": "arn:aws:iam::051963532279:policy/dev-github-deployment-deployment",
+            "role": "github-actions-deployment-role"
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "data.aws_iam_role.github_actions_deployment_role",
+            "module.github_deployment_application.aws_iam_policy.github_deployment_application",
+            "module.github_deployment_cloudwatch.aws_iam_policy.github_deployment_cloudwatch",
+            "module.github_deployment_database.aws_iam_policy.github_deployment_database",
+            "module.github_deployment_deployment.aws_iam_policy.github_deployment_deployment",
+            "module.github_deployment_glue.aws_iam_policy.github_deployment_glue",
+            "module.github_deployment_iam.aws_iam_policy.github_deployment_iam",
+            "module.github_deployment_monitoring.aws_iam_policy.github_deployment_monitoring",
+            "module.github_deployment_network.aws_iam_policy.github_deployment_network",
+            "module.github_deployment_storage.aws_iam_policy.github_deployment_storage"
+          ]
+        },
+        {
+          "index_key": "glue",
+          "schema_version": 0,
+          "attributes": {
+            "id": "github-actions-deployment-role-20251019224312862800000001",
+            "policy_arn": "arn:aws:iam::051963532279:policy/dev-github-deployment-glue",
+            "role": "github-actions-deployment-role"
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "data.aws_iam_role.github_actions_deployment_role",
+            "module.github_deployment_application.aws_iam_policy.github_deployment_application",
+            "module.github_deployment_cloudwatch.aws_iam_policy.github_deployment_cloudwatch",
+            "module.github_deployment_database.aws_iam_policy.github_deployment_database",
+            "module.github_deployment_deployment.aws_iam_policy.github_deployment_deployment",
+            "module.github_deployment_glue.aws_iam_policy.github_deployment_glue",
+            "module.github_deployment_iam.aws_iam_policy.github_deployment_iam",
+            "module.github_deployment_monitoring.aws_iam_policy.github_deployment_monitoring",
+            "module.github_deployment_network.aws_iam_policy.github_deployment_network",
+            "module.github_deployment_storage.aws_iam_policy.github_deployment_storage"
+          ]
+        },
+        {
+          "index_key": "iam",
+          "schema_version": 0,
+          "attributes": {
+            "id": "github-actions-deployment-role-20251019224313025100000003",
+            "policy_arn": "arn:aws:iam::051963532279:policy/dev-github-deployment-iam",
+            "role": "github-actions-deployment-role"
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "data.aws_iam_role.github_actions_deployment_role",
+            "module.github_deployment_application.aws_iam_policy.github_deployment_application",
+            "module.github_deployment_cloudwatch.aws_iam_policy.github_deployment_cloudwatch",
+            "module.github_deployment_database.aws_iam_policy.github_deployment_database",
+            "module.github_deployment_deployment.aws_iam_policy.github_deployment_deployment",
+            "module.github_deployment_glue.aws_iam_policy.github_deployment_glue",
+            "module.github_deployment_iam.aws_iam_policy.github_deployment_iam",
+            "module.github_deployment_monitoring.aws_iam_policy.github_deployment_monitoring",
+            "module.github_deployment_network.aws_iam_policy.github_deployment_network",
+            "module.github_deployment_storage.aws_iam_policy.github_deployment_storage"
+          ]
+        },
+        {
+          "index_key": "monitoring",
+          "schema_version": 0,
+          "attributes": {
+            "id": "github-actions-deployment-role-20251019224313129900000009",
+            "policy_arn": "arn:aws:iam::051963532279:policy/dev-github-deployment-monitoring",
+            "role": "github-actions-deployment-role"
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "data.aws_iam_role.github_actions_deployment_role",
+            "module.github_deployment_application.aws_iam_policy.github_deployment_application",
+            "module.github_deployment_cloudwatch.aws_iam_policy.github_deployment_cloudwatch",
+            "module.github_deployment_database.aws_iam_policy.github_deployment_database",
+            "module.github_deployment_deployment.aws_iam_policy.github_deployment_deployment",
+            "module.github_deployment_glue.aws_iam_policy.github_deployment_glue",
+            "module.github_deployment_iam.aws_iam_policy.github_deployment_iam",
+            "module.github_deployment_monitoring.aws_iam_policy.github_deployment_monitoring",
+            "module.github_deployment_network.aws_iam_policy.github_deployment_network",
+            "module.github_deployment_storage.aws_iam_policy.github_deployment_storage"
+          ]
+        },
+        {
+          "index_key": "network",
+          "schema_version": 0,
+          "attributes": {
+            "id": "github-actions-deployment-role-20251019224313020500000002",
+            "policy_arn": "arn:aws:iam::051963532279:policy/dev-github-deployment-network",
+            "role": "github-actions-deployment-role"
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "data.aws_iam_role.github_actions_deployment_role",
+            "module.github_deployment_application.aws_iam_policy.github_deployment_application",
+            "module.github_deployment_cloudwatch.aws_iam_policy.github_deployment_cloudwatch",
+            "module.github_deployment_database.aws_iam_policy.github_deployment_database",
+            "module.github_deployment_deployment.aws_iam_policy.github_deployment_deployment",
+            "module.github_deployment_glue.aws_iam_policy.github_deployment_glue",
+            "module.github_deployment_iam.aws_iam_policy.github_deployment_iam",
+            "module.github_deployment_monitoring.aws_iam_policy.github_deployment_monitoring",
+            "module.github_deployment_network.aws_iam_policy.github_deployment_network",
+            "module.github_deployment_storage.aws_iam_policy.github_deployment_storage"
+          ]
+        },
+        {
+          "index_key": "storage",
+          "schema_version": 0,
+          "attributes": {
+            "id": "github-actions-deployment-role-20251019224313050500000005",
+            "policy_arn": "arn:aws:iam::051963532279:policy/dev-github-deployment-storage",
+            "role": "github-actions-deployment-role"
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "data.aws_iam_role.github_actions_deployment_role",
+            "module.github_deployment_application.aws_iam_policy.github_deployment_application",
+            "module.github_deployment_cloudwatch.aws_iam_policy.github_deployment_cloudwatch",
+            "module.github_deployment_database.aws_iam_policy.github_deployment_database",
+            "module.github_deployment_deployment.aws_iam_policy.github_deployment_deployment",
+            "module.github_deployment_glue.aws_iam_policy.github_deployment_glue",
+            "module.github_deployment_iam.aws_iam_policy.github_deployment_iam",
+            "module.github_deployment_monitoring.aws_iam_policy.github_deployment_monitoring",
+            "module.github_deployment_network.aws_iam_policy.github_deployment_network",
+            "module.github_deployment_storage.aws_iam_policy.github_deployment_storage"
+          ]
+        }
+      ]
+    },
+    {
+      "module": "module.github_deployment_application",
+      "mode": "managed",
+      "type": "aws_iam_policy",
+      "name": "github_deployment_application",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:iam::051963532279:policy/dev-github-deployment-application",
+            "attachment_count": 0,
+            "description": "Política consolidada de servicios de aplicación (Lambda, S3, DynamoDB, EventBridge) para GitHub Actions deployment con control ABAC basado en tags",
+            "id": "arn:aws:iam::051963532279:policy/dev-github-deployment-application",
+            "name": "dev-github-deployment-application",
+            "name_prefix": "",
+            "path": "/",
+            "policy": "{\"Statement\":[{\"Action\":[\"lambda:CreateFunction\",\"lambda:UpdateFunctionCode\",\"lambda:UpdateFunctionConfiguration\",\"lambda:DeleteFunction\",\"lambda:GetFunction\",\"lambda:GetFunctionConfiguration\",\"lambda:ListFunctions\",\"lambda:ListVersionsByFunction\",\"lambda:PublishVersion\",\"lambda:CreateAlias\",\"lambda:UpdateAlias\",\"lambda:DeleteAlias\",\"lambda:GetAlias\",\"lambda:ListAliases\",\"lambda:CreateEventSourceMapping\",\"lambda:UpdateEventSourceMapping\",\"lambda:DeleteEventSourceMapping\",\"lambda:GetEventSourceMapping\",\"lambda:ListEventSourceMappings\",\"lambda:AddPermission\",\"lambda:RemovePermission\",\"lambda:GetPolicy\",\"lambda:TagResource\",\"lambda:UntagResource\",\"lambda:ListTags\"],\"Effect\":\"Allow\",\"Resource\":[\"*\"],\"Sid\":\"LambdaManagementWithABAC\"},{\"Action\":[\"s3:CreateBucket\",\"s3:DeleteBucket\",\"s3:ListBucket\",\"s3:ListAllMyBuckets\",\"s3:GetBucketLocation\",\"s3:GetBucketVersioning\",\"s3:PutBucketVersioning\",\"s3:GetBucketEncryption\",\"s3:PutBucketEncryption\",\"s3:GetBucketPublicAccessBlock\",\"s3:PutBucketPublicAccessBlock\",\"s3:GetBucketNotification\",\"s3:PutBucketNotification\",\"s3:GetBucketPolicy\",\"s3:PutBucketPolicy\",\"s3:DeleteBucketPolicy\",\"s3:GetBucketAcl\",\"s3:PutBucketAcl\",\"s3:GetBucketTagging\",\"s3:PutBucketTagging\"],\"Condition\":{\"StringEquals\":{\"aws:RequestedRegion\":\"us-east-1\"}},\"Effect\":\"Allow\",\"Resource\":[\"arn:aws:s3:::mci-*\",\"arn:aws:s3:::github-*\",\"arn:aws:s3:::sgsi-*\"],\"Sid\":\"S3BucketManagementWithABAC\"},{\"Action\":[\"s3:GetObject\",\"s3:PutObject\",\"s3:DeleteObject\",\"s3:GetObjectVersion\",\"s3:DeleteObjectVersion\",\"s3:GetObjectAttributes\",\"s3:GetObjectAcl\",\"s3:PutObjectAcl\",\"s3:GetObjectTagging\",\"s3:PutObjectTagging\",\"s3:DeleteObjectTagging\"],\"Condition\":{\"StringEquals\":{\"aws:RequestedRegion\":\"us-east-1\"}},\"Effect\":\"Allow\",\"Resource\":[\"arn:aws:s3:::mci-*/*\",\"arn:aws:s3:::github-*/*\",\"arn:aws:s3:::sgsi-*/*\"],\"Sid\":\"S3ObjectManagementWithABAC\"},{\"Action\":[\"dynamodb:CreateTable\",\"dynamodb:DeleteTable\",\"dynamodb:DescribeTable\",\"dynamodb:ListTables\",\"dynamodb:UpdateTable\",\"dynamodb:DescribeTimeToLive\",\"dynamodb:UpdateTimeToLive\",\"dynamodb:DescribeBackup\",\"dynamodb:CreateBackup\",\"dynamodb:DeleteBackup\",\"dynamodb:ListBackups\",\"dynamodb:RestoreTableFromBackup\",\"dynamodb:DescribeContinuousBackups\",\"dynamodb:UpdateContinuousBackups\",\"dynamodb:TagResource\",\"dynamodb:UntagResource\",\"dynamodb:ListTagsOfResource\",\"dynamodb:CreateGlobalTable\",\"dynamodb:UpdateGlobalTable\",\"dynamodb:DescribeGlobalTable\",\"dynamodb:ListGlobalTables\"],\"Condition\":{\"StringEquals\":{\"aws:RequestedRegion\":\"us-east-1\"},\"StringLike\":{\"dynamodb:TableName\":[\"mci-*\",\"github-*\",\"sgsi-*\"]}},\"Effect\":\"Allow\",\"Resource\":[\"*\"],\"Sid\":\"DynamoDBManagementWithABAC\"},{\"Action\":[\"events:PutRule\",\"events:DeleteRule\",\"events:DescribeRule\",\"events:ListRules\",\"events:PutTargets\",\"events:RemoveTargets\",\"events:ListTargetsByRule\",\"events:CreateEventBus\",\"events:DeleteEventBus\",\"events:DescribeEventBus\",\"events:ListEventBuses\",\"events:CreateConnection\",\"events:UpdateConnection\",\"events:DeleteConnection\",\"events:DescribeConnection\",\"events:ListConnections\",\"events:PutPermission\",\"events:RemovePermission\",\"events:DescribeEventSource\",\"events:ListEventSources\",\"events:TagResource\",\"events:UntagResource\",\"events:ListTagsForResource\"],\"Condition\":{\"StringEquals\":{\"aws:RequestedRegion\":\"us-east-1\"},\"StringLike\":{\"events:RuleName\":[\"mci-*\",\"github-*\",\"sgsi-*\"]}},\"Effect\":\"Allow\",\"Resource\":[\"*\"],\"Sid\":\"EventBridgeManagementWithABAC\"},{\"Action\":[\"states:CreateStateMachine\",\"states:UpdateStateMachine\",\"states:DeleteStateMachine\",\"states:DescribeStateMachine\",\"states:ListStateMachines\",\"states:StartExecution\",\"states:StopExecution\",\"states:DescribeExecution\",\"states:ListExecutions\",\"states:GetExecutionHistory\",\"states:TagResource\",\"states:UntagResource\",\"states:ListTagsForResource\"],\"Condition\":{\"StringEquals\":{\"aws:RequestedRegion\":\"us-east-1\"},\"StringLike\":{\"states:StateMachineName\":[\"mci-*\",\"github-*\",\"sgsi-*\"]}},\"Effect\":\"Allow\",\"Resource\":[\"*\"],\"Sid\":\"StepFunctionsManagementWithABAC\"}],\"Version\":\"2012-10-17\"}",
+            "policy_id": "ANPAQYGKESP33I6UXY56L",
+            "tags": {
+              "BackupRequired": "Yes",
+              "BusinessOwner": "SGSI_Team",
+              "ChangeManagement": "ITIL_v4",
+              "ComplianceScope": "ISO27001_NIST_CSF",
+              "CostCenter": "Security_Infrastructure",
+              "CreatedBy": "GitHub_Actions",
+              "DataClassification": "Internal",
+              "Environment": "Development",
+              "GeneratedFrom": "github_deployment_application.yaml",
+              "Layer": "Foundation",
+              "LoggingEnabled": "Yes",
+              "MaintenanceWindow": "Sunday_2AM_6AM",
+              "MonitoringEnabled": "Yes",
+              "Name": "dev-github-deployment-application",
+              "PolicyType": "Custom",
+              "Project": "SGSI_Implementation",
+              "Scope": "Service",
+              "SecurityContact": "security",
+              "SecurityLevel": "Critical",
+              "TechnicalContact": "darwin.lopez"
+            },
+            "tags_all": {
+              "BackupRequired": "Yes",
+              "BusinessOwner": "SGSI_Team",
+              "ChangeManagement": "ITIL_v4",
+              "ComplianceScope": "ISO27001_NIST_CSF",
+              "CostCenter": "Security_Infrastructure",
+              "CreatedBy": "GitHub_Actions",
+              "DataClassification": "Internal",
+              "Environment": "Development",
+              "GeneratedFrom": "github_deployment_application.yaml",
+              "Layer": "Foundation",
+              "LoggingEnabled": "Yes",
+              "MaintenanceWindow": "Sunday_2AM_6AM",
+              "ManagedBy": "Terraform",
+              "MonitoringEnabled": "Yes",
+              "Name": "dev-github-deployment-application",
+              "PolicyType": "Custom",
+              "Project": "SGSI_Implementation",
+              "Scope": "Service",
+              "SecurityContact": "security",
+              "SecurityLevel": "Critical",
+              "TechnicalContact": "darwin.lopez"
+            }
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA=="
+        }
+      ]
+    },
+    {
+      "module": "module.github_deployment_cloudwatch",
+      "mode": "managed",
+      "type": "aws_iam_policy",
+      "name": "github_deployment_cloudwatch",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:iam::051963532279:policy/dev-github-deployment-cloudwatch",
+            "attachment_count": 0,
+            "description": "Gestión de CloudWatch Logs, Métricas, Dashboards y SNS del SGSI",
+            "id": "arn:aws:iam::051963532279:policy/dev-github-deployment-cloudwatch",
+            "name": "dev-github-deployment-cloudwatch",
+            "name_prefix": "",
+            "path": "/",
+            "policy": "{\"Statement\":[{\"Action\":[\"logs:CreateLogGroup\",\"logs:DeleteLogGroup\",\"logs:DescribeLogGroups\",\"logs:PutRetentionPolicy\",\"logs:DeleteRetentionPolicy\",\"logs:CreateLogStream\",\"logs:DeleteLogStream\",\"logs:DescribeLogStreams\",\"logs:PutLogEvents\",\"logs:GetLogEvents\",\"logs:FilterLogEvents\",\"logs:PutMetricFilter\",\"logs:DeleteMetricFilter\",\"logs:DescribeMetricFilters\",\"logs:TagLogGroup\",\"logs:UntagLogGroup\",\"logs:ListTagsLogGroup\",\"logs:ListTagsForResource\",\"logs:TagResource\",\"logs:UntagResource\"],\"Effect\":\"Allow\",\"Resource\":[\"arn:aws:logs:*:*:log-group:*\",\"arn:aws:logs:*:*:log-group:*:log-stream:*\"],\"Sid\":\"CloudWatchLogsManagement\"},{\"Action\":[\"cloudwatch:PutMetricData\",\"cloudwatch:GetMetricData\",\"cloudwatch:GetMetricStatistics\",\"cloudwatch:ListMetrics\",\"cloudwatch:PutMetricAlarm\",\"cloudwatch:DeleteAlarms\",\"cloudwatch:DescribeAlarms\",\"cloudwatch:DescribeAlarmsForMetric\",\"cloudwatch:DescribeAlarmHistory\",\"cloudwatch:SetAlarmState\",\"cloudwatch:EnableAlarmActions\",\"cloudwatch:DisableAlarmActions\",\"cloudwatch:TagResource\",\"cloudwatch:UntagResource\",\"cloudwatch:ListTagsForResource\"],\"Effect\":\"Allow\",\"Resource\":[\"arn:aws:cloudwatch:*:*:alarm:*\",\"*\"],\"Sid\":\"CloudWatchMetricsAndAlarms\"},{\"Action\":[\"cloudwatch:PutDashboard\",\"cloudwatch:GetDashboard\",\"cloudwatch:DeleteDashboards\",\"cloudwatch:ListDashboards\"],\"Effect\":\"Allow\",\"Resource\":[\"*\"],\"Sid\":\"CloudWatchDashboards\"},{\"Action\":[\"sns:CreateTopic\",\"sns:DeleteTopic\",\"sns:GetTopicAttributes\",\"sns:SetTopicAttributes\",\"sns:ListTopics\",\"sns:Subscribe\",\"sns:Unsubscribe\",\"sns:ListSubscriptions\",\"sns:ListSubscriptionsByTopic\",\"sns:GetSubscriptionAttributes\",\"sns:SetSubscriptionAttributes\",\"sns:Publish\",\"sns:AddPermission\",\"sns:RemovePermission\",\"sns:TagResource\",\"sns:UntagResource\",\"sns:ListTagsForResource\"],\"Effect\":\"Allow\",\"Resource\":[\"arn:aws:sns:*:*:*\",\"arn:aws:sns:*:*:sgsi-*\",\"arn:aws:sns:*:*:security-*\",\"arn:aws:sns:*:*:compliance-*\"],\"Sid\":\"SNSManagement\"}],\"Version\":\"2012-10-17\"}",
+            "policy_id": "ANPAQYGKESP33FNUSHON5",
+            "tags": {
+              "BackupRequired": "Yes",
+              "BusinessOwner": "SGSI_Team",
+              "ChangeManagement": "ITIL_v4",
+              "ComplianceScope": "ISO27001_NIST_CSF",
+              "CostCenter": "Security_Infrastructure",
+              "CreatedBy": "GitHub_Actions",
+              "DataClassification": "Internal",
+              "Environment": "Development",
+              "GeneratedFrom": "github_deployment_cloudwatch.yaml",
+              "Layer": "Foundation",
+              "LoggingEnabled": "Yes",
+              "MaintenanceWindow": "Sunday_2AM_6AM",
+              "MonitoringEnabled": "Yes",
+              "Name": "dev-github-deployment-cloudwatch",
+              "PolicyType": "Custom",
+              "Project": "SGSI_Implementation",
+              "Scope": "Service",
+              "SecurityContact": "security",
+              "SecurityLevel": "Critical",
+              "TechnicalContact": "darwin.lopez"
+            },
+            "tags_all": {
+              "BackupRequired": "Yes",
+              "BusinessOwner": "SGSI_Team",
+              "ChangeManagement": "ITIL_v4",
+              "ComplianceScope": "ISO27001_NIST_CSF",
+              "CostCenter": "Security_Infrastructure",
+              "CreatedBy": "GitHub_Actions",
+              "DataClassification": "Internal",
+              "Environment": "Development",
+              "GeneratedFrom": "github_deployment_cloudwatch.yaml",
+              "Layer": "Foundation",
+              "LoggingEnabled": "Yes",
+              "MaintenanceWindow": "Sunday_2AM_6AM",
+              "ManagedBy": "Terraform",
+              "MonitoringEnabled": "Yes",
+              "Name": "dev-github-deployment-cloudwatch",
+              "PolicyType": "Custom",
+              "Project": "SGSI_Implementation",
+              "Scope": "Service",
+              "SecurityContact": "security",
+              "SecurityLevel": "Critical",
+              "TechnicalContact": "darwin.lopez"
+            }
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA=="
+        }
+      ]
+    },
+    {
+      "module": "module.github_deployment_database",
+      "mode": "managed",
+      "type": "aws_iam_policy",
+      "name": "github_deployment_database",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:iam::051963532279:policy/dev-github-deployment-database",
+            "attachment_count": 0,
+            "description": "Política consolidada para recursos de base de datos (RDS) del SGSI Layer 3",
+            "id": "arn:aws:iam::051963532279:policy/dev-github-deployment-database",
+            "name": "dev-github-deployment-database",
+            "name_prefix": "",
+            "path": "/",
+            "policy": "{\"Statement\":[{\"Action\":[\"rds:CreateDBInstance\",\"rds:DeleteDBInstance\",\"rds:DescribeDBInstances\",\"rds:ModifyDBInstance\",\"rds:RebootDBInstance\",\"rds:StartDBInstance\",\"rds:StopDBInstance\",\"rds:DescribeDBLogFiles\",\"rds:DownloadDBLogFilePortion\",\"rds:ApplyPendingMaintenanceAction\",\"rds:DescribePendingMaintenanceActions\",\"rds:CreateDBSnapshot\",\"rds:DeleteDBSnapshot\",\"rds:DescribeDBSnapshots\",\"rds:RestoreDBInstanceFromDBSnapshot\",\"rds:CopyDBSnapshot\",\"rds:DescribeDBInstanceAutomatedBackups\",\"rds:DeleteDBInstanceAutomatedBackup\"],\"Condition\":{\"StringEquals\":{\"aws:RequestedRegion\":\"us-east-1\"}},\"Effect\":\"Allow\",\"Resource\":[\"*\"],\"Sid\":\"RDSInstanceManagement\"},{\"Action\":[\"rds:CreateDBSubnetGroup\",\"rds:DeleteDBSubnetGroup\",\"rds:DescribeDBSubnetGroups\",\"rds:ModifyDBSubnetGroup\"],\"Condition\":{\"StringEquals\":{\"aws:RequestedRegion\":\"us-east-1\"}},\"Effect\":\"Allow\",\"Resource\":[\"*\"],\"Sid\":\"RDSSubnetGroupManagement\"},{\"Action\":[\"rds:CreateDBParameterGroup\",\"rds:DeleteDBParameterGroup\",\"rds:DescribeDBParameterGroups\",\"rds:ModifyDBParameterGroup\",\"rds:DescribeDBParameters\",\"rds:ResetDBParameterGroup\",\"rds:DescribeEngineDefaultParameters\",\"rds:DescribeEngineDefaultClusterParameters\"],\"Condition\":{\"StringEquals\":{\"aws:RequestedRegion\":\"us-east-1\"}},\"Effect\":\"Allow\",\"Resource\":[\"*\"],\"Sid\":\"RDSParameterGroupManagement\"},{\"Action\":[\"rds:CreateOptionGroup\",\"rds:DeleteOptionGroup\",\"rds:DescribeOptionGroups\",\"rds:ModifyOptionGroup\",\"rds:DescribeOptionGroupOptions\"],\"Condition\":{\"StringEquals\":{\"aws:RequestedRegion\":\"us-east-1\"}},\"Effect\":\"Allow\",\"Resource\":[\"*\"],\"Sid\":\"RDSOptionGroupManagement\"},{\"Action\":[\"rds:CreateDBSecurityGroup\",\"rds:DeleteDBSecurityGroup\",\"rds:DescribeDBSecurityGroups\",\"rds:AuthorizeDBSecurityGroupIngress\",\"rds:RevokeDBSecurityGroupIngress\"],\"Condition\":{\"StringEquals\":{\"aws:RequestedRegion\":\"us-east-1\"}},\"Effect\":\"Allow\",\"Resource\":[\"*\"],\"Sid\":\"RDSSecurityGroupManagement\"},{\"Action\":[\"pi:DescribeDimensionKeys\",\"pi:GetDimensionKeyDetails\",\"pi:GetResourceMetrics\",\"logs:CreateLogGroup\",\"logs:CreateLogStream\",\"logs:PutLogEvents\",\"logs:DescribeLogGroups\",\"logs:DescribeLogStreams\",\"cloudwatch:PutMetricData\",\"cloudwatch:GetMetricStatistics\",\"cloudwatch:ListMetrics\"],\"Condition\":{\"StringEquals\":{\"aws:RequestedRegion\":\"us-east-1\"}},\"Effect\":\"Allow\",\"Resource\":[\"*\"],\"Sid\":\"RDSMonitoringAndPerformance\"},{\"Action\":[\"rds:CreateEventSubscription\",\"rds:DeleteEventSubscription\",\"rds:DescribeEventSubscriptions\",\"rds:ModifyEventSubscription\",\"rds:DescribeEvents\",\"rds:DescribeEventCategories\",\"rds:DescribeSourceRegions\"],\"Condition\":{\"StringEquals\":{\"aws:RequestedRegion\":\"us-east-1\"}},\"Effect\":\"Allow\",\"Resource\":[\"*\"],\"Sid\":\"RDSEventsAndNotifications\"},{\"Action\":[\"rds:AddTagsToResource\",\"rds:RemoveTagsFromResource\",\"rds:ListTagsForResource\"],\"Condition\":{\"StringEquals\":{\"aws:RequestedRegion\":\"us-east-1\"}},\"Effect\":\"Allow\",\"Resource\":[\"*\"],\"Sid\":\"RDSTagManagement\"}],\"Version\":\"2012-10-17\"}",
+            "policy_id": "ANPAQYGKESP3ZAWI6NYYM",
+            "tags": {
+              "BackupRequired": "Yes",
+              "BusinessOwner": "SGSI_Team",
+              "ChangeManagement": "ITIL_v4",
+              "ComplianceScope": "ISO27001_NIST_CSF",
+              "CostCenter": "Security_Infrastructure",
+              "CreatedBy": "GitHub_Actions",
+              "DataClassification": "Internal",
+              "Environment": "Development",
+              "GeneratedFrom": "github_deployment_database.yaml",
+              "Layer": "Foundation",
+              "LoggingEnabled": "Yes",
+              "MaintenanceWindow": "Sunday_2AM_6AM",
+              "MonitoringEnabled": "Yes",
+              "Name": "dev-github-deployment-database",
+              "PolicyType": "Custom",
+              "Project": "SGSI_Implementation",
+              "Scope": "Service",
+              "SecurityContact": "security",
+              "SecurityLevel": "Critical",
+              "TechnicalContact": "darwin.lopez"
+            },
+            "tags_all": {
+              "BackupRequired": "Yes",
+              "BusinessOwner": "SGSI_Team",
+              "ChangeManagement": "ITIL_v4",
+              "ComplianceScope": "ISO27001_NIST_CSF",
+              "CostCenter": "Security_Infrastructure",
+              "CreatedBy": "GitHub_Actions",
+              "DataClassification": "Internal",
+              "Environment": "Development",
+              "GeneratedFrom": "github_deployment_database.yaml",
+              "Layer": "Foundation",
+              "LoggingEnabled": "Yes",
+              "MaintenanceWindow": "Sunday_2AM_6AM",
+              "ManagedBy": "Terraform",
+              "MonitoringEnabled": "Yes",
+              "Name": "dev-github-deployment-database",
+              "PolicyType": "Custom",
+              "Project": "SGSI_Implementation",
+              "Scope": "Service",
+              "SecurityContact": "security",
+              "SecurityLevel": "Critical",
+              "TechnicalContact": "darwin.lopez"
+            }
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA=="
+        }
+      ]
+    },
+    {
+      "module": "module.github_deployment_deployment",
+      "mode": "managed",
+      "type": "aws_iam_policy",
+      "name": "github_deployment_deployment",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:iam::051963532279:policy/dev-github-deployment-deployment",
+            "attachment_count": 0,
+            "description": "Política consolidada para herramientas de deployment (CloudFormation + Terraform State) del SGSI - Consolidación de cloudformation + tfstate",
+            "id": "arn:aws:iam::051963532279:policy/dev-github-deployment-deployment",
+            "name": "dev-github-deployment-deployment",
+            "name_prefix": "",
+            "path": "/",
+            "policy": "{\"Statement\":[{\"Action\":[\"cloudformation:CreateStack\",\"cloudformation:UpdateStack\",\"cloudformation:DeleteStack\",\"cloudformation:DescribeStacks\",\"cloudformation:DescribeStackEvents\",\"cloudformation:DescribeStackResources\",\"cloudformation:DescribeStackResource\",\"cloudformation:GetTemplate\",\"cloudformation:GetStackPolicy\",\"cloudformation:SetStackPolicy\",\"cloudformation:ValidateTemplate\",\"cloudformation:EstimateTemplateCost\",\"cloudformation:ListStacks\",\"cloudformation:ListStackResources\",\"cloudformation:CancelUpdateStack\",\"cloudformation:ContinueUpdateRollback\",\"cloudformation:CreateChangeSet\",\"cloudformation:DeleteChangeSet\",\"cloudformation:DescribeChangeSet\",\"cloudformation:ExecuteChangeSet\",\"cloudformation:ListChangeSets\",\"cloudformation:SignalResource\",\"cloudformation:DetectStackDrift\",\"cloudformation:DetectStackResourceDrift\",\"cloudformation:DescribeStackDriftDetectionStatus\",\"cloudformation:DescribeStackResourceDrifts\"],\"Condition\":{\"StringEquals\":{\"aws:RequestedRegion\":[\"us-east-1\"]}},\"Effect\":\"Allow\",\"Resource\":[\"arn:aws:cloudformation:*:*:stack/sgsi-*/*\",\"arn:aws:cloudformation:*:*:stack/mci-*/*\",\"arn:aws:cloudformation:*:*:changeSet/*\"],\"Sid\":\"CloudFormationFullAccess\"},{\"Action\":[\"cloudformation:TagResource\",\"cloudformation:UntagResource\",\"cloudformation:ListTagsForResource\"],\"Effect\":\"Allow\",\"Resource\":[\"arn:aws:cloudformation:*:*:stack/sgsi-*/*\",\"arn:aws:cloudformation:*:*:stack/mci-*/*\"],\"Sid\":\"CloudFormationTagging\"},{\"Action\":[\"s3:GetObject\",\"s3:PutObject\",\"s3:DeleteObject\",\"s3:ListBucket\",\"s3:GetBucketVersioning\",\"s3:GetBucketLocation\",\"s3:GetBucketLogging\",\"s3:GetBucketPolicy\",\"s3:GetBucketTagging\",\"s3:GetBucketAcl\",\"s3:GetBucketCors\",\"s3:GetBucketWebsite\",\"s3:GetBucketNotification\",\"s3:GetEncryptionConfiguration\",\"s3:GetObjectVersion\",\"s3:GetObjectVersionAcl\",\"s3:DeleteObjectVersion\",\"s3:ListBucketVersions\",\"s3:ListBucketMultipartUploads\",\"s3:GetObjectRetention\",\"s3:GetObjectLegalHold\",\"s3:ListMultipartUploadParts\",\"s3:AbortMultipartUpload\"],\"Condition\":{\"StringEquals\":{\"aws:RequestedRegion\":[\"us-east-1\"]}},\"Effect\":\"Allow\",\"Resource\":[\"arn:aws:s3:::terraform-state-bucket-*\",\"arn:aws:s3:::terraform-state-bucket-*/*\",\"arn:aws:s3:::sgsi-terraform-state-*\",\"arn:aws:s3:::sgsi-terraform-state-*/*\",\"arn:aws:s3:::mci-terraform-state-*\",\"arn:aws:s3:::mci-terraform-state-*/*\"],\"Sid\":\"TerraformS3StateBackend\"},{\"Action\":[\"dynamodb:GetItem\",\"dynamodb:PutItem\",\"dynamodb:DeleteItem\",\"dynamodb:DescribeTable\",\"dynamodb:Query\",\"dynamodb:Scan\",\"dynamodb:UpdateItem\",\"dynamodb:CreateTable\",\"dynamodb:UpdateTable\",\"dynamodb:DeleteTable\",\"dynamodb:DescribeTimeToLive\",\"dynamodb:UpdateTimeToLive\",\"dynamodb:ListTagsOfResource\",\"dynamodb:TagResource\",\"dynamodb:UntagResource\"],\"Condition\":{\"StringEquals\":{\"aws:RequestedRegion\":[\"us-east-1\"]}},\"Effect\":\"Allow\",\"Resource\":[\"arn:aws:dynamodb:*:*:table/terraform-locks\",\"arn:aws:dynamodb:*:*:table/terraform-state-locks\",\"arn:aws:dynamodb:*:*:table/sgsi-terraform-locks\",\"arn:aws:dynamodb:*:*:table/mci-terraform-locks\",\"arn:aws:dynamodb:*:*:table/terraform-locks/index/*\",\"arn:aws:dynamodb:*:*:table/terraform-state-locks/index/*\",\"arn:aws:dynamodb:*:*:table/sgsi-terraform-locks/index/*\",\"arn:aws:dynamodb:*:*:table/mci-terraform-locks/index/*\"],\"Sid\":\"TerraformDynamoDBStateLocking\"},{\"Action\":[\"s3:ListAllMyBuckets\",\"s3:GetBucketLocation\",\"s3:HeadBucket\"],\"Effect\":\"Allow\",\"Resource\":[\"*\"],\"Sid\":\"TerraformStateBucketReadOnlyAccess\"},{\"Action\":[\"dynamodb:ListTables\",\"dynamodb:DescribeTable\"],\"Effect\":\"Allow\",\"Resource\":[\"*\"],\"Sid\":\"TerraformDynamoDBReadAccess\"},{\"Action\":[\"kms:Decrypt\",\"kms:Encrypt\",\"kms:ReEncrypt*\",\"kms:GenerateDataKey*\",\"kms:DescribeKey\",\"kms:CreateGrant\",\"kms:ListAliases\",\"kms:ListKeys\"],\"Condition\":{\"StringEquals\":{\"aws:RequestedRegion\":[\"us-east-1\"]},\"StringLike\":{\"kms:ViaService\":[\"s3.*.amazonaws.com\",\"dynamodb.*.amazonaws.com\"]}},\"Effect\":\"Allow\",\"Resource\":[\"arn:aws:kms:*:*:key/*\",\"arn:aws:kms:*:*:alias/terraform-state-*\",\"arn:aws:kms:*:*:alias/sgsi-*\"],\"Sid\":\"TerraformStateKMSAccess\"},{\"Action\":[\"sts:GetCallerIdentity\",\"sts:AssumeRole\",\"iam:GetRole\",\"iam:ListRoles\",\"iam:PassRole\",\"logs:CreateLogGroup\",\"logs:CreateLogStream\",\"logs:PutLogEvents\",\"logs:DescribeLogGroups\",\"logs:DescribeLogStreams\"],\"Effect\":\"Allow\",\"Resource\":[\"arn:aws:iam::*:role/github-*\",\"arn:aws:iam::*:role/terraform-*\",\"arn:aws:iam::*:role/sgsi-*\",\"arn:aws:logs:*:*:log-group:/aws/cloudformation/*\",\"arn:aws:logs:*:*:log-group:/aws/terraform/*\",\"arn:aws:logs:*:*:log-group:/aws/deployment/*\"],\"Sid\":\"DeploymentCoordination\"}],\"Version\":\"2012-10-17\"}",
+            "policy_id": "ANPAQYGKESP3UIDHPA3Z3",
+            "tags": {
+              "BackupRequired": "Yes",
+              "BusinessOwner": "SGSI_Team",
+              "ChangeManagement": "ITIL_v4",
+              "ComplianceScope": "ISO27001_NIST_CSF",
+              "CostCenter": "Security_Infrastructure",
+              "CreatedBy": "GitHub_Actions",
+              "DataClassification": "Internal",
+              "Environment": "Development",
+              "GeneratedFrom": "github_deployment_deployment.yaml",
+              "Layer": "Foundation",
+              "LoggingEnabled": "Yes",
+              "MaintenanceWindow": "Sunday_2AM_6AM",
+              "MonitoringEnabled": "Yes",
+              "Name": "dev-github-deployment-deployment",
+              "PolicyType": "Custom",
+              "Project": "SGSI_Implementation",
+              "Scope": "Service",
+              "SecurityContact": "security",
+              "SecurityLevel": "Critical",
+              "TechnicalContact": "darwin.lopez"
+            },
+            "tags_all": {
+              "BackupRequired": "Yes",
+              "BusinessOwner": "SGSI_Team",
+              "ChangeManagement": "ITIL_v4",
+              "ComplianceScope": "ISO27001_NIST_CSF",
+              "CostCenter": "Security_Infrastructure",
+              "CreatedBy": "GitHub_Actions",
+              "DataClassification": "Internal",
+              "Environment": "Development",
+              "GeneratedFrom": "github_deployment_deployment.yaml",
+              "Layer": "Foundation",
+              "LoggingEnabled": "Yes",
+              "MaintenanceWindow": "Sunday_2AM_6AM",
+              "ManagedBy": "Terraform",
+              "MonitoringEnabled": "Yes",
+              "Name": "dev-github-deployment-deployment",
+              "PolicyType": "Custom",
+              "Project": "SGSI_Implementation",
+              "Scope": "Service",
+              "SecurityContact": "security",
+              "SecurityLevel": "Critical",
+              "TechnicalContact": "darwin.lopez"
+            }
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA=="
+        }
+      ]
+    },
+    {
+      "module": "module.github_deployment_glue",
+      "mode": "managed",
+      "type": "aws_iam_policy",
+      "name": "github_deployment_glue",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:iam::051963532279:policy/dev-github-deployment-glue",
+            "attachment_count": 0,
+            "description": "Gestión de Glue, IAM PassRole y KMS para despliegue de infraestructura con ABAC",
+            "id": "arn:aws:iam::051963532279:policy/dev-github-deployment-glue",
+            "name": "dev-github-deployment-glue",
+            "name_prefix": "",
+            "path": "/",
+            "policy": "{\"Statement\":[{\"Action\":[\"glue:CreateDatabase\",\"glue:DeleteDatabase\",\"glue:GetDatabase\",\"glue:GetDatabases\",\"glue:UpdateDatabase\",\"glue:CreateTable\",\"glue:DeleteTable\",\"glue:GetTable\",\"glue:GetTables\",\"glue:UpdateTable\",\"glue:CreatePartition\",\"glue:DeletePartition\",\"glue:GetPartition\",\"glue:GetPartitions\",\"glue:UpdatePartition\",\"glue:BatchCreatePartition\",\"glue:BatchDeletePartition\",\"glue:BatchGetPartition\",\"glue:BatchUpdatePartition\",\"glue:CreateJob\",\"glue:DeleteJob\",\"glue:GetJob\",\"glue:GetJobs\",\"glue:UpdateJob\",\"glue:StartJobRun\",\"glue:StopJobRun\",\"glue:GetJobRun\",\"glue:GetJobRuns\",\"glue:GetJobBookmark\",\"glue:ResetJobBookmark\",\"glue:CreateCrawler\",\"glue:DeleteCrawler\",\"glue:GetCrawler\",\"glue:GetCrawlers\",\"glue:UpdateCrawler\",\"glue:StartCrawler\",\"glue:StopCrawler\",\"glue:GetCrawlerMetrics\",\"glue:CreateTrigger\",\"glue:DeleteTrigger\",\"glue:GetTrigger\",\"glue:GetTriggers\",\"glue:UpdateTrigger\",\"glue:StartTrigger\",\"glue:StopTrigger\",\"glue:CreateWorkflow\",\"glue:DeleteWorkflow\",\"glue:GetWorkflow\",\"glue:UpdateWorkflow\",\"glue:TagResource\",\"glue:UntagResource\",\"glue:GetTags\"],\"Effect\":\"Allow\",\"Resource\":[\"arn:aws:glue:*:*:catalog\",\"arn:aws:glue:*:*:database/*\",\"arn:aws:glue:*:*:table/*\",\"arn:aws:glue:*:*:job/*\",\"arn:aws:glue:*:*:crawler/*\",\"arn:aws:glue:*:*:trigger/*\",\"arn:aws:glue:*:*:workflow/*\"],\"Sid\":\"GlueFullManagement\"},{\"Action\":[\"iam:PassRole\"],\"Condition\":{\"StringEquals\":{\"iam:PassedToService\":[\"lambda.amazonaws.com\",\"glue.amazonaws.com\",\"states.amazonaws.com\",\"events.amazonaws.com\"]}},\"Effect\":\"Allow\",\"Resource\":[\"arn:aws:iam::*:role/*\"],\"Sid\":\"IAMPassRoleForServices\"},{\"Action\":[\"iam:GetRole\",\"iam:GetRolePolicy\",\"iam:GetPolicy\",\"iam:GetPolicyVersion\",\"iam:ListAttachedRolePolicies\",\"iam:ListRolePolicies\",\"iam:ListPolicyVersions\"],\"Effect\":\"Allow\",\"Resource\":[\"arn:aws:iam::*:role/*\",\"arn:aws:iam::*:policy/*\"],\"Sid\":\"IAMReadOnlyForInfra\"},{\"Action\":[\"kms:Decrypt\",\"kms:Encrypt\",\"kms:DescribeKey\",\"kms:GenerateDataKey\",\"kms:GenerateDataKeyWithoutPlaintext\",\"kms:CreateGrant\",\"kms:ListGrants\",\"kms:ListKeys\",\"kms:ListAliases\",\"kms:ReEncrypt\"],\"Effect\":\"Allow\",\"Resource\":[\"*\"],\"Sid\":\"KMSFullAccess\"},{\"Action\":[\"sts:AssumeRole\",\"sts:GetCallerIdentity\"],\"Effect\":\"Allow\",\"Resource\":[\"*\"],\"Sid\":\"STSAssumeRole\"}],\"Version\":\"2012-10-17\"}",
+            "policy_id": "ANPAQYGKESP3QIXXHLPOG",
+            "tags": {
+              "BackupRequired": "Yes",
+              "BusinessOwner": "SGSI_Team",
+              "ChangeManagement": "ITIL_v4",
+              "ComplianceScope": "ISO27001_NIST_CSF",
+              "CostCenter": "Security_Infrastructure",
+              "CreatedBy": "GitHub_Actions",
+              "DataClassification": "Internal",
+              "Environment": "Development",
+              "GeneratedFrom": "github_deployment_glue.yaml",
+              "Layer": "Foundation",
+              "LoggingEnabled": "Yes",
+              "MaintenanceWindow": "Sunday_2AM_6AM",
+              "MonitoringEnabled": "Yes",
+              "Name": "dev-github-deployment-glue",
+              "PolicyType": "Custom",
+              "Project": "SGSI_Implementation",
+              "Scope": "Service",
+              "SecurityContact": "security",
+              "SecurityLevel": "Critical",
+              "TechnicalContact": "darwin.lopez"
+            },
+            "tags_all": {
+              "BackupRequired": "Yes",
+              "BusinessOwner": "SGSI_Team",
+              "ChangeManagement": "ITIL_v4",
+              "ComplianceScope": "ISO27001_NIST_CSF",
+              "CostCenter": "Security_Infrastructure",
+              "CreatedBy": "GitHub_Actions",
+              "DataClassification": "Internal",
+              "Environment": "Development",
+              "GeneratedFrom": "github_deployment_glue.yaml",
+              "Layer": "Foundation",
+              "LoggingEnabled": "Yes",
+              "MaintenanceWindow": "Sunday_2AM_6AM",
+              "ManagedBy": "Terraform",
+              "MonitoringEnabled": "Yes",
+              "Name": "dev-github-deployment-glue",
+              "PolicyType": "Custom",
+              "Project": "SGSI_Implementation",
+              "Scope": "Service",
+              "SecurityContact": "security",
+              "SecurityLevel": "Critical",
+              "TechnicalContact": "darwin.lopez"
+            }
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA=="
+        }
+      ]
+    },
+    {
+      "module": "module.github_deployment_iam",
+      "mode": "managed",
+      "type": "aws_iam_policy",
+      "name": "github_deployment_iam",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:iam::051963532279:policy/dev-github-deployment-iam",
+            "attachment_count": 0,
+            "description": "Gestión completa de IAM y STS para despliegues del SGSI - Consolidación de iam + sts",
+            "id": "arn:aws:iam::051963532279:policy/dev-github-deployment-iam",
+            "name": "dev-github-deployment-iam",
+            "name_prefix": "",
+            "path": "/",
+            "policy": "{\"Statement\":[{\"Action\":[\"iam:CreateRole\",\"iam:DeleteRole\",\"iam:UpdateRole\",\"iam:UpdateRoleDescription\",\"iam:GetRole\",\"iam:ListRoles\",\"iam:ListRoleTags\",\"iam:TagRole\",\"iam:UntagRole\",\"iam:UpdateAssumeRolePolicy\"],\"Effect\":\"Allow\",\"Resource\":[\"arn:aws:iam::*:role/*\"],\"Sid\":\"IAMRoleFullManagement\"},{\"Action\":[\"iam:CreatePolicy\",\"iam:DeletePolicy\",\"iam:GetPolicy\",\"iam:GetPolicyVersion\",\"iam:ListPolicies\",\"iam:ListPolicyVersions\",\"iam:CreatePolicyVersion\",\"iam:DeletePolicyVersion\",\"iam:SetDefaultPolicyVersion\",\"iam:TagPolicy\",\"iam:UntagPolicy\",\"iam:ListPolicyTags\"],\"Effect\":\"Allow\",\"Resource\":[\"arn:aws:iam::*:policy/*\"],\"Sid\":\"IAMPolicyFullManagement\"},{\"Action\":[\"iam:AttachRolePolicy\",\"iam:DetachRolePolicy\",\"iam:ListAttachedRolePolicies\",\"iam:PutRolePolicy\",\"iam:DeleteRolePolicy\",\"iam:GetRolePolicy\",\"iam:ListRolePolicies\"],\"Effect\":\"Allow\",\"Resource\":[\"arn:aws:iam::*:role/*\"],\"Sid\":\"IAMRolePolicyAttachment\"},{\"Action\":[\"iam:PassRole\"],\"Effect\":\"Allow\",\"Resource\":[\"arn:aws:iam::*:role/*\"],\"Sid\":\"IAMPassRoleForServices\"},{\"Action\":[\"iam:ListInstanceProfiles\",\"iam:ListInstanceProfilesForRole\",\"iam:GetAccountSummary\",\"iam:GetAccountPasswordPolicy\",\"iam:ListUsers\",\"iam:ListGroups\",\"iam:ListAccountAliases\"],\"Effect\":\"Allow\",\"Resource\":[\"*\"],\"Sid\":\"IAMReadOnlyAccess\"},{\"Action\":[\"iam:CreateOpenIDConnectProvider\",\"iam:DeleteOpenIDConnectProvider\",\"iam:GetOpenIDConnectProvider\",\"iam:ListOpenIDConnectProviders\",\"iam:UpdateOpenIDConnectProviderThumbprint\",\"iam:TagOpenIDConnectProvider\",\"iam:UntagOpenIDConnectProvider\",\"iam:ListOpenIDConnectProviderTags\"],\"Effect\":\"Allow\",\"Resource\":[\"arn:aws:iam::*:oidc-provider/*\"],\"Sid\":\"IAMOIDCProviderManagement\"},{\"Action\":[\"sts:AssumeRoleWithWebIdentity\",\"sts:GetCallerIdentity\",\"sts:TagSession\"],\"Effect\":\"Allow\",\"Resource\":[\"*\"],\"Sid\":\"STSAssumeRoleWithWebIdentity\"},{\"Action\":[\"sts:AssumeRole\"],\"Condition\":{\"StringEquals\":{\"aws:RequestedRegion\":[\"us-east-1\"]}},\"Effect\":\"Allow\",\"Resource\":[\"arn:aws:iam::*:role/*\"],\"Sid\":\"AssumeOtherRoles\"}],\"Version\":\"2012-10-17\"}",
+            "policy_id": "ANPAQYGKESP3SSHUV7TLB",
+            "tags": {
+              "BackupRequired": "Yes",
+              "BusinessOwner": "SGSI_Team",
+              "ChangeManagement": "ITIL_v4",
+              "ComplianceScope": "ISO27001_NIST_CSF",
+              "CostCenter": "Security_Infrastructure",
+              "CreatedBy": "GitHub_Actions",
+              "DataClassification": "Internal",
+              "Environment": "Development",
+              "GeneratedFrom": "github_deployment_iam.yaml",
+              "Layer": "Foundation",
+              "LoggingEnabled": "Yes",
+              "MaintenanceWindow": "Sunday_2AM_6AM",
+              "MonitoringEnabled": "Yes",
+              "Name": "dev-github-deployment-iam",
+              "PolicyType": "Custom",
+              "Project": "SGSI_Implementation",
+              "Scope": "Service",
+              "SecurityContact": "security",
+              "SecurityLevel": "Critical",
+              "TechnicalContact": "darwin.lopez"
+            },
+            "tags_all": {
+              "BackupRequired": "Yes",
+              "BusinessOwner": "SGSI_Team",
+              "ChangeManagement": "ITIL_v4",
+              "ComplianceScope": "ISO27001_NIST_CSF",
+              "CostCenter": "Security_Infrastructure",
+              "CreatedBy": "GitHub_Actions",
+              "DataClassification": "Internal",
+              "Environment": "Development",
+              "GeneratedFrom": "github_deployment_iam.yaml",
+              "Layer": "Foundation",
+              "LoggingEnabled": "Yes",
+              "MaintenanceWindow": "Sunday_2AM_6AM",
+              "ManagedBy": "Terraform",
+              "MonitoringEnabled": "Yes",
+              "Name": "dev-github-deployment-iam",
+              "PolicyType": "Custom",
+              "Project": "SGSI_Implementation",
+              "Scope": "Service",
+              "SecurityContact": "security",
+              "SecurityLevel": "Critical",
+              "TechnicalContact": "darwin.lopez"
+            }
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA=="
+        }
+      ]
+    },
+    {
+      "module": "module.github_deployment_monitoring",
+      "mode": "managed",
+      "type": "aws_iam_policy",
+      "name": "github_deployment_monitoring",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:iam::051963532279:policy/dev-github-deployment-monitoring",
+            "attachment_count": 0,
+            "description": "Gestión de servicios de monitoreo y seguridad del SGSI (CloudTrail, Config, GuardDuty, Security Hub)",
+            "id": "arn:aws:iam::051963532279:policy/dev-github-deployment-monitoring",
+            "name": "dev-github-deployment-monitoring",
+            "name_prefix": "",
+            "path": "/",
+            "policy": "{\"Statement\":[{\"Action\":[\"cloudtrail:CreateTrail\",\"cloudtrail:DeleteTrail\",\"cloudtrail:DescribeTrails\",\"cloudtrail:GetTrailStatus\",\"cloudtrail:StartLogging\",\"cloudtrail:StopLogging\",\"cloudtrail:UpdateTrail\",\"cloudtrail:PutEventSelectors\",\"cloudtrail:GetEventSelectors\",\"cloudtrail:PutInsightSelectors\",\"cloudtrail:GetInsightSelectors\",\"cloudtrail:CreateEventDataStore\",\"cloudtrail:DeleteEventDataStore\",\"cloudtrail:GetEventDataStore\",\"cloudtrail:ListEventDataStores\",\"cloudtrail:AddTags\",\"cloudtrail:RemoveTags\",\"cloudtrail:ListTags\"],\"Effect\":\"Allow\",\"Resource\":[\"*\"],\"Sid\":\"CloudTrailManagement\"},{\"Action\":[\"config:PutConfigurationRecorder\",\"config:DeleteConfigurationRecorder\",\"config:DescribeConfigurationRecorders\",\"config:PutDeliveryChannel\",\"config:DeleteDeliveryChannel\",\"config:DescribeDeliveryChannels\",\"config:StartConfigurationRecorder\",\"config:StopConfigurationRecorder\",\"config:PutConfigRule\",\"config:DeleteConfigRule\",\"config:DescribeConfigRules\",\"config:GetComplianceDetailsByConfigRule\",\"config:GetComplianceSummaryByConfigRule\",\"config:PutRemediationConfigurations\",\"config:DeleteRemediationConfiguration\",\"config:DescribeRemediationConfigurations\",\"config:PutOrganizationConfigRule\",\"config:DeleteOrganizationConfigRule\"],\"Effect\":\"Allow\",\"Resource\":[\"*\"],\"Sid\":\"ConfigManagement\"},{\"Action\":[\"guardduty:CreateDetector\",\"guardduty:DeleteDetector\",\"guardduty:GetDetector\",\"guardduty:ListDetectors\",\"guardduty:UpdateDetector\",\"guardduty:CreateIPSet\",\"guardduty:DeleteIPSet\",\"guardduty:GetIPSet\",\"guardduty:ListIPSets\",\"guardduty:UpdateIPSet\",\"guardduty:CreateThreatIntelSet\",\"guardduty:DeleteThreatIntelSet\",\"guardduty:GetThreatIntelSet\",\"guardduty:ListThreatIntelSets\",\"guardduty:UpdateThreatIntelSet\",\"guardduty:CreateFilter\",\"guardduty:DeleteFilter\",\"guardduty:GetFilter\",\"guardduty:ListFilters\",\"guardduty:UpdateFilter\",\"guardduty:CreatePublishingDestination\",\"guardduty:DeletePublishingDestination\",\"guardduty:DescribePublishingDestination\",\"guardduty:ListPublishingDestinations\",\"securityhub:EnableSecurityHub\",\"securityhub:DisableSecurityHub\",\"securityhub:GetEnabledStandards\",\"securityhub:BatchEnableStandards\",\"securityhub:BatchDisableStandards\",\"securityhub:UpdateStandardsControl\",\"securityhub:CreateInsight\",\"securityhub:DeleteInsight\",\"securityhub:GetInsights\",\"securityhub:UpdateInsight\",\"securityhub:CreateCustomAction\",\"securityhub:DeleteCustomAction\",\"securityhub:GetCustomActions\",\"securityhub:UpdateCustomAction\",\"securityhub:EnableImportFindingsForProduct\",\"securityhub:DisableImportFindingsForProduct\",\"securityhub:ListEnabledProductsForImport\"],\"Effect\":\"Allow\",\"Resource\":[\"*\"],\"Sid\":\"SecurityMonitoring\"},{\"Action\":[\"inspector2:EnableInspector\",\"inspector2:DisableInspector\",\"inspector2:GetConfiguration\",\"inspector2:UpdateConfiguration\",\"inspector2:CreateFilter\",\"inspector2:DeleteFilter\",\"inspector2:GetFilter\",\"inspector2:ListFilters\",\"inspector2:UpdateFilter\",\"inspector:CreateAssessmentTarget\",\"inspector:DeleteAssessmentTarget\",\"inspector:DescribeAssessmentTargets\",\"inspector:CreateAssessmentTemplate\",\"inspector:DeleteAssessmentTemplate\",\"inspector:DescribeAssessmentTemplates\",\"inspector:StartAssessmentRun\",\"inspector:StopAssessmentRun\",\"inspector:DescribeAssessmentRuns\",\"ssm:PutComplianceItems\",\"ssm:ListComplianceItems\",\"ssm:ListComplianceSummary\",\"ssm:GetComplianceSummary\",\"ssm:CreateAssociation\",\"ssm:DeleteAssociation\",\"ssm:DescribeAssociations\",\"ssm:UpdateAssociation\",\"ssm:CreateDocument\",\"ssm:DeleteDocument\",\"ssm:DescribeDocument\",\"ssm:ListDocuments\",\"ssm:UpdateDocument\",\"support:DescribeTrustedAdvisorChecks\",\"support:DescribeTrustedAdvisorCheckResult\",\"support:RefreshTrustedAdvisorCheck\",\"wellarchitected:CreateWorkload\",\"wellarchitected:DeleteWorkload\",\"wellarchitected:GetWorkload\",\"wellarchitected:ListWorkloads\",\"wellarchitected:UpdateWorkload\",\"wellarchitected:CreateLensReview\",\"wellarchitected:DeleteLensReview\",\"wellarchitected:GetLensReview\",\"wellarchitected:UpdateLensReview\"],\"Effect\":\"Allow\",\"Resource\":[\"*\"],\"Sid\":\"ComplianceTools\"},{\"Action\":[\"events:CreateRule\",\"events:DeleteRule\",\"events:DescribeRule\",\"events:ListRules\",\"events:PutRule\",\"events:PutTargets\",\"events:RemoveTargets\",\"events:EnableRule\",\"events:DisableRule\"],\"Effect\":\"Allow\",\"Resource\":[\"*\"],\"Sid\":\"EventBridgeManagement\"}],\"Version\":\"2012-10-17\"}",
+            "policy_id": "ANPAQYGKESP33CT4Z26QM",
+            "tags": {
+              "BackupRequired": "Yes",
+              "BusinessOwner": "SGSI_Team",
+              "ChangeManagement": "ITIL_v4",
+              "ComplianceScope": "ISO27001_NIST_CSF",
+              "CostCenter": "Security_Infrastructure",
+              "CreatedBy": "GitHub_Actions",
+              "DataClassification": "Internal",
+              "Environment": "Development",
+              "GeneratedFrom": "github_deployment_monitoring.yaml",
+              "Layer": "Foundation",
+              "LoggingEnabled": "Yes",
+              "MaintenanceWindow": "Sunday_2AM_6AM",
+              "MonitoringEnabled": "Yes",
+              "Name": "dev-github-deployment-monitoring",
+              "PolicyType": "Custom",
+              "Project": "SGSI_Implementation",
+              "Scope": "Service",
+              "SecurityContact": "security",
+              "SecurityLevel": "Critical",
+              "TechnicalContact": "darwin.lopez"
+            },
+            "tags_all": {
+              "BackupRequired": "Yes",
+              "BusinessOwner": "SGSI_Team",
+              "ChangeManagement": "ITIL_v4",
+              "ComplianceScope": "ISO27001_NIST_CSF",
+              "CostCenter": "Security_Infrastructure",
+              "CreatedBy": "GitHub_Actions",
+              "DataClassification": "Internal",
+              "Environment": "Development",
+              "GeneratedFrom": "github_deployment_monitoring.yaml",
+              "Layer": "Foundation",
+              "LoggingEnabled": "Yes",
+              "MaintenanceWindow": "Sunday_2AM_6AM",
+              "ManagedBy": "Terraform",
+              "MonitoringEnabled": "Yes",
+              "Name": "dev-github-deployment-monitoring",
+              "PolicyType": "Custom",
+              "Project": "SGSI_Implementation",
+              "Scope": "Service",
+              "SecurityContact": "security",
+              "SecurityLevel": "Critical",
+              "TechnicalContact": "darwin.lopez"
+            }
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA=="
+        }
+      ]
+    },
+    {
+      "module": "module.github_deployment_network",
+      "mode": "managed",
+      "type": "aws_iam_policy",
+      "name": "github_deployment_network",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:iam::051963532279:policy/dev-github-deployment-network",
+            "attachment_count": 0,
+            "description": "Gestión de recursos de red VPC del SGSI (VPC, Subnets, Security Groups, Routes)",
+            "id": "arn:aws:iam::051963532279:policy/dev-github-deployment-network",
+            "name": "dev-github-deployment-network",
+            "name_prefix": "",
+            "path": "/",
+            "policy": "{\"Statement\":[{\"Action\":[\"ec2:CreateVpc\",\"ec2:DeleteVpc\",\"ec2:ModifyVpcAttribute\",\"ec2:DescribeVpcs\",\"ec2:DescribeVpcAttribute\",\"ec2:CreateTags\",\"ec2:DeleteTags\",\"ec2:DescribeTags\"],\"Condition\":{\"StringEquals\":{\"aws:RequestedRegion\":[\"us-east-1\"]}},\"Effect\":\"Allow\",\"Resource\":[\"arn:aws:ec2:*:*:vpc/*\"],\"Sid\":\"VPCManagement\"},{\"Action\":[\"ec2:CreateInternetGateway\",\"ec2:DeleteInternetGateway\",\"ec2:AttachInternetGateway\",\"ec2:DetachInternetGateway\",\"ec2:DescribeInternetGateways\"],\"Condition\":{\"StringEquals\":{\"aws:RequestedRegion\":[\"us-east-1\"]}},\"Effect\":\"Allow\",\"Resource\":[\"arn:aws:ec2:*:*:internet-gateway/*\",\"arn:aws:ec2:*:*:vpc/*\"],\"Sid\":\"InternetGatewayManagement\"},{\"Action\":[\"ec2:CreateSubnet\",\"ec2:DeleteSubnet\",\"ec2:ModifySubnetAttribute\",\"ec2:DescribeSubnets\",\"ec2:DescribeAvailabilityZones\"],\"Condition\":{\"StringEquals\":{\"aws:RequestedRegion\":[\"us-east-1\"]}},\"Effect\":\"Allow\",\"Resource\":[\"arn:aws:ec2:*:*:subnet/*\",\"arn:aws:ec2:*:*:vpc/*\"],\"Sid\":\"SubnetManagement\"},{\"Action\":[\"ec2:CreateSecurityGroup\",\"ec2:DeleteSecurityGroup\",\"ec2:DescribeSecurityGroups\",\"ec2:DescribeSecurityGroupRules\",\"ec2:AuthorizeSecurityGroupIngress\",\"ec2:AuthorizeSecurityGroupEgress\",\"ec2:RevokeSecurityGroupIngress\",\"ec2:RevokeSecurityGroupEgress\",\"ec2:ModifySecurityGroupRules\"],\"Condition\":{\"StringEquals\":{\"aws:RequestedRegion\":[\"us-east-1\"]}},\"Effect\":\"Allow\",\"Resource\":[\"arn:aws:ec2:*:*:security-group/*\",\"arn:aws:ec2:*:*:vpc/*\"],\"Sid\":\"SecurityGroupManagement\"},{\"Action\":[\"ec2:CreateRouteTable\",\"ec2:DeleteRouteTable\",\"ec2:DescribeRouteTables\",\"ec2:CreateRoute\",\"ec2:DeleteRoute\",\"ec2:ReplaceRoute\",\"ec2:AssociateRouteTable\",\"ec2:DisassociateRouteTable\",\"ec2:ReplaceRouteTableAssociation\"],\"Condition\":{\"StringEquals\":{\"aws:RequestedRegion\":[\"us-east-1\"]}},\"Effect\":\"Allow\",\"Resource\":[\"arn:aws:ec2:*:*:route-table/*\",\"arn:aws:ec2:*:*:vpc/*\",\"arn:aws:ec2:*:*:subnet/*\",\"arn:aws:ec2:*:*:internet-gateway/*\",\"arn:aws:ec2:*:*:natgateway/*\"],\"Sid\":\"RouteTableManagement\"},{\"Action\":[\"ec2:CreateNatGateway\",\"ec2:DeleteNatGateway\",\"ec2:DescribeNatGateways\",\"ec2:AllocateAddress\",\"ec2:ReleaseAddress\",\"ec2:DescribeAddresses\",\"ec2:AssociateAddress\",\"ec2:DisassociateAddress\"],\"Condition\":{\"StringEquals\":{\"aws:RequestedRegion\":[\"us-east-1\"]}},\"Effect\":\"Allow\",\"Resource\":[\"arn:aws:ec2:*:*:natgateway/*\",\"arn:aws:ec2:*:*:subnet/*\",\"arn:aws:ec2:*:*:elastic-ip/*\"],\"Sid\":\"NATGatewayManagement\"},{\"Action\":[\"ec2:DescribeAvailabilityZones\",\"ec2:DescribeRegions\",\"ec2:DescribeSubnets\",\"ec2:DescribeVpcs\",\"ec2:DescribeRouteTables\",\"ec2:DescribeSecurityGroups\",\"ec2:DescribeInternetGateways\",\"ec2:DescribeNatGateways\",\"ec2:DescribeNetworkAcls\",\"ec2:DescribeVpcEndpoints\",\"ec2:DescribeTags\"],\"Condition\":{\"StringEquals\":{\"aws:RequestedRegion\":[\"us-east-1\"]}},\"Effect\":\"Allow\",\"Resource\":[\"*\"],\"Sid\":\"EC2ReadOperations\"}],\"Version\":\"2012-10-17\"}",
+            "policy_id": "ANPAQYGKESP3UABZNNM6B",
+            "tags": {
+              "BackupRequired": "Yes",
+              "BusinessOwner": "SGSI_Team",
+              "ChangeManagement": "ITIL_v4",
+              "ComplianceScope": "ISO27001_NIST_CSF",
+              "CostCenter": "Security_Infrastructure",
+              "CreatedBy": "GitHub_Actions",
+              "DataClassification": "Internal",
+              "Environment": "Development",
+              "GeneratedFrom": "github_deployment_network.yaml",
+              "Layer": "Foundation",
+              "LoggingEnabled": "Yes",
+              "MaintenanceWindow": "Sunday_2AM_6AM",
+              "MonitoringEnabled": "Yes",
+              "Name": "dev-github-deployment-network",
+              "PolicyType": "Custom",
+              "Project": "SGSI_Implementation",
+              "Scope": "Service",
+              "SecurityContact": "security",
+              "SecurityLevel": "Critical",
+              "TechnicalContact": "darwin.lopez"
+            },
+            "tags_all": {
+              "BackupRequired": "Yes",
+              "BusinessOwner": "SGSI_Team",
+              "ChangeManagement": "ITIL_v4",
+              "ComplianceScope": "ISO27001_NIST_CSF",
+              "CostCenter": "Security_Infrastructure",
+              "CreatedBy": "GitHub_Actions",
+              "DataClassification": "Internal",
+              "Environment": "Development",
+              "GeneratedFrom": "github_deployment_network.yaml",
+              "Layer": "Foundation",
+              "LoggingEnabled": "Yes",
+              "MaintenanceWindow": "Sunday_2AM_6AM",
+              "ManagedBy": "Terraform",
+              "MonitoringEnabled": "Yes",
+              "Name": "dev-github-deployment-network",
+              "PolicyType": "Custom",
+              "Project": "SGSI_Implementation",
+              "Scope": "Service",
+              "SecurityContact": "security",
+              "SecurityLevel": "Critical",
+              "TechnicalContact": "darwin.lopez"
+            }
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA=="
+        }
+      ]
+    },
+    {
+      "module": "module.github_deployment_storage",
+      "mode": "managed",
+      "type": "aws_iam_policy",
+      "name": "github_deployment_storage",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:iam::051963532279:policy/dev-github-deployment-storage",
+            "attachment_count": 0,
+            "description": "GitHub Actions deployment policy for Storage infrastructure (S3, EFS, EBS, Backup)",
+            "id": "arn:aws:iam::051963532279:policy/dev-github-deployment-storage",
+            "name": "dev-github-deployment-storage",
+            "name_prefix": "",
+            "path": "/",
+            "policy": "{\"Statement\":[{\"Action\":[\"s3:CreateBucket\",\"s3:DeleteBucket\",\"s3:ListBucket\",\"s3:ListAllMyBuckets\",\"s3:GetBucketLocation\",\"s3:GetBucketVersioning\",\"s3:PutBucketVersioning\",\"s3:GetBucketPolicy\",\"s3:PutBucketPolicy\",\"s3:DeleteBucketPolicy\",\"s3:GetBucketAcl\",\"s3:PutBucketAcl\",\"s3:GetBucketCors\",\"s3:PutBucketCors\",\"s3:GetBucketLifecycleConfiguration\",\"s3:PutBucketLifecycleConfiguration\",\"s3:GetBucketReplication\",\"s3:PutBucketReplication\",\"s3:GetBucketNotification\",\"s3:PutBucketNotification\",\"s3:GetEncryptionConfiguration\",\"s3:PutEncryptionConfiguration\",\"s3:GetBucketPublicAccessBlock\",\"s3:PutBucketPublicAccessBlock\",\"s3:GetObject\",\"s3:PutObject\",\"s3:DeleteObject\",\"s3:GetObjectVersion\",\"s3:DeleteObjectVersion\",\"s3:RestoreObject\"],\"Effect\":\"Allow\",\"Resource\":[\"arn:aws:s3:::sgsi-*\",\"arn:aws:s3:::sgsi-*/*\",\"arn:aws:s3:::*-sgsi-*\",\"arn:aws:s3:::*-sgsi-*/*\"],\"Sid\":\"S3BucketManagement\"},{\"Action\":[\"ec2:CreateVolume\",\"ec2:DeleteVolume\",\"ec2:DescribeVolumes\",\"ec2:AttachVolume\",\"ec2:DetachVolume\",\"ec2:ModifyVolume\",\"ec2:CreateSnapshot\",\"ec2:DeleteSnapshot\",\"ec2:DescribeSnapshots\",\"ec2:CopySnapshot\",\"ec2:ModifySnapshotAttribute\"],\"Effect\":\"Allow\",\"Resource\":[\"*\"],\"Sid\":\"EBSVolumeManagement\"},{\"Action\":[\"elasticfilesystem:CreateFileSystem\",\"elasticfilesystem:DeleteFileSystem\",\"elasticfilesystem:DescribeFileSystems\",\"elasticfilesystem:CreateMountTarget\",\"elasticfilesystem:DeleteMountTarget\",\"elasticfilesystem:DescribeMountTargets\",\"elasticfilesystem:ModifyMountTargetSecurityGroups\",\"elasticfilesystem:CreateAccessPoint\",\"elasticfilesystem:DeleteAccessPoint\",\"elasticfilesystem:DescribeAccessPoints\",\"elasticfilesystem:PutFileSystemPolicy\",\"elasticfilesystem:DescribeFileSystemPolicy\",\"elasticfilesystem:DeleteFileSystemPolicy\"],\"Effect\":\"Allow\",\"Resource\":[\"*\"],\"Sid\":\"EFSManagement\"},{\"Action\":[\"backup:CreateBackupPlan\",\"backup:DeleteBackupPlan\",\"backup:GetBackupPlan\",\"backup:ListBackupPlans\",\"backup:UpdateBackupPlan\",\"backup:CreateBackupSelection\",\"backup:DeleteBackupSelection\",\"backup:GetBackupSelection\",\"backup:ListBackupSelections\",\"backup:CreateBackupVault\",\"backup:DeleteBackupVault\",\"backup:DescribeBackupVault\",\"backup:ListBackupVaults\",\"backup:StartBackupJob\",\"backup:StopBackupJob\",\"backup:DescribeBackupJob\",\"backup:ListBackupJobs\",\"backup:StartRestoreJob\",\"backup:DescribeRestoreJob\",\"backup:ListRestoreJobs\"],\"Effect\":\"Allow\",\"Resource\":[\"*\"],\"Sid\":\"BackupManagement\"},{\"Action\":[\"fsx:CreateFileSystem\",\"fsx:DeleteFileSystem\",\"fsx:DescribeFileSystems\",\"fsx:CreateBackup\",\"fsx:DeleteBackup\",\"fsx:DescribeBackups\",\"fsx:RestoreVolumeFromSnapshot\"],\"Effect\":\"Allow\",\"Resource\":[\"*\"],\"Sid\":\"FSxManagement\"},{\"Action\":[\"kms:CreateKey\",\"kms:DescribeKey\",\"kms:ListKeys\",\"kms:ListAliases\",\"kms:CreateAlias\",\"kms:DeleteAlias\",\"kms:GetKeyPolicy\",\"kms:PutKeyPolicy\",\"kms:EnableKey\",\"kms:DisableKey\",\"kms:TagResource\",\"kms:UntagResource\",\"kms:ListResourceTags\"],\"Effect\":\"Allow\",\"Resource\":[\"*\"],\"Sid\":\"KMSForStorage\"},{\"Action\":[\"storagegateway:CreateGateway\",\"storagegateway:DeleteGateway\",\"storagegateway:DescribeGatewayInformation\",\"storagegateway:ListGateways\",\"storagegateway:CreateNFSFileShare\",\"storagegateway:DeleteFileShare\",\"storagegateway:DescribeNFSFileShares\",\"storagegateway:UpdateNFSFileShare\"],\"Effect\":\"Allow\",\"Resource\":[\"*\"],\"Sid\":\"StorageGatewayManagement\"},{\"Action\":[\"dlm:CreateLifecyclePolicy\",\"dlm:DeleteLifecyclePolicy\",\"dlm:GetLifecyclePolicy\",\"dlm:GetLifecyclePolicies\",\"dlm:UpdateLifecyclePolicy\"],\"Effect\":\"Allow\",\"Resource\":[\"*\"],\"Sid\":\"DataLifecycleManagement\"},{\"Action\":[\"s3:GetBucketTagging\",\"s3:PutBucketTagging\",\"ec2:CreateTags\",\"ec2:DeleteTags\",\"ec2:DescribeTags\",\"elasticfilesystem:CreateTags\",\"elasticfilesystem:DeleteTags\",\"elasticfilesystem:DescribeTags\"],\"Effect\":\"Allow\",\"Resource\":[\"*\"],\"Sid\":\"StorageTagging\"}],\"Version\":\"2012-10-17\"}",
+            "policy_id": "ANPAQYGKESP36ZUGPKYK7",
+            "tags": {
+              "BackupRequired": "Yes",
+              "BusinessOwner": "SGSI_Team",
+              "ChangeManagement": "ITIL_v4",
+              "ComplianceScope": "ISO27001_NIST_CSF",
+              "CostCenter": "Security_Infrastructure",
+              "CreatedBy": "GitHub_Actions",
+              "DataClassification": "Internal",
+              "Environment": "Development",
+              "GeneratedFrom": "github_deployment_storage.yaml",
+              "Layer": "Foundation",
+              "LoggingEnabled": "Yes",
+              "MaintenanceWindow": "Sunday_2AM_6AM",
+              "MonitoringEnabled": "Yes",
+              "Name": "dev-github-deployment-storage",
+              "PolicyType": "Custom",
+              "Project": "SGSI_Implementation",
+              "Scope": "Service",
+              "SecurityContact": "security",
+              "SecurityLevel": "Critical",
+              "TechnicalContact": "darwin.lopez"
+            },
+            "tags_all": {
+              "BackupRequired": "Yes",
+              "BusinessOwner": "SGSI_Team",
+              "ChangeManagement": "ITIL_v4",
+              "ComplianceScope": "ISO27001_NIST_CSF",
+              "CostCenter": "Security_Infrastructure",
+              "CreatedBy": "GitHub_Actions",
+              "DataClassification": "Internal",
+              "Environment": "Development",
+              "GeneratedFrom": "github_deployment_storage.yaml",
+              "Layer": "Foundation",
+              "LoggingEnabled": "Yes",
+              "MaintenanceWindow": "Sunday_2AM_6AM",
+              "ManagedBy": "Terraform",
+              "MonitoringEnabled": "Yes",
+              "Name": "dev-github-deployment-storage",
+              "PolicyType": "Custom",
+              "Project": "SGSI_Implementation",
+              "Scope": "Service",
+              "SecurityContact": "security",
+              "SecurityLevel": "Critical",
+              "TechnicalContact": "darwin.lopez"
+            }
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA=="
+        }
+      ]
+    }
+  ],
+  "check_results": [
+    {
+      "object_kind": "var",
+      "config_addr": "var.role_session_duration",
+      "status": "pass",
+      "objects": [
+        {
+          "object_addr": "var.role_session_duration",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "object_kind": "var",
+      "config_addr": "var.environment",
+      "status": "pass",
+      "objects": [
+        {
+          "object_addr": "var.environment",
+          "status": "pass"
+        }
+      ]
+    }
+  ]
+}
