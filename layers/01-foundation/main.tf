@@ -165,8 +165,17 @@ module "github_deployment_glue" {
   common_tags     = var.common_tags
 }
 
+# Compute Services (ELB, ALB, ASG, EC2)
+module "github_deployment_compute" {
+  source = "../../generated/modules/policies/github_deployment_compute"
+  
+  environment      = var.environment
+  abac_conditions  = var.abac_conditions
+  common_tags     = var.common_tags
+}
+
 # ==============================================================================
-# POLICY ATTACHMENTS (9 Optimized Policies)
+# POLICY ATTACHMENTS (10 Optimized Policies)
 # ==============================================================================
 resource "aws_iam_role_policy_attachment" "github_deployment_policies" {
   for_each = {
@@ -179,6 +188,7 @@ resource "aws_iam_role_policy_attachment" "github_deployment_policies" {
     database    = module.github_deployment_database.policy_arn    # RDS
     storage     = module.github_deployment_storage.policy_arn     # S3, EFS
     glue        = module.github_deployment_glue.policy_arn        # AWS Glue
+    compute     = module.github_deployment_compute.policy_arn     # ELB, ALB, ASG, EC2
   }
 
   role       = data.aws_iam_role.github_actions_deployment_role.name

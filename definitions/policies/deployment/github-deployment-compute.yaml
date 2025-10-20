@@ -1,0 +1,97 @@
+﻿policy:
+  name: "github-deployment-compute"
+  description: "Política de servicios de compute (ELB, ALB, ASG, EC2) para GitHub Actions"
+  service: "compute"
+  version: "1.0.0"
+  
+  statements:
+    - sid: "ELBManagement"
+      effect: "Allow"
+      actions:
+        - "elasticloadbalancing:CreateLoadBalancer"
+        - "elasticloadbalancing:DeleteLoadBalancer"
+        - "elasticloadbalancing:DescribeLoadBalancers"
+        - "elasticloadbalancing:ModifyLoadBalancerAttributes"
+        - "elasticloadbalancing:CreateTargetGroup"
+        - "elasticloadbalancing:DeleteTargetGroup"
+        - "elasticloadbalancing:DescribeTargetGroups"
+        - "elasticloadbalancing:ModifyTargetGroup"
+        - "elasticloadbalancing:RegisterTargets"
+        - "elasticloadbalancing:DeregisterTargets"
+        - "elasticloadbalancing:DescribeTargetHealth"
+        - "elasticloadbalancing:CreateListener"
+        - "elasticloadbalancing:DeleteListener"
+        - "elasticloadbalancing:DescribeListeners"
+        - "elasticloadbalancing:ModifyListener"
+        - "elasticloadbalancing:CreateRule"
+        - "elasticloadbalancing:DeleteRule"
+        - "elasticloadbalancing:DescribeRules"
+        - "elasticloadbalancing:ModifyRule"
+        - "elasticloadbalancing:AddTags"
+        - "elasticloadbalancing:RemoveTags"
+        - "elasticloadbalancing:DescribeTags"
+        - "elasticloadbalancing:SetSecurityGroups"
+        - "elasticloadbalancing:SetSubnets"
+      resources: ["*"]
+      conditions:
+        StringEquals:
+          "aws:RequestedRegion": "us-east-1"
+
+    - sid: "AutoScalingManagement"
+      effect: "Allow"
+      actions:
+        - "autoscaling:CreateAutoScalingGroup"
+        - "autoscaling:UpdateAutoScalingGroup"
+        - "autoscaling:DeleteAutoScalingGroup"
+        - "autoscaling:DescribeAutoScalingGroups"
+        - "autoscaling:PutScalingPolicy"
+        - "autoscaling:DeletePolicy"
+        - "autoscaling:DescribePolicies"
+        - "autoscaling:AttachLoadBalancerTargetGroups"
+        - "autoscaling:DetachLoadBalancerTargetGroups"
+        - "autoscaling:CreateOrUpdateTags"
+        - "autoscaling:DeleteTags"
+        - "autoscaling:DescribeTags"
+        - "autoscaling:StartInstanceRefresh"
+        - "autoscaling:EnableMetricsCollection"
+      resources: ["*"]
+      conditions:
+        StringEquals:
+          "aws:RequestedRegion": "us-east-1"
+
+    - sid: "EC2LaunchTemplate"
+      effect: "Allow"
+      actions:
+        - "ec2:CreateLaunchTemplate"
+        - "ec2:DeleteLaunchTemplate"
+        - "ec2:DescribeLaunchTemplates"
+        - "ec2:DescribeLaunchTemplateVersions"
+        - "ec2:DescribeImages"
+        - "ec2:DescribeInstanceTypes"
+        - "ec2:DescribeSecurityGroups"
+        - "ec2:DescribeSubnets"
+        - "ec2:DescribeVpcs"
+        - "ec2:CreateTags"
+        - "ec2:DeleteTags"
+      resources: ["*"]
+      conditions:
+        StringEquals:
+          "aws:RequestedRegion": "us-east-1"
+
+    - sid: "IAMPassRole"
+      effect: "Allow"
+      actions:
+        - "iam:PassRole"
+      resources:
+        - "arn:aws:iam::*:role/sgsi-*"
+        - "arn:aws:iam::*:role/mci-*"
+      conditions:
+        StringEquals:
+          "iam:PassedToService":
+            - "ec2.amazonaws.com"
+            - "autoscaling.amazonaws.com"
+
+  tags:
+    "Name": "github-deployment-compute"
+    "Ambiente": "DEV"
+    "Modulo": "Compute"
