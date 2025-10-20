@@ -196,8 +196,13 @@ resource "aws_cloudtrail" "sgsi_trail" {
 }
 
 # ==============================================================================
-# AWS CONFIG
+# AWS CONFIG - COMENTADO POR COSTOS
 # ==============================================================================
+/*
+# AWS Config genera costos adicionales (~$5-15/mes)
+# Comentado para mantener stack gratuito en AWS Academy
+# Se puede habilitar en producción cuando se tenga presupuesto
+
 resource "aws_config_configuration_recorder" "sgsi_recorder" {
   name     = "sgsi-config-recorder"
   role_arn = aws_iam_role.config_role.arn
@@ -288,6 +293,7 @@ resource "aws_iam_role_policy" "config_s3_policy" {
     ]
   })
 }
+*/
 
 # ==============================================================================
 # GUARDDUTY (DESHABILITADO - No disponible en AWS Academy)

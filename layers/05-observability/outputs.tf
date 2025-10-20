@@ -8,8 +8,8 @@ output "cloudtrail_arn" {
 }
 
 output "config_recorder_name" {
-  description = "Name of the AWS Config recorder"
-  value       = aws_config_configuration_recorder.sgsi_recorder.name
+  description = "Name of the AWS Config recorder (disabled due to costs)"
+  value       = null  # aws_config_configuration_recorder.sgsi_recorder.name
 }
 
 output "guardduty_detector_id" {
@@ -45,7 +45,7 @@ output "observability_summary" {
   value = {
     layer               = "05-observability"
     cloudtrail_enabled  = true
-    config_enabled      = true
+    config_enabled      = false  # Disabled due to costs in AWS Academy
     guardduty_enabled   = false  # Not available in AWS Academy
     security_hub_enabled = false # Not available in AWS Academy
     monitoring_enabled  = true
@@ -53,13 +53,12 @@ output "observability_summary" {
     
     security_services = [
       "CloudTrail",
-      "AWS Config", 
       "CloudWatch"
     ]
     
     compliance_coverage = [
       "ISO27001 - A.12.6.1 (Management of technical vulnerabilities)",
-      "NIST-CSF - DE.CM (Detection Continuous Monitoring)",
+      "NIST-CSF - DE.CM (Detection Continuous Monitoring)", 
       "SOX - IT General Controls (Monitoring)"
     ]
   }
