@@ -11,6 +11,7 @@ environment  = "dev"
 # ==============================================================================
 # ALB CONFIGURATION
 # ==============================================================================
+enable_alb                     = false  # Deshabilitado - AWS account no soporta ALB
 alb_enable_deletion_protection = false
 alb_access_logs_bucket         = ""  # Bucket S3 para logs (vacío = deshabilitado)
 alb_enable_https               = false

@@ -8,27 +8,27 @@
 
 output "alb_id" {
   description = "ID del Application Load Balancer"
-  value       = module.alb.alb_id
+  value       = var.enable_alb ? module.alb[0].alb_id : "ALB no habilitado - restricción de cuenta AWS"
 }
 
 output "alb_arn" {
   description = "ARN del Application Load Balancer"
-  value       = module.alb.alb_arn
+  value       = var.enable_alb ? module.alb[0].alb_arn : "ALB no habilitado - restricción de cuenta AWS"
 }
 
 output "alb_dns_name" {
   description = "DNS name del ALB (usar para acceder a la aplicación)"
-  value       = module.alb.alb_dns_name
+  value       = var.enable_alb ? module.alb[0].alb_dns_name : "ALB no habilitado - restricción de cuenta AWS"
 }
 
 output "alb_zone_id" {
   description = "Zone ID del ALB para Route53"
-  value       = module.alb.alb_zone_id
+  value       = var.enable_alb ? module.alb[0].alb_zone_id : "ALB no habilitado - restricción de cuenta AWS"
 }
 
 output "target_group_arn" {
   description = "ARN del Target Group"
-  value       = module.alb.target_group_arn
+  value       = var.enable_alb ? module.alb[0].target_group_arn : "ALB no habilitado - restricción de cuenta AWS"
 }
 
 # ==============================================================================
@@ -102,7 +102,7 @@ output "db_instance_name" {
 
 output "alb_cloudwatch_alarms" {
   description = "ARNs de alarmas de CloudWatch del ALB"
-  value       = module.alb.cloudwatch_alarm_arns
+  value       = var.enable_alb ? module.alb[0].cloudwatch_alarm_arns : {}
 }
 
 output "asg_cloudwatch_alarms" {
@@ -179,7 +179,7 @@ output "deployment_info" {
 
 output "application_url" {
   description = "URL para acceder a la aplicación"
-  value       = "http://${module.alb.alb_dns_name}"
+  value       = var.enable_alb ? "http://${module.alb[0].alb_dns_name}" : "ALB deshabilitado - Acceder vía Session Manager (SSM) a instancias EC2"
 }
 
 output "database_connection_info" {

@@ -59,9 +59,12 @@ provider "aws" {
 }
 
 # ==============================================================================
-# MODULE: APPLICATION LOAD BALANCER
+# MODULE: APPLICATION LOAD BALANCER (CONDITIONAL)
 # ==============================================================================
+# NOTA: ALB deshabilitado temporalmente - AWS account tiene restricción para crear Load Balancers
+# El módulo está listo para habilitarse cuando AWS soporte lo habilite
 module "alb" {
+  count  = var.enable_alb ? 1 : 0
   source = "../../modules/compute/alb"
 
   project_name   = var.project_name
@@ -111,7 +114,7 @@ module "asg" {
   environment        = var.environment
   subnet_ids         = data.terraform_remote_state.network.outputs.app_private_subnet_ids
   security_group_ids = [data.terraform_remote_state.network.outputs.security_group_ids.web]
-  target_group_arns  = [module.alb.target_group_arn]
+  target_group_arns  = var.enable_alb ? [module.alb[0].target_group_arn] : []
 
   # Instance Configuration
   ami_id                    = var.asg_ami_id
@@ -124,7 +127,7 @@ module "asg" {
   min_size                  = var.asg_min_size
   max_size                  = var.asg_max_size
   desired_capacity          = var.asg_desired_capacity
-  health_check_type         = "ELB"
+  health_check_type         = var.enable_alb ? "ELB" : "EC2"  # Usar EC2 health check si no hay ALB
   health_check_grace_period = 300
 
   # Scaling Policies
@@ -138,8 +141,6 @@ module "asg" {
   cpu_low_threshold  = 30
 
   common_tags = var.common_tags
-
-  depends_on = [module.alb]
 }
 
 # ==============================================================================

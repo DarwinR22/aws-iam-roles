@@ -29,6 +29,12 @@ variable "common_tags" {
 # ==============================================================================
 # ALB (Application Load Balancer) CONFIGURATION
 # ==============================================================================
+variable "enable_alb" {
+  description = "Enable Application Load Balancer (set to false if ALB not supported in account)"
+  type        = bool
+  default     = false
+}
+
 
 variable "alb_enable_deletion_protection" {
   description = "Habilitar protección contra eliminación del ALB"
