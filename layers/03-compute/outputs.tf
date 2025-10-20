@@ -3,35 +3,6 @@
 # ==============================================================================
 
 # ==============================================================================
-# ALB (Application Load Balancer) OUTPUTS
-# ==============================================================================
-
-output "alb_id" {
-  description = "ID del Application Load Balancer"
-  value       = var.enable_alb ? module.alb[0].alb_id : "ALB no habilitado - restricción de cuenta AWS"
-}
-
-output "alb_arn" {
-  description = "ARN del Application Load Balancer"
-  value       = var.enable_alb ? module.alb[0].alb_arn : "ALB no habilitado - restricción de cuenta AWS"
-}
-
-output "alb_dns_name" {
-  description = "DNS name del ALB (usar para acceder a la aplicación)"
-  value       = var.enable_alb ? module.alb[0].alb_dns_name : "ALB no habilitado - restricción de cuenta AWS"
-}
-
-output "alb_zone_id" {
-  description = "Zone ID del ALB para Route53"
-  value       = var.enable_alb ? module.alb[0].alb_zone_id : "ALB no habilitado - restricción de cuenta AWS"
-}
-
-output "target_group_arn" {
-  description = "ARN del Target Group"
-  value       = var.enable_alb ? module.alb[0].target_group_arn : "ALB no habilitado - restricción de cuenta AWS"
-}
-
-# ==============================================================================
 # ASG (Auto Scaling Group) OUTPUTS
 # ==============================================================================
 
@@ -100,11 +71,6 @@ output "db_instance_name" {
 # CLOUDWATCH ALARM OUTPUTS
 # ==============================================================================
 
-output "alb_cloudwatch_alarms" {
-  description = "ARNs de alarmas de CloudWatch del ALB"
-  value       = var.enable_alb ? module.alb[0].cloudwatch_alarm_arns : {}
-}
-
 output "asg_cloudwatch_alarms" {
   description = "ARNs de alarmas de CloudWatch del ASG"
   value       = module.asg.cloudwatch_alarm_arns
@@ -124,14 +90,12 @@ output "compliance_summary" {
   value = {
     layer = "Layer 3 - Compute"
     modules = {
-      alb = module.alb.compliance_summary
       asg = module.asg.compliance_summary
       rds = module.rds.compliance_summary
     }
     overall_iso27001_controls = [
       "A.17.2.1",  # Availability (Multi-AZ, Auto Scaling)
       "A.12.3.1",  # Information backup (RDS backups)
-      "A.13.1.3",  # Network segregation (ALB/TG)
       "A.12.6.1",  # Technical vulnerability management (Launch Templates)
       "A.10.1.1",  # Encryption at rest (EBS, RDS)
       "A.12.4.1",  # Event logging (CloudWatch)
@@ -144,7 +108,7 @@ output "compliance_summary" {
       "DE.CM-1"    # Network monitoring (CloudWatch)
     ]
     features = {
-      load_balancer_type      = "Application Load Balancer"
+      load_balancer_enabled   = false
       auto_scaling_enabled    = true
       database_type           = var.rds_engine
       database_multi_az       = var.rds_multi_az
@@ -179,7 +143,7 @@ output "deployment_info" {
 
 output "application_url" {
   description = "URL para acceder a la aplicación"
-  value       = var.enable_alb ? "http://${module.alb[0].alb_dns_name}" : "ALB deshabilitado - Acceder vía Session Manager (SSM) a instancias EC2"
+  value       = "ALB deshabilitado - Acceder vía AWS Systems Manager Session Manager (SSM) a instancias EC2"
 }
 
 output "database_connection_info" {
