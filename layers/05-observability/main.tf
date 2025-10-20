@@ -71,7 +71,7 @@ provider "aws" {
 # ==============================================================================
 resource "aws_cloudtrail" "sgsi_trail" {
   name           = "sgsi-audit-trail"
-  s3_bucket_name = data.terraform_remote_state.storage.outputs.s3_buckets.logs
+  s3_bucket_name = data.terraform_remote_state.storage.outputs.s3_logs_bucket_id
 
   include_global_service_events = true
   is_multi_region_trail         = true
@@ -113,7 +113,7 @@ resource "aws_config_configuration_recorder" "sgsi_recorder" {
 
 resource "aws_config_delivery_channel" "sgsi_delivery_channel" {
   name           = "sgsi-config-delivery-channel"
-  s3_bucket_name = data.terraform_remote_state.storage.outputs.s3_buckets.logs
+  s3_bucket_name = data.terraform_remote_state.storage.outputs.s3_logs_bucket_id
 }
 
 # Config IAM Role
