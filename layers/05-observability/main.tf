@@ -114,6 +114,8 @@ resource "aws_config_configuration_recorder" "sgsi_recorder" {
 resource "aws_config_delivery_channel" "sgsi_delivery_channel" {
   name           = "sgsi-config-delivery-channel"
   s3_bucket_name = data.terraform_remote_state.storage.outputs.s3_logs_bucket_id
+  
+  depends_on = [aws_config_configuration_recorder.sgsi_recorder]
 }
 
 # Config IAM Role
@@ -148,36 +150,36 @@ resource "aws_iam_role_policy_attachment" "config_role_policy" {
 }
 
 # ==============================================================================
-# GUARDDUTY
+# GUARDDUTY (DESHABILITADO - No disponible en AWS Academy)
 # ==============================================================================
-resource "aws_guardduty_detector" "sgsi_detector" {
-  enable = true
-  finding_publishing_frequency = var.guardduty_findings_frequency
-
-  tags = merge(
-    var.common_tags,
-    {
-      Name                = "sgsi-guardduty-detector"
-      AssetID             = "OBS-GD-001"
-      AssetType           = "GuardDuty-Detector"
-      SecurityLevel       = "Critical"
-    }
-  )
-}
+# resource "aws_guardduty_detector" "sgsi_detector" {
+#   enable = true
+#   finding_publishing_frequency = var.guardduty_findings_frequency
+#
+#   tags = merge(
+#     var.common_tags,
+#     {
+#       Name                = "sgsi-guardduty-detector"
+#       AssetID             = "OBS-GD-001"
+#       AssetType           = "GuardDuty-Detector"
+#       SecurityLevel       = "Critical"
+#     }
+#   )
+# }
 
 # ==============================================================================
-# SECURITY HUB
+# SECURITY HUB (DESHABILITADO - No disponible en AWS Academy)
 # ==============================================================================
-resource "aws_securityhub_account" "sgsi_security_hub" {
-  enable_default_standards = true
-  control_finding_generator = "SECURITY_CONTROL"
-}
-
-# Enable AWS Foundational Security Standard
-resource "aws_securityhub_standards_subscription" "aws_foundational" {
-  standards_arn = "arn:aws:securityhub:::ruleset/finding-format/aws-foundational-security-best-practices/v/1.0.0"
-  depends_on    = [aws_securityhub_account.sgsi_security_hub]
-}
+# resource "aws_securityhub_account" "sgsi_security_hub" {
+#   enable_default_standards = true
+#   control_finding_generator = "SECURITY_CONTROL"
+# }
+#
+# # Enable AWS Foundational Security Standard
+# resource "aws_securityhub_standards_subscription" "aws_foundational" {
+#   standards_arn = "arn:aws:securityhub:::ruleset/finding-format/aws-foundational-security-best-practices/v/1.0.0"
+#   depends_on    = [aws_securityhub_account.sgsi_security_hub]
+# }
 
 # ==============================================================================
 # CLOUDWATCH DASHBOARDS AND ALARMS

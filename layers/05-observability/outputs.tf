@@ -13,13 +13,13 @@ output "config_recorder_name" {
 }
 
 output "guardduty_detector_id" {
-  description = "ID of the GuardDuty detector"
-  value       = aws_guardduty_detector.sgsi_detector.id
+  description = "ID of the GuardDuty detector (disabled in AWS Academy)"
+  value       = null  # aws_guardduty_detector.sgsi_detector.id
 }
 
 output "security_hub_arn" {
-  description = "ARN of the Security Hub"
-  value       = aws_securityhub_account.sgsi_security_hub.arn
+  description = "ARN of the Security Hub (disabled in AWS Academy)"
+  value       = null  # aws_securityhub_account.sgsi_security_hub.arn
 }
 
 output "cloudwatch_dashboard_arn" {
@@ -46,16 +46,14 @@ output "observability_summary" {
     layer               = "05-observability"
     cloudtrail_enabled  = true
     config_enabled      = true
-    guardduty_enabled   = true
-    security_hub_enabled = true
+    guardduty_enabled   = false  # Not available in AWS Academy
+    security_hub_enabled = false # Not available in AWS Academy
     monitoring_enabled  = true
     alert_topic_created = true
     
     security_services = [
       "CloudTrail",
       "AWS Config", 
-      "GuardDuty",
-      "Security Hub",
       "CloudWatch"
     ]
     
