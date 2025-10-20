@@ -216,10 +216,10 @@ jobs:
           echo "| Layer | Changed | Description |" >> $GITHUB_STEP_SUMMARY
           echo "|-------|---------|-------------|" >> $GITHUB_STEP_SUMMARY
           echo "| 1 - Foundation | ${{ steps.changes.outputs.layer1 == 'true' && '✅' || '❌' }} | IAM Roles & Policies |" >> $GITHUB_STEP_SUMMARY
-          echo "| 2 - Network | ${{ steps.changes.outputs.layer2 == 'true' && '✅' || '❌' }} | VPC & Security Groups |" >> $GITHUB_STEP_SUMMARY
-          echo "| 3 - Compute | ${{ steps.changes.outputs.layer3 == 'true' && '✅' || '❌' }} | ALB, ASG, RDS, Lambda |" >> $GITHUB_STEP_SUMMARY
+          echo "| 2 - Network | ${{ steps.changes.outputs.layer2 == 'true' && '✅' || '❌' }} | VPC, NAT HA, Flow Logs, NACLs, Endpoints |" >> $GITHUB_STEP_SUMMARY
+          echo "| 3 - Compute | ${{ steps.changes.outputs.layer3 == 'true' && '✅' || '❌' }} | ALB, ASG (Multi-AZ), RDS PostgreSQL |" >> $GITHUB_STEP_SUMMARY
           echo "| 4 - Storage | ${{ steps.changes.outputs.layer4 == 'true' && '✅' || '❌' }} | S3, EFS, Backup |" >> $GITHUB_STEP_SUMMARY
-          echo "| 5 - Observability | ${{ steps.changes.outputs.layer5 == 'true' && '✅' || '❌' }} | CloudTrail, GuardDuty |" >> $GITHUB_STEP_SUMMARY
+          echo "| 5 - Observability | ${{ steps.changes.outputs.layer5 == 'true' && '✅' || '❌' }} | CloudTrail, GuardDuty, Security Hub |" >> $GITHUB_STEP_SUMMARY
 
   # ==============================================================================
   # STEP 3: UNIFIED TERRAFORM PLAN WITH ADVANCED VISUAL ANALYSIS
@@ -393,6 +393,34 @@ jobs:
           fi
           echo "" >> $GITHUB_STEP_SUMMARY
 
+      # Plan Layer 3 (Compute) - if changed
+      - name: 📋 Plan Layer 3 - Compute
+        if: needs.detect-changes.outputs.layer3 == 'true'
+        working-directory: layers/03-compute
+        run: |
+          echo "### 🖥️ Layer 3 - Compute Plan" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          terraform init
+          terraform validate
+          terraform plan -no-color -input=false -out=compute.tfplan > compute_plan.txt 2>&1 || true
+          
+          if grep -q "Plan:" compute_plan.txt; then
+            grep "Plan:" compute_plan.txt | tail -1 >> $GITHUB_STEP_SUMMARY
+            
+            # Extract resource counts
+            creates=$(grep -c "will be created" compute_plan.txt || echo 0)
+            updates=$(grep -c "will be updated" compute_plan.txt || echo 0)
+            destroys=$(grep -c "will be destroyed" compute_plan.txt || echo 0)
+            
+            echo "- ➕ **Creates:** $creates resources (ALB, ASG, RDS, etc)" >> $GITHUB_STEP_SUMMARY
+            echo "- 🛠 **Updates:** $updates resources" >> $GITHUB_STEP_SUMMARY
+            echo "- ❌ **Destroys:** $destroys resources" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "No changes needed for Compute layer" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+
       # Upload all plans for deployment job
       - name: 📤 Upload Terraform Plans
         uses: actions/upload-artifact@v4
@@ -479,6 +507,30 @@ jobs:
           echo "🚀 Applying network plan..."
           terraform apply -auto-approve network.tfplan
           echo "✅ Network layer deployment completed"
+
+      # Deploy Compute Layer (if changed)
+      - name: 🚀 Deploy Layer 3 - Compute (ALB + ASG + RDS)
+        if: needs.detect-changes.outputs.layer3 == 'true'
+        working-directory: layers/03-compute
+        run: |
+          echo "🖥️ Deploying Compute Layer (ALB, ASG, RDS Multi-AZ)..."
+          terraform init
+          echo "📋 Creating compute plan..."
+          terraform plan -out=compute.tfplan
+          echo "🚀 Applying compute plan (esto puede tomar 15-20 minutos)..."
+          terraform apply -auto-approve compute.tfplan
+          echo "✅ Compute layer deployment completed"
+          
+          # Show outputs
+          echo ""
+          echo "📊 Deployment Outputs:"
+          terraform output -json > compute_outputs.json
+          
+          if [ -f compute_outputs.json ]; then
+            echo "🌐 ALB DNS: $(terraform output -raw alb_dns_name || echo 'N/A')"
+            echo "🖥️ ASG Name: $(terraform output -raw asg_name || echo 'N/A')"
+            echo "🗄️ RDS Endpoint: $(terraform output -raw db_instance_endpoint || echo 'N/A')"
+          fi
 
       # Add more layers as needed...
 
