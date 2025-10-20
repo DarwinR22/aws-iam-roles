@@ -109,6 +109,13 @@ resource "aws_iam_policy" "github_deployment_storage" {
         "backup:DeleteBackupVault",
         "backup:DescribeBackupVault",
         "backup:ListBackupVaults",
+        "backup:PutBackupVaultAccessPolicy",
+        "backup:DeleteBackupVaultAccessPolicy",
+        "backup:GetBackupVaultAccessPolicy",
+        "backup:PutBackupVaultNotifications",
+        "backup:DeleteBackupVaultNotifications",
+        "backup:GetBackupVaultNotifications",
+        "backup:PutBackupVaultLockConfiguration",
         "backup:StartBackupJob",
         "backup:StopBackupJob",
         "backup:DescribeBackupJob",
@@ -215,10 +222,10 @@ EOF
   tags = merge(
     var.common_tags,
     {
-      Name          = "${var.environment}-github-deployment-storage"
-      PolicyType    = "Custom"
-      Scope         = "Service"
-      GeneratedFrom = "github_deployment_storage.yaml"
+      Name                = "${var.environment}-github-deployment-storage"
+      PolicyType         = "Custom"
+      Scope              = "Service"
+      GeneratedFrom      = "github_deployment_storage.yaml"
     }
   )
 }

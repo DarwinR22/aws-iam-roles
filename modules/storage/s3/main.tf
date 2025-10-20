@@ -155,6 +155,9 @@ resource "aws_s3_bucket_object_lock_configuration" "primary" {
       days = var.object_lock_retention_days
     }
   }
+  
+  # Depende de versioning porque Object Lock requiere versioning habilitado
+  depends_on = [aws_s3_bucket_versioning.primary]
 }
 
 # ------------------------------------------------------------------------------
