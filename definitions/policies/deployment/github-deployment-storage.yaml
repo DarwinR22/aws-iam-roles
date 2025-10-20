@@ -159,6 +159,11 @@ policy:
       - "kms:TagResource"
       - "kms:UntagResource"
       - "kms:ListResourceTags"
+      # Permisos necesarios para AWS Backup
+      - "kms:Encrypt"
+      - "kms:Decrypt"
+      - "kms:GenerateDataKey"
+      - "kms:CreateGrant"
     resources:
       - "*"
 

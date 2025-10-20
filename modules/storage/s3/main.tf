@@ -145,6 +145,15 @@ resource "aws_s3_bucket_logging" "primary" {
 # ------------------------------------------------------------------------------
 # S3 OBJECT LOCK - IMMUTABILITY (WORM)
 # ------------------------------------------------------------------------------
+# Delay para asegurar que versioning esté completamente propagado en AWS
+resource "time_sleep" "wait_for_versioning" {
+  count = var.enable_object_lock ? 1 : 0
+  
+  create_duration = "30s"
+  
+  depends_on = [aws_s3_bucket_versioning.primary]
+}
+
 resource "aws_s3_bucket_object_lock_configuration" "primary" {
   count  = var.enable_object_lock ? 1 : 0
   bucket = aws_s3_bucket.primary.id
@@ -156,8 +165,8 @@ resource "aws_s3_bucket_object_lock_configuration" "primary" {
     }
   }
   
-  # Depende de versioning porque Object Lock requiere versioning habilitado
-  depends_on = [aws_s3_bucket_versioning.primary]
+  # Espera explícita para que versioning esté completamente activo
+  depends_on = [time_sleep.wait_for_versioning]
 }
 
 # ------------------------------------------------------------------------------
