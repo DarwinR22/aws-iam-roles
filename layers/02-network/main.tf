@@ -74,7 +74,7 @@ resource "aws_vpc" "sgsi_vpc_main" {
       AssetType            = "Network-Infrastructure"
       AssetOwner           = "SGSI-Team"
       DataClassification   = "Internal"
-      ISO27001Control      = "A.13.1.1,A.13.1.2,A.13.2.1"
+      ISO27001Control      = "A.13.1.1+A.13.1.2+A.13.2.1"
       SecurityLevel        = "High"
       ComplianceScope      = "ISO27001+NIST-CSF+ZeroTrust"
       BackupRequired       = "No"

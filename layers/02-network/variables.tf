@@ -44,6 +44,7 @@ variable "common_tags" {
     MonitoringEnabled    = "Yes"
     LoggingEnabled       = "Yes"
     ChangeManagement     = "ITIL-v4"
+    Environment          = "Development"
   }
 }
 
