@@ -449,6 +449,28 @@ jobs:
           fi
           echo "" >> $GITHUB_STEP_SUMMARY
 
+      # Plan Layer 5 (Observability) - if changed
+      - name: 🔍 Plan Layer 5 - Observability
+        if: needs.detect-changes.outputs.layer5 == 'true'
+        working-directory: layers/05-observability
+        run: |
+          echo "### 🔍 Layer 5 - Observability Plan" >> $GITHUB_STEP_SUMMARY
+          terraform init
+          terraform plan -out=observability.tfplan | tee observability_plan.txt
+          
+          if [ -f observability_plan.txt ]; then
+            creates=$(grep -c "will be created" observability_plan.txt || echo 0)
+            updates=$(grep -c "will be updated" observability_plan.txt || echo 0)
+            destroys=$(grep -c "will be destroyed" observability_plan.txt || echo 0)
+            
+            echo "- ➕ **Creates:** $creates resources (GuardDuty, SecurityHub, Config, CloudWatch)" >> $GITHUB_STEP_SUMMARY
+            echo "- 🛠 **Updates:** $updates resources" >> $GITHUB_STEP_SUMMARY
+            echo "- ❌ **Destroys:** $destroys resources" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "No changes needed for Observability layer" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+
       # Upload all plans for deployment job
       - name: 📤 Upload Terraform Plans
         uses: actions/upload-artifact@v4
@@ -585,6 +607,33 @@ jobs:
             echo "📂 EFS ID: $(terraform output -raw efs_file_system_id || echo 'N/A')"
             echo "🔄 Backup Vault: $(terraform output -raw backup_vault_id || echo 'N/A')"
             echo "📅 Backup Schedule: Daily (2AM), Weekly (Sun 3AM), Monthly (1st 4AM)"
+          fi
+
+      # Deploy Observability Layer (if changed)
+      - name: 🔍 Deploy Layer 5 - Observability (GuardDuty + Security Hub + Config)
+        if: needs.detect-changes.outputs.layer5 == 'true'
+        working-directory: layers/05-observability
+        run: |
+          echo "🔍 Deploying Observability Layer (GuardDuty, Security Hub, AWS Config)..."
+          terraform init
+          echo "📋 Creating observability plan..."
+          terraform plan -out=observability.tfplan
+          echo "🚀 Applying observability plan (esto puede tomar 3-5 minutos)..."
+          terraform apply -auto-approve observability.tfplan
+          echo "✅ Observability layer deployment completed"
+          
+          # Show outputs
+          echo ""
+          echo "📊 Deployment Outputs:"
+          terraform output -json > observability_outputs.json
+          
+          if [ -f observability_outputs.json ]; then
+            echo "🛡️ GuardDuty Detector: $(terraform output -raw guardduty_detector_id || echo 'N/A')"
+            echo "🔒 Security Hub: Enabled with AWS Foundational Security Best Practices"
+            echo "📋 AWS Config: Enabled with compliance tracking"
+            echo "📊 CloudWatch Dashboard: SGSI-Security-Dashboard"
+            echo "🔔 SNS Topic: sgsi-security-alerts"
+            echo "⚠️ IMPORTANTE: GuardDuty y Security Hub pueden tardar 24-48h en mostrar findings completos"
           fi
 
       # Add more layers as needed...

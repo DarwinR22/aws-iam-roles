@@ -830,12 +830,12 @@ class SGSIValidator:
             "status": "unknown"
         }
         
-        # Verificar buckets S3 del proyecto
+        # ==================== S3 BUCKETS ====================
         buckets_data = self.run_aws_command(['aws', 's3api', 'list-buckets'])
         
         if buckets_data:
             all_buckets = buckets_data['Buckets']
-            sgsi_buckets = [b for b in all_buckets if 'sgsi' in b['Name'].lower() or 'terraform' in b['Name'].lower()]
+            sgsi_buckets = [b for b in all_buckets if 'sgsi-dev' in b['Name'].lower()]
             
             layer4['resources']['s3_buckets'] = {
                 "total": len(sgsi_buckets),
@@ -843,22 +843,103 @@ class SGSIValidator:
             }
             
             for bucket in sgsi_buckets:
-                bucket_location = self.run_aws_command([
-                    'aws', 's3api', 'get-bucket-location',
+                # Verificar versioning
+                versioning = self.run_aws_command([
+                    'aws', 's3api', 'get-bucket-versioning',
                     '--bucket', bucket['Name']
                 ])
                 
-                region = bucket_location.get('LocationConstraint', 'us-east-1') if bucket_location else 'unknown'
+                # Verificar encryption
+                encryption = self.run_aws_command([
+                    'aws', 's3api', 'get-bucket-encryption',
+                    '--bucket', bucket['Name']
+                ])
                 
-                layer4['resources']['s3_buckets']['details'].append({
+                bucket_info = {
                     "name": bucket['Name'],
-                    "creation_date": bucket['CreationDate'],
-                    "region": region,
-                    "status": "✅ Activo"
-                })
-                self.print_success(f"S3 Bucket: {bucket['Name']}")
+                    "versioning": versioning.get('Status', 'Disabled') if versioning else 'Disabled',
+                    "encrypted": encryption is not None,
+                    "status": f"✅ {bucket['Name']}"
+                }
+                
+                layer4['resources']['s3_buckets']['details'].append(bucket_info)
+                self.print_success(f"S3: {bucket['Name']} (Versioning: {bucket_info['versioning']}, Encrypted: {bucket_info['encrypted']})")
                 self.valid_resources += 1
                 self.total_resources += 1
+        
+        # ==================== EFS ====================
+        efs_data = self.run_aws_command([
+            'aws', 'efs', 'describe-file-systems',
+            '--query', 'FileSystems[?contains(to_string(Tags[?Key==`Name`].Value), `sgsi`)]'
+        ])
+        
+        if efs_data and isinstance(efs_data, list) and len(efs_data) > 0:
+            for fs in efs_data:
+                # Verificar mount targets
+                mount_targets = self.run_aws_command([
+                    'aws', 'efs', 'describe-mount-targets',
+                    '--file-system-id', fs['FileSystemId']
+                ])
+                
+                num_mount_targets = len(mount_targets.get('MountTargets', [])) if mount_targets else 0
+                
+                layer4['resources']['efs'] = {
+                    "file_system_id": fs['FileSystemId'],
+                    "encrypted": fs.get('Encrypted', False),
+                    "performance_mode": fs.get('PerformanceMode', 'unknown'),
+                    "throughput_mode": fs.get('ThroughputMode', 'unknown'),
+                    "mount_targets": num_mount_targets,
+                    "lifecycle_policies": len(fs.get('LifeCyclePolicies', [])),
+                    "status": f"✅ {fs['FileSystemId']} - Multi-AZ: {num_mount_targets > 1}"
+                }
+                
+                self.print_success(f"EFS: {fs['FileSystemId']} ({fs.get('PerformanceMode')}, {num_mount_targets} mount targets, Encrypted: {fs.get('Encrypted')})")
+                self.valid_resources += 1
+                self.total_resources += 1
+        else:
+            layer4['resources']['efs'] = {"status": "❌ EFS no encontrado"}
+            self.print_error("EFS sgsi-dev-efs no encontrado")
+        
+        # ==================== AWS BACKUP ====================
+        # Verificar Backup Vault
+        backup_vault_data = self.run_aws_command([
+            'aws', 'backup', 'list-backup-vaults'
+        ])
+        
+        if backup_vault_data and backup_vault_data.get('BackupVaultList'):
+            sgsi_vaults = [v for v in backup_vault_data['BackupVaultList'] if 'sgsi-dev-vault' in v['BackupVaultName']]
+            
+            if sgsi_vaults:
+                vault = sgsi_vaults[0]
+                
+                # Verificar Backup Plan
+                backup_plans = self.run_aws_command([
+                    'aws', 'backup', 'list-backup-plans'
+                ])
+                
+                plan_count = 0
+                if backup_plans and backup_plans.get('BackupPlansList'):
+                    sgsi_plans = [p for p in backup_plans['BackupPlansList'] if 'sgsi-dev-plan' in p['BackupPlanName']]
+                    plan_count = len(sgsi_plans)
+                
+                layer4['resources']['backup'] = {
+                    "vault_name": vault['BackupVaultName'],
+                    "vault_arn": vault['BackupVaultArn'],
+                    "recovery_points": vault.get('NumberOfRecoveryPoints', 0),
+                    "encrypted": vault.get('EncryptionKeyArn') is not None or vault.get('Encrypted', False),
+                    "backup_plans": plan_count,
+                    "status": f"✅ {vault['BackupVaultName']} ({vault.get('NumberOfRecoveryPoints', 0)} recovery points)"
+                }
+                
+                self.print_success(f"AWS Backup: {vault['BackupVaultName']} ({plan_count} plan(s), {vault.get('NumberOfRecoveryPoints', 0)} recovery points)")
+                self.valid_resources += 1
+                self.total_resources += 1
+            else:
+                layer4['resources']['backup'] = {"status": "❌ Backup Vault no encontrado"}
+                self.print_error("AWS Backup Vault sgsi-dev-vault no encontrado")
+        else:
+            layer4['resources']['backup'] = {"status": "❌ AWS Backup no configurado"}
+            self.print_error("AWS Backup no configurado")
         
         return layer4
 
