@@ -21,9 +21,9 @@ resource "aws_s3_bucket" "primary" {
     }
   )
   
-  lifecycle {
-    prevent_destroy = true
-  }
+  # lifecycle {
+  #   prevent_destroy = true  # Comentado temporalmente para permitir recreación por cambio de tags
+  # }
 }
 
 # ------------------------------------------------------------------------------
