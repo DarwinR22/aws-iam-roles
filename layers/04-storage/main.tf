@@ -68,7 +68,7 @@ provider "aws" {
       Environment = var.environment
       ManagedBy   = "Terraform"
       Layer       = "Storage"
-      Compliance  = "ISO27001,NIST-CSF"
+      Compliance  = "ISO27001+NIST-CSF"
       Owner       = var.owner
     }
   }
@@ -82,7 +82,7 @@ locals {
     Project     = var.project_name
     Environment = var.environment
     Layer       = "Storage"
-    Compliance  = "ISO27001,NIST-CSF"
+    Compliance  = "ISO27001+NIST-CSF"
   }
   
   # Subnets privadas de Layer 2 para EFS mount targets

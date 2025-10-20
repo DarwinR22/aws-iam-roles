@@ -17,7 +17,7 @@ resource "aws_backup_vault" "main" {
       Name       = var.vault_name
       Layer      = "Storage"
       Module     = "Backup"
-      Compliance = "ISO27001-A.12.3.1,A.17.1.2"
+      Compliance = "ISO27001-A.12.3.1+A.17.1.2"
     }
   )
 }

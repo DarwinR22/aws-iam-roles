@@ -35,7 +35,7 @@ resource "aws_efs_file_system" "main" {
       Name       = var.efs_name
       Layer      = "Storage"
       Module     = "EFS"
-      Compliance = "ISO27001-A.12.3.1,A.12.6.1"
+      Compliance = "ISO27001-A.12.3.1+A.12.6.1"
     }
   )
 }

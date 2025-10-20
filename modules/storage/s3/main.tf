@@ -16,7 +16,7 @@ resource "aws_s3_bucket" "primary" {
       Name        = var.bucket_name
       Layer       = "Storage"
       Module      = "S3"
-      Compliance  = "ISO27001-A.12.3.1,A.18.1.3"
+      Compliance  = "ISO27001-A.12.3.1+A.18.1.3"
       DataClass   = var.data_classification
     }
   )
