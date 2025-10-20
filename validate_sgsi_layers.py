@@ -715,34 +715,39 @@ class SGSIValidator:
             "status": "unknown"
         }
         
-        # Verificar Application Load Balancer
+        # Verificar Application Load Balancer (DESHABILITADO - restricción cuenta AWS)
+        # Buscar cualquier ALB con 'sgsi' en el nombre
         alb_data = self.run_aws_command([
-            'aws', 'elbv2', 'describe-load-balancers',
-            '--names', 'sgsi-main-alb'
+            'aws', 'elbv2', 'describe-load-balancers'
         ])
         
-        if alb_data and alb_data['LoadBalancers']:
-            alb = alb_data['LoadBalancers'][0]
-            layer3['resources']['alb'] = {
-                "name": alb['LoadBalancerName'],
-                "arn": alb['LoadBalancerArn'],
-                "state": alb['State']['Code'],
-                "type": alb['Type'],
-                "scheme": alb['Scheme'],
-                "status": f"✅ {alb['LoadBalancerName']} ({alb['State']['Code']})"
-            }
-            self.print_success(f"ALB: {alb['LoadBalancerName']} - {alb['State']['Code']}")
-            self.valid_resources += 1
-        else:
-            layer3['resources']['alb'] = {"status": "❌ ALB no encontrado"}
-            self.print_error("ALB sgsi-main-alb no encontrado")
+        alb_found = False
+        if alb_data and alb_data.get('LoadBalancers'):
+            for alb in alb_data['LoadBalancers']:
+                if 'sgsi' in alb['LoadBalancerName'].lower():
+                    layer3['resources']['alb'] = {
+                        "name": alb['LoadBalancerName'],
+                        "arn": alb['LoadBalancerArn'],
+                        "state": alb['State']['Code'],
+                        "type": alb['Type'],
+                        "scheme": alb['Scheme'],
+                        "status": f"✅ {alb['LoadBalancerName']} ({alb['State']['Code']})"
+                    }
+                    self.print_success(f"ALB: {alb['LoadBalancerName']} - {alb['State']['Code']}")
+                    self.valid_resources += 1
+                    alb_found = True
+                    break
+        
+        if not alb_found:
+            layer3['resources']['alb'] = {"status": "⚠️ ALB no desplegado (restricción cuenta AWS)"}
+            self.print_warning("ALB: No desplegado - restricción de cuenta AWS Academy")
         
         self.total_resources += 1
         
         # Verificar Auto Scaling Group
         asg_data = self.run_aws_command([
             'aws', 'autoscaling', 'describe-auto-scaling-groups',
-            '--auto-scaling-group-names', 'sgsi-web-asg'
+            '--auto-scaling-group-names', 'sgsi-dev-asg'
         ])
         
         if asg_data and asg_data['AutoScalingGroups']:
@@ -760,14 +765,14 @@ class SGSIValidator:
             self.valid_resources += 1
         else:
             layer3['resources']['asg'] = {"status": "❌ ASG no encontrado"}
-            self.print_error("ASG sgsi-web-asg no encontrado")
+            self.print_error("ASG sgsi-dev-asg no encontrado")
         
         self.total_resources += 1
         
         # Verificar RDS Database
         rds_data = self.run_aws_command([
             'aws', 'rds', 'describe-db-instances',
-            '--db-instance-identifier', 'sgsi-main-db'
+            '--db-instance-identifier', 'sgsi-dev-db'
         ])
         
         if rds_data and rds_data['DBInstances']:
@@ -778,13 +783,15 @@ class SGSIValidator:
                 "db_instance_class": db['DBInstanceClass'],
                 "db_instance_status": db['DBInstanceStatus'],
                 "allocated_storage": db['AllocatedStorage'],
-                "status": f"✅ {db['DBInstanceIdentifier']} ({db['DBInstanceStatus']})"
+                "multi_az": db.get('MultiAZ', False),
+                "encrypted": db.get('StorageEncrypted', False),
+                "status": f"✅ {db['DBInstanceIdentifier']} ({db['DBInstanceStatus']}) - Multi-AZ: {db.get('MultiAZ', False)}"
             }
-            self.print_success(f"RDS: {db['DBInstanceIdentifier']} - {db['Engine']} {db['EngineVersion']} [{db['DBInstanceStatus']}]")
+            self.print_success(f"RDS: {db['DBInstanceIdentifier']} - {db['Engine']} {db['EngineVersion']} [{db['DBInstanceStatus']}] Multi-AZ: {db.get('MultiAZ', False)}")
             self.valid_resources += 1
         else:
             layer3['resources']['rds'] = {"status": "❌ RDS no encontrado"}
-            self.print_error("RDS sgsi-main-db no encontrado")
+            self.print_error("RDS sgsi-dev-db no encontrado")
         
         self.total_resources += 1
         
