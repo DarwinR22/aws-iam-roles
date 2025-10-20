@@ -88,8 +88,8 @@ locals {
   # Subnets privadas de Layer 2 para EFS mount targets
   app_private_subnet_ids = data.terraform_remote_state.network.outputs.app_private_subnet_ids
   
-  # Security Group para EFS
-  app_sg_id = data.terraform_remote_state.network.outputs.app_sg_id
+  # Security Group para EFS (usar map de security_group_ids)
+  app_sg_id = data.terraform_remote_state.network.outputs.security_group_ids.app
   
   # Información de RDS para backup
   rds_instance_arn = try(data.terraform_remote_state.compute.outputs.db_instance_arn, null)
