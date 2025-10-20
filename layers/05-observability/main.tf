@@ -145,15 +145,10 @@ resource "aws_cloudtrail" "sgsi_trail" {
   is_multi_region_trail         = true
   enable_logging               = true
 
+  # Event selector simplificado - solo management events
   event_selector {
-    read_write_type                 = "All"
-    include_management_events       = true
-    exclude_management_event_sources = []
-
-    data_resource {
-      type   = "AWS::S3::Object"
-      values = ["arn:aws:s3:::*/*"]
-    }
+    read_write_type           = "All"
+    include_management_events = true
   }
 
   tags = merge(
@@ -220,6 +215,37 @@ resource "aws_iam_role" "config_role" {
 resource "aws_iam_role_policy_attachment" "config_role_policy" {
   role       = aws_iam_role.config_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWS_ConfigRole"
+}
+
+# Inline policy para S3 access
+resource "aws_iam_role_policy" "config_s3_policy" {
+  name = "ConfigS3DeliveryPolicy"
+  role = aws_iam_role.config_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:PutObject",
+          "s3:PutObjectAcl",
+          "s3:GetBucketVersioning"
+        ]
+        Resource = [
+          data.terraform_remote_state.storage.outputs.s3_logs_bucket_arn,
+          "${data.terraform_remote_state.storage.outputs.s3_logs_bucket_arn}/*"
+        ]
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:GetBucketAcl"
+        ]
+        Resource = data.terraform_remote_state.storage.outputs.s3_logs_bucket_arn
+      }
+    ]
+  })
 }
 
 # ==============================================================================
