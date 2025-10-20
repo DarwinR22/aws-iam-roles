@@ -179,11 +179,21 @@ resource "aws_config_configuration_recorder" "sgsi_recorder" {
 resource "aws_config_delivery_channel" "sgsi_delivery_channel" {
   name           = "sgsi-config-delivery-channel"
   s3_bucket_name = data.terraform_remote_state.storage.outputs.s3_logs_bucket_id
+  s3_key_prefix  = "config"  # Carpeta dentro del bucket para Config
   
   depends_on = [
     aws_config_configuration_recorder.sgsi_recorder,
-    aws_s3_bucket_policy.logs_bucket_policy
+    aws_s3_bucket_policy.logs_bucket_policy,
+    aws_iam_role_policy.config_s3_policy
   ]
+}
+
+# Start Config Recorder
+resource "aws_config_configuration_recorder_status" "sgsi_recorder" {
+  name       = aws_config_configuration_recorder.sgsi_recorder.name
+  is_enabled = true
+  
+  depends_on = [aws_config_delivery_channel.sgsi_delivery_channel]
 }
 
 # Config IAM Role
