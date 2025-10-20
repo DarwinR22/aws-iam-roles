@@ -151,13 +151,8 @@ resource "aws_backup_selection" "main" {
     value = var.backup_tag_value
   }
   
-  # Recursos específicos (opcional)
-  dynamic "resources" {
-    for_each = var.resource_arns != null ? [1] : []
-    content {
-      resources = var.resource_arns
-    }
-  }
+  # Recursos específicos (opcional) - resources es un atributo, no un bloque
+  resources = var.resource_arns
   
   # Condiciones avanzadas
   dynamic "condition" {
