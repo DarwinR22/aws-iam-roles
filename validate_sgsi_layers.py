@@ -383,8 +383,8 @@ class SGSIValidator:
         return layer1
 
     def validate_layer2_network(self) -> Dict[str, Any]:
-        """Valida Layer 2: Network (VPC) - SGSI Academic Project Requirements"""
-        self.print_header("LAYER 2 - NETWORK (VPC + SECURITY + DNS)")
+        """Valida Layer 2: Network (VPC) - SGSI Academic Project Requirements + Enhanced Modules"""
+        self.print_header("LAYER 2 - NETWORK (Enhanced: VPC + NAT HA + Flow Logs + NACLs + Endpoints)")
         
         layer2 = {
             "name": "Network",
@@ -585,6 +585,108 @@ class SGSIValidator:
             layer2['resources']['hybrid_connectivity'] = {"status": "❌ Sin conectividad híbrida"}
             layer2['sgsi_compliance']['hybrid_connectivity'] = "❌ No implementado"
             self.print_error("Conectividad híbrida: No configurada (VPN/DirectConnect)")
+        
+        self.total_resources += 1
+        
+        # 6. VERIFICAR VPC FLOW LOGS
+        flowlogs_data = self.run_aws_command([
+            'aws', 'logs', 'describe-log-groups',
+            '--log-group-name-prefix', '/aws/vpc/flowlogs'
+        ])
+        
+        if flowlogs_data and flowlogs_data['logGroups']:
+            flowlog = flowlogs_data['logGroups'][0]
+            retention_days = flowlog.get('retentionInDays', 'No definido')
+            layer2['resources']['vpc_flow_logs'] = {
+                "log_group": flowlog['logGroupName'],
+                "retention": f"{retention_days} días" if isinstance(retention_days, int) else retention_days,
+                "status": f"✅ Habilitado ({retention_days} días retención)"
+            }
+            layer2['sgsi_compliance']['flow_logs'] = f"✅ Habilitado ({retention_days} días)"
+            self.print_success(f"VPC Flow Logs: {flowlog['logGroupName']} - Retención: {retention_days} días")
+            self.valid_resources += 1
+        else:
+            layer2['resources']['vpc_flow_logs'] = {"status": "❌ No configurado"}
+            layer2['sgsi_compliance']['flow_logs'] = "❌ No implementado"
+            self.print_error("VPC Flow Logs: No configurado")
+        
+        self.total_resources += 1
+        
+        # 7. VERIFICAR NAT GATEWAYS (High Availability)
+        nat_data = self.run_aws_command([
+            'aws', 'ec2', 'describe-nat-gateways',
+            '--filter', 'Name=state,Values=available'
+        ])
+        
+        if nat_data and nat_data['NatGateways']:
+            nat_gateways = [ng for ng in nat_data['NatGateways'] if any(tag.get('Key') == 'Name' and 'sgsi' in tag.get('Value', '').lower() for tag in ng.get('Tags', []))]
+            if len(nat_gateways) >= 2:
+                azs = list(set([ng['SubnetId'] for ng in nat_gateways]))
+                public_ips = [ng['NatGatewayAddresses'][0]['PublicIp'] for ng in nat_gateways if ng.get('NatGatewayAddresses')]
+                layer2['resources']['nat_gateways'] = {
+                    "count": len(nat_gateways),
+                    "availability_zones": len(azs),
+                    "public_ips": public_ips,
+                    "status": f"✅ Multi-AZ ({len(nat_gateways)} NAT Gateways en {len(azs)} AZs)"
+                }
+                layer2['sgsi_compliance']['nat_gateway_ha'] = f"✅ Multi-AZ ({len(nat_gateways)} NAT Gateways)"
+                self.print_success(f"NAT Gateways: {len(nat_gateways)} en {len(azs)} AZs - IPs: {', '.join(public_ips)}")
+                self.valid_resources += 1
+            elif len(nat_gateways) == 1:
+                layer2['resources']['nat_gateways'] = {
+                    "count": 1,
+                    "status": "⚠️ Solo 1 NAT Gateway (sin HA)"
+                }
+                layer2['sgsi_compliance']['nat_gateway_ha'] = "⚠️ Sin Alta Disponibilidad"
+                self.print_warning("NAT Gateways: Solo 1 encontrado (recomendado 2+ para HA)")
+            else:
+                layer2['resources']['nat_gateways'] = {"status": "❌ No configurado"}
+                layer2['sgsi_compliance']['nat_gateway_ha'] = "❌ No implementado"
+                self.print_error("NAT Gateways: No encontrados")
+        else:
+            layer2['resources']['nat_gateways'] = {"status": "❌ No configurado"}
+            layer2['sgsi_compliance']['nat_gateway_ha'] = "❌ No implementado"
+            self.print_error("NAT Gateways: No configurado")
+        
+        self.total_resources += 1
+        
+        # 8. VERIFICAR VPC ENDPOINTS (S3, DynamoDB)
+        endpoints_data = self.run_aws_command([
+            'aws', 'ec2', 'describe-vpc-endpoints',
+            '--filters', f'Name=vpc-id,Values={vpc["VpcId"]}' if vpcs_data and vpcs_data['Vpcs'] else 'Name=tag:Name,Values=sgsi*'
+        ])
+        
+        if endpoints_data and endpoints_data['VpcEndpoints']:
+            gateway_endpoints = [ep for ep in endpoints_data['VpcEndpoints'] if ep['VpcEndpointType'] == 'Gateway']
+            interface_endpoints = [ep for ep in endpoints_data['VpcEndpoints'] if ep['VpcEndpointType'] == 'Interface']
+            
+            services = [ep['ServiceName'].split('.')[-1] for ep in gateway_endpoints]
+            
+            if len(gateway_endpoints) >= 2 and 's3' in services and 'dynamodb' in services:
+                layer2['resources']['vpc_endpoints'] = {
+                    "gateway": len(gateway_endpoints),
+                    "interface": len(interface_endpoints),
+                    "services": services,
+                    "status": f"✅ Gateway Endpoints ({', '.join(services)})"
+                }
+                layer2['sgsi_compliance']['vpc_endpoints'] = f"✅ Gateway Endpoints ({len(gateway_endpoints)})"
+                self.print_success(f"VPC Endpoints: {len(gateway_endpoints)} Gateway ({', '.join(services)}), {len(interface_endpoints)} Interface")
+                self.valid_resources += 1
+            elif len(gateway_endpoints) > 0:
+                layer2['resources']['vpc_endpoints'] = {
+                    "gateway": len(gateway_endpoints),
+                    "status": f"⚠️ {len(gateway_endpoints)} Gateway Endpoints (recomendado: S3 + DynamoDB)"
+                }
+                layer2['sgsi_compliance']['vpc_endpoints'] = "⚠️ Implementación parcial"
+                self.print_warning(f"VPC Endpoints: {len(gateway_endpoints)} encontrados (recomendado: S3 + DynamoDB)")
+            else:
+                layer2['resources']['vpc_endpoints'] = {"status": "❌ No configurado"}
+                layer2['sgsi_compliance']['vpc_endpoints'] = "❌ No implementado"
+                self.print_error("VPC Endpoints: No configurados")
+        else:
+            layer2['resources']['vpc_endpoints'] = {"status": "❌ No configurado"}
+            layer2['sgsi_compliance']['vpc_endpoints'] = "❌ No implementado"
+            self.print_error("VPC Endpoints: No configurados")
         
         self.total_resources += 1
         

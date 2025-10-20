@@ -1,6 +1,7 @@
 # ==============================================================================
-# LAYER 3: COMPUTE
-# EC2, ALB, Auto Scaling, Lambda, RDS
+# LAYER 3: COMPUTE - MODULAR ARCHITECTURE
+# Propósito: Capa de cómputo con ALB + ASG + RDS Multi-AZ
+# Compliance: ISO 27001 A.17.2.1, A.12.3.1, A.13.1.3 | NIST CSF PR.IP-1, PR.DS-1
 # ==============================================================================
 
 terraform {
@@ -23,7 +24,7 @@ terraform {
 }
 
 # ==============================================================================
-# DATA SOURCES (Read from previous layers)
+# DATA SOURCES - PREVIOUS LAYERS
 # ==============================================================================
 data "terraform_remote_state" "foundation" {
   backend = "s3"
@@ -53,285 +54,191 @@ provider "aws" {
   region = var.aws_region
   
   default_tags {
-    tags = {
-      Project              = "SGSI-Implementation"
-      Layer                = "Compute"
-      Environment          = var.environment
-      ManagedBy           = "Terraform"
-      SecurityLevel       = "High"
-      ComplianceScope     = "ISO27001+NIST-CSF"
-      CreatedBy           = "GitHub-Actions"
-      MaintenanceWindow   = "Sunday-2AM-6AM"
-    }
+    tags = var.common_tags
   }
 }
 
 # ==============================================================================
-# APPLICATION LOAD BALANCER
+# MODULE: APPLICATION LOAD BALANCER
 # ==============================================================================
-resource "aws_lb" "sgsi_main_alb" {
-  name               = "sgsi-main-alb"
-  internal           = false
-  load_balancer_type = "application"
-  security_groups    = [data.terraform_remote_state.network.outputs.security_group_ids.alb]
-  subnets           = data.terraform_remote_state.network.outputs.public_subnet_ids
+module "alb" {
+  source = "../../modules/compute/alb"
 
-  enable_deletion_protection = false
-  enable_http2              = true
-  enable_cross_zone_load_balancing = true
+  project_name   = var.project_name
+  environment    = var.environment
+  vpc_id         = data.terraform_remote_state.network.outputs.vpc_id
+  subnet_ids     = data.terraform_remote_state.network.outputs.public_subnet_ids
+  security_group_ids = [data.terraform_remote_state.network.outputs.security_group_ids.alb]
 
-  tags = merge(
-    var.common_tags,
-    {
-      Name                = "sgsi-main-alb"
-      AssetID             = "COMP-ALB-001"
-      AssetType           = "Load-Balancer"
-      SecurityLevel       = "High"
-      InternetFacing      = "Yes"
-    }
-  )
-}
+  # ALB Configuration
+  internal                   = false
+  enable_deletion_protection = var.alb_enable_deletion_protection
+  idle_timeout               = 60
+  access_logs_bucket         = var.alb_access_logs_bucket
 
-# Target Group for Web Servers
-resource "aws_lb_target_group" "web_servers" {
-  name     = "sgsi-web-servers-tg"
-  port     = 8080
-  protocol = "HTTP"
-  vpc_id   = data.terraform_remote_state.network.outputs.vpc_id
+  # Target Group Configuration
+  target_port     = 80
+  target_protocol = "HTTP"
 
-  health_check {
-    enabled             = true
-    healthy_threshold   = 2
-    interval            = 30
-    matcher             = "200"
-    path                = "/"
-    port                = "traffic-port"
-    protocol            = "HTTP"
-    timeout             = 5
-    unhealthy_threshold = 2
-  }
+  # Health Check Configuration
+  health_check_path                = "/"
+  health_check_matcher             = "200"
+  health_check_interval            = 30
+  health_check_timeout             = 5
+  health_check_healthy_threshold   = 2
+  health_check_unhealthy_threshold = 2
+  enable_stickiness                = false
 
-  tags = merge(
-    var.common_tags,
-    {
-      Name                = "sgsi-web-servers-tg"
-      AssetType           = "Target-Group"
-    }
-  )
-}
+  # HTTPS Configuration (opcional)
+  enable_https    = var.alb_enable_https
+  certificate_arn = var.alb_certificate_arn
+  ssl_policy      = "ELBSecurityPolicy-TLS13-1-2-2021-06"
 
-# ALB Listener
-resource "aws_lb_listener" "web" {
-  load_balancer_arn = aws_lb.sgsi_main_alb.arn
-  port              = "80"
-  protocol          = "HTTP"
+  # CloudWatch Alarms Thresholds
+  response_time_threshold = 1.0
+  error_5xx_threshold     = 10
 
-  default_action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.web_servers.arn
-  }
-
-  tags = var.common_tags
+  common_tags = var.common_tags
 }
 
 # ==============================================================================
-# LAUNCH TEMPLATE
+# MODULE: AUTO SCALING GROUP
 # ==============================================================================
-data "aws_ami" "amazon_linux" {
-  most_recent = true
-  owners      = ["amazon"]
+module "asg" {
+  source = "../../modules/compute/asg"
 
-  filter {
-    name   = "name"
-    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
-  }
-}
+  project_name       = var.project_name
+  environment        = var.environment
+  subnet_ids         = data.terraform_remote_state.network.outputs.app_private_subnet_ids
+  security_group_ids = [data.terraform_remote_state.network.outputs.security_group_ids.web]
+  target_group_arns  = [module.alb.target_group_arn]
 
-resource "aws_launch_template" "web_servers" {
-  name_prefix   = "sgsi-web-"
-  image_id      = data.aws_ami.amazon_linux.id
-  instance_type = var.instance_type
-  
-  vpc_security_group_ids = [data.terraform_remote_state.network.outputs.security_group_ids.web]
+  # Instance Configuration
+  ami_id                    = var.asg_ami_id
+  instance_type             = var.asg_instance_type
+  root_volume_size          = 20
+  detailed_monitoring       = true
+  enable_cloudwatch_agent   = true
 
-  user_data = base64encode(templatefile("${path.module}/user-data.sh", {
-    environment = var.environment
-  }))
-
-  tag_specifications {
-    resource_type = "instance"
-    tags = merge(
-      var.common_tags,
-      {
-        Name                = "sgsi-web-server"
-        AssetType           = "EC2-Instance"
-        Role                = "WebServer"
-      }
-    )
-  }
-
-  tags = merge(
-    var.common_tags,
-    {
-      Name                = "sgsi-web-launch-template"
-      AssetType           = "Launch-Template"
-    }
-  )
-}
-
-# ==============================================================================
-# AUTO SCALING GROUP
-# ==============================================================================
-resource "aws_autoscaling_group" "web_servers" {
-  name                = "sgsi-web-asg"
-  vpc_zone_identifier = data.terraform_remote_state.network.outputs.app_private_subnet_ids
-  target_group_arns   = [aws_lb_target_group.web_servers.arn]
-  health_check_type   = "ELB"
+  # Auto Scaling Configuration
+  min_size                  = var.asg_min_size
+  max_size                  = var.asg_max_size
+  desired_capacity          = var.asg_desired_capacity
+  health_check_type         = "ELB"
   health_check_grace_period = 300
 
-  min_size         = var.asg_min_size
-  max_size         = var.asg_max_size
-  desired_capacity = var.asg_desired_capacity
+  # Scaling Policies
+  scale_up_adjustment   = 1
+  scale_up_cooldown     = 300
+  scale_down_adjustment = -1
+  scale_down_cooldown   = 300
 
-  launch_template {
-    id      = aws_launch_template.web_servers.id
-    version = "$Latest"
-  }
+  # CloudWatch Alarm Thresholds
+  cpu_high_threshold = 70
+  cpu_low_threshold  = 30
 
-  tag {
-    key                 = "Name"
-    value               = "sgsi-web-asg"
-    propagate_at_launch = false
-  }
+  common_tags = var.common_tags
 
-  dynamic "tag" {
-    for_each = var.common_tags
-    content {
-      key                 = tag.key
-      value               = tag.value
-      propagate_at_launch = true
-    }
-  }
+  depends_on = [module.alb]
 }
 
 # ==============================================================================
-# RDS DATABASE
+# MODULE: RDS DATABASE (PostgreSQL Multi-AZ)
 # ==============================================================================
-resource "aws_db_subnet_group" "sgsi_db" {
-  name       = "sgsi-db-subnet-group"
-  subnet_ids = data.terraform_remote_state.network.outputs.db_private_subnet_ids
+module "rds" {
+  source = "../../modules/compute/rds"
 
-  tags = merge(
-    var.common_tags,
-    {
-      Name                = "sgsi-db-subnet-group"
-      AssetType           = "DB-Subnet-Group"
-    }
-  )
-}
+  project_name       = var.project_name
+  environment        = var.environment
+  subnet_ids         = data.terraform_remote_state.network.outputs.db_private_subnet_ids
+  security_group_ids = [data.terraform_remote_state.network.outputs.security_group_ids.db]
 
-resource "aws_db_instance" "sgsi_main" {
-  identifier = "sgsi-main-db"
+  # Database Engine Configuration
+  engine                  = var.rds_engine
+  engine_version          = var.rds_engine_version
+  instance_class          = var.rds_instance_class
+  parameter_group_family  = var.rds_parameter_group_family
+  db_name                 = var.rds_db_name
+  db_port                 = var.rds_db_port
+  master_username         = var.rds_master_username
+  master_password         = var.rds_master_password
 
-  allocated_storage     = var.db_allocated_storage
-  max_allocated_storage = var.db_max_allocated_storage
+  # Storage Configuration
+  allocated_storage     = var.rds_allocated_storage
+  max_allocated_storage = var.rds_max_allocated_storage
   storage_type          = "gp3"
-  storage_encrypted     = true
+  iops                  = null
+  kms_key_id            = ""
 
-  engine         = "mysql"
-  engine_version = "8.0"
-  instance_class = var.db_instance_class
+  # High Availability Configuration (ISO 27001 A.17.2.1)
+  multi_az          = var.rds_multi_az
+  availability_zone = ""
 
-  db_name  = var.db_name
-  username = var.db_username
-  password = var.db_password
+  # Backup Configuration (ISO 27001 A.12.3.1)
+  backup_retention_period = var.rds_backup_retention_period
+  backup_window           = "03:00-04:00"
+  skip_final_snapshot     = var.rds_skip_final_snapshot
 
-  db_subnet_group_name   = aws_db_subnet_group.sgsi_db.name
-  vpc_security_group_ids = [data.terraform_remote_state.network.outputs.security_group_ids.db]
+  # Maintenance Configuration
+  maintenance_window         = "sun:04:00-sun:05:00"
+  auto_minor_version_upgrade = true
+  apply_immediately          = false
 
-  backup_retention_period = 7
-  backup_window          = "03:00-04:00"
-  maintenance_window     = "sun:04:00-sun:05:00"
+  # Monitoring Configuration (ISO 27001 A.12.4.1)
+  enabled_cloudwatch_logs_exports = ["postgresql", "upgrade"]
+  monitoring_interval             = 60
+  performance_insights_enabled    = true
+  performance_insights_retention  = 7
 
-  skip_final_snapshot = true
-  deletion_protection = false
+  # Protection Configuration
+  deletion_protection = var.rds_deletion_protection
 
-  performance_insights_enabled = true
-  monitoring_interval         = 60
+  # CloudWatch Alarm Thresholds
+  cpu_threshold            = 80
+  storage_threshold_bytes  = 10737418240  # 10 GB
+  connections_threshold    = 80
+
+  common_tags = var.common_tags
+}
+
+# ==============================================================================
+# CLOUDWATCH LOG GROUP FOR APPLICATION LOGS
+# ==============================================================================
+resource "aws_cloudwatch_log_group" "application" {
+  name              = "/aws/ec2/${var.project_name}-${var.environment}/httpd"
+  retention_in_days = 30
 
   tags = merge(
     var.common_tags,
     {
-      Name                = "sgsi-main-db"
-      AssetID             = "COMP-RDS-001"
-      AssetType           = "Database"
-      SecurityLevel       = "Critical"
-      BackupRequired      = "Yes"
-      MonitoringEnabled   = "Yes"
+      Name              = "${var.project_name}-${var.environment}-app-logs"
+      Module            = "compute"
+      AssetType         = "CloudWatch-LogGroup"
+      ISO27001Control   = "A.12.4.1"
     }
   )
 }
 
 # ==============================================================================
-# LAMBDA FUNCTIONS
+# SNS TOPIC FOR ALARMS (Optional)
 # ==============================================================================
-resource "aws_lambda_function" "api_handler" {
-  filename         = "api_handler.zip"
-  function_name    = "sgsi-api-handler"
-  role            = aws_iam_role.lambda_execution_role.arn
-  handler         = "index.handler"
-  runtime         = "python3.9"
-  timeout         = 30
-
-  vpc_config {
-    subnet_ids         = data.terraform_remote_state.network.outputs.app_private_subnet_ids
-    security_group_ids = [data.terraform_remote_state.network.outputs.security_group_ids.app]
-  }
-
-  environment {
-    variables = {
-      ENVIRONMENT = var.environment
-      DB_HOST     = aws_db_instance.sgsi_main.endpoint
-    }
-  }
+resource "aws_sns_topic" "compute_alarms" {
+  count = var.enable_sns_alarms ? 1 : 0
+  name  = "${var.project_name}-${var.environment}-compute-alarms"
 
   tags = merge(
     var.common_tags,
     {
-      Name                = "sgsi-api-handler"
-      AssetType           = "Lambda-Function"
-      Role                = "API-Handler"
+      Name              = "${var.project_name}-${var.environment}-compute-alarms"
+      Module            = "compute"
+      AssetType         = "SNS-Topic"
     }
   )
 }
 
-# Lambda Execution Role
-resource "aws_iam_role" "lambda_execution_role" {
-  name = "sgsi-lambda-execution-role"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
-        Principal = {
-          Service = "lambda.amazonaws.com"
-        }
-      }
-    ]
-  })
-
-  tags = merge(
-    var.common_tags,
-    {
-      Name                = "sgsi-lambda-execution-role"
-      AssetType           = "IAM-Role"
-    }
-  )
-}
-
-resource "aws_iam_role_policy_attachment" "lambda_vpc_access" {
-  role       = aws_iam_role.lambda_execution_role.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+resource "aws_sns_topic_subscription" "compute_alarms_email" {
+  count     = var.enable_sns_alarms && var.sns_alarm_email != "" ? 1 : 0
+  topic_arn = aws_sns_topic.compute_alarms[0].arn
+  protocol  = "email"
+  endpoint  = var.sns_alarm_email
 }
