@@ -152,7 +152,7 @@ resource "aws_s3_bucket_policy" "logs_bucket_policy" {
         Principal = {
           Service = "config.amazonaws.com"
         }
-        Action   = "s3:PutObject"
+        Action   = ["s3:PutObject", "s3:PutObjectAcl"]
         Resource = "${data.terraform_remote_state.storage.outputs.s3_logs_bucket_arn}/config/AWSLogs/${data.aws_caller_identity.current.account_id}/Config/*"
         Condition = {
           StringEquals = {
