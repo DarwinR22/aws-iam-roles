@@ -83,6 +83,11 @@ resource "aws_s3_bucket_policy" "logs_bucket_policy" {
         }
         Action   = "s3:GetBucketAcl"
         Resource = data.terraform_remote_state.storage.outputs.s3_logs_bucket_arn
+        Condition = {
+          StringEquals = {
+            "AWS:SourceArn" = "arn:aws:cloudtrail:${var.aws_region}:${data.aws_caller_identity.current.account_id}:trail/sgsi-cloudtrail"
+          }
+        }
       },
       {
         Sid    = "AWSCloudTrailWrite"
@@ -91,10 +96,11 @@ resource "aws_s3_bucket_policy" "logs_bucket_policy" {
           Service = "cloudtrail.amazonaws.com"
         }
         Action   = "s3:PutObject"
-        Resource = "${data.terraform_remote_state.storage.outputs.s3_logs_bucket_arn}/*"
+        Resource = "${data.terraform_remote_state.storage.outputs.s3_logs_bucket_arn}/AWSLogs/${data.aws_caller_identity.current.account_id}/*"
         Condition = {
           StringEquals = {
             "s3:x-amz-acl" = "bucket-owner-full-control"
+            "AWS:SourceArn" = "arn:aws:cloudtrail:${var.aws_region}:${data.aws_caller_identity.current.account_id}:trail/sgsi-cloudtrail"
           }
         }
       },
@@ -106,6 +112,11 @@ resource "aws_s3_bucket_policy" "logs_bucket_policy" {
         }
         Action   = "s3:GetBucketAcl"
         Resource = data.terraform_remote_state.storage.outputs.s3_logs_bucket_arn
+        Condition = {
+          StringEquals = {
+            "AWS:SourceAccount" = data.aws_caller_identity.current.account_id
+          }
+        }
       },
       {
         Sid    = "AWSConfigBucketExistenceCheck"
@@ -115,6 +126,25 @@ resource "aws_s3_bucket_policy" "logs_bucket_policy" {
         }
         Action   = "s3:ListBucket"
         Resource = data.terraform_remote_state.storage.outputs.s3_logs_bucket_arn
+        Condition = {
+          StringEquals = {
+            "AWS:SourceAccount" = data.aws_caller_identity.current.account_id
+          }
+        }
+      },
+      {
+        Sid    = "AWSConfigBucketDeliveryCheck"
+        Effect = "Allow"
+        Principal = {
+          Service = "config.amazonaws.com"
+        }
+        Action   = "s3:GetBucketLocation"
+        Resource = data.terraform_remote_state.storage.outputs.s3_logs_bucket_arn
+        Condition = {
+          StringEquals = {
+            "AWS:SourceAccount" = data.aws_caller_identity.current.account_id
+          }
+        }
       },
       {
         Sid    = "AWSConfigWrite"
@@ -123,10 +153,11 @@ resource "aws_s3_bucket_policy" "logs_bucket_policy" {
           Service = "config.amazonaws.com"
         }
         Action   = "s3:PutObject"
-        Resource = "${data.terraform_remote_state.storage.outputs.s3_logs_bucket_arn}/*"
+        Resource = "${data.terraform_remote_state.storage.outputs.s3_logs_bucket_arn}/config/AWSLogs/${data.aws_caller_identity.current.account_id}/Config/*"
         Condition = {
           StringEquals = {
             "s3:x-amz-acl" = "bucket-owner-full-control"
+            "AWS:SourceAccount" = data.aws_caller_identity.current.account_id
           }
         }
       }
