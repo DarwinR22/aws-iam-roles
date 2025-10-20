@@ -67,6 +67,74 @@ provider "aws" {
 }
 
 # ==============================================================================
+# S3 BUCKET POLICY - ALLOW CLOUDTRAIL & CONFIG
+# ==============================================================================
+resource "aws_s3_bucket_policy" "logs_bucket_policy" {
+  bucket = data.terraform_remote_state.storage.outputs.s3_logs_bucket_id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "AWSCloudTrailAclCheck"
+        Effect = "Allow"
+        Principal = {
+          Service = "cloudtrail.amazonaws.com"
+        }
+        Action   = "s3:GetBucketAcl"
+        Resource = data.terraform_remote_state.storage.outputs.s3_logs_bucket_arn
+      },
+      {
+        Sid    = "AWSCloudTrailWrite"
+        Effect = "Allow"
+        Principal = {
+          Service = "cloudtrail.amazonaws.com"
+        }
+        Action   = "s3:PutObject"
+        Resource = "${data.terraform_remote_state.storage.outputs.s3_logs_bucket_arn}/*"
+        Condition = {
+          StringEquals = {
+            "s3:x-amz-acl" = "bucket-owner-full-control"
+          }
+        }
+      },
+      {
+        Sid    = "AWSConfigBucketPermissionsCheck"
+        Effect = "Allow"
+        Principal = {
+          Service = "config.amazonaws.com"
+        }
+        Action   = "s3:GetBucketAcl"
+        Resource = data.terraform_remote_state.storage.outputs.s3_logs_bucket_arn
+      },
+      {
+        Sid    = "AWSConfigBucketExistenceCheck"
+        Effect = "Allow"
+        Principal = {
+          Service = "config.amazonaws.com"
+        }
+        Action   = "s3:ListBucket"
+        Resource = data.terraform_remote_state.storage.outputs.s3_logs_bucket_arn
+      },
+      {
+        Sid    = "AWSConfigWrite"
+        Effect = "Allow"
+        Principal = {
+          Service = "config.amazonaws.com"
+        }
+        Action   = "s3:PutObject"
+        Resource = "${data.terraform_remote_state.storage.outputs.s3_logs_bucket_arn}/*"
+        Condition = {
+          StringEquals = {
+            "s3:x-amz-acl" = "bucket-owner-full-control"
+          }
+        }
+      }
+    ]
+  })
+}
+
+# ==============================================================================
 # CLOUDTRAIL
 # ==============================================================================
 resource "aws_cloudtrail" "sgsi_trail" {
@@ -97,6 +165,8 @@ resource "aws_cloudtrail" "sgsi_trail" {
       SecurityLevel       = "Critical"
     }
   )
+  
+  depends_on = [aws_s3_bucket_policy.logs_bucket_policy]
 }
 
 # ==============================================================================
@@ -115,7 +185,10 @@ resource "aws_config_delivery_channel" "sgsi_delivery_channel" {
   name           = "sgsi-config-delivery-channel"
   s3_bucket_name = data.terraform_remote_state.storage.outputs.s3_logs_bucket_id
   
-  depends_on = [aws_config_configuration_recorder.sgsi_recorder]
+  depends_on = [
+    aws_config_configuration_recorder.sgsi_recorder,
+    aws_s3_bucket_policy.logs_bucket_policy
+  ]
 }
 
 # Config IAM Role
@@ -146,7 +219,7 @@ resource "aws_iam_role" "config_role" {
 
 resource "aws_iam_role_policy_attachment" "config_role_policy" {
   role       = aws_iam_role.config_role.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/ConfigRole"
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWS_ConfigRole"
 }
 
 # ==============================================================================
