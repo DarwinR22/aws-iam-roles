@@ -39,10 +39,10 @@ rds_master_username         = "dbadmin"
 rds_master_password         = "Changeme123!SecurePassword"  # ⚠️ CAMBIAR EN PRODUCCIÓN
 rds_allocated_storage       = 20
 rds_max_allocated_storage   = 100
-rds_multi_az                = true   # Alta disponibilidad Multi-AZ
-rds_backup_retention_period = 30     # 30 días de retención de backups
+rds_multi_az                = false  # Deshabilitado para AWS Free Tier
+rds_backup_retention_period = 7      # 7 días máximo en Free Tier
 rds_skip_final_snapshot     = false  # Crear snapshot final
-rds_deletion_protection     = true   # Protección contra eliminación
+rds_deletion_protection     = false  # Facilita testing/cleanup
 
 # ==============================================================================
 # SNS ALARMS CONFIGURATION (Optional)
