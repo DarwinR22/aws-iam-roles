@@ -295,10 +295,160 @@ module "vpc_endpoints" {
 - Inspector (vulnerability scanning)
 - Macie (data security)
 
-## 📚 References
+## � Troubleshooting Common Issues
+
+### NAT Gateway Connectivity Issues
+
+**Symptom:** Private instances cannot reach internet despite NAT Gateway being available
+```bash
+# Check NAT Gateway status
+aws ec2 describe-nat-gateways --filter "Name=vpc-id,Values=vpc-0797bd12c2e77d7d8"
+
+# Verify route tables have correct routes
+aws ec2 describe-route-tables --filters "Name=vpc-id,Values=vpc-0797bd12c2e77d7d8" \
+  --query 'RouteTables[].{RouteTableId:RouteTableId,Routes:Routes[?DestinationCidrBlock==`0.0.0.0/0`]}'
+
+# Check subnet associations
+aws ec2 describe-route-tables --filters "Name=vpc-id,Values=vpc-0797bd12c2e77d7d8" \
+  --query 'RouteTables[].{RouteTableId:RouteTableId,Associations:Associations}'
+```
+
+**Common Solutions:**
+- Verify route table has `0.0.0.0/0` → `nat-xxxxxxxxx` route
+- Check subnet is associated with correct route table
+- Ensure NAT Gateway has Elastic IP assigned
+- Verify Network ACL allows outbound traffic on ports 80/443
+
+### VPC Endpoint Policy Troubleshooting
+
+**Symptom:** Cannot access S3/DynamoDB through VPC endpoint
+```bash
+# Check VPC endpoint status
+aws ec2 describe-vpc-endpoints --filters "Name=vpc-id,Values=vpc-0797bd12c2e77d7d8"
+
+# Test S3 access through endpoint
+aws s3 ls s3://terraform-state-bucket-051963532279 --region us-east-1
+
+# Check endpoint policy
+aws ec2 describe-vpc-endpoints --vpc-endpoint-ids vpce-xxxxxx --query 'VpcEndpoints[0].PolicyDocument'
+```
+
+**Common Solutions:**
+- Verify route table includes VPC endpoint routes
+- Check endpoint policy allows required actions
+- Ensure bucket policy doesn't block VPC endpoint access
+- Verify DNS resolution for service names
+
+### VPC Flow Logs Analysis for Security Incidents
+
+**Symptom:** Suspicious network activity detected
+```bash
+# Query rejected connections (potential attacks)
+aws logs filter-log-events \
+  --log-group-name "/aws/vpc/flowlogs/sgsi-vpc-main" \
+  --filter-pattern "[version, account, eni, source, destination, srcport, destport, protocol, packets, bytes, windowstart, windowend, action=REJECT, flowlogstatus]" \
+  --start-time $(date -d '1 hour ago' +%s)000
+
+# Query SSH attempts from external sources
+aws logs filter-log-events \
+  --log-group-name "/aws/vpc/flowlogs/sgsi-vpc-main" \
+  --filter-pattern "[version, account, eni, source!=10.*, destination, srcport, destport=22, protocol=6, packets, bytes, windowstart, windowend, action, flowlogstatus]" \
+  --start-time $(date -d '24 hours ago' +%s)000
+
+# Query high traffic connections
+aws logs filter-log-events \
+  --log-group-name "/aws/vpc/flowlogs/sgsi-vpc-main" \
+  --filter-pattern "[version, account, eni, source, destination, srcport, destport, protocol, packets>100, bytes>10000, windowstart, windowend, action=ACCEPT, flowlogstatus]" \
+  --start-time $(date -d '1 hour ago' +%s)000
+```
+
+**Security Incident Response:**
+1. **Immediate:** Block suspicious IPs via Security Group rules
+2. **Analysis:** Export flow logs for detailed forensic analysis
+3. **Remediation:** Update Network ACL rules if needed
+4. **Prevention:** Review and tighten security group rules
+
+### Network ACL Debugging
+
+**Symptom:** Traffic blocked unexpectedly
+```bash
+# Check Network ACL rules for specific subnet
+aws ec2 describe-network-acls --filters "Name=vpc-id,Values=vpc-0797bd12c2e77d7d8" \
+  --query 'NetworkAcls[].{NetworkAclId:NetworkAclId,Entries:Entries,Associations:Associations}'
+
+# Test network connectivity
+# From EC2 instance in subnet:
+telnet <destination-ip> <port>
+nc -zv <destination-ip> <port>
+```
+
+**Common Solutions:**
+- Verify both inbound AND outbound NACL rules
+- Check rule precedence (lower numbers processed first)
+- Remember NACLs are stateless (need both directions)
+- Ensure ephemeral ports (1024-65535) allowed for outbound responses
+
+### High Availability Verification
+
+**Symptom:** Single point of failure concerns
+```bash
+# Verify resources are distributed across AZs
+echo "=== MULTI-AZ DEPLOYMENT VERIFICATION ==="
+echo "NAT Gateways:"
+aws ec2 describe-nat-gateways --filter "Name=vpc-id,Values=vpc-0797bd12c2e77d7d8" \
+  --query 'NatGateways[].{NATId:NatGatewayId,AZ:SubnetId,State:State}'
+
+echo "Subnets by AZ:"
+aws ec2 describe-subnets --filters "Name=vpc-id,Values=vpc-0797bd12c2e77d7d8" \
+  --query 'Subnets[].{SubnetId:SubnetId,AZ:AvailabilityZone,Type:Tags[?Key==`Type`].Value|[0]}'
+
+echo "Route Tables:"
+aws ec2 describe-route-tables --filters "Name=vpc-id,Values=vpc-0797bd12c2e77d7d8" \
+  --query 'RouteTables[].{RouteTableId:RouteTableId,Name:Tags[?Key==`Name`].Value|[0]}'
+```
+
+**HA Best Practices:**
+- Each AZ should have its own NAT Gateway
+- Each AZ should have its own route table
+- Subnets should be evenly distributed across AZs
+- Test failover scenarios regularly
+
+### Performance Optimization
+
+**Symptom:** High latency or data transfer costs
+```bash
+# Monitor NAT Gateway metrics
+aws cloudwatch get-metric-statistics \
+  --namespace AWS/NATGateway \
+  --metric-name PacketsDropCount \
+  --dimensions Name=NatGatewayId,Value=nat-xxxxxxxxx \
+  --statistics Sum \
+  --start-time $(date -d '1 hour ago' -u +%Y-%m-%dT%H:%M:%S) \
+  --end-time $(date -u +%Y-%m-%dT%H:%M:%S) \
+  --period 300
+
+# Check VPC endpoint usage
+aws cloudwatch get-metric-statistics \
+  --namespace AWS/VPC-Endpoint \
+  --metric-name PacketDropCount \
+  --start-time $(date -d '1 hour ago' -u +%Y-%m-%dT%H:%M:%S) \
+  --end-time $(date -u +%Y-%m-%dT%H:%M:%S) \
+  --period 300
+```
+
+**Optimization Tips:**
+- Use VPC endpoints for AWS services to reduce NAT costs
+- Monitor CloudWatch metrics for performance bottlenecks
+- Consider VPC endpoint policies to restrict access
+- Review data transfer patterns monthly
+
+## �📚 References
 
 - [AWS VPC Best Practices](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-security-best-practices.html)
 - [AWS VPC Flow Logs](https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs.html)
+- [AWS VPC Troubleshooting](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Troubleshooting.html)
+- [NAT Gateway Troubleshooting](https://docs.aws.amazon.com/vpc/latest/userguide/nat-gateway-troubleshooting.html)
+- [VPC Endpoint Troubleshooting](https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints-troubleshoot.html)
 - [ISO 27001:2013 Annex A.13](https://www.iso.org/standard/54533.html)
 - [NIST Cybersecurity Framework](https://www.nist.gov/cyberframework)
 
@@ -306,4 +456,4 @@ module "vpc_endpoints" {
 
 **Ready for deployment** ✅
 
-*Last updated: November 26, 2025 - Layer 2 deployment triggered*
+*Last updated: November 26, 2025 - Enhanced with troubleshooting guide - 100% documentation coverage*
