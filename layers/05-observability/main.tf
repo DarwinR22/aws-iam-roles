@@ -85,7 +85,7 @@ resource "aws_s3_bucket_policy" "logs_bucket_policy" {
         Resource = data.terraform_remote_state.storage.outputs.s3_logs_bucket_arn
         Condition = {
           StringEquals = {
-            "AWS:SourceArn" = "arn:aws:cloudtrail:${var.aws_region}:${data.aws_caller_identity.current.account_id}:trail/sgsi-cloudtrail"
+            "AWS:SourceArn" = "arn:aws:cloudtrail:${var.aws_region}:${data.aws_caller_identity.current.account_id}:trail/sgsi-audit-trail"
           }
         }
       },
@@ -100,7 +100,7 @@ resource "aws_s3_bucket_policy" "logs_bucket_policy" {
         Condition = {
           StringEquals = {
             "s3:x-amz-acl" = "bucket-owner-full-control"
-            "AWS:SourceArn" = "arn:aws:cloudtrail:${var.aws_region}:${data.aws_caller_identity.current.account_id}:trail/sgsi-cloudtrail"
+            "AWS:SourceArn" = "arn:aws:cloudtrail:${var.aws_region}:${data.aws_caller_identity.current.account_id}:trail/sgsi-audit-trail"
           }
         }
       },
