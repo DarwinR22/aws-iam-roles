@@ -100,8 +100,8 @@ resource "aws_db_instance" "main" {
   multi_az               = var.multi_az
   availability_zone      = var.multi_az ? null : var.availability_zone
 
-  # Backup Configuration (ISO 27001 A.12.3.1)
-  backup_retention_period   = var.backup_retention_period
+  # Backup Configuration (AWS Free Tier Compatible)
+  backup_retention_period   = 0  # FORCED: Free Tier requires 0 (no automated backups)
   backup_window             = var.backup_window
   copy_tags_to_snapshot     = true
   delete_automated_backups  = false

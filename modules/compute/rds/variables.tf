@@ -193,9 +193,9 @@ variable "enabled_cloudwatch_logs_exports" {
 }
 
 variable "monitoring_interval" {
-  description = "Intervalo de monitoreo mejorado (0, 1, 5, 10, 15, 30, 60)"
+  description = "Intervalo de monitoreo mejorado (0=disabled para free tier)"
   type        = number
-  default     = 60
+  default     = 0  # Disabled for AWS Free Tier compatibility
   validation {
     condition     = contains([0, 1, 5, 10, 15, 30, 60], var.monitoring_interval)
     error_message = "Monitoring interval debe ser 0, 1, 5, 10, 15, 30, o 60."
@@ -203,9 +203,9 @@ variable "monitoring_interval" {
 }
 
 variable "performance_insights_enabled" {
-  description = "Habilitar Performance Insights"
+  description = "Habilitar Performance Insights (false para free tier)"
   type        = bool
-  default     = true
+  default     = false  # Disabled for AWS Free Tier compatibility
 }
 
 variable "performance_insights_retention" {
