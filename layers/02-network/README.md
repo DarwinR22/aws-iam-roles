@@ -306,4 +306,4 @@ module "vpc_endpoints" {
 
 **Ready for deployment** ✅
 
-*Last updated: October 19, 2025*
+*Last updated: November 26, 2025 - Layer 2 deployment triggered*
