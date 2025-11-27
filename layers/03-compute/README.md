@@ -10,6 +10,8 @@ El **Layer 3 (Compute)** implementa la capa de cómputo del proyecto SGSI con un
 - **CloudWatch Monitoring** - Alarmas y métricas personalizadas
 - **SNS Notifications** (opcional) - Notificaciones de alarmas
 
+**🚀 Ready for deployment - November 26, 2025**
+
 ---
 
 ## 🏗️ Arquitectura Modular
