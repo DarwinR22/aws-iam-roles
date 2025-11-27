@@ -6,11 +6,46 @@ El **Layer 3 (Compute)** implementa la capa de cómputo del proyecto SGSI con un
 
 - **Application Load Balancer (ALB)** - Balanceo de carga con health checks y monitoreo
 - **Auto Scaling Group (ASG)** - Auto escalado Multi-AZ con Launch Templates
-- **RDS PostgreSQL Multi-AZ** - Base de datos con alta disponibilidad y backups automáticos
+- **RDS PostgreSQL Single-AZ** - Base de datos compatible con AWS Free Tier
 - **CloudWatch Monitoring** - Alarmas y métricas personalizadas
 - **SNS Notifications** (opcional) - Notificaciones de alarmas
 
-**🚀 Ready for deployment - November 26, 2025**
+**🚀 Deployed successfully - November 26, 2025 - AWS Free Tier Compatible**
+
+---
+
+## 💰 AWS Free Tier Configuration
+
+### 🆓 Optimizado para AWS Free Tier
+
+**Configuración Actual (Compatible con Free Tier):**
+- 🖥️ **EC2 Instances:** t3.micro (750 horas/mes gratis)
+- 🗄️ **RDS Instance:** db.t3.micro (750 horas/mes gratis)
+- 🏢 **Multi-AZ RDS:** Deshabilitado (no disponible en free tier)
+- 📅 **RDS Backups:** Deshabilitados (backup_retention_period = 0)
+- 📊 **Enhanced Monitoring:** Deshabilitado para free tier
+- 🔍 **Performance Insights:** Deshabilitado para free tier
+
+**✅ Beneficios:**
+- Sin costos adicionales por RDS Multi-AZ
+- Sin costos por backups automáticos
+- Sin costos por monitoreo avanzado
+- Funcionalidad completa dentro de límites gratuitos
+
+**⚠️ Consideraciones:**
+- **Backups:** Solo manual snapshots disponibles
+- **High Availability:** RDS en Single-AZ (EC2 sigue siendo Multi-AZ vía ASG)
+- **Monitoring:** CloudWatch básico incluido
+
+### 🔄 Upgrade Path (Futuro)
+
+Para **producción** fuera de Free Tier:
+```hcl
+# En terraform.tfvars - configuración producción
+rds_multi_az                = true
+rds_backup_retention_period = 30
+rds_instance_class          = "db.t3.small"
+```
 
 ---
 
