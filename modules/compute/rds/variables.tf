@@ -127,9 +127,9 @@ variable "kms_key_id" {
 # ------------------------------------------------------------------------------
 
 variable "multi_az" {
-  description = "Habilitar despliegue Multi-AZ"
+  description = "Habilitar despliegue Multi-AZ (false para free tier)"
   type        = bool
-  default     = true
+  default     = false  # Multi-AZ not available in free tier
 }
 
 variable "availability_zone" {
@@ -143,9 +143,9 @@ variable "availability_zone" {
 # ------------------------------------------------------------------------------
 
 variable "backup_retention_period" {
-  description = "Días de retención de backups automáticos"
+  description = "Días de retención de backups automáticos (max 7 para free tier)"
   type        = number
-  default     = 30
+  default     = 7  # AWS Free Tier limit
 }
 
 variable "backup_window" {
