@@ -27,80 +27,9 @@
 
 ## 🏗️ Arquitectura de 5 Capas Desplegada
 
-```mermaid
-graph TB
-    subgraph "🏛️ SGSI - Arquitectura Empresarial"
-        subgraph "Layer 5 - Observability 📊"
-            CT[CloudTrail Audit]
-            CW[CloudWatch Dashboard]
-            SNS[SNS Notifications]
-            FL[VPC Flow Logs]
-        end
-        
-        subgraph "Layer 4 - Storage 📦"
-            S3A[S3 App Data]
-            S3L[S3 Logs WORM]
-            EFS[EFS Shared Storage]
-            BKP[AWS Backup Vault]
-        end
-        
-        subgraph "Layer 3 - Compute 💻"
-            ALB[Application Load Balancer]
-            ASG[Auto Scaling Group]
-            EC2[EC2 Web Servers x2]
-            RDS[(RDS PostgreSQL)]
-        end
-        
-        subgraph "Layer 2 - Network 🌐"
-            VPC[VPC 10.0.0.0/16]
-            PUB[Public Subnets x2]
-            PRI[Private Subnets x4]
-            NAT[NAT Gateway HA]
-            SG[Security Groups]
-        end
-        
-        subgraph "Layer 1 - Foundation 🏗️"
-            IAM[IAM Roles & Policies]
-            KMS[KMS Encryption]
-            TAGS[Resource Tagging]
-            OIDC[GitHub OIDC Trust]
-        end
-    end
-    
-    subgraph "🛡️ Compliance & Security"
-        ISO[ISO 27001]
-        NIST[NIST CSF]
-        ZTA[Zero Trust]
-    end
-    
-    subgraph "☁️ AWS Services Desplegados"
-        AWS1[13 IAM Policies ✅]
-        AWS2[VPC Multi-AZ ✅]
-        AWS3[ALB + ASG + RDS ✅]
-        AWS4[S3 + EFS + Backup ✅]
-        AWS5[CloudTrail + CW ✅]
-    end
-    
-    %% Connections
-    CT --> S3L
-    ALB --> EC2
-    EC2 --> RDS
-    EC2 --> EFS
-    BKP --> RDS
-    BKP --> EFS
-    FL --> CW
-    
-    %% Compliance connections
-    Layer1 --> ISO
-    Layer2 --> NIST
-    Layer3 --> ZTA
-    
-    style CT fill:#e3f2fd
-    style ALB fill:#e8f5e8
-    style VPC fill:#fff3e0
-    style S3A fill:#f3e5f5
-    style IAM fill:#fce4ec
-```
+![Arquitectura SGSI Desplegada](arquitectura.png)
+
+> **📊 Diagrama de Arquitectura:** Infraestructura SGSI completamente desplegada en AWS con 5 capas de seguridad empresarial, compliance ISO 27001 + NIST CSF, y optimización de costos con 95% Free Tier utilization.
 
 ### 📋 **Recursos AWS Desplegados**
 
