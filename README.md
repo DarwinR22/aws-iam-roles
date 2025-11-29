@@ -340,27 +340,6 @@ python scripts/cost-optimizer.py
 | **Security Posture** | Zero Trust + Defense in Depth implementados |
 | **Scalability** | Ready para workloads production |
 
-### 🚀 **Próximos Pasos (Opcionales)**
-
-#### **Inmediatos**
-- [ ] **GuardDuty** - Threat detection avanzado (~$3/mes)
-- [ ] **Security Hub** - Compliance center (~$5/mes)
-- [ ] **Config** - Configuration compliance (~$2/mes)
-- [ ] **WAF** - Web Application Firewall protection
-
-#### **Production Readiness**
-- [ ] **Scaling**: EC2 instances a t3.small
-- [ ] **RDS**: Habilitar Multi-AZ + automated backups
-- [ ] **SSL**: Certificados ALB con Route 53
-- [ ] **Blue/Green**: Deployment strategy avanzado
-- [ ] **APM**: Application Performance Monitoring
-
-#### **Security Avanzada**
-- [ ] **Systems Manager**: Patch management + SSM
-- [ ] **Secrets Manager**: Gestión segura de secretos
-- [ ] **Inspector**: Vulnerability assessment
-- [ ] **Security Lake**: SIEM centralizado
-
 ## 📞 Soporte y Contacto
 
 ### 📖 **Recursos de Documentación**
